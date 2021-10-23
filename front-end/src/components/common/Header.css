@@ -1,0 +1,13 @@
+.app-header {
+  background-color: white;
+  padding: 5px 10px 5px 30px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
+  height: 50px;
+}
+
+.app-header-brand-logo {
+  width: 150px;
+}
