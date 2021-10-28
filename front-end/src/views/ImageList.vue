@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="imageList">
     <!-- Page header-->
     <div>
       <h5>Select the training image to edit.</h5>
@@ -74,6 +74,12 @@ export default {
   mounted() {
     this.loadImages();
   },
+  watch: {
+    $route () {
+      this.currentPage = 0;
+      this.loadImages()
+    }
+  },
   methods: {
     nextPage() {
       this.currentPage += 1;
@@ -102,7 +108,7 @@ export default {
           let idx = imageCoord2Idx(row, col);
           let imgid = imagePageIdx2Id(this.currentPage, idx);
           // TODO: '/train/' should be a component prop, not hard-coded
-          line.push(`${configs.serverUrl}/train/${imgid}`);
+          line.push(`${configs.serverUrl}/${this.$route.params.phase}/${imgid}`);
         }
         this.imgmat.push(line);
       }
@@ -115,5 +121,9 @@ export default {
 <style scoped>
 img {
   cursor: pointer;
+}
+
+#imageList {
+  text-align: center;
 }
 </style>
