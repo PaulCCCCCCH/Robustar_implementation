@@ -1,0 +1,58 @@
+{% extends "menuBase.html" %}
+{% block myapp %}
+
+<!-- PAGE-HEADER -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Hi! Thank you for using RobuStar</h1>
+        <hr>
+        <h5>Please choose where you want to start</h5>
+<!--								<ol class="breadcrumb">-->
+<!--									<li class="breadcrumb-item"><a href="#">Home</a></li>-->
+<!--									<li class="breadcrumb-item active" aria-current="page">Sales Dashboard</li>-->
+<!--								</ol>-->
+    </div>
+</div>
+<!-- PAGE-HEADER END -->
+
+<!-- Row -->
+<div class="row hover15">
+    <div class="col-xl-3 col-sm-6" onclick="location.replace('imglist?type=trainImages_template')">
+        <div class="card">
+            <div class="card-body bx-tada-hover">
+                <div class="row mb-1">
+                    <img src="images/functions/training_images.png" alt="img">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6" onclick="location.replace('edit')">
+        <div class="card">
+            <div class="card-body bx-tada-hover">
+                <div class="row mb-1">
+                    <img src="images/functions/start.png" alt="img">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6" onclick="location.replace('imglist?type=trainImages_template')">
+        <div class="card">
+            <div class="card-body bx-tada-hover">
+                <div class="row mb-1">
+                    <img src="images/functions/train_augmented.png" alt="img">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="card">
+            <div class="card-body bx-tada-hover">
+                <div class="row mb-1">
+                    <img src="images/functions/train_original.png" alt="img">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

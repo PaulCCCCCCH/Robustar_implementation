@@ -25,7 +25,14 @@ Developed with `Vue2`
     npm run serve
 ```
 
-## Dev Notes
+
+## TODO List
+- Cannot view misclassified and correctly classified images separately
+- Drawing Functionalities
+- Viewing influence 
+
+
+## Bug List
 
 ### ImageList
 - `Next Page` calls `currentPage++` without bounding.

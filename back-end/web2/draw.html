@@ -1,0 +1,48 @@
+<!-- <script src="js/master.js"></script> -->
+<!-- <script src="js/angular.min.js"></script> -->
+<!-- <script src="js/buttons.js"></script> -->
+<!-- <script src="js/carbon.js"></script> -->
+<script src="js/fabric.js"></script>
+<!-- <script src="js/ga.js"></script> -->
+<!-- <script src="js/prism.js"></script> -->
+<!-- <script src="js/widgets.js"></script> -->
+
+
+<div id="bd-wrapper" ng-controller="CanvasControls"></div>
+
+
+<canvas id="c" width="500" height="370" style="border:1px solid #aaa"></canvas>
+
+<div style="display: inline-block; margin-left: 10px">
+  <button hidden='hidden' id="delete-selection" class="btn btn-info">Delete selection</button>
+  <button hidden='hidden' id="drawing-mode" class="btn btn-info">Cancel drawing mode</button>
+  <button hidden='hidden' id="clear-canvas" class="btn btn-info">Clear</button><br>
+
+  <div id="drawing-mode-options" hidden='hidden'>
+    <label for="drawing-mode-selector">Mode:</label>
+    <select id="drawing-mode-selector">
+      <option>Pencil</option>
+      <option>Circle</option>
+      <option>Spray</option>
+      <option>Pattern</option>
+    </select><br>
+
+    <label for="drawing-line-width">Line width:</label>
+    <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+
+    <label for="drawing-color">Line color:</label>
+    <input type="color" value="#FFFFFF" id="drawing-color"><br>
+
+    <label for="drawing-shadow-color" hidden='hidden'>Shadow color:</label>
+    <input type="color" value="#FFFFFF" id="drawing-shadow-color" hidden='hidden'><br>
+
+    <label for="drawing-shadow-width" hidden='hidden'>Shadow width:</label>
+    <span class="info" hidden='hidden'>0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width" hidden='hidden'><br>
+
+    <label for="drawing-shadow-offset" hidden='hidden'>Shadow offset:</label>
+    <span class="info" hidden='hidden'>0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset" hidden='hidden'><br>
+  </div>
+</div>
+
+
+<script src="freedraw.js"></script>
