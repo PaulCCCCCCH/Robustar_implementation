@@ -1,0 +1,46 @@
+.line-chart {
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.line-chart ul {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+}
+
+.line-chart ul li {
+  text-align: center;
+  list-style: none;
+}
+
+.line-chart ul li .box {
+  position: absolute;
+  height: 0;
+  text-align: center;
+  transform: translateX(-50%);
+  transition: height 1s;
+}
+
+.line-chart ul li .box-pos {
+  bottom: 0;
+}
+
+.line-chart ul li .box-neg {
+  top: 0;
+}
+
+
+
+
+/* .line-chart ul li .box .num {
+  position: absolute;
+  top:-1.4rem;
+  left:0;
+  right: 0;
+  display: inline-block;
+  color: #f22323;
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1;
+} */
