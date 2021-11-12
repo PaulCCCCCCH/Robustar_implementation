@@ -1,22 +1,45 @@
 <template>
-  <div :style="{width:defaultConfig.figWidth+'px', height:defaultConfig.figHeight+'px'}">
+  <div :style="{width:defaultConfig.figWidth+'px', height:defaultConfig.figHeight*(arrLength+2)/(arrLength+3)+'px'}">
     <div
-      class="line-chart"
-      :style="{background:defaultConfig.lineColor, marginTop:defaultConfig.figHeight/2+'px'}"
+      class="chart-border"
+      style="transform:translateX(100%) translateX(-1px)"
+      v-if="maxNegative != 0"
+    >
+      <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
+      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxNegative}}</div>
+    </div>
+    <div
+      class="chart-line"
+      :style="{background:defaultConfig.lineColor,
+               transform:'translateX('+maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)+'px) translateX(-50%)'}"
     >
       <ul>
         <li v-for="(item, index) in dataArr" :key=index>
           <div
+            :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
+                     fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px',
+                     transform:'translateX('+(-maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)-defaultConfig.figWidth*0.05)+'px) translateX(-100%)'}"
+          > {{item[0]}} </div>
+          <div
             class="box"
+            :title="item[1]"
             :class="item[1]>=0?'box-pos':'box-neg'"
-            :style="{height:dataPercentageArr[index]*defaultConfig.figHeight/2+'px',
-                     background:(item[1]>=0)?defaultConfig.posColor:defaultConfig.negColor,
-                     width:defaultConfig.figWidth/(arrLength+2)+'px'}"
-          >
-            <!-- <span class="num">{{item[1]}}</span> -->
-          </div>
+            :style="{width:item[1]>=0?item[1]*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
+                                     :item[1]*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
+                    background:(item[1]>=0)?defaultConfig.posColor:defaultConfig.negColor,
+                    height:defaultConfig.figHeight/(arrLength+3)+'px'}"
+          />
         </li>
       </ul>
+      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">0</div>
+    </div>
+    <div
+      class="chart-border"
+      :style="{transform:'translateX('+(defaultConfig.figWidth-1)+'px)'}"
+      v-if="maxPositive != 0"
+    >
+      <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
+      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxPositive}}</div>
     </div>
   </div>
 </template>
@@ -27,7 +50,7 @@ export default {
     dataArr: {
       type: Array,
       default: () => [["bird", 0], ["cat", 0], ["crab", 0], ["dog", 0], ["fish", 0], 
-                      ["frog", 0], ["insect", 0], ["primate", 0], ["turtle", 0]]
+                      ["frog", 0], ["insect", 0], ["primate", 0], ["turtle", 1]]
     },
     config: {
       type: Object,
@@ -36,7 +59,6 @@ export default {
   },
   data() {
     return {
-      dataPercentageArr: [],
       defaultConfig: {
         // height of the figure
         figHeight: 300,
@@ -48,9 +70,13 @@ export default {
         negColor: "#00a000",
         // bottom line color
         lineColor: "#262626",
+        // the maximan border and the minimun border
+        dataRange: null,
       },
 
       arrLength: 0,
+      maxPositive: 0,
+      maxNegative: 0,
     }
   },
   watch: {
@@ -59,32 +85,21 @@ export default {
     },
   },
   created() {
-    /* calculate maxPositive, maxNegative, maxNumber */
-    let maxNegative = 0, maxPositive = 0;
-    this.dataArr.forEach(function(v) {
-      if ((v[1]>0) && (v[1]>maxPositive)) maxPositive = v[1];
-      if ((v[1]<0) && (v[1]<maxNegative)) maxNegative = v[1];
-    });
-    let maxNumber=Math.max(maxPositive, Math.abs(maxNegative));
-    // console.log(maxNegative, maxPositive, maxNumber)
-    // calculate marginTop of line-chart
-    this.$nextTick(function () {
-      if (maxPositive != -maxNegative) {{
-        document.querySelector('.line-chart').style.marginTop = maxPositive*this.defaultConfig.figHeight/(maxPositive-maxNegative)+'px';
-      }}
-    })
-    /* ... */
+    this.arrLength = this.dataArr.length;
     setTimeout(function() {
-      for (var i = 0; i < this.arrLength; i++) {
-        this.dataPercentageArr.push(Math.abs(this.dataArr[i][1]) / maxNumber);
+      if (this.defaultConfig.dataRange != null) {
+        this.maxNegative = this.defaultConfig.dataRange[0];
+        this.maxPositive = this.defaultConfig.dataRange[1];
+      } else {
+        for (var i = 0; i < this.arrLength; i++) {
+          if (this.dataArr[i][1]>this.maxPositive) this.maxPositive = this.dataArr[i][1];
+          if (this.dataArr[i][1]<this.maxNegative) this.maxNegative = this.dataArr[i][1];
+        }
       }
-      console.log(this.dataArr);
-      console.log(this.dataPercentageArr);
-    }.bind(this), 0)
+    }.bind(this), 0);
   },
   mounted() {
     this.updateConfig();
-    this.arrLength = this.dataArr.length;
   },
   methods: {
     updateConfig() {

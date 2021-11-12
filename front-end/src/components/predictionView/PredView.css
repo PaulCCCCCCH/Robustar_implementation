@@ -1,46 +1,52 @@
-.line-chart {
-  height: 1px;
-  transform: translateY(-50%);
+.chart-border {
+  height: 100%;
+  float: left;
 }
 
-.line-chart ul {
+.chart-border .chart-border-line {
+  width: 1px;
+  height: 100%;
+}
+
+.chart-border .num {
+  transform: translateX(-50%);
+}
+
+
+.chart-line {
+  width: 1px;
+  height: 100%;
+  float: left;
+}
+
+.chart-line ul {
   display: flex;
-  /* flex-direction: column; */
+  flex-direction: column;
   justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-.line-chart ul li {
+.chart-line ul li {
   text-align: center;
   list-style: none;
+  display: flex;
 }
 
-.line-chart ul li .box {
+.chart-line ul li .box {
   position: absolute;
-  height: 0;
+  width: 0;
   text-align: center;
-  transform: translateX(-50%);
-  transition: height 1s;
+  transition: width 1s;
 }
 
-.line-chart ul li .box-pos {
-  bottom: 0;
+.chart-line ul li .box-pos {
+  left: 0;
 }
 
-.line-chart ul li .box-neg {
-  top: 0;
-}
-
-
-
-
-/* .line-chart ul li .box .num {
-  position: absolute;
-  top:-1.4rem;
-  left:0;
+.chart-line ul li .box-neg {
   right: 0;
-  display: inline-block;
-  color: #f22323;
-  font-weight: 500;
-  font-size: 1.2rem;
-  line-height: 1;
-} */
+}
+
+
