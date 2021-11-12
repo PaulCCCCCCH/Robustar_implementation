@@ -1,45 +1,52 @@
 <template>
-  <div :style="{width:defaultConfig.figWidth+'px', height:defaultConfig.figHeight*(arrLength+2)/(arrLength+3)+'px'}">
-    <div
-      class="chart-border"
-      style="transform:translateX(100%) translateX(-1px)"
-      v-if="maxNegative != 0"
-    >
-      <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
-      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxNegative}}</div>
-    </div>
-    <div
-      class="chart-line"
-      :style="{background:defaultConfig.lineColor,
-               transform:'translateX('+maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)+'px) translateX(-50%)'}"
-    >
-      <ul>
-        <li v-for="(item, index) in dataArr" :key=index>
-          <div
-            :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
-                     fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px',
-                     transform:'translateX('+(-maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)-defaultConfig.figWidth*0.05)+'px) translateX(-100%)'}"
-          > {{item[0]}} </div>
-          <div
-            class="box"
-            :title="item[1]"
-            :class="item[1]>=0?'box-pos':'box-neg'"
-            :style="{width:item[1]>=0?item[1]*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
-                                     :item[1]*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
-                    background:(item[1]>=0)?defaultConfig.posColor:defaultConfig.negColor,
-                    height:defaultConfig.figHeight/(arrLength+3)+'px'}"
-          />
-        </li>
-      </ul>
-      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">0</div>
-    </div>
-    <div
-      class="chart-border"
-      :style="{transform:'translateX('+(defaultConfig.figWidth-1)+'px)'}"
-      v-if="maxPositive != 0"
-    >
-      <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
-      <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxPositive}}</div>
+  <div :style="{width:defaultConfig.componentWidth+'px',
+                height:defaultConfig.figHeight+'px',
+                }">
+    <div :style="{width:defaultConfig.figWidth+'px',
+                  height:defaultConfig.figHeight*(arrLength+2)/(arrLength+3)+'px',
+                  transform:'translateX('+(defaultConfig.componentWidth-defaultConfig.figWidth)/2+'px)'}">
+      <div
+        class="chart-border"
+        style="transform:translateX(100%) translateX(-1px)"
+        v-if="maxNegative != 0"
+      >
+        <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
+        <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxNegative}}</div>
+      </div>
+      <div v-else style="float:left; height: 1px" :style="{width:defaultConfig.figWidth*0.1+'px'}"/>
+      <div
+        class="chart-line"
+        :style="{background:defaultConfig.lineColor,
+                transform:'translateX('+maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)+'px) translateX(-50%)'}"
+      >
+        <ul>
+          <li v-for="(item, index) in dataArr" :key=index>
+            <div
+              :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
+                      fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px',
+                      transform:'translateX('+(-maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)-defaultConfig.figWidth*0.05)+'px) translateX(-100%)'}"
+            > {{item[0]}} </div>
+            <div
+              class="box"
+              :title="item[1]"
+              :class="item[1]>=0?'box-pos':'box-neg'"
+              :style="{width:item[1]>=0?item[1]*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
+                                      :item[1]*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
+                      background:(item[1]>=0)?defaultConfig.posColor:defaultConfig.negColor,
+                      height:defaultConfig.figHeight/(arrLength+3)+'px'}"
+            />
+          </li>
+        </ul>
+        <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">0</div>
+      </div>
+      <div
+        class="chart-border"
+        :style="{transform:'translateX('+(defaultConfig.figWidth-1)+'px)'}"
+        v-if="maxPositive != 0"
+      >
+        <div class="chart-border-line" :style="{background:defaultConfig.lineColor}"></div>
+        <div class="num" :style="{fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px'}">{{maxPositive}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -60,6 +67,8 @@ export default {
   data() {
     return {
       defaultConfig: {
+        // width of the component
+        componentWidth: 400,
         // height of the figure
         figHeight: 300,
         // width of the figure

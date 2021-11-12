@@ -4,9 +4,8 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <button type="button" class="btn btn-primary"> mybutton </button>
 
-    <div>
-      <PredView :dataArr="predDataArr" :config="predViewConfig" style="padding-left:100px"/>
-    </div>
+    <PredView :dataArr="predDataArr" :config="predViewConfig"/>
+    
   </div>
 </template>
 
@@ -22,21 +21,22 @@ export default {
       //               ["frog", -20], ["insect", -50], ["primate", 20], ["turtle", 15]],
       // predDataArr: [["bird", 5], ["cat", 10], ["crab", -3], ["dog", 50], ["fish", 20], 
       //               ["frog", -15], ["insect", -10], ["primate", 20], ["turtle", 15]],
-      predDataArr: [["bird", 5], ["cat", 10], ["crab", -3], ["dog", 5], ["fish", 20], 
-                    ["frog", -50], ["insect", -10], ["primate", 20], ["turtle", 15]],
-      // predDataArr: [["bird", 5], ["cat", 10], ["crab", 3], ["dog", 50], ["fish", 20], 
-      //               ["frog", 20], ["insect", 49], ["primate", 20], ["turtle", 15]],
+      // predDataArr: [["bird", 5], ["cat", 10], ["crab", -3], ["dog", 5], ["fish", 20], 
+      //               ["frog", -50], ["insect", -10], ["primate", 20], ["turtle", 15]],
+      predDataArr: [["bird", 5], ["cat", 10], ["crab", 3], ["dog", 50], ["fish", 20], 
+                    ["frog", 20], ["insect", 49], ["primate", 20], ["turtle", 15]],
       // predDataArr: [["bird", -5], ["cat", -10], ["crab", -3], ["dog", -50], ["fish", -20], 
       //               ["frog", -20], ["insect", -49], ["primate", -20], ["turtle", -15]],
-      // predDataArr: [["bird", 5], ["cat", 10]],
-      // predDataArr: [["bird", -5], ["cat", 10]],
+      // predDataArr: [["bird", 5], ["cat", 10], ["crab", 3], ["dog", 50], ["fish", 20], 
+      //               ["frog", 20], ["insect", 49]],
       predViewConfig: {
+        componentWidth: 300,
         figHeight: 200,
         figWidth: 200,
         // posColor: "#234567",
         // negColor: "#67891a",
         // lineColor: "#abcedf",
-        dataRange: [-60, 60],
+        // dataRange: [-60, 60],
       },
     }
   }
