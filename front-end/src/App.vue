@@ -1,16 +1,16 @@
 <template>
   <div id="app">
+    <v-app id="inspire">
+
     <Header />
-    <SideBar />
+      <div class="pages">
+        <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
 
-    <div id="page-content">
-      <router-view />
-    </div>
-
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+        <div id="page-content">
+          <router-view />
+        </div>
+      </div>
+    </v-app>
   </div>
 </template>
 
@@ -25,6 +25,29 @@ export default {
     Header,
     SideBar,
   },
+  data() {
+    return {
+      f_mini: false,
+      f_mini_return:false,
+      open_fit: "",
+      window_pa: (window.screen.width-256) + "px",
+    }
+  },
+  methods: {
+    updatewindow: function(f_mini_return){
+      if(f_mini_return==true){
+        document.getElementById("page-content").style.width = (screen.width - 256) + "px";
+      }
+      else{
+        document.getElementById("page-content").style.width = (screen.width - 56) + "px";
+
+      }
+      console.log('123',f_mini_return)
+    },
+  },
+  mounted () {
+    this.updatewindow(true)
+  }
 };
 </script>
 
@@ -36,21 +59,9 @@ export default {
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-
-#nav {
-  position: fixed;
-  bottom: 0;
+.pages{
+  margin: 0px 0px 0px 40px;
+  height: 100%;
+  float: right;
 }
 </style>
