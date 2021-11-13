@@ -29,8 +29,6 @@ export default {
     return {
       f_mini: false,
       f_mini_return:false,
-      open_fit: "",
-      window_pa: (window.screen.width-256) + "px",
     }
   },
   methods: {

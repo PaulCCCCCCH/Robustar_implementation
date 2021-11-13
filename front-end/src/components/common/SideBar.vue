@@ -180,7 +180,6 @@ export default {
   props: {
     f_mini:Boolean,
     f_mini_return:Boolean,
-    open_fit: Boolean,
   },
   methods: {
     handleOpen(key, keyPath) {
