@@ -24,7 +24,7 @@
         "test:types": "tsc --project tests/types",
         "build": "npm run build:clean && npm run build:svg && npm run build:prod && npm run build:minify && node tsBannerGenerator.js",
         "build:editor": "lerna run build",
-        "build:clean": "rm -rf ./dist",
+        "build:clean": "rm -rf ./dist || rd /s /q .\\dist",
         "build:prod": "webpack",
         "build:minify": "webpack --env minify",
         "build:svg": "node makesvg.js",
