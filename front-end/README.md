@@ -29,19 +29,19 @@ You are now all set with the environment.
 To run `robustar`, first build the `robustar-image-editor` with
 
 ```
-lerna run build:editor
+lerna run build:editor --stream
 ```
 
 Then, run `robustar` with
 
 ```
-lerna run serve:main
+lerna run serve:main --stream
 ```
 
 Note that whenever you make changes to `robustar-image-editor`, you will have to **build editor again** with `lerna run build:editor`, so that changes take effect on `robustar`. Alternatively, you could run editor alone to view real-time changes:
 
 ```
-lerna run serve:editor
+lerna run serve:editor --stream
 ```
 
 

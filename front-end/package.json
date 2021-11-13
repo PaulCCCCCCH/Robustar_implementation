@@ -49,7 +49,7 @@
     },
     "scripts": {
         "build": "lerna run build",
-        "build:editor": "lerna run --scope robustar-image-editor build",
+        "build:editor": "lerna run --scope robustar-image-editor build --stream",
         "serve:editor": "lerna run --scope robustar-image-editor serve --stream",
         "serve:main": "lerna run --scope robustar serve --stream"
     },
