@@ -49,8 +49,8 @@
     },
     "scripts": {
         "build": "lerna run build",
-        "build:editor": "lerna run --scope @robustar/robustar-image-editor build --stream",
-        "serve:editor": "lerna run --scope @robustar/robustar-image-editor serve --stream",
+        "build:editor": "lerna run --scope @robustar/image-editor build --stream",
+        "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
         "serve:main": "lerna run --scope @robustar/robustar serve --stream"
     },
     "workspaces": [

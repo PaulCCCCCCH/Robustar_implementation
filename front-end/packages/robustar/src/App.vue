@@ -1,16 +1,16 @@
 <template>
   <div id="app">
+    <v-app id="inspire">
+
     <Header />
-    <SideBar />
+      <div class="pages">
+        <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
 
-    <div id="page-content">
-      <router-view />
-    </div>
-
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+        <div id="page-content">
+          <router-view />
+        </div>
+      </div>
+    </v-app>
   </div>
 </template>
 
@@ -19,43 +19,52 @@
 import Header from "@/components/common/Header";
 import SideBar from '@/components/common/SideBar'
 
-  export default {
-    name: "App",
-    components: {
-      Header,
-      SideBar,
+export default {
+  name: "App",
+  components: {
+    Header,
+    SideBar,
+  },
+  data() {
+    return {
+      f_mini: false,
+      f_mini_return:false,
+    }
+  },
+  methods: {
+    updatewindow: function(f_mini_return){
+      if(f_mini_return==true){
+        document.getElementById("page-content").style.width = (screen.width - 256) + "px";
+      }
+      else{
+        document.getElementById("page-content").style.width = (screen.width - 56) + "px";
+
+      }
+      console.log('123',f_mini_return)
     },
-  };
-  </script>
-
-  <style>
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
+  },
+  mounted () {
+    this.updatewindow(true)
   }
+};
+</script>
 
-  #nav {
-    padding: 30px;
-  }
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
 
-  #nav a {
-    font-weight: bold;
-    color: #2c3e50;
-  }
+.pages{
+  margin: 0px 0px 0px 40px;
+  height: 100%;
+  float: right;
+}
 
-  #nav a.router-link-exact-active {
-    color: #42b983;
-  }
-
-  #nav {
-    position: fixed;
-    bottom: 0;
-  }
-
-  #app, #page-content{
-    height: 100%;
-  }
+#app, #page-content{
+  height: 100%;
+}
 
 </style>
