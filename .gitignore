@@ -1,8 +1,8 @@
 */.DS_Store
 */__pycache__
 */.idea
-front-end/node_modules
-front-end/dist
+*/node_modules
+*/dist
 
 
 # local env files
