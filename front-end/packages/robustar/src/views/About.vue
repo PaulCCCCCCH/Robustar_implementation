@@ -11,7 +11,7 @@
 
 
 <script>
-import PredView from "@/components/predictionView/PredView.vue";
+import PredView from "@/components/prediction-viewer/PredView.vue";
 
 export default {
   components: { PredView },
