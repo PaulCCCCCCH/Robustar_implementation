@@ -10,7 +10,11 @@ body {
 }
 
 #page-content {
-  margin: 50px 0px 0px 210px;
+  margin: 50px 0px 0px 40px;
+  padding-left: 20px;
+  width: 100%;
+  right: 0;
+  float: right;
 }
 
 a {
