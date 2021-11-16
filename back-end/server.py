@@ -20,41 +20,6 @@ def after_request(resp):
 
 app.after_request(after_request)
 
-
-@app.route('/')
-def first_flask():
-    return redirect('/webpage/index')
-    # return redirect("/main/new_menu.html")
-
-
-@app.route('/webpage/index')
-def webpage_index():
-    return render_template('index_template.html')
-
-
-@app.route('/webpage/<path:path>')
-def get_web2_page(path):
-    return send_from_directory('web2', path)
-
-
-@app.route('/webpage/edit', methods=['GET'])
-def get_edit_page():
-    trainid = 0
-    if(request.args.get('id')):
-        trainid = request.args.get('id')
-    return render_template('edit_template.html', trainid=trainid)
-
-
-@app.route('/webpage/imglist', methods=['GET'])
-def get_img_list_page():
-    return render_template(request.args.get('type')+'.html')
-
-
-@app.route('/setting')
-def send_setting():
-    return redirect("/main/settingTrain.html")
-
-
 # Save the given configs into a file. Not currently used.
 @app.route('/post_settings', methods=['POST'])
 def save_settings():
@@ -126,10 +91,13 @@ def start_training():
     # Try to start training thread
     app.configs = configs
     print("DEBUG: Training request received! Setting up training...")
-    train_response = start_train(app.configs)
+
+    # TODO: Save this train_thread variable somewhere. 
+    # When a stop API is called, stop this thread.
+    train_thread = start_train(app.configs)
 
     # Return error if training cannot be started
-    if not train_response:
+    if not train_thread:
         return {"msg": "Failed", "code": -1}
 
     # Training started succesfully!
@@ -140,7 +108,7 @@ def generate():
     print("Requested to generate paired dataset")
     json_data = request.get_json()
 
-    # TODO: Create a new thread to do this.
+    # TODO: Create a new thread to do this so that it does not block the server.
     generate_paired_data(json_data['mirrored_data_path'], json_data['user_edit_path'])
     return {"msg": "Generation completed!", "code": 0}
 

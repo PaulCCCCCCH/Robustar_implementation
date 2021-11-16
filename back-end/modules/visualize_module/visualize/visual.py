@@ -4,6 +4,9 @@ import torch,matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+
+# https://github.com/MisaOgura/flashtorch#saliency-maps-flashtorchsaliency
+
 def visualize(mymodel,imgpath,imgsize):
 
         backprop=Backprop(mymodel)
