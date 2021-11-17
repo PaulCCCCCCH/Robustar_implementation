@@ -11,18 +11,13 @@
       <div class="row">
         <!-- Previous page button -->
         <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4">
-          <button class="btn btn-primary mb-xl-0" @click="prevPage()">
-            Prev Page
-          </button>
+          <button class="btn btn-primary mb-xl-0" @click="prevPage()">Prev Page</button>
         </div>
 
         <!-- Refresh page button & page number -->
         <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4">
           <div class="btn-list mb-xl-0">
-            <button
-              @click="gotoPage()"
-              class="btn btn-primary mb-xl-0 refresh-page"
-            >
+            <button @click="gotoPage()" class="btn btn-primary mb-xl-0 refresh-page">
               Goto Page
               <input v-model="currentPage" class="page-number" />
             </button>
@@ -30,10 +25,7 @@
         </div>
 
         <!-- Next page button -->
-        <div
-          class="col-xl-4 col-lg-4 text-lg-center mt-xl-4"
-          @click="nextPage()"
-        >
+        <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4" @click="nextPage()">
           <div class="btn-list mb-xl-0">
             <a class="btn btn-primary mb-xl-0">Next Page</a>
           </div>
@@ -43,11 +35,7 @@
 
     <!-- Image List -->
     <div class="row train-img-list" v-for="(imgline, row) in imgmat" :key="row">
-      <div
-        class="card-body col-xl-2 col-sm-4"
-        v-for="(url, col) in imgline"
-        :key="col"
-      >
+      <div class="card-body col-xl-2 col-sm-4" v-for="(url, col) in imgline" :key="col">
         <div class="row mb-1">
           <!-- minus 1 is necessary since Vue counts from 1 -->
           <img :src="url" alt="img" class="w-95" />
@@ -58,11 +46,11 @@
 </template>
 
 <script>
-import { configs } from "@/configs.js";
-import { imagePageIdx2Id, imageCoord2Idx } from "@/utils/image_list";
+import { configs } from '@/configs.js';
+import { imagePageIdx2Id, imageCoord2Idx } from '@/utils/image_list';
 
 export default {
-  name: "ImageList",
+  name: 'ImageList',
   components: {},
   data() {
     return {
@@ -75,10 +63,10 @@ export default {
     this.loadImages();
   },
   watch: {
-    $route () {
+    $route() {
       this.currentPage = 0;
-      this.loadImages()
-    }
+      this.loadImages();
+    },
   },
   methods: {
     nextPage() {

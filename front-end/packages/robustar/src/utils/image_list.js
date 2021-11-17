@@ -1,4 +1,4 @@
-import { configs } from '@/configs.js'
+import { configs } from '@/configs.js';
 
 /**
  * Converts the index of the image within a page to its global id
@@ -6,11 +6,11 @@ import { configs } from '@/configs.js'
  * @param {*} index index of the image within the page
  */
 const imagePageIdx2Id = (page_idx, index) => {
-  return page_idx * configs.imagePerPage + index
-}
+  return page_idx * configs.imagePerPage + index;
+};
 
 const imageCoord2Idx = (row, col) => {
-  return row * configs.imageListCol + col
-}
+  return row * configs.imageListCol + col;
+};
 
-export { imagePageIdx2Id, imageCoord2Idx }
+export { imagePageIdx2Id, imageCoord2Idx };

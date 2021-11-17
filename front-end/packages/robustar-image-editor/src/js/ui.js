@@ -366,6 +366,7 @@ class Ui {
         loadButtonStyle: this.theme.getStyle('loadButton'),
         downloadButtonStyle: this.theme.getStyle('downloadButton'),
         submenuStyle: this.theme.getStyle('submenu'),
+        replaceDownload: this.options.replaceDownload,
       });
 
     this._selectedElement = selectedElement;
@@ -379,6 +380,7 @@ class Ui {
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+      sendEdit: this._selectedElement.querySelectorAll('.tui-image-editor-send-edit-btn'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
 
@@ -577,6 +579,23 @@ class Ui {
   }
 
   /**
+   * Add send edit event.
+   * @private
+   */
+  _addSendEditEvent() {
+    this.eventHandler.sendEdit = () => this._actions.main.sendEdit(this.options.apiSendEdit);
+    snippet.forEach(this._buttonElements.sendEdit, (element) => {
+      element.addEventListener('click', this.eventHandler.sendEdit);
+    });
+  }
+
+  _removeSendEditEvent() {
+    snippet.forEach(this._buttonElements.sendEdit, (element) => {
+      element.removeEventListener('click', this.eventHandler.sendEdit);
+    });
+  }
+
+  /**
    * Add load event
    * @private
    */
@@ -666,6 +685,7 @@ class Ui {
 
     this._addHelpActionEvent();
     this._addDownloadEvent();
+    this._addSendEditEvent();
     this._addMenuEvent();
     this._initMenu();
     this._historyMenu.addEvent(this._actions.history);
@@ -679,6 +699,7 @@ class Ui {
   _removeUiEvent() {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
+    this._removeSendEditEvent();
     this._removeLoadEvent();
     this._removeMainMenuEvent();
     this._historyMenu.removeEvent();
@@ -856,5 +877,4 @@ class Ui {
 }
 
 CustomEvents.mixin(Ui);
-
 export default Ui;

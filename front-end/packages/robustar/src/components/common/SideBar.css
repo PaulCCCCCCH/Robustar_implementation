@@ -1,13 +1,13 @@
 .side-bar {
   position: fixed;
   background-color: white;
-  left:0;
+  left: 0;
   height: 100%;
   max-width: 256px;
   padding-top: 50px;
 }
 
-v-card{
+v-card {
   height: 100%;
 }
 

@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import ImageEditor from "@robustar/image-editor"
-import "@robustar/image-editor/dist/tui-image-editor.css"
+import ImageEditor from '@robustar/image-editor';
+import '@robustar/image-editor/dist/tui-image-editor.css';
 
 const includeUIOptions = {
   includeUI: {

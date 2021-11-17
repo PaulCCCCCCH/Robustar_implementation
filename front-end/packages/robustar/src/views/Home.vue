@@ -1,6 +1,6 @@
 <template>
   <div class="view-home">
-    <h1> Welcome Home! </h1>
+    <h1>Welcome Home!</h1>
   </div>
 </template>
 
@@ -9,7 +9,6 @@
 
 export default {
   name: 'Home',
-  components: {
-  }
-}
+  components: {},
+};
 </script>

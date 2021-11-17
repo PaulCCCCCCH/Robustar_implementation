@@ -15,6 +15,7 @@ datasetPath = '/Robustar2/dataset'
 
 def after_request(resp):
     resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Access-Control-Allow-Headers'] = '*'
     return resp
 
 
@@ -107,6 +108,7 @@ def start_training():
 def generate():
     print("Requested to generate paired dataset")
     json_data = request.get_json()
+    print(json_data)
 
     # TODO: Create a new thread to do this so that it does not block the server.
     generate_paired_data(json_data['mirrored_data_path'], json_data['user_edit_path'])
@@ -128,24 +130,40 @@ def get_chart_labels():
     return "window.labels='23333'"
 
 
-@app.route('/edit', methods=['POST'])
-def user_edit():
-    if 'src' in request.form and 'content' in request.form:
-        src = request.form.get("src")
-        content = request.form.get("content")
+@app.route('/save-edit/<dataset>/<dataid>', methods=['POST'])
+def save_edit(dataset, dataid):
+    """
+    Saves edit info in the database.
+    TODO: setup a sqlite to save the edit info. For now it's saved to a file
 
-        data = {}
-        file_path = 'user-edit.json'
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-        data[src] = content
+    args: 
+        dataset: a string of 'train', 'dev' or 'test'
+        dataid: a string that uniquely identifies an image in the given dataset
 
-        with open(file_path, 'w') as f:
-            json.dump(data, f)
+    """
+    json_data = request.get_json()
+    image_base64 = json_data['image']
 
-        return "success"
-    return 'invalid image content'
+    print(len(image_base64))
+    return {'msg': 'success', 'code': 0}
+
+    # if 'src' in request.form and 'content' in request.form:
+    #     src = request.form.get("src")
+    #     content = request.form.get("content")
+
+    #     data = {}
+    #     file_path = 'user-edit.json'
+    #     if os.path.exists(file_path):
+    #         with open(file_path, 'r') as f:
+    #             data = json.load(f)
+    #     data[src] = content
+
+    #     with open(file_path, 'w') as f:
+    #         json.dump(data, f)
+
+    #     return "success"
+    # return 'invalid image content'
+    
 
 
 proc = None

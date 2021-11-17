@@ -163,6 +163,12 @@ export default {
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
         },
+        sendEdit: (apiSendEdit) => {
+          if (apiSendEdit) {
+            const dataURL = this.toDataURL();
+            apiSendEdit(dataURL);
+          }
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },
