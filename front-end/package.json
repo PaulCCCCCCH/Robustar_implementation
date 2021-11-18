@@ -33,7 +33,7 @@
         "prettier": "^2.0.5",
         "stylus": "^0.55.0",
         "stylus-loader": "^6.1.0",
-        "svgstore": "*",
+        "svgstore": "^3.0.1",
         "terser-webpack-plugin": "^5.2.3",
         "typescript": "^3.2.2",
         "vue-eslint-parser": "^7.10.0",

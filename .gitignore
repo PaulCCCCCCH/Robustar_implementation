@@ -1,8 +1,8 @@
-*/.DS_Store
-*/__pycache__
-*/.idea
-*/node_modules
-*/dist
+**/.DS_Store
+**/__pycache__
+**/.idea
+**/node_modules
+**/dist
 
 
 # local env files
@@ -15,6 +15,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+back-end/runs
+
 # Editor directories and files
 .idea
 .vscode
@@ -23,3 +25,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.pyc

@@ -59,7 +59,6 @@ def start_train(configs):
           This is the most elegant way that I can think of to signal a stop from the front end.
     """
 
-    from server import app, get_correct
     print("configs:", configs)
 
     train_set, test_set, model, trainer = ml_initialize(configs)
@@ -97,6 +96,7 @@ def start_train(configs):
         train_thread.start()
 
     except Exception as e:
+        e.with_traceback()
         return None
 
     return train_thread
