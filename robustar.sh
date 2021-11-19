@@ -16,7 +16,7 @@ TRAIN_FOLDER='./'
 TEST_FOLDER='./'
 INFLU_FOLDER='./'
 CHECK_FOLDER='./'
-CONFIG_FILE='config.txt'
+CONFIG_FILE='configs.json'
 
 # Discover platform and set default IP depending on it.
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -72,7 +72,7 @@ function RUN {
       --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
       --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
       --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
-      -v ${CONFIG_FILE}:/config.txt \
+      -v ${CONFIG_FILE}:/Robustar2/configs.json \
       /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}"
 }
 
