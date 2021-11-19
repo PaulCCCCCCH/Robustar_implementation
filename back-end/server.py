@@ -1,8 +1,10 @@
 import torchvision.datasets as dset
 import json
 import os
+from os import path as osp
 from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
 from objects.RServer import RServer
+from utils.train import initialize_model
 
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
 
@@ -192,7 +194,16 @@ if __name__ == "__main__":
     app.model = model
     app.configs = configs
     """
-    server = RServer.createServer(datasetPath='/Robustar2/dataset')
+    baseDir = osp.join('/', 'Robustar2')
+
+    with open(osp.join(baseDir, 'configs.json')) as jsonfile:
+        configs = json.load(jsonfile)
+
+
+
+    server = RServer.createServer(configs=configs, datasetPath=osp.join(baseDir, 'dataset'))
+    model = initialize_model()
+    RServer.setModel(model)
     import apis # register all api routes
 
     server.run(port='8000', host='0.0.0.0', debug=True) 

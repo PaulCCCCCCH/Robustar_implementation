@@ -37,16 +37,12 @@ class DataSet(Dataset):
 
 
 class PairedDataset(DataSet):
-    test_folder = './dataset/cifar/test'
-    train_folder = './dataset/cifar/train'
-    classes = []
     mixture_methods = ['pure_black', 'noise', 'noise_weak', 'noise_minor', 'random_pure', 'hstrips', 'vstrips']
 
     def __init__(self, data_folder, paired_data_folder, image_size, classes_path, mode):
         super(PairedDataset, self).__init__(data_folder, image_size, classes_path)
         print("********************")
         print(paired_data_folder)
-        print("********************")
         print("********************")
         self.paired_data_folder = paired_data_folder
         self.paired_dataset = dset.ImageFolder(root=paired_data_folder, loader=paired_loader)

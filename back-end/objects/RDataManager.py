@@ -24,3 +24,8 @@ class RDataManager:
         self.correctBuffer = {}
         self.mistakeBuffer = {}
 
+
+if __name__ == '__main__':
+    # Test
+    dataManager = RDataManager('/Robustar2/dataset')
+    print(dataManager.trainset.samples[0])

@@ -1,6 +1,7 @@
 from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
+from objects.RResponse import RResponse
 
 app = RServer.getServer().getFlaskApp()
 
@@ -20,22 +21,21 @@ def start_training():
     # Return error message if config is invalid
     check_result = check_configs(configs)
     if check_result != 0:
-        return {"msg": "Invalid Configuration!", "code": check_result}
+        return RResponse.fail("Invalid Configuration!", check_result).toJSON()
 
     # Try to start training thread
-    app.configs = configs
     print("DEBUG: Training request received! Setting up training...")
 
     # TODO: Save this train_thread variable somewhere. 
     # When a stop API is called, stop this thread.
-    train_thread = start_train(app.configs)
+    train_thread = start_train(configs)
 
     # Return error if training cannot be started
     if not train_thread:
-        return {"msg": "Failed", "code": -1}
+        return RResponse.fail("Failed", -1).toJSON()
 
     # Training started succesfully!
-    return {"msg": "Training started!", "code": 0}
+    return RResponse.ok("Training started!").toJSON()
 
 
 

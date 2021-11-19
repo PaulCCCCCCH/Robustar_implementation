@@ -29,6 +29,7 @@ Robustar reads from the following directories (absolute path, i.e. `Robustar2` f
 - `/Robuster2/dataset/paired` for paired dataset
 - `/Robuster2/influence_images` for calculated influence images
 - `/Robuster2/user-edit.json` for user edit.
+- `/Robuster2/configs.json` for server configs. You directly may copy `configs.json` in the repository over.
 
 You can download our example dataset [here](https://drive.google.com/file/d/1DTaPnWV91C9VXZ9JOBz7hoDxfyUXBpUv/view?usp=sharing)
 

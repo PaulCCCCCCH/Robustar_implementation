@@ -7,7 +7,7 @@ class Model:
         self.network_type = network_type
         if(net_path!=""):
             self.load_net(net_path)
-        if(device=='cuda'):
+        if('cuda' in device):
             self.apply_cuda()
 
     def init_net(self,network_type,pretrained):
@@ -36,7 +36,7 @@ class Model:
 
     def load_net(self,path):
         if os.path.exists(path):
-            print('load net from: ',path)
+            print('load net from: ', path)
             self.net.load_state_dict(torch.load(path,map_location=self.device))
         else:
             print('weight file not found')

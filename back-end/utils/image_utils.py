@@ -1,44 +1,52 @@
 from objects.RServer import RServer
 import json
+from os.path import normpath
+from utils.path_utils import split_path
+
+dataManager = RServer.getServer().dataManager
+datasetFileBuffer = dataManager.datasetFileBuffer
+
+trainset = dataManager.trainset
+testset = dataManager.testset
 
 
-def get_dataset_file(dataOriginId):
+def imageIdToPath(imageId):
+    """
+    Get the real path of the image specified by its id.
 
-    dataManager = RServer.getServer().dataManager
-    datasetFileBuffer = dataManager.datasetFileBuffer
+    args: 
+        imageId:    The id of the image consisting of the dataset split (train/dev/test) 
+                    and an index.
+                    e.g.  train/10, test/300
 
-    trainset = dataManager.trainset
-    testset = dataManager.testset
+    returns:
+        imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg
+    """
 
-    if(datasetFileBuffer.get(dataOriginId)):
-        return datasetFileBuffer[dataOriginId]
+    split, indexStr = imageId.split('/')
+    imageIndex = int(indexStr)
 
-    dataId = dataOriginId.split("/")
-    if dataId[0] == "train":
-        if(len(trainset.samples) <= int(dataId[1])):
-            return "none"
-        filePath = trainset.samples[int(dataId[1])][0]
-        filePath = filePath.replace("\\", "/").split("/")
-        datasetFileBuffer[dataOriginId] = filePath[-2]+"/"+filePath[-1]
-        return get_dataset_file(dataOriginId)
-    if dataId[0] == "test":
-        if(len(testset.samples) <= int(dataId[1])):
-            return "none"
-        filePath = testset.samples[int(dataId[1])][0]
-        filePath = filePath.replace("\\", "/").split("/")
-        datasetFileBuffer[dataOriginId] = filePath[-2]+"/"+filePath[-1]
-        return get_dataset_file(dataOriginId)
-    if dataId[0] == "test_correct":
-        filePath = get_correct(True, int(dataId[1]))[0]
-        filePath = filePath.replace("\\", "/").split("/")
-        datasetFileBuffer[dataOriginId] = filePath[-2]+"/"+filePath[-1]
-        return get_dataset_file(dataOriginId)
-    if dataId[0] == "test_mistake":
-        filePath = get_correct(False, int(dataId[1]))[0]
-        filePath = filePath.replace("\\", "/").split("/")
-        datasetFileBuffer[dataOriginId] = filePath[-2]+"/"+filePath[-1]
-        return get_dataset_file(dataOriginId)
-    return "none"
+    # If already buffered, just return
+    if imageId in datasetFileBuffer:
+        return datasetFileBuffer[imageId]
+
+    filePath = None
+    if split == 'train':
+        filePath = trainset.samples[imageIndex][0]
+    elif split == 'test':
+        filePath = testset.samples[imageIndex][0]
+    elif split == 'test_correct':
+        filePath = get_correct(True, imageIndex)[0]
+    elif split == 'test_mistake':
+        filePath = get_correct(False, imageIndex)[0]
+    else:
+        # data split not supported
+        raise NotImplemented
+
+    filePath = normpath(filePath)
+    datasetFileBuffer[imageId] = filePath
+    return filePath 
+
 
 def get_correct(isCorrect, id):
 

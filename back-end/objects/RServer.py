@@ -16,28 +16,47 @@ class RServer:
     serverInstance = None
 
     # Use createServer method instead!
-    def __init__(self, datasetPath='/Robustar2/dataset',):
+    def __init__(self, configs, datasetPath):
     
-        app = Flask(__name__, )
+        app = Flask(__name__)
         app.after_request(self.afterRequest)
 
         self.datasetPath = datasetPath
         self.app = app
         self.dataManager = RDataManager(datasetPath)
+        self.configs = configs
+        self.model = None
 
     @staticmethod
-    def createServer(datasetPath):
+    def createServer(configs: dict, datasetPath: dict):
         if RServer.serverInstance is None:
-            RServer.serverInstance = RServer(datasetPath)
+            RServer.serverInstance = RServer(configs, datasetPath)
         else:
-            assert datasetPath == RServer.serverInstance.datasetPath, \
-            'Attempting to recreate an existing server with a different datapath'
+            assert configs == RServer.serverInstance.configs, \
+            'Attempting to recreate an existing server with different configs'
         return RServer.serverInstance
 
+   
     
     @staticmethod
     def getServer():
         return RServer.serverInstance
+
+    @staticmethod
+    def getDataManager():
+        return RServer.serverInstance.dataManager
+
+    @staticmethod
+    def getServerConfigs():
+        return RServer.serverInstance.configs
+
+    @staticmethod
+    def getModel():
+        return RServer.serverInstance.model
+
+    @staticmethod
+    def setModel(model):
+        RServer.serverInstance.model = model
         
     
     def afterRequest(self, resp):
@@ -47,7 +66,6 @@ class RServer:
 
     def getFlaskApp(self):
         return self.app
-
 
     def run(self, port=8000, host='0.0.0.0', debug=True):
         self.port = port

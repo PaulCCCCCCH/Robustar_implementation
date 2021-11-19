@@ -18,16 +18,16 @@ class RResponse:
         return {
             'data': self.data,
             'code': self.code,
-            'message': self.message
+            'msg': self.message
         }
 
 
     @staticmethod
-    def ok(data, message='Success'):
-        return RResponse(data, code=200, message=message)
+    def ok(data, message='Success', code=0):
+        return RResponse(data, code, message=message)
 
     @staticmethod
-    def fail(message='Error'):
-        return RResponse(code=500, message=message)
+    def fail(message='Error', code=-1):
+        return RResponse(code=code, message=message)
 
 

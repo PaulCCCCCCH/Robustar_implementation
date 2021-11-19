@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 
-from flashtorch_.utils import (denormalize,
+from modules.visualize_module.flashtorch_.utils import (denormalize,
                               format_for_plotting,
                               standardize_and_clip)
 
