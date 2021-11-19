@@ -1,4 +1,4 @@
-from ml import DataSet, PairedDataset, Model, Trainer
+from ml import DataSet, PairedDataset, Trainer
 import sys
 import math
 import time
@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 
 
 def ml_initialize(configs):
@@ -36,11 +37,12 @@ def ml_initialize(configs):
     test_set = DataSet(testset, image_size=int(
         configs['image_size']), classes_path=configs['class_path'])
 
-    model = initialize_model() # Model will be initialized with server config
+    modelwrapper = initialize_model() # Model will be initialized with server config
+    model = modelwrapper.model
 
-    trainer = Trainer(model.net, train_set, test_set, batch_size,
+    trainer = Trainer(model, train_set, test_set, batch_size,
                       shuffle, num_workers, device, learn_rate, True,
-                      save_dir, model.network_type,
+                      save_dir, modelwrapper.network_type,
                       use_paired_train=use_paired_train,
                       paired_reg=paired_train_reg_coeff)
 
@@ -56,7 +58,7 @@ def initialize_model():
     device = server_configs['device']
     pre_trained = server_configs['pre_trained']
 
-    return Model(model_arch, weight_to_load, device, pre_trained)
+    return RModelWrapper(model_arch, weight_to_load, device, pre_trained)
 
 
 def update_info(status_dict):

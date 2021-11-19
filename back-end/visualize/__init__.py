@@ -1,1 +1,1 @@
-from visualize.visual import visualize,getPredict
+from visualize.visual import visualize

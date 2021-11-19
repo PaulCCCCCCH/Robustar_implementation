@@ -25,7 +25,7 @@ class RServer:
         self.app = app
         self.dataManager = RDataManager(datasetPath)
         self.configs = configs
-        self.model = None
+        self.modelWrapper = None
 
     @staticmethod
     def createServer(configs: dict, datasetPath: dict):
@@ -51,12 +51,12 @@ class RServer:
         return RServer.serverInstance.configs
 
     @staticmethod
-    def getModel():
-        return RServer.serverInstance.model
+    def getModelWrapper():
+        return RServer.serverInstance.modelWrapper
 
     @staticmethod
-    def setModel(model):
-        RServer.serverInstance.model = model
+    def setModel(modelWrapper):
+        RServer.serverInstance.modelWrapper = modelWrapper
         
     
     def afterRequest(self, resp):

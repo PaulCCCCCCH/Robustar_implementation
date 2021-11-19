@@ -24,10 +24,10 @@ class RResponse:
 
     @staticmethod
     def ok(data, message='Success', code=0):
-        return RResponse(data, code, message=message)
+        return RResponse(data, code, message=message).toJSON()
 
     @staticmethod
     def fail(message='Error', code=-1):
-        return RResponse(code=code, message=message)
+        return RResponse(code=code, message=message).toJSON()
 
 

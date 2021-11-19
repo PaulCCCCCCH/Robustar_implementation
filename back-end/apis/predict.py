@@ -1,22 +1,25 @@
 from objects.RServer import RServer
+from objects.RResponse import RResponse
 from flask import jsonify
 from utils.image_utils import imageIdToPath
 from os import path as osp
-from utils.predict import convert_predict_to_string
+from utils.predict import convert_predict_to_array
 from utils.image_utils import imageIdToPath
 import json
+from utils.predict import get_image_prediction
+from visualize import visual
 
 app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
 datasetPath = server.datasetPath
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
-model = RServer.getModel()
+modelWrapper = RServer.getModelWrapper()
 
 
 # 返回预测结果
 @app.route('/predict/<dataset>/<imageIndex>')
-def get_image_prediction(dataset, imageIndex):
+def predict(dataset, imageIndex):
     """
     Get the prediction path of the image specified by its id.
 
@@ -32,7 +35,6 @@ def get_image_prediction(dataset, imageIndex):
     # e.g.  train/10, test/300
     imageId = "{}/{}".format(dataset, imageIndex)
     
-    from visualize import visual
 
     if imageId in predictBuffer:
         return predictBuffer[imageId]
@@ -40,20 +42,23 @@ def get_image_prediction(dataset, imageIndex):
     datasetImgPath = imageIdToPath(imageId).replace(
         "_mistake", "").replace("_correct", "")
 
-    try:
-        img = osp.join(datasetPath, datasetImgPath)
-        output = visual.visualize(model.net, img, 32)
-        output_string = convert_predict_to_string(output)
-        predictBuffer[datasetImgPath] = output_string
+    # try:
+    imgPath = osp.join(datasetPath, datasetImgPath)
 
-        # TODO: Design a good return format here! Remember to wrap it with RResponse
-        return output_string
+    # TODO: 32 should not be hardcoded!
+    output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
 
-    except Exception as e:
-        print(e.args)
-        print(e)
-        # TODO: And design a good error return as well
-        return "0_0_0_0_0_0_0_0_0_0"
+    output_array = convert_predict_to_array(output.cpu().detach().numpy())
+    predictBuffer[datasetImgPath] = output_array
+
+    # TODO: Design a good return format here!
+    return RResponse.ok(output_array)
+
+    # except Exception as e:
+    #     print(e.args)
+    #     print(e)
+    #     # TODO: And design a good error return as well
+    #     return "0_0_0_0_0_0_0_0_0_0"
 
 
 ##########################################################

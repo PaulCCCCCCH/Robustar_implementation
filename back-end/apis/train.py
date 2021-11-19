@@ -21,7 +21,7 @@ def start_training():
     # Return error message if config is invalid
     check_result = check_configs(configs)
     if check_result != 0:
-        return RResponse.fail("Invalid Configuration!", check_result).toJSON()
+        return RResponse.fail("Invalid Configuration!", check_result)
 
     # Try to start training thread
     print("DEBUG: Training request received! Setting up training...")
@@ -32,10 +32,10 @@ def start_training():
 
     # Return error if training cannot be started
     if not train_thread:
-        return RResponse.fail("Failed", -1).toJSON()
+        return RResponse.fail("Failed", -1)
 
     # Training started succesfully!
-    return RResponse.ok("Training started!").toJSON()
+    return RResponse.ok("Training started!")
 
 
 

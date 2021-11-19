@@ -4,7 +4,6 @@ from flask import jsonify, redirect, send_from_directory, send_file
 import os
 from os import path as osp
 from utils.image_utils import imageIdToPath
-from utils.predict import convert_predict_to_string
 
 server = RServer.getServer()
 app = server.getFlaskApp()
