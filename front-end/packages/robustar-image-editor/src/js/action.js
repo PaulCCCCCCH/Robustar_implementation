@@ -164,7 +164,7 @@ export default {
           }
         },
         sendEdit: (apiSendEdit) => {
-          if (apiSendEdit) {
+          if (apiSendEdit && typeof apiSendEdit === 'function') {
             const dataURL = this.toDataURL();
             apiSendEdit(dataURL);
           }

@@ -21,10 +21,13 @@ lerna bootstrap
 You are now all set with the environment.
 
 ## Important!
+
 Before you push to remote repo, make sure you go back to `front-end` and run
+
 ```
 prettier --write .
 ```
+
 to fix any styling issues.
 
 ## Run locally
