@@ -14,20 +14,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 class DataSet(Dataset):
 
-    test_folder='./dataset/cifar/test'
-    train_folder='./dataset/cifar/train'
-    classes=[]
-
-    #读取类别文件
-    def set_classes_file(self,path):
-        if path:
-            with open(path) as myfile:
-                # FIXME: I don't think self.classes attribute is used anywhere
-                self.classes=myfile.read().split()
-    
-    #dataset=DataSet(train_folder="./dataset/cifar/train",test_folder='./dataset/cifar/test',image_size=32,classes_path='./model/cifar-class.txt')
     def __init__(self,data_folder,image_size,classes_path=None):
-        self.set_classes_file(classes_path)
 
         self.data_folder=data_folder
         self.image_size=image_size
@@ -50,16 +37,12 @@ class DataSet(Dataset):
 
 
 class PairedDataset(DataSet):
-    test_folder = './dataset/cifar/test'
-    train_folder = './dataset/cifar/train'
-    classes = []
     mixture_methods = ['pure_black', 'noise', 'noise_weak', 'noise_minor', 'random_pure', 'hstrips', 'vstrips']
 
     def __init__(self, data_folder, paired_data_folder, image_size, classes_path, mode):
         super(PairedDataset, self).__init__(data_folder, image_size, classes_path)
         print("********************")
         print(paired_data_folder)
-        print("********************")
         print("********************")
         self.paired_data_folder = paired_data_folder
         self.paired_dataset = dset.ImageFolder(root=paired_data_folder, loader=paired_loader)

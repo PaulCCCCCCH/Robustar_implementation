@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     nextPage() {
-      this.currentPage += 1;
+      this.currentPage = parseInt(this.currentPage) + 1;
       this.loadImages();
     },
     prevPage() {
