@@ -1,36 +1,21 @@
 <template>
-  <div id="imageList">
+  <div class="d-flex flex-column align-center">
     <!-- Page header-->
-    <div>
-      <h5>Select the training image to edit.</h5>
-    </div>
+    <div class="text-h5 text-center font-weight-medium my-4">Select the training image to edit</div>
 
-    <!-- Image list -->
-    <div class="col-md-12">
-      <!-- Image list controller -->
-      <div class="row">
-        <!-- Previous page button -->
-        <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4">
-          <button class="btn btn-primary mb-xl-0" @click="prevPage()">Prev Page</button>
-        </div>
+    <!-- Image list controller -->
+    <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
+      <!-- Previous page button -->
+      <v-btn outlined color="primary" @click="prevPage"> Prev Page </v-btn>
 
-        <!-- Refresh page button & page number -->
-        <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4">
-          <div class="btn-list mb-xl-0">
-            <button @click="gotoPage()" class="btn btn-primary mb-xl-0 refresh-page">
-              Goto Page
-              <input v-model="currentPage" class="page-number" />
-            </button>
-          </div>
-        </div>
-
-        <!-- Next page button -->
-        <div class="col-xl-4 col-lg-4 text-lg-center mt-xl-4" @click="nextPage()">
-          <div class="btn-list mb-xl-0">
-            <a class="btn btn-primary mb-xl-0">Next Page</a>
-          </div>
-        </div>
+      <!-- Refresh page button & page number -->
+      <div class="d-flex">
+        <v-btn class="mr-4" outlined color="primary" @click="gotoPage"> Goto Page </v-btn>
+        <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
       </div>
+
+      <!-- Next page button -->
+      <v-btn outlined color="primary" @click="nextPage"> Next Page </v-btn>
     </div>
 
     <!-- Image List -->
@@ -82,7 +67,7 @@ export default {
     },
     imageClicked(index) {
       let image_id = imagePageIdx2Id(this.currentPage, index);
-      this.$router.push({ path: `edit?id=${image_id}` });
+      this.$router.push({ path: `edit/${image_id}` });
     },
     getImageUrl(row, col) {
       let x = this.imgarr[imageCoord2Idx(row, col)];

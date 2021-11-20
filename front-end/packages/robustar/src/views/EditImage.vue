@@ -53,7 +53,8 @@ export default {
     ImageEditor: ImageEditor,
   },
   props: {
-    imageId: {
+    id: {
+      // image id
       type: String,
       default: '',
     },
@@ -70,7 +71,7 @@ export default {
 
       sending: false, // sending image data
       snackbar: false,
-      snackbarError: false
+      snackbarError: false,
     };
   },
   methods: {
@@ -78,17 +79,17 @@ export default {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log('Success!');
       this.sending = false;
-      this.snackbar = true
+      this.snackbar = true;
     },
     sendEditFailed() {
       // TODO:
       console.log('Failed!');
       this.sending = false;
-      this.snackbarError = true
+      this.snackbarError = true;
     },
     sendEdit(image_base64) {
       this.sending = true;
-      APISendEdit('train', this.imageId, image_base64, this.sendEditSuccess, this.sendEditFailed);
+      APISendEdit('train', this.id, image_base64, this.sendEditSuccess, this.sendEditFailed);
     },
   },
 };
