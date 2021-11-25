@@ -1,7 +1,21 @@
-import { extend } from 'tui-code-snippet';
+import {
+  extend
+} from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone, includes } from '@/util';
-import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
+import {
+  isSupportFileApi,
+  base64ToBlob,
+  toInteger,
+  isEmptyCropzone,
+  includes
+} from '@/util';
+import {
+  eventNames,
+  historyNames,
+  drawingModes,
+  drawingMenuNames,
+  zoomModes
+} from '@/consts';
 
 export default {
   /**
@@ -82,13 +96,14 @@ export default {
       }
     };
 
-    return extend(
-      {
+    return extend({
         initLoadImage: (imagePath, imageName) =>
           this.loadImageFromURL(imagePath, imageName).then((sizeValue) => {
             exitCropOnAction();
             this.ui.initializeImgUrl = imagePath;
-            this.ui.resizeEditor({ imageSize: sizeValue });
+            this.ui.resizeEditor({
+              imageSize: sizeValue,
+            });
             this.clearUndoStack();
             this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
           }),
@@ -111,7 +126,9 @@ export default {
           this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
             exitCropOnAction();
             initFilterState();
-            this.ui.resizeEditor({ imageSize: sizeValue });
+            this.ui.resizeEditor({
+              imageSize: sizeValue,
+            });
             this.clearUndoStack();
             this._initHistory();
           });
@@ -140,11 +157,12 @@ export default {
               initFilterState();
               this.clearUndoStack();
               this.ui.activeMenuEvent();
-              this.ui.resizeEditor({ imageSize: sizeValue });
+              this.ui.resizeEditor({
+                imageSize: sizeValue,
+              });
               this._clearHistory();
               this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
-            })
-            ['catch']((message) => Promise.reject(message));
+            })['catch']((message) => Promise.reject(message));
         },
         download: () => {
           const dataURL = this.toDataURL();
@@ -197,8 +215,7 @@ export default {
    * @private
    */
   _iconAction() {
-    return extend(
-      {
+    return extend({
         changeColor: (color) => {
           if (this.activeObjectId) {
             this.changeIconColor(this.activeObjectId, color);
@@ -247,8 +264,7 @@ export default {
    * @private
    */
   _drawAction() {
-    return extend(
-      {
+    return extend({
         setDrawMode: (type, settings) => {
           this.stopDrawingMode();
           if (type === 'free') {
@@ -273,8 +289,7 @@ export default {
    * @private
    */
   _maskAction() {
-    return extend(
-      {
+    return extend({
         loadImageFromURL: (imgUrl, file) => {
           return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
             this.addImageObject(imgUrl).then(() => {
@@ -299,8 +314,7 @@ export default {
    * @private
    */
   _textAction() {
-    return extend(
-      {
+    return extend({
         changeTextStyle: (styleObj, isSilent) => {
           if (this.activeObjectId) {
             this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
@@ -317,8 +331,7 @@ export default {
    * @private
    */
   _rotateAction() {
-    return extend(
-      {
+    return extend({
         rotate: (angle, isSilent) => {
           this.rotate(angle, isSilent);
           this.ui.resizeEditor();
@@ -340,8 +353,7 @@ export default {
    * @private
    */
   _shapeAction() {
-    return extend(
-      {
+    return extend({
         changeShape: (changeShapeObject, isSilent) => {
           if (this.activeObjectId) {
             this.changeShape(this.activeObjectId, changeShapeObject, isSilent);
@@ -361,8 +373,7 @@ export default {
    * @private
    */
   _cropAction() {
-    return extend(
-      {
+    return extend({
         crop: () => {
           const cropRect = this.getCropzoneRect();
           if (cropRect && !isEmptyCropzone(cropRect)) {
@@ -372,8 +383,7 @@ export default {
                 this.ui.resizeEditor();
                 this.ui.changeMenu('crop');
                 this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
-              })
-              ['catch']((message) => Promise.reject(message));
+              })['catch']((message) => Promise.reject(message));
           }
         },
         cancel: () => {
@@ -418,8 +428,7 @@ export default {
    * @private
    */
   _resizeAction() {
-    return extend(
-      {
+    return extend({
         getCurrentDimensions: () => this._graphics.getCurrentDimensions(),
         preview: (actor, value, lockState) => {
           const currentDimensions = this._graphics.getCurrentDimensions();
@@ -457,7 +466,10 @@ export default {
           }
         },
         lockAspectRatio: (lockState, min, max) => {
-          const { width, height } = this._graphics.getCurrentDimensions();
+          const {
+            width,
+            height
+          } = this._graphics.getCurrentDimensions();
           const aspectRatio = width / height;
           if (lockState) {
             if (width > height) {
@@ -499,8 +511,7 @@ export default {
               this.stopDrawingMode();
               this.ui.resizeEditor();
               this.ui.changeMenu('resize');
-            })
-            ['catch']((message) => Promise.reject(message));
+            })['catch']((message) => Promise.reject(message));
         },
         reset: (standByMode = false) => {
           const dimensions = this._graphics.getOriginalDimensions();
@@ -527,8 +538,7 @@ export default {
    * @private
    */
   _flipAction() {
-    return extend(
-      {
+    return extend({
         flip: (flipType) => this[flipType](),
       },
       this._commonAction()
@@ -541,8 +551,7 @@ export default {
    * @private
    */
   _filterAction() {
-    return extend(
-      {
+    return extend({
         applyFilter: (applying, type, options, isSilent) => {
           if (applying) {
             this.applyFilter(type, options, isSilent);
@@ -620,12 +629,25 @@ export default {
       },
       /* eslint-enable complexity */
       addText: (pos) => {
-        const { textColor: fill, fontSize, fontStyle, fontWeight, underline } = this.ui.text;
+        const {
+          textColor: fill,
+          fontSize,
+          fontStyle,
+          fontWeight,
+          underline
+        } = this.ui.text;
         const fontFamily = 'Noto Sans';
 
         this.addText('Double Click', {
           position: pos.originPosition,
-          styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+          styles: {
+            fill,
+            fontSize,
+            fontFamily,
+            fontStyle,
+            fontWeight,
+            underline,
+          },
         }).then(() => {
           this.changeCursor('default');
         });
@@ -642,7 +664,10 @@ export default {
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
           this.ui.text.fontSize = toInteger(obj.fontSize);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
-          const { width, height } = obj;
+          const {
+            width,
+            height
+          } = obj;
           const strokeValue = this.ui.shape.getStrokeValue();
 
           if (width < strokeValue) {
@@ -682,7 +707,13 @@ export default {
    * @private
    */
   _commonAction() {
-    const { TEXT, CROPPER, SHAPE, ZOOM, RESIZE } = drawingModes;
+    const {
+      TEXT,
+      CROPPER,
+      SHAPE,
+      ZOOM,
+      RESIZE
+    } = drawingModes;
 
     return {
       modeChange: (menu) => {

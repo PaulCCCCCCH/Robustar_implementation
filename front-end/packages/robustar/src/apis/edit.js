@@ -9,8 +9,12 @@ import * as common from './common';
  * @param {function} fail fail callback function
  */
 const APISendEdit = (dataset, dataid, image_base64, success, failed) => {
-  const data = { image: image_base64 };
-  common.postRequest(data, `save-edit/${dataset}/${dataid}`, success, failed);
+  const data = {
+    image: image_base64
+  };
+  common.postRequest(data, `/save-edit/${dataset}/${dataid}`, success, failed);
 };
 
-export { APISendEdit };
+export {
+  APISendEdit
+};

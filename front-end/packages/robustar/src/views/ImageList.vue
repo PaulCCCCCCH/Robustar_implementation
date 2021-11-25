@@ -10,7 +10,7 @@
 
       <!-- Refresh page button & page number -->
       <div class="d-flex">
-        <v-btn class="mr-4" outlined color="primary" @click="gotoPage"> Goto Page </v-btn>
+        <v-btn class="mr-4" outlined color="primary" @click="loadImages"> Goto Page </v-btn>
         <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
       </div>
 
@@ -19,13 +19,55 @@
     </div>
 
     <!-- Image List -->
-    <div class="row train-img-list" v-for="(imgline, row) in imgmat" :key="row">
-      <div class="card-body col-xl-2 col-sm-4" v-for="(url, col) in imgline" :key="col">
-        <div class="row mb-1">
+    <div v-for="(imgline, row) in imageMatrix" :key="row" style="width: 80%">
+      <div class="d-flex">
+        <div class="mb-8 mr-8 row-item" v-for="(url, col) in imgline" :key="col">
           <!-- minus 1 is necessary since Vue counts from 1 -->
-          <img :src="url" alt="img" class="w-95" />
+          <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
+          <v-hover v-slot="{ hover }">
+            <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="primary lighten-3"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+              <v-expand-transition>
+                <div
+                  v-if="hover"
+                  class="
+                    d-flex
+                    transition-fast-in-fast-out
+                    primary
+                    v-card--reveal
+                    text-h5
+                    white--text
+                  "
+                  style="height: 100%"
+                >
+                  <v-btn
+                    class="mr-4"
+                    outlined
+                    large
+                    fab
+                    color="white"
+                    @click="editImage(row, col, url)"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                  <div>Edit</div>
+                </div>
+              </v-expand-transition>
+            </v-img>
+          </v-hover>
         </div>
       </div>
+    </div>
+
+    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
+      Sorry, image list is empty
     </div>
   </div>
 </template>
@@ -40,7 +82,7 @@ export default {
   data() {
     return {
       currentPage: 0,
-      imgmat: [],
+      imageMatrix: [],
       configs: configs,
     };
   },
@@ -55,48 +97,51 @@ export default {
   },
   methods: {
     nextPage() {
-      this.currentPage = parseInt(this.currentPage) + 1;
+      this.currentPage++;
       this.loadImages();
     },
     prevPage() {
-      this.currentPage = Math.max(this.currentPage - 1, 0);
+      if (this.currentPage <= 0) {
+        return;
+      }
+      this.currentPage--;
       this.loadImages();
     },
-    gotoPage() {
-      this.loadImages();
-    },
-    imageClicked(index) {
-      let image_id = imagePageIdx2Id(this.currentPage, index);
-      this.$router.push({ path: `edit/${image_id}` });
-    },
-    getImageUrl(row, col) {
-      let x = this.imgarr[imageCoord2Idx(row, col)];
-      console.log(row, col, x);
+    editImage(row, col, url) {
+      const idx = imageCoord2Idx(row, col);
+      const image_id = imagePageIdx2Id(this.currentPage, idx);
+      localStorage.setItem('image_id', image_id);
+      localStorage.setItem('image_url', url);
+      this.$router.push({ name: 'EditImage' });
     },
     loadImages() {
-      this.imgmat = [];
+      this.imageMatrix = [];
       for (let row = 0; row < configs.imageListRow; row++) {
         let line = [];
         for (let col = 0; col < configs.imageListCol; col++) {
-          let idx = imageCoord2Idx(row, col);
-          let imgid = imagePageIdx2Id(this.currentPage, idx);
+          const idx = imageCoord2Idx(row, col);
+          const imgid = imagePageIdx2Id(this.currentPage, idx);
           // TODO: '/train/' should be a component prop, not hard-coded
           line.push(`${configs.serverUrl}/${this.$route.params.phase}/${imgid}`);
         }
-        this.imgmat.push(line);
+        this.imageMatrix.push(line);
       }
-      console.log(this.imgmat);
+      this.$forceUpdate();
     },
   },
 };
 </script>
 
 <style scoped>
-img {
-  cursor: pointer;
+.row-item:last-child {
+  margin-right: 0 !important;
 }
 
-#imageList {
-  text-align: center;
+.v-card--reveal {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 </style>

@@ -52,13 +52,6 @@ export default {
   components: {
     ImageEditor: ImageEditor,
   },
-  props: {
-    id: {
-      // image id
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
       useDefaultUI: true,
@@ -69,27 +62,35 @@ export default {
         apiSendEdit: this.sendEdit.bind(this),
       },
 
+      imageId: '',
+      imageUrl: '',
       sending: false, // sending image data
       snackbar: false,
       snackbarError: false,
     };
   },
+  created() {
+    const id = localStorage.getItem('image_id');
+    const url = localStorage.getItem('image_url');
+    this.imageId = id;
+    this.imageUrl = url;
+  },
   methods: {
-    sendEditSuccess() {
+    sendEditSuccess(res) {
       // TODO: Edit success and jump to the next image or back to the image list
-      console.log('Success!');
+      console.log(res);
       this.sending = false;
       this.snackbar = true;
     },
-    sendEditFailed() {
+    sendEditFailed(res) {
       // TODO:
-      console.log('Failed!');
+      console.log(res);
       this.sending = false;
       this.snackbarError = true;
     },
     sendEdit(image_base64) {
       this.sending = true;
-      APISendEdit('train', this.id, image_base64, this.sendEditSuccess, this.sendEditFailed);
+      APISendEdit('train', this.imageId, image_base64, this.sendEditSuccess, this.sendEditFailed);
     },
   },
 };
