@@ -14,7 +14,8 @@ export default ({
                 <img src="${biImage}" />
             </div>
             <div class="tui-image-editor-header-buttons">
-                <div style="${loadButtonStyle}">
+                <div ${replaceDownload ? 'hidden' : ''}
+                style="${loadButtonStyle}">
                     ${locale.localize('Load')}
                     <input type="file" class="tui-image-editor-load-btn" />
                 </div>

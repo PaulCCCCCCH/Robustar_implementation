@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <ImageEditor :include-ui="useDefaultUI" :options="options"></ImageEditor>
+    <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
 
     <v-overlay :value="sending" opacity="0.7">
       <v-progress-circular indeterminate size="30" class="mr-4"></v-progress-circular>
@@ -69,11 +69,17 @@ export default {
       snackbarError: false,
     };
   },
-  created() {
+  mounted() {
     const id = localStorage.getItem('image_id');
     const url = localStorage.getItem('image_url');
     this.imageId = id;
     this.imageUrl = url;
+    // this.$refs.editor.invoke('loadImageFromURL', this.imageUrl, this.imageId);
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.$refs.editor.initInstance();
+    });
   },
   methods: {
     sendEditSuccess(res) {

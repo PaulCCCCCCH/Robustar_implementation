@@ -9,6 +9,10 @@ import '@robustar/image-editor/dist/tui-image-editor.css';
 const includeUIOptions = {
   includeUI: {
     initMenu: 'filter',
+    loadImage: {
+      path: '',
+      name: '',
+    },
   },
 };
 const editorDefaultOptions = {
@@ -30,12 +34,7 @@ export default {
     },
   },
   mounted() {
-    let options = editorDefaultOptions;
-    if (this.includeUi) {
-      options = Object.assign(includeUIOptions, this.options);
-    }
-    this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
-    this.addEventListener();
+    // this.initInstance();
   },
   destroyed() {
     Object.keys(this.$listeners).forEach((eventName) => {
@@ -45,6 +44,18 @@ export default {
     this.editorInstance = null;
   },
   methods: {
+    initInstance() {
+      let options = editorDefaultOptions;
+      if (this.includeUi) {
+        options = Object.assign(includeUIOptions, this.options);
+      }
+      options.includeUI.loadImage = {
+        path: localStorage.getItem('image_url'),
+        name: localStorage.getItem('image_id'),
+      };
+      this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
+      this.addEventListener();
+    },
     addEventListener() {
       Object.keys(this.$listeners).forEach((eventName) => {
         this.editorInstance.on(eventName, (...args) => this.$emit(eventName, ...args));

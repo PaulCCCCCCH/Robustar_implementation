@@ -39,6 +39,7 @@
                   v-if="hover"
                   class="
                     d-flex
+                    flex-column
                     transition-fast-in-fast-out
                     primary
                     v-card--reveal
@@ -48,16 +49,20 @@
                   style="height: 100%"
                 >
                   <v-btn
-                    class="mr-4"
+                    class="mb-4"
                     outlined
                     large
-                    fab
                     color="white"
+                    width="150px"
                     @click="editImage(row, col, url)"
                   >
-                    <v-icon>mdi-pencil</v-icon>
+                    <v-icon left>mdi-pencil</v-icon>
+                    Annotate
                   </v-btn>
-                  <div>Edit</div>
+                  <v-btn outlined large color="white" width="150px">
+                    <v-icon left>mdi-cogs</v-icon>
+                    Predict
+                  </v-btn>
                 </div>
               </v-expand-transition>
             </v-img>
@@ -143,5 +148,6 @@ export default {
   position: absolute;
   bottom: 0;
   width: 100%;
+  opacity: 0.8;
 }
 </style>
