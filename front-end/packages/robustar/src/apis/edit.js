@@ -12,7 +12,9 @@ const APISendEdit = (dataset, dataid, image_base64, success, failed) => {
   const data = {
     image: image_base64,
   };
-  common.postRequest(data, `/save-edit/${dataset}/${dataid}`, success, failed);
+  common.postRequest(data, `/edit/${dataset}/${dataid}`, success, failed);
 };
 
-export { APISendEdit };
+export {
+  APISendEdit
+};

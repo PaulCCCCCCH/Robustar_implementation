@@ -131,7 +131,6 @@ export default {
         }
         this.imageMatrix.push(line);
       }
-      this.$forceUpdate();
     },
   },
 };

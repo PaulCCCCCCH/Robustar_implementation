@@ -62,19 +62,10 @@ export default {
         apiSendEdit: this.sendEdit.bind(this),
       },
 
-      imageId: '',
-      imageUrl: '',
       sending: false, // sending image data
       snackbar: false,
       snackbarError: false,
     };
-  },
-  mounted() {
-    const id = localStorage.getItem('image_id');
-    const url = localStorage.getItem('image_url');
-    this.imageId = id;
-    this.imageUrl = url;
-    // this.$refs.editor.invoke('loadImageFromURL', this.imageUrl, this.imageId);
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -85,18 +76,26 @@ export default {
     sendEditSuccess(res) {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
+      const id = localStorage.getItem('image_id');
+      const url = localStorage.getItem('image_url');
+      const newId = Number(id) + 1;
+      const arr = url.split('/');
+      const newUrl = arr.slice(0, arr.length - 1).join('/') + `/${newId}`;
+      localStorage.setItem('image_id', newId);
+      localStorage.setItem('image_url', newUrl);
+      this.$refs.editor.initInstance();
       this.sending = false;
       this.snackbar = true;
     },
     sendEditFailed(res) {
-      // TODO:
       console.log(res);
       this.sending = false;
       this.snackbarError = true;
     },
     sendEdit(image_base64) {
       this.sending = true;
-      APISendEdit('train', this.imageId, image_base64, this.sendEditSuccess, this.sendEditFailed);
+      const image_id = localStorage.getItem('image_id') || '';
+      APISendEdit('train', image_id, image_base64, this.sendEditSuccess, this.sendEditFailed);
     },
   },
 };
