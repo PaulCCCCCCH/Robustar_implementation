@@ -1,5 +1,7 @@
 <template>
-  <div ref="tuiImageEditor" style="width: 100%; height: 200%"></div>
+  <div ref="tuiImageEditor" style="width: 100%; height: 200%">
+    <canvas></canvas>
+  </div>
 </template>
 
 <script>

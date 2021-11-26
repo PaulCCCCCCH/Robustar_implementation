@@ -11,18 +11,20 @@ import mainContainer from '@/ui/template/mainContainer';
 import controls from '@/ui/template/controls';
 
 import Theme from '@/ui/theme/theme';
+import Resize from '@/ui/resize';
+import Draw from '@/ui/draw';
+import History from '@/ui/history';
+import Locale from '@/ui/locale/locale';
+
+/* A full list of components
 import Shape from '@/ui/shape';
 import Crop from '@/ui/crop';
-import Resize from '@/ui/resize';
 import Flip from '@/ui/flip';
 import Rotate from '@/ui/rotate';
 import Text from '@/ui/text';
 import Mask from '@/ui/mask';
 import Icon from '@/ui/icon';
-import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
-import History from '@/ui/history';
-import Locale from '@/ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -36,6 +38,9 @@ const SUB_UI_COMPONENT = {
   Draw,
   Filter,
 };
+*/
+
+const SUB_UI_COMPONENT = { Resize, Draw };
 
 const { CustomEvents } = snippet;
 
@@ -251,15 +256,15 @@ class Ui {
         menuIconPath: '',
         menu: [
           'resize',
-          'crop',
-          'flip',
-          'rotate',
+          // 'crop',
+          // 'flip',
+          // 'rotate',
           'draw',
-          'shape',
-          'icon',
-          'text',
-          'mask',
-          'filter',
+          // 'shape',
+          // 'icon',
+          // 'text',
+          // 'mask',
+          // 'filter',
         ],
         initMenu: '',
         uiSize: {

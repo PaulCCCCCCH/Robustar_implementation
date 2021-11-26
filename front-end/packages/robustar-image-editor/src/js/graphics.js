@@ -3,9 +3,7 @@
  * @fileoverview Graphics module
  */
 import snippet from 'tui-code-snippet';
-import {
-  fabric
-} from 'fabric';
+import { fabric } from 'fabric';
 import ImageLoader from '@/component/imageLoader';
 import Cropper from '@/component/cropper';
 import Flip from '@/component/flip';
@@ -29,11 +27,7 @@ import {
   makeSelectionUndoDatum,
   setCachedUndoDataForDimension,
 } from '@/helper/selectionModifyHelper';
-import {
-  getProperties,
-  includes,
-  isShape
-} from '@/util';
+import { getProperties, includes, isShape } from '@/util';
 import {
   componentNames as components,
   eventNames as events,
@@ -43,16 +37,8 @@ import {
 import Resize from '@/component/resize';
 import ResizeDrawingMode from '@/drawingMode/resize';
 
-const {
-  extend,
-  stamp,
-  isArray,
-  isString,
-  forEachArray,
-  forEachOwnProperties,
-  CustomEvents
-} =
-snippet;
+const { extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents } =
+  snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 const EXTRA_PX_FOR_PASTE = 10;
@@ -74,10 +60,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-  constructor(element, {
-    cssMaxWidth,
-    cssMaxHeight
-  } = {}) {
+  constructor(element, { cssMaxWidth, cssMaxHeight } = {}) {
     /**
      * Fabric image instance
      * @type {fabric.Image}
@@ -181,9 +164,7 @@ class Graphics {
    * Destroy canvas element
    */
   destroy() {
-    const {
-      wrapperEl
-    } = this._canvas;
+    const { wrapperEl } = this._canvas;
 
     this._canvas.clear();
 
@@ -353,11 +334,7 @@ class Graphics {
    */
   getActiveObjectIdForRemove() {
     const activeObject = this.getActiveObject();
-    const {
-      type,
-      left,
-      top
-    } = activeObject;
+    const { type, left, top } = activeObject;
     const isSelection = type === 'activeSelection';
 
     if (isSelection) {
@@ -401,7 +378,7 @@ class Graphics {
     const canvas = this.getCanvas();
 
     return new fabric.ActiveSelection(objects, {
-      canvas
+      canvas,
     });
   }
 
@@ -484,16 +461,16 @@ class Graphics {
    * @param {{x: number, y: number}} center - center of zoom
    * @param {number} zoomLevel - zoom level
    */
-  zoom({
-    x,
-    y
-  }, zoomLevel) {
+  zoom({ x, y }, zoomLevel) {
     const zoom = this.getComponent(components.ZOOM);
 
-    zoom.zoom({
-      x,
-      y
-    }, zoomLevel);
+    zoom.zoom(
+      {
+        x,
+        y,
+      },
+      zoomLevel
+    );
   }
 
   /**
@@ -616,10 +593,7 @@ class Graphics {
       canvasImage = this.canvasImage;
     }
 
-    const {
-      width,
-      height
-    } = canvasImage.getBoundingRect();
+    const { width, height } = canvasImage.getBoundingRect();
     const maxDimension = this._calcMaxDimension(width, height);
 
     this.setCanvasCssDimension({
@@ -661,9 +635,7 @@ class Graphics {
    * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
    */
   setImageProperties(setting, withRendering) {
-    const {
-      canvasImage
-    } = this;
+    const { canvasImage } = this;
 
     if (!canvasImage) {
       return;
@@ -721,7 +693,8 @@ class Graphics {
         (image) => {
           callback(image);
           resolve(this.createObjectProperties(image));
-        }, {
+        },
+        {
           crossOrigin: 'Anonymous',
         }
       );
@@ -925,12 +898,7 @@ class Graphics {
    */
   setObjectPosition(id, posInfo) {
     const targetObj = this.getObject(id);
-    const {
-      x,
-      y,
-      originX,
-      originY
-    } = posInfo;
+    const { x, y, originX, originY } = posInfo;
     if (!targetObj) {
       return false;
     }
@@ -1149,16 +1117,11 @@ class Graphics {
    * @private
    */
   _onMouseDown(fEvent) {
-    const {
-      e: event,
-      target
-    } = fEvent;
+    const { e: event, target } = fEvent;
     const originPointer = this._canvas.getPointer(event);
 
     if (target) {
-      const {
-        type
-      } = target;
+      const { type } = target;
       const undoData = makeSelectionUndoData(target, (item) =>
         makeSelectionUndoDatum(this.getObjectId(item), item, type === 'activeSelection')
       );
@@ -1226,9 +1189,7 @@ class Graphics {
    * @private
    */
   _onObjectModified(fEvent) {
-    const {
-      target
-    } = fEvent;
+    const { target } = fEvent;
     if (target.type === 'activeSelection') {
       const items = target.getObjects();
 
@@ -1279,9 +1240,7 @@ class Graphics {
    * @private
    */
   _onObjectSelected(fEvent) {
-    const {
-      target
-    } = fEvent;
+    const { target } = fEvent;
     const params = this.createObjectProperties(target);
 
     this.fire(events.OBJECT_ACTIVATED, params);
@@ -1293,12 +1252,10 @@ class Graphics {
    * @private
    */
   _onPathCreated(obj) {
-    const {
-      x: left,
-      y: top
-    } = obj.path.getCenterPoint();
+    const { x: left, y: top } = obj.path.getCenterPoint();
     obj.path.set(
-      extend({
+      extend(
+        {
           left,
           top,
         },
@@ -1325,9 +1282,7 @@ class Graphics {
    * @private
    */
   _onSelectionCreated(fEvent) {
-    const {
-      target
-    } = fEvent;
+    const { target } = fEvent;
     const params = this.createObjectProperties(target);
 
     this.fire(events.OBJECT_ACTIVATED, params);
@@ -1511,21 +1466,14 @@ class Graphics {
       isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
 
     return this._copyFabricObject(targetObject).then((clonedObject) => {
-      const {
-        left,
-        top,
-        width,
-        height
-      } = clonedObject;
-      const {
-        width: canvasWidth,
-        height: canvasHeight
-      } = this.getCanvasSize();
+      const { left, top, width, height } = clonedObject;
+      const { width: canvasWidth, height: canvasHeight } = this.getCanvasSize();
       const rightEdge = left + width / 2;
       const bottomEdge = top + height / 2;
 
       clonedObject.set(
-        snippet.extend({
+        snippet.extend(
+          {
             left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
             top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight),
           },
