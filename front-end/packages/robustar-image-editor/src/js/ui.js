@@ -692,6 +692,7 @@ class Ui {
     this._addDownloadEvent();
     this._addSendEditEvent();
     this._addMenuEvent();
+    // this._activateDefaultItem();
     this._initMenu();
     this._historyMenu.addEvent(this._actions.history);
     this._initMenuEvent = true;
@@ -749,6 +750,10 @@ class Ui {
       '.tui-image-editor-canvas-container'
     );
     this._editorContainerElement.appendChild(gridVisual);
+  }
+
+  _activateDefaultItem() {
+    this.changeMenu(this.options.menu[this.options.menu.length - 1]);
   }
 
   /**

@@ -10,7 +10,7 @@ import '@robustar/image-editor/dist/tui-image-editor.css';
 
 const includeUIOptions = {
   includeUI: {
-    initMenu: 'filter',
+    initMenu: 'draw',
     loadImage: {
       path: '',
       name: '',
