@@ -32,9 +32,11 @@ def start_training():
 
     # Return error if training cannot be started
     if not train_thread:
+        print("Failed")
         return RResponse.fail("Failed", -1)
 
     # Training started succesfully!
+    print("Training started!")
     return RResponse.ok("Training started!")
 
 

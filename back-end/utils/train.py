@@ -1,3 +1,6 @@
+import torch
+import torchvision
+
 from ml import DataSet, PairedDataset, Trainer
 import sys
 import math
@@ -5,8 +8,12 @@ import time
 import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
+import torchvision.transforms as transforms
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
+import threading
+import modules.influence_module as ptif
+
 
 
 def ml_initialize(configs):
@@ -42,7 +49,7 @@ def ml_initialize(configs):
 
     trainer = Trainer(model, train_set, test_set, batch_size,
                       shuffle, num_workers, device, learn_rate, True,
-                      save_dir, modelwrapper.network_type,
+                      save_dir, modelwrapper.modelwork_type,
                       use_paired_train=use_paired_train,
                       paired_reg=paired_train_reg_coeff)
 
@@ -53,7 +60,7 @@ def ml_initialize(configs):
 def initialize_model():
     # Configs given at server boot time
     server_configs = RServer.getServerConfigs()
-    model_arch = server_configs['model_arch'] 
+    model_arch = server_configs['model_arch']
     weight_to_load = server_configs['weight_to_load']
     device = server_configs['device']
     pre_trained = server_configs['pre_trained']
@@ -65,7 +72,6 @@ def update_info(status_dict):
     return """This is a placeholder function. If anything needs to be done
     after each iteration, put it here.
     """
-
 
 def start_train(configs):
     """
@@ -96,7 +102,7 @@ def start_train(configs):
             'train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
-        import threading
+        # import threading
         # Start the tensorboard writer as a new process
 
         def startTB():
@@ -107,8 +113,10 @@ def start_train(configs):
         # os.system('tensorboard --logdir={} &'.format(logdir))
 
         # Start training on a new thread
-        train_thread = threading.Thread(target=trainer.start_train, args=(
-            update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
+        # train_thread = threading.Thread(target=trainer.start_train, args=(
+        #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
+        # train_thread.start()
+        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'), calculate_influence)
         train_thread.start()
 
     except Exception as e:
@@ -116,3 +124,78 @@ def start_train(configs):
         return None
 
     return train_thread
+
+def calculate_influence(model):
+    TRAIN_DATA_PATH = '/Robustar2/dataset/test'
+    TEST_DATA_PATH = '/Robustar2/dataset/train'
+
+    transform = transforms.Compose(
+        [transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    trainset = torchvision.datasets.ImageFolder(root=TRAIN_DATA_PATH, transform=transform)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1,shuffle=True, num_workers=2)
+
+    testset = torchvision.datasets.ImageFolder(root=TEST_DATA_PATH, transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=2)
+
+    config = ptif.get_default_config()
+    config['gpu'] = -1;
+    config['test_sample_num'] = 0;
+    config['recursion_depth'] = len(trainset);
+    config['r_averaging'] = 1;
+    ptif.init_logging('logfile.log')
+    max_influence_dicts = ptif.calc_img_wise(config, model, trainloader, testloader)
+    # max_influence_dicts = {
+    #     "0": {
+    #         "523": 254.1763153076172,
+    #         "719": 221.39866638183594,
+    #         "667": 216.841064453125,
+    #         "653": 214.35723876953125
+    #     }
+    # }
+
+    toPIL = transforms.ToPILImage()
+
+    INFLUENCE_IMAGES_PATH = '/Robustar2/influence_images'
+
+    # for i in range(len(trainset)):
+    for i in range(1):
+        max_influence_dict = max_influence_dicts[str(i)]
+        str_count_list = max_influence_dict.keys()
+        count_list = list(map(int, str_count_list))
+
+        base_img_name = str(i)
+
+        count = 0
+        for image, label in trainloader:
+            if (count in count_list):
+                img_name_suffix = str(count_list.index(count))
+                img_name = base_img_name + '_' + img_name_suffix + '.jpg'
+
+                save_path = os.path.join(INFLUENCE_IMAGES_PATH, img_name)
+
+                img = toPIL(image[0])
+                img.save(save_path)
+
+            count = count + 1
+
+
+
+class TrainThread(threading.Thread):
+
+    def __init__(self, trainer, args, callback):
+        print("init")
+        super(TrainThread, self).__init__()
+        self.trainer = trainer
+        self.args = args
+        self.callback = callback
+
+    def run(self):
+        call_back, epochs, auto_save = self.args
+        self.trainer.start_train(call_back, epochs, auto_save)
+        calculate_influence(self.trainer.net)
+
+if __name__ == "__main__":
+    model = torchvision.models.resnet18(pretrained=True).to('cpu')
+    calculate_influence(model)
