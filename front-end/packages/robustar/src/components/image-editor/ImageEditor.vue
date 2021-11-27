@@ -1,5 +1,7 @@
 <template>
-  <div ref="tuiImageEditor" style="width: 100%; height: 200%"></div>
+  <div ref="tuiImageEditor" style="width: 100%; height: 200%">
+    <canvas></canvas>
+  </div>
 </template>
 
 <script>
@@ -8,7 +10,7 @@ import '@robustar/image-editor/dist/tui-image-editor.css';
 
 const includeUIOptions = {
   includeUI: {
-    initMenu: 'filter',
+    initMenu: 'draw',
     loadImage: {
       path: '',
       name: '',
