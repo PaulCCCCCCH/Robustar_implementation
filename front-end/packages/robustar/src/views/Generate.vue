@@ -2,11 +2,11 @@
   <div id="training-settings-page" class="container">
     <el-card class="box-card form-group">
       <div class="tab-pane" id="billing">
-        <h3>Paired Data Generation Settings</h3>
+        <h3 class="t_title">Paired Data Generation Settings</h3>
         <hr />
         <form>
           <div class="form-group">
-            <label>Specify the path to the dataset to be mirrored</label>
+            <label class="sec">Specify the path to the dataset to be mirrored</label>
             <input
               type="text"
               class="form-control"
@@ -24,7 +24,7 @@
           </div>
 
           <div class="form-group">
-            <label>Specify the path to the user-edit json file</label>
+            <label class="sec">Specify the path to the user-edit json file</label>
             <input
               type="text"
               class="form-control"
@@ -35,7 +35,6 @@
             />
             <small class="form-text text-muted"></small>
           </div>
-
           <button
             class="btn btn-primary"
             @click="generate_paired_data"
@@ -151,5 +150,16 @@ body {
 
 .shadow-none {
   box-shadow: none !important;
+}
+
+.btn{
+  margin-top: 10px;
+}
+.sec{
+  font-size: 20px;
+  font-weight: 500;
+}
+.t_title{
+  text-align: center;
 }
 </style>

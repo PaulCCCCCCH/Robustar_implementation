@@ -32,15 +32,14 @@
 </template>
 
 <script>
-import Header from './common/Header.vue'
-
+/* import Header from './common/Header.vue' */
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
   },
   components: {
-    Header,
+   /*  Header, */
   },
 }
 </script>

@@ -16,9 +16,8 @@
 
 
 <script>
-import Header from "@/components/common/Header";
-import SideBar from '@/components/common/SideBar'
-
+import Header from "@/components/common/Header.vue";
+import SideBar from "@/components/common/SideBar.vue";
 export default {
   name: "App",
   components: {
@@ -27,7 +26,7 @@ export default {
   },
   data() {
     return {
-      f_mini: false,
+      f_mini: true,
       f_mini_return:false,
     }
   },
@@ -38,9 +37,7 @@ export default {
       }
       else{
         document.getElementById("page-content").style.width = (screen.width - 56) + "px";
-
       }
-      console.log('123',f_mini_return)
     },
   },
   mounted () {
@@ -56,15 +53,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-
 .pages{
   margin: 0px 0px 0px 40px;
   height: 100%;
   float: right;
 }
-
-#app, #page-content{
-  height: 100%;
-}
-
 </style>

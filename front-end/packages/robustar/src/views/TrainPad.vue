@@ -5,9 +5,10 @@
         <h1>Training Settings</h1>
       </div>
       <div>
-        <h3>System settings</h3>
+        <h3 class="t_title">System settings</h3>
 
         <!-- Shuffle training set  -->
+        <v-card class="select">
         <input
           type="checkbox"
           checked=""
@@ -33,10 +34,11 @@
         <label class="custom-control-label" for="epoch-save"
           >save the model per epoch</label
         >
+        </v-card>
 
         <!-- Save path -->
         <div class="form-group">
-          <label>Save model to</label>
+          <label class="sec">Save model to</label>
           <input
             type="text"
             class="form-control"
@@ -48,7 +50,7 @@
         </div>
 
         <div class="form-group">
-          <label>Select training device</label>
+          <label class="sec">Select training device</label>
           <select
             type="text"
             class="form-control"
@@ -61,7 +63,7 @@
         </div>
 
         <div class="form-group">
-          <label>Number of dataloader workers</label>
+          <label class="sec">Number of dataloader workers</label>
           <input
             type="text"
             class="form-control"
@@ -78,9 +80,9 @@
         <!-- <button type="button" @click="update_server" class="btn btn-primary">Update Server</button> -->
         <!-- <button type="reset" class="btn btn-light" onclick="location.replace('http://home.0cdl.com:6006')">Start Training</button> -->
 
-        <h3>Hyperparameters</h3>
+        <h3 class="t_title">Hyperparameters</h3>
         <div class="form-group">
-          <label>learning rate</label>
+          <label class="sec">learning rate</label>
           <input
             type="text"
             class="form-control"
@@ -92,7 +94,7 @@
         </div>
 
         <div class="form-group">
-          <label>Epoch</label>
+          <label class="sec">Epoch</label>
           <input
             type="text"
             class="form-control"
@@ -104,7 +106,7 @@
         </div>
 
         <div class="form-group">
-          <label>image size</label>
+          <label class="sec">image size</label>
           <input
             type="text"
             class="form-control"
@@ -129,7 +131,7 @@
 
         <hr />
 
-        <h3>Paired Training</h3>
+        <h3 class="t_title">Paired Training</h3>
         <!-- Use paired training ? -->
         <div class="custom-control custom-checkbox">
           <input
@@ -381,4 +383,14 @@ body {
 .shadow-none {
   box-shadow: none !important;
 }
+.select{
+  padding-left: 5px;
+}
+.sec{
+  margin-top: 8px;
+}
+label{
+  font: 400;
+}
 </style>
+

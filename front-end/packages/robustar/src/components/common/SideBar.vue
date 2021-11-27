@@ -15,7 +15,6 @@
       icon
       @click.stop="mini = !mini"
       v-if="mini==false"
-      @click="changewindow"
     >
       <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
@@ -23,7 +22,6 @@
       icon
       @click.stop="mini = !mini"
       v-if="mini==true"
-      @click="changewindow"
     >
       <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
@@ -31,7 +29,7 @@
     <v-list dense>
       <!-- Module 1: Training -->
       <v-list-item @click="navigateTo('/train-pad')" >
-        <v-list-item-icon @click="changewindow">
+        <v-list-item-icon >
           <v-icon class="side-bar-level1-icon">mdi-chart-line</v-icon>
         </v-list-item-icon>
         <v-list-item-title>
@@ -43,7 +41,7 @@
 
       <!-- Module 2: Annotate -->
       <v-list-item @click="navigateTo('/edit')">
-        <v-list-item-icon @click="changewindow">
+        <v-list-item-icon >
           <v-icon class="side-bar-level1-icon">mdi-bookmark</v-icon>
         </v-list-item-icon>
         <v-list-item-title>
@@ -55,10 +53,9 @@
 
       <!-- Module 3: Inspect data -->
       <v-list-group
-        :value="(!mini)&&true"
+        :value="extend()"
         prepend-icon="mdi-eye"
         eager
-        @click="changewindow"
       >
         <template v-slot:activator>
           <v-list-item-title class="side-bar-level1-title">
@@ -148,7 +145,7 @@
 
       <!-- Module 4: Generate Paired Data -->
       <v-list-item  @click="navigateTo('/generate')">
-        <v-list-item-icon @click="changewindow">
+        <v-list-item-icon >
           <v-icon class="side-bar-level1-icon">mdi-file-document-outline</v-icon>
         </v-list-item-icon>        
         <v-list-item-title>
@@ -159,8 +156,8 @@
       </v-list-item>
     </v-list>
     <div id="nav">
-      <router-link to="/" @click="changewindow">Home</router-link> |
-      <router-link to="/about" @click="changewindow">About</router-link>
+      <router-link to="/" >Home</router-link> |
+      <router-link to="/about" >About</router-link>
     </div>
     </v-navigation-drawer>
   </v-card>
@@ -169,12 +166,11 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       drawer:true,
-      mini: 'false',
+      mini: false,
     }
   },
   props: {
@@ -199,8 +195,11 @@ export default {
         else{
           this.$emit("updatewindow",!this.f_mini_return);
         }
-      console.log('min',this.mini)
-      console.log('min-re',this.f_mini_return)
+    },
+    extend(){
+      if(this.mini==true){
+        return false;
+      }
     }
   },
   created() {
@@ -209,36 +208,29 @@ export default {
   },
   watch: {
     mini(newVal) {
-      console.log(newVal)
+      console.log(newVal);
       this.f_mini_return = this.mini;
-      console.log('show-mini',newVal)
-      console.log('show-mini-re',this.f_mini_return)
-    }
+      this.changewindow();
+    },
   }
 };
 </script>
 
 <style>
 @import "./SideBar.css";
-
 li a {
   text-decoration: none;
 }
-
-
 /* #nav {
   padding: 30px;
 } */
-
 #nav a {
   font-weight: bold;
   color: #2c3e50;
 }
-
 #nav a.router-link-exact-active {
   color: #42b983;
 }
-
 #nav {
   position: fixed;
   bottom: 0;
@@ -246,10 +238,7 @@ li a {
   float: right;
   margin-right: 10px;
 }
-
 .v-list-group__header__append-icon{
   min-width: 24px!important;
 }
-
-
 </style>
