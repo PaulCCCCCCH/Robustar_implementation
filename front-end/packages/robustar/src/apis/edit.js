@@ -15,6 +15,4 @@ const APISendEdit = (dataset, dataid, image_base64, success, failed) => {
   common.postRequest(data, `/edit/${dataset}/${dataid}`, success, failed);
 };
 
-export {
-  APISendEdit
-};
+export { APISendEdit };

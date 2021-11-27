@@ -16,7 +16,7 @@ const includeUIOptions = {
   },
 };
 const editorDefaultOptions = {
-  cssMaxWidth: 700,
+  cssMaxWidth: 1000,
   cssMaxHeight: 1000,
 };
 export default {
@@ -32,9 +32,6 @@ export default {
         return editorDefaultOptions;
       },
     },
-  },
-  mounted() {
-    // this.initInstance();
   },
   destroyed() {
     Object.keys(this.$listeners).forEach((eventName) => {

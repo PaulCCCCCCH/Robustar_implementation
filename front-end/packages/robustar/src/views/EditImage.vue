@@ -1,5 +1,9 @@
 <template>
   <div style="height: 100%">
+    <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
+      adjust
+    </v-btn>
+
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
 
     <v-overlay :value="sending" opacity="0.7">
@@ -73,6 +77,9 @@ export default {
     });
   },
   methods: {
+    adjustImageSize() {
+      this.$refs.editor.invoke('resize', { width: 500, height: 500 });
+    },
     sendEditSuccess(res) {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
@@ -100,3 +107,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.float-button {
+  position: fixed;
+  bottom: 120px;
+  right: -80px;
+  z-index: 9999;
+}
+
+.float-button:hover {
+  transform: translateX(-90px);
+}
+</style>

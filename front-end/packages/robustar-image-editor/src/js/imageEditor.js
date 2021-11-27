@@ -709,7 +709,13 @@ class ImageEditor {
    * @param {number} zoomLevel - level of zoom(1.0 ~ 5.0)
    */
   zoom({ x, y, zoomLevel }) {
-    this._graphics.zoom({ x, y }, zoomLevel);
+    this._graphics.zoom(
+      {
+        x,
+        y,
+      },
+      zoomLevel
+    );
   }
 
   /**
