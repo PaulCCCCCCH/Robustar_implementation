@@ -43,7 +43,6 @@ const routes = [
     component: EditImage,
     props: true,
   },
-
 ];
 
 const router = new VueRouter({
