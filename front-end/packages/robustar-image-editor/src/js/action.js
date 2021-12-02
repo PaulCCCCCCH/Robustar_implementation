@@ -175,6 +175,12 @@ export default {
             apiSendEdit(dataURL);
           }
         },
+        adjustSize: () => {
+          this.resize({
+            width: 500,
+            height: 500,
+          });
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },

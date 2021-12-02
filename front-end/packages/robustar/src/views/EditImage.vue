@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100%">
-    <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
+    <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
       adjust
-    </v-btn>
+    </v-btn> -->
 
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
 

@@ -24,6 +24,11 @@ export default ({
                 style="${downloadButtonStyle}">
                     ${locale.localize('Download')}
                 </button>
+                <button class="tui-image-editor-adjust-size-btn"
+                ${replaceDownload ? '' : 'hidden'} 
+                style="${loadButtonStyle}">
+                    ${locale.localize('Adjust Size')}
+                </button>
                 <button class="tui-image-editor-send-edit-btn"
                 ${replaceDownload ? '' : 'hidden'} 
                 style="${downloadButtonStyle}">

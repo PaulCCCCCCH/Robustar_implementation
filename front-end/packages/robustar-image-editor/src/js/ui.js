@@ -40,7 +40,10 @@ const SUB_UI_COMPONENT = {
 };
 */
 
-const SUB_UI_COMPONENT = { Resize, Draw };
+const SUB_UI_COMPONENT = {
+  Resize,
+  Draw,
+};
 
 const { CustomEvents } = snippet;
 
@@ -386,6 +389,7 @@ class Ui {
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
       sendEdit: this._selectedElement.querySelectorAll('.tui-image-editor-send-edit-btn'),
+      adjustSize: this._selectedElement.querySelectorAll('.tui-image-editor-adjust-size-btn'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
 
@@ -502,7 +506,11 @@ class Ui {
   _addHistory(command) {
     if (!isSilentCommand(command)) {
       const historyTitle =
-        typeof command === 'string' ? { name: command } : getHistoryTitle(command);
+        typeof command === 'string'
+          ? {
+              name: command,
+            }
+          : getHistoryTitle(command);
 
       this._historyMenu.add(historyTitle);
     }
@@ -601,6 +609,23 @@ class Ui {
   }
 
   /**
+   * Add adjust size event.
+   * @private
+   */
+  _addAdjustSizeEvent() {
+    this.eventHandler.adjustSize = () => this._actions.main.adjustSize();
+    snippet.forEach(this._buttonElements.adjustSize, (element) => {
+      element.addEventListener('click', this.eventHandler.adjustSize);
+    });
+  }
+
+  _removeAdjustSizeEvent() {
+    snippet.forEach(this._buttonElements.adjustSize, (element) => {
+      element.removeEventListener('click', this.eventHandler.adjustSize);
+    });
+  }
+
+  /**
    * Add load event
    * @private
    */
@@ -691,6 +716,7 @@ class Ui {
     this._addHelpActionEvent();
     this._addDownloadEvent();
     this._addSendEditEvent();
+    this._addAdjustSizeEvent();
     this._addMenuEvent();
     // this._activateDefaultItem();
     this._initMenu();
@@ -706,6 +732,7 @@ class Ui {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
     this._removeSendEditEvent();
+    this._removeAdjustSizeEvent();
     this._removeLoadEvent();
     this._removeMainMenuEvent();
     this._historyMenu.removeEvent();
