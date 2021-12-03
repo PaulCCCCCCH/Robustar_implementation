@@ -1,3 +1,8 @@
+import torchvision
+from matplotlib import pyplot as plt
+
+from modules.visualize_module.visualize.test_visualize import visualize
+from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import jsonify
@@ -28,31 +33,62 @@ def predict(dataset, imageIndex):
         imageIndex: The index of the image within the dataset
     returns:
         TODO: Need to design a good format here.
-    
+        [attribute, output_array, predict_fig_routes]
     """
 
 
     # e.g.  train/10, test/300
     imageId = "{}/{}".format(dataset, imageIndex)
-    
 
     if imageId in predictBuffer:
-        return predictBuffer[imageId]
+        output_object = predictBuffer[imageId]
+    else:
+        # get output array from prediction
+        datasetImgPath = imageIdToPath(imageId).replace("_mistake", "").replace("_correct", "")
 
-    datasetImgPath = imageIdToPath(imageId).replace(
-        "_mistake", "").replace("_correct", "")
+        # try:
+        imgPath = osp.join(datasetPath, datasetImgPath)
 
-    # try:
-    imgPath = osp.join(datasetPath, datasetImgPath)
+        # TODO: 32 should not be hardcoded!
+        output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
 
-    # TODO: 32 should not be hardcoded!
-    output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
+        output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
-    output_array = convert_predict_to_array(output.cpu().detach().numpy())
-    predictBuffer[datasetImgPath] = output_array
+        # get influence images
+        influenceImgName = imgPath.replace('.', '_').replace('/', '_').replace('\\', '_')
+
+        model = modelWrapper.model
+
+        output = visualize(model, imgPath, 32)
+        if len(output) != 4:
+            raise ValueError("Invalid number of predict visualize figures. Please check.")
+
+        predict_fig_routes = []
+
+        for i in range(4):
+            plt.figure(output[i])
+            predict_fig_route = '/Robustar2/influence_images/' + influenceImgName + '_' + str(i) + '.png'
+            plt.savefig(predict_fig_route)
+            plt.close()
+            predict_fig_routes.append(predict_fig_route)
+
+        predictBuffer[imageId] = [output_array, predict_fig_routes]
+        output_object = [output_array, predict_fig_routes]
+
+    # get attributes
+    if dataset == "train":
+        attribute = dataManager.trainset.classes
+    elif dataset == "test":
+        attribute = dataManager.testset.classes
+    else:
+        raise ValueError("Wrong dataset. Please check.")
+
+    # combine and return
+    return_value = [attribute, output_object[0], output_object[1]]
+    # print(return_value)
 
     # TODO: Design a good return format here!
-    return RResponse.ok(output_array)
+    return RResponse.ok(return_value)
 
     # except Exception as e:
     #     print(e.args)

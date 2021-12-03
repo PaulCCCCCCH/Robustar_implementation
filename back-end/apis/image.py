@@ -26,6 +26,10 @@ def get_dataset_img(datasetImgPath):
         "_mistake", "").replace("_correct", "")
     return send_file(osp.join('/', datasetImgPath))
 
+@app.route('/influence-images/<path:influenceImgPath>')
+def get_influence_img(influenceImgPath):
+    return send_file(osp.join('/', influenceImgPath))
+
 
 # TODO: Need refactor
 @app.route('/dataset-info/<path:dataOriginId>')

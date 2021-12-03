@@ -20,19 +20,19 @@
                 transform:'translateX('+maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)+'px) translateX(-50%)'}"
       >
         <ul>
-          <li v-for="(item, index) in dataArr" :key=index>
+          <li v-for="(item, index) in dataArr[1]" :key=index>
             <div
               :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
                       fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px',
                       transform:'translateX('+(-maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)-defaultConfig.figWidth*0.05)+'px) translateX(-100%)'}"
-            > {{item[0]}} </div>
+            > {{dataArr[0][index]}} </div>
             <div
               class="box"
-              :title="item[1]"
-              :class="item[1]>=0?'box-pos':'box-neg'"
-              :style="{width:item[1]>=0?item[1]*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
-                                      :item[1]*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
-                      background:(item[1]>=0)?defaultConfig.posColor:defaultConfig.negColor,
+              :title="item"
+              :class="item>=0?'box-pos':'box-neg'"
+              :style="{width:item>=0?item*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
+                                      :item*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
+                      background:(item>=0)?defaultConfig.posColor:defaultConfig.negColor,
                       height:defaultConfig.figHeight/(arrLength+3)+'px'}"
             />
           </li>
@@ -56,8 +56,7 @@ export default {
   props: {
     dataArr: {
       type: Array,
-      default: () => [["bird", 0], ["cat", 0], ["crab", 0], ["dog", 0], ["fish", 0], 
-                      ["frog", 0], ["insect", 0], ["primate", 0], ["turtle", 1]]
+      default: () => [["bird", "cat", "crab", "dog", "fish", "frog", "insect", "primate", "turtle"], [0, 0, 0, 0.7, 0, 0, 0, 0, 0.3]]
     },
     config: {
       type: Object,
@@ -94,15 +93,15 @@ export default {
     },
   },
   created() {
-    this.arrLength = this.dataArr.length;
+    this.arrLength = this.dataArr[0].length;
     setTimeout(function() {
       if (this.defaultConfig.dataRange != null) {
         this.maxNegative = this.defaultConfig.dataRange[0];
         this.maxPositive = this.defaultConfig.dataRange[1];
       } else {
         for (var i = 0; i < this.arrLength; i++) {
-          if (this.dataArr[i][1]>this.maxPositive) this.maxPositive = this.dataArr[i][1];
-          if (this.dataArr[i][1]<this.maxNegative) this.maxNegative = this.dataArr[i][1];
+          if (this.dataArr[1][i]>this.maxPositive) this.maxPositive = this.dataArr[1][i];
+          if (this.dataArr[1][i]<this.maxNegative) this.maxNegative = this.dataArr[1][i];
         }
       }
     }.bind(this), 0);
