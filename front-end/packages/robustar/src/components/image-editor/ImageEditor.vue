@@ -35,6 +35,9 @@ export default {
       },
     },
   },
+  mounted() {
+    this.initInstance();
+  },
   destroyed() {
     Object.keys(this.$listeners).forEach((eventName) => {
       this.editorInstance.off(eventName);

@@ -73,7 +73,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.$refs.editor.initInstance();
+      // vm.$refs.editor.initInstance();
     });
   },
   methods: {
