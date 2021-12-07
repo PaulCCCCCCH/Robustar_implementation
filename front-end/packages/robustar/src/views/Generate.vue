@@ -17,9 +17,9 @@
             />
 
             <small class="form-text text-muted">
-              Note that the selected data set should immediately contain class
-              folders. In other words, the input path should be the exact thing
-              that you would pass to an ImageFolder constructor
+              Note that the selected data set should immediately contain class folders. In other
+              words, the input path should be the exact thing that you would pass to an ImageFolder
+              constructor
             </small>
           </div>
 
@@ -36,11 +36,7 @@
             <small class="form-text text-muted"></small>
           </div>
 
-          <button
-            class="btn btn-primary"
-            @click="generate_paired_data"
-            type="button"
-          >
+          <button class="btn btn-primary" @click="generate_paired_data" type="button">
             generate paired dataset
           </button>
         </form>
@@ -51,21 +47,21 @@
   </div>
 </template>
 
-  <script>
-import { APIGeneratePairedDataset } from "@/apis/generate";
+<script>
+import { APIGeneratePairedDataset } from '@/apis/generate';
 export default {
-  name: "TrainPad",
+  name: 'TrainPad',
   data() {
     return {
       // Data generation configs
       generate_configs: {
-        mirrored_data_path: "/Robustar2/dataset/train",
-        user_edit_path: "/Robustar2/user-edit.json",
+        mirrored_data_path: '/Robustar2/dataset/train',
+        user_edit_path: '/Robustar2/user-edit.json',
       },
     };
   },
   methods: {
-   generate_paired_data() {
+    generate_paired_data() {
       const success = (response) => {
         // TODO: Error handling according to the code returned from the server
         console.log(response);
@@ -74,7 +70,7 @@ export default {
 
       const failed = (err) => {
         console.log(err);
-        alert("Server error. Check console.");
+        alert('Server error. Check console.');
       };
       APIGeneratePairedDataset(
         this.generate_configs.mirrored_data_path,
@@ -131,7 +127,7 @@ body {
 }
 
 .gutters-sm > .col,
-.gutters-sm > [class*="col-"] {
+.gutters-sm > [class*='col-'] {
   padding-right: 8px;
   padding-left: 8px;
 }

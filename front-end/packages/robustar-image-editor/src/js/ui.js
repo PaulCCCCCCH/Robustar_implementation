@@ -11,18 +11,20 @@ import mainContainer from '@/ui/template/mainContainer';
 import controls from '@/ui/template/controls';
 
 import Theme from '@/ui/theme/theme';
+import Resize from '@/ui/resize';
+import Draw from '@/ui/draw';
+import History from '@/ui/history';
+import Locale from '@/ui/locale/locale';
+
+/* A full list of components
 import Shape from '@/ui/shape';
 import Crop from '@/ui/crop';
-import Resize from '@/ui/resize';
 import Flip from '@/ui/flip';
 import Rotate from '@/ui/rotate';
 import Text from '@/ui/text';
 import Mask from '@/ui/mask';
 import Icon from '@/ui/icon';
-import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
-import History from '@/ui/history';
-import Locale from '@/ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -35,6 +37,12 @@ const SUB_UI_COMPONENT = {
   Icon,
   Draw,
   Filter,
+};
+*/
+
+const SUB_UI_COMPONENT = {
+  Resize,
+  Draw,
 };
 
 const { CustomEvents } = snippet;
@@ -251,15 +259,15 @@ class Ui {
         menuIconPath: '',
         menu: [
           'resize',
-          'crop',
-          'flip',
-          'rotate',
+          // 'crop',
+          // 'flip',
+          // 'rotate',
           'draw',
-          'shape',
-          'icon',
-          'text',
-          'mask',
-          'filter',
+          // 'shape',
+          // 'icon',
+          // 'text',
+          // 'mask',
+          // 'filter',
         ],
         initMenu: '',
         uiSize: {
@@ -366,6 +374,7 @@ class Ui {
         loadButtonStyle: this.theme.getStyle('loadButton'),
         downloadButtonStyle: this.theme.getStyle('downloadButton'),
         submenuStyle: this.theme.getStyle('submenu'),
+        replaceDownload: this.options.replaceDownload,
       });
 
     this._selectedElement = selectedElement;
@@ -379,6 +388,8 @@ class Ui {
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+      sendEdit: this._selectedElement.querySelectorAll('.tui-image-editor-send-edit-btn'),
+      adjustSize: this._selectedElement.querySelectorAll('.tui-image-editor-adjust-size-btn'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
 
@@ -495,7 +506,11 @@ class Ui {
   _addHistory(command) {
     if (!isSilentCommand(command)) {
       const historyTitle =
-        typeof command === 'string' ? { name: command } : getHistoryTitle(command);
+        typeof command === 'string'
+          ? {
+              name: command,
+            }
+          : getHistoryTitle(command);
 
       this._historyMenu.add(historyTitle);
     }
@@ -573,6 +588,40 @@ class Ui {
   _removeDownloadEvent() {
     snippet.forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);
+    });
+  }
+
+  /**
+   * Add send edit event.
+   * @private
+   */
+  _addSendEditEvent() {
+    this.eventHandler.sendEdit = () => this._actions.main.sendEdit(this.options.apiSendEdit);
+    snippet.forEach(this._buttonElements.sendEdit, (element) => {
+      element.addEventListener('click', this.eventHandler.sendEdit);
+    });
+  }
+
+  _removeSendEditEvent() {
+    snippet.forEach(this._buttonElements.sendEdit, (element) => {
+      element.removeEventListener('click', this.eventHandler.sendEdit);
+    });
+  }
+
+  /**
+   * Add adjust size event.
+   * @private
+   */
+  _addAdjustSizeEvent() {
+    this.eventHandler.adjustSize = () => this._actions.main.adjustSize();
+    snippet.forEach(this._buttonElements.adjustSize, (element) => {
+      element.addEventListener('click', this.eventHandler.adjustSize);
+    });
+  }
+
+  _removeAdjustSizeEvent() {
+    snippet.forEach(this._buttonElements.adjustSize, (element) => {
+      element.removeEventListener('click', this.eventHandler.adjustSize);
     });
   }
 
@@ -666,7 +715,10 @@ class Ui {
 
     this._addHelpActionEvent();
     this._addDownloadEvent();
+    this._addSendEditEvent();
+    this._addAdjustSizeEvent();
     this._addMenuEvent();
+    // this._activateDefaultItem();
     this._initMenu();
     this._historyMenu.addEvent(this._actions.history);
     this._initMenuEvent = true;
@@ -679,6 +731,8 @@ class Ui {
   _removeUiEvent() {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
+    this._removeSendEditEvent();
+    this._removeAdjustSizeEvent();
     this._removeLoadEvent();
     this._removeMainMenuEvent();
     this._historyMenu.removeEvent();
@@ -723,6 +777,10 @@ class Ui {
       '.tui-image-editor-canvas-container'
     );
     this._editorContainerElement.appendChild(gridVisual);
+  }
+
+  _activateDefaultItem() {
+    this.changeMenu(this.options.menu[this.options.menu.length - 1]);
   }
 
   /**
@@ -856,5 +914,4 @@ class Ui {
 }
 
 CustomEvents.mixin(Ui);
-
 export default Ui;

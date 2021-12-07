@@ -17,7 +17,6 @@
   </div>
 </template>
 
-
 <script>
 import PredView from "@/components/prediction-viewer/PredView.vue";
 import { APIPredict } from "@/apis/predict";
@@ -73,5 +72,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

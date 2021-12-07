@@ -41,7 +41,7 @@
           </v-list-item>
 
           <!-- Module 3: Inspect data -->
-          <v-list-group prepend-icon="mdi-eye" eager @click="changewindow">
+          <v-list-group prepend-icon="mdi-eye" eager>
             <template v-slot:activator>
               <v-list-item-title class="side-bar-level1-title"> Inspect Data </v-list-item-title>
             </template>

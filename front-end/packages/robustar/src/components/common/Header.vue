@@ -5,11 +5,7 @@
       <div class="d-flex justify-content-between align-items-center">
         <!-- Robustar Logo -->
         <a class="header-brand" href="index">
-          <img
-            src="../../assets/images/brand/logo.png"
-            class="app-header-brand-logo"
-            alt="logo"
-          />
+          <img src="../../assets/images/brand/logo.png" class="app-header-brand-logo" alt="logo" />
         </a>
 
         <!-- Right icons -->
@@ -45,5 +41,5 @@ export default {};
 </script>
 
 <style>
-@import "./Header.css";
+@import './Header.css';
 </style>

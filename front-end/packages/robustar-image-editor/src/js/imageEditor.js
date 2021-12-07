@@ -136,6 +136,7 @@ const {
  *  @param {string} [options.selectionStyle.borderColor] - selection border color
  *  @param {number} [options.selectionStyle.rotatingPointOffset] - selection rotating point length
  *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ *  @param {function} [options.apiSendEdit] - API to send user edit to the server. If not given, will download the image instead.
  * @example
  * var ImageEditor = require('tui-image-editor');
  * var blackTheme = require('./js/theme/black-theme.js');
@@ -183,6 +184,10 @@ class ImageEditor {
     if (options.includeUI) {
       const UIOption = options.includeUI;
       UIOption.usageStatistics = options.usageStatistics;
+
+      // Send edit api configs
+      UIOption.replaceDownload = !!options.apiSendEdit;
+      UIOption.apiSendEdit = options.apiSendEdit;
 
       this.ui = new UI(wrapper, UIOption, this.getActions());
       options = this.ui.setUiDefaultSelectionStyle(options);
@@ -704,7 +709,13 @@ class ImageEditor {
    * @param {number} zoomLevel - level of zoom(1.0 ~ 5.0)
    */
   zoom({ x, y, zoomLevel }) {
-    this._graphics.zoom({ x, y }, zoomLevel);
+    this._graphics.zoom(
+      {
+        x,
+        y,
+      },
+      zoomLevel
+    );
   }
 
   /**

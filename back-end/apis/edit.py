@@ -1,26 +1,30 @@
 from objects.RServer import RServer
-import json
+from objects.RResponse import RResponse
 from flask import request
-import os
+from io import BytesIO
+import numpy as np
+from PIL import Image
+import base64
 
 app = RServer.getServer().getFlaskApp()
 
-@app.route('/edit', methods=['POST'])
-def user_edit():
-    if 'src' in request.form and 'content' in request.form:
-        src = request.form.get("src")
-        content = request.form.get("content")
+@app.route('/edit/<phase>/<image_id>', methods=['POST'])
+def user_edit(phase, image_id):
+    json_data = request.get_json()
 
-        data = {}
-        file_path = 'user-edit.json'
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-        data[src] = content
+    encoded_string = json_data['image'].split(',')[1]
+    decoded = base64.b64decode(encoded_string)
 
-        with open(file_path, 'w') as f:
-            json.dump(data, f)
+    with Image.open(BytesIO(decoded)) as img:
+        print("************************")
+        print(np.array(img).shape)
 
-        return "success"
-    return 'invalid image content'
+
+
+
+    # decoded = base64.decodestring(encoded_string)
+    # print(decoded)
+   
+
+    return RResponse.ok("Success!")
 

@@ -1,8 +1,7 @@
 <template>
   <div id="app">
     <v-app id="inspire">
-
-    <Header />
+      <Header />
       <div class="pages">
         <SideBar
           @updatewindow="updatewindow"
@@ -16,13 +15,12 @@
   </div>
 </template>
 
-
 <script>
-import Header from "@/components/common/Header";
-import SideBar from '@/components/common/SideBar'
+import Header from '@/components/common/Header';
+import SideBar from '@/components/common/SideBar';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Header,
     SideBar,
@@ -56,14 +54,14 @@ export default {
   color: #2c3e50;
 }
 
-.pages{
+.pages {
   margin: 0px 0px 0px 40px;
   height: 100%;
   float: right;
 }
 
-#app, #page-content{
+#app,
+#page-content {
   height: 100%;
 }
-
 </style>

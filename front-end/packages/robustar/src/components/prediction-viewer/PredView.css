@@ -12,7 +12,6 @@
   transform: translateX(-50%);
 }
 
-
 .chart-line {
   width: 1px;
   height: 100%;
@@ -48,5 +47,3 @@
 .chart-line ul li .box-neg {
   right: 0;
 }
-
-
