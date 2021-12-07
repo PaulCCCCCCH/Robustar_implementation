@@ -19,7 +19,7 @@ def get_test_img(number):
     url = imageIdToPath('test'+'/'+str(number))
     return redirect('/dataset/'+url)
 
- # 根据图片路径返回图片
+ # internal use only
 @app.route('/dataset/<path:datasetImgPath>')
 def get_dataset_img(datasetImgPath):
     datasetImgPath = datasetImgPath.replace(

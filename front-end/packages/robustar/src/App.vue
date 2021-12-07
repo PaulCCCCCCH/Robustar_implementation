@@ -4,7 +4,9 @@
 
     <Header />
       <div class="pages">
-        <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
+        <SideBar
+          @updatewindow="updatewindow"
+        ></SideBar>
 
         <div id="page-content">
           <router-view />
@@ -27,25 +29,22 @@ export default {
   },
   data() {
     return {
-      f_mini: false,
-      f_mini_return:false,
-    }
+    };
   },
   methods: {
-    updatewindow: function(f_mini_return){
-      if(f_mini_return==true){
-        document.getElementById("page-content").style.width = (screen.width - 256) + "px";
+    updatewindow: function (is_mini_side_bar) {
+      const page_content = document.getElementById('page-content')
+      if (!page_content) {
+        return
       }
-      else{
-        document.getElementById("page-content").style.width = (screen.width - 56) + "px";
 
+      if (is_mini_side_bar) {
+        page_content.style.width = screen.width - 56 + 'px';
+      } else {
+        page_content.style.width = screen.width - 256 + 'px';
       }
-      console.log('123',f_mini_return)
     },
   },
-  mounted () {
-    this.updatewindow(true)
-  }
 };
 </script>
 
