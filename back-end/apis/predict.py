@@ -6,10 +6,10 @@ from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import jsonify
-from utils.image_utils import imageIdToPath
+from utils.image_utils import imageURLToPath
 from os import path as osp
 from utils.predict import convert_predict_to_array
-from utils.image_utils import imageIdToPath
+from utils.image_utils import imageURLToPath
 import json
 from utils.predict import get_image_prediction
 from visualize import visual
@@ -44,7 +44,7 @@ def predict(dataset, imageIndex):
         output_object = predictBuffer[imageId]
     else:
         # get output array from prediction
-        datasetImgPath = imageIdToPath(imageId).replace("_mistake", "").replace("_correct", "")
+        datasetImgPath = imageURLToPath(imageId).replace("_mistake", "").replace("_correct", "")
 
         # try:
         imgPath = osp.join(datasetPath, datasetImgPath)
@@ -109,7 +109,7 @@ def get_correct_list(type):
     result = {}
     i = 0
     while(True):
-        path = imageIdToPath(type+"/"+str(i))
+        path = imageURLToPath(type+"/"+str(i))
         if(path == "none"):
             break
         
@@ -127,7 +127,7 @@ def get_correct_list(type):
 # 将编号转化为图片路径
 @app.route('/predictid/<folder>/<imageid>')
 def get_predict_img_from_id(folder, imageid):
-    url = imageIdToPath(folder+'/'+str(imageid))
+    url = imageURLToPath(folder+'/'+str(imageid))
     filePath = folder+'/'+url
     return get_predict_img(filePath)
 
@@ -138,7 +138,7 @@ def get_random_influence_img(number):
     import math
     random_num = random.randint(1, 1000)
     random_num = math.floor(float(number)*1000)
-    url = imageIdToPath('train'+'/'+str(random_num))
+    url = imageURLToPath('train'+'/'+str(random_num))
     # return redirect('/dataset/train/'+url)
     return '/dataset/train/' + url
 

@@ -3,7 +3,6 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import ImageList from '../views/ImageList.vue';
 import TrainPad from '../views/TrainPad.vue';
-import Generate from '../views/Generate.vue';
 import EditImage from '@/views/EditImage';
 
 Vue.use(VueRouter);
@@ -23,7 +22,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
   {
-    path: '/image-list/:phase',
+    path: '/image-list/:split',
     name: 'ImageList',
     component: ImageList,
   },
@@ -31,11 +30,6 @@ const routes = [
     path: '/train-pad',
     name: 'TrainPad',
     component: TrainPad,
-  },
-  {
-    path: '/generate',
-    name: 'Generate',
-    component: Generate,
   },
   {
     path: '/edit',

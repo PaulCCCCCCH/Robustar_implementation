@@ -206,4 +206,4 @@ if __name__ == "__main__":
     RServer.setModel(model)
     import apis # register all api routes
 
-    server.run(port='8000', host='0.0.0.0', debug=True) 
+    server.run(port='8000', host='0.0.0.0', debug=False) 

@@ -8,11 +8,13 @@ import * as common from './common';
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-const APISendEdit = (dataset, dataid, image_base64, success, failed) => {
+const APISendEdit = (split, image_id, image_height, image_width, image_base64, success, failed) => {
   const data = {
     image: image_base64,
+    image_height,
+    image_width
   };
-  common.postRequest(data, `/edit/${dataset}/${dataid}`, success, failed);
+  common.postRequest(data, `/edit/${split}/${image_id}`, success, failed);
 };
 
 export { APISendEdit };

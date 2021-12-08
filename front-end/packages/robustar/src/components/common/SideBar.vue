@@ -97,18 +97,6 @@
               </v-list>
             </v-menu>
           </v-list-group>
-
-          <!-- Module 4: Generate Paired Data -->
-          <v-list-item @click="navigateTo('/generate')">
-            <v-list-item-icon>
-              <v-icon class="side-bar-level1-icon">mdi-file-document-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              <div class="side-bar-level1-title">
-                <span>Generate</span>
-              </div>
-            </v-list-item-title>
-          </v-list-item>
         </v-list>
         <div id="nav">
           <router-link to="/">Home</router-link> |

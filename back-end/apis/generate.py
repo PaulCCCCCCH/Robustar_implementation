@@ -14,3 +14,6 @@ def generate():
     generate_paired_data(json_data['mirrored_data_path'], json_data['user_edit_path'])
     return {"msg": "Generation completed!", "code": 0}
 
+
+if __name__ == '__main__':
+    print(generate_paired_data)
