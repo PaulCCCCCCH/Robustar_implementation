@@ -23,14 +23,14 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # 返回预测结果
-@app.route('/predict/<dataset>/<imageIndex>')
+@app.route('/predict/<split>/<image_id>')
 def predict(dataset, imageIndex):
     """
     Get the prediction path of the image specified by its id.
 
     args: 
-        dataset:    'train', 'test' or 'dev'
-        imageIndex: The index of the image within the dataset
+        split:    'train', 'test' or 'dev'
+        image_id: The index of the image within the dataset
     returns:
         TODO: Need to design a good format here.
         [attribute, output_array, predict_fig_routes]

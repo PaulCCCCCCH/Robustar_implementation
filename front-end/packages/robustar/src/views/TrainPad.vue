@@ -200,7 +200,6 @@
 
 <script>
 import { APIStartTrain } from '@/apis/train';
-import { APIGeneratePairedDataset } from '@/apis/generate';
 export default {
   name: 'TrainPad',
   data() {
@@ -252,12 +251,6 @@ export default {
         thread: 8,
         pretrain: 'no',
       },
-
-      // Data generation configs
-      generate_configs: {
-        mirrored_data_path: '/Robustar2/dataset/train',
-        user_edit_path: '/Robustar2/user-edit.json',
-      },
     };
   },
   methods: {
@@ -279,24 +272,6 @@ export default {
           configs: this.configs,
           info: 'placeholder',
         },
-        success,
-        failed
-      );
-    },
-    generate_paired_data() {
-      const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
-        console.log(response);
-        alert(response.data.msg);
-      };
-
-      const failed = (err) => {
-        console.log(err);
-        alert('Server error. Check console.');
-      };
-      APIGeneratePairedDataset(
-        this.generate_configs.mirrored_data_path,
-        this.generate_configs.user_edit_path,
         success,
         failed
       );
