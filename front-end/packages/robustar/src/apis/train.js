@@ -6,7 +6,7 @@ import * as common from './common';
  * @param {function} fail fail callback function
  */
 const APIStartTrain = (configs, success, failed) => {
-  common.postRequest(configs, `train`, success, failed);
+  common.postRequest(configs, `/train`, success, failed);
 };
 
 export { APIStartTrain };

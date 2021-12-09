@@ -39,7 +39,6 @@
         }"
       >
         <ul>
-<<<<<<< HEAD
           <li v-for="(item, index) in dataArr[1]" :key=index>
             <div
               :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
@@ -54,34 +53,6 @@
                                       :item*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
                       background:(item>=0)?defaultConfig.posColor:defaultConfig.negColor,
                       height:defaultConfig.figHeight/(arrLength+3)+'px'}"
-=======
-          <li v-for="(item, index) in dataArr" :key="index">
-            <div
-              :style="{
-                height: defaultConfig.figHeight / (arrLength + 3) + 'px',
-                fontSize: (defaultConfig.figHeight / (arrLength + 3)) * 0.65 + 'px',
-                transform:
-                  'translateX(' +
-                  ((-maxNegative * defaultConfig.figWidth) / (maxNegative - maxPositive) -
-                    defaultConfig.figWidth * 0.05) +
-                  'px) translateX(-100%)',
-              }"
-            >
-              {{ item[0] }}
-            </div>
-            <div
-              class="box"
-              :title="item[1]"
-              :class="item[1] >= 0 ? 'box-pos' : 'box-neg'"
-              :style="{
-                width:
-                  item[1] >= 0
-                    ? (item[1] * defaultConfig.figWidth) / (maxPositive - maxNegative) + 'px'
-                    : (item[1] * -1 * defaultConfig.figWidth) / (maxPositive - maxNegative) + 'px',
-                background: item[1] >= 0 ? defaultConfig.posColor : defaultConfig.negColor,
-                height: defaultConfig.figHeight / (arrLength + 3) + 'px',
-              }"
->>>>>>> drawing
             />
           </li>
         </ul>

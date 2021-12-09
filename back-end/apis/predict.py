@@ -1,3 +1,4 @@
+from numpy.lib.polynomial import roots
 import torchvision
 from matplotlib import pyplot as plt
 
@@ -16,15 +17,14 @@ from visualize import visual
 
 app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
-datasetPath = server.datasetPath
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
 
-# 返回预测结果
+# Return prediction result
 @app.route('/predict/<split>/<image_id>')
-def predict(dataset, imageIndex):
+def predict(split, image_id):
     """
     Get the prediction path of the image specified by its id.
 
@@ -38,50 +38,50 @@ def predict(dataset, imageIndex):
 
 
     # e.g.  train/10, test/300
-    imageId = "{}/{}".format(dataset, imageIndex)
+    imageURL = "{}/{}".format(split, image_id).replace("_mistake", "").replace("_correct", "")
+    visualize_root = dataManager.visualize_root
 
-    if imageId in predictBuffer:
-        output_object = predictBuffer[imageId]
+    if imageURL in predictBuffer:
+        output_object = predictBuffer[imageURL]
     else:
         # get output array from prediction
-        datasetImgPath = imageURLToPath(imageId).replace("_mistake", "").replace("_correct", "")
+        datasetImgPath = imageURLToPath(imageURL)
 
         # try:
-        imgPath = osp.join(datasetPath, datasetImgPath)
+        imgPath = osp.join(server.baseDir, datasetImgPath)
 
         # TODO: 32 should not be hardcoded!
         output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
 
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
-        # get influence images
-        influenceImgName = imgPath.replace('.', '_').replace('/', '_').replace('\\', '_')
+        # get visualize images
+        # image_name = imgPath.replace('.', '_').replace('/', '_').replace('\\', '_')
+        image_name = imageURL.replace('.', '_').replace('/', '_').replace('\\', '_')
 
         model = modelWrapper.model
 
-        output = visualize(model, imgPath, 32)
+        output = visualize(model, imgPath, 32, server.configs['device'])
         if len(output) != 4:
             raise ValueError("Invalid number of predict visualize figures. Please check.")
 
         predict_fig_routes = []
 
-        for i in range(4):
-            plt.figure(output[i])
-            predict_fig_route = '/Robustar2/influence_images/' + influenceImgName + '_' + str(i) + '.png'
-            plt.savefig(predict_fig_route)
-            plt.close()
+        for i, fig in enumerate(output):
+            predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
+            fig.savefig(predict_fig_route)
             predict_fig_routes.append(predict_fig_route)
 
-        predictBuffer[imageId] = [output_array, predict_fig_routes]
+        predictBuffer[imageURL] = [output_array, predict_fig_routes]
         output_object = [output_array, predict_fig_routes]
 
     # get attributes
-    if dataset == "train":
+    if split == "train":
         attribute = dataManager.trainset.classes
-    elif dataset == "test":
+    elif split == "test":
         attribute = dataManager.testset.classes
     else:
-        raise ValueError("Wrong dataset. Please check.")
+        raise ValueError("Wrong split. Please check.")
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]

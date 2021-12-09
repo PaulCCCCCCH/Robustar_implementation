@@ -201,7 +201,8 @@ if __name__ == "__main__":
 
 
 
-    server = RServer.createServer(configs=configs, datasetPath=osp.join(baseDir, 'dataset'))
+    server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=osp.join(baseDir, 'dataset')
+)
     model = initialize_model()
     RServer.setModel(model)
     import apis # register all api routes

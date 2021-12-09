@@ -5,6 +5,7 @@ Last Modified: Tuesday, 7th December 2021 10:45:14 pm
 Modified By: Chonghan Chen (paulcccccch@gmail.com)
 -----
 '''
+from genericpath import exists
 import pickle
 import torchvision
 import os.path as osp
@@ -16,20 +17,22 @@ from utils.path_utils import get_paired_path, split_path
 # The data interface
 class RDataManager:
 
-    def __init__(self, datasetPath):
+    def __init__(self, baseDir, datasetDir):
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
-        self.data_root = datasetPath
-        self.test_root =osp.join(datasetPath, "test")
-        self.train_root = osp.join(datasetPath, 'train')
-        self.paired_root = osp.join(datasetPath, 'paired')
+        self.data_root = datasetDir
+        self.base_dir = baseDir
+        self.test_root =osp.join(datasetDir, "test")
+        self.train_root = osp.join(datasetDir, 'train')
+        self.paired_root = osp.join(datasetDir, 'paired')
+        self.visualize_root = osp.join(baseDir, 'visualize_images')
+        self.influence_root = osp.join(baseDir, 'influence_images')
+        self.init_folders()
 
         self.testset = torchvision.datasets.ImageFolder(self.test_root)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root)
 
-        if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
-            self.init_paired_folder()
 
         self.datasetFileBuffer = {}
         self.predictBuffer = {}
@@ -37,7 +40,16 @@ class RDataManager:
         self.mistakeBuffer = {}
 
 
-    def init_paired_folder(self):
+    def init_folders(self):
+        if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
+            self._init_paired_folder()
+        self._init_visualize_root()
+
+
+    def _init_visualize_root(self):
+        os.makedirs(self.visualize_root, exist_ok=True)
+
+    def _init_paired_folder(self):
         # Initializes paired folder. Ignores files that already exists
         if not osp.exists(self.paired_root):
             os.mkdir(self.paired_root)
