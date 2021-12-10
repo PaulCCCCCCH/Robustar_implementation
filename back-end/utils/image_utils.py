@@ -43,7 +43,7 @@ def imageURLToPath(imageId):
         # data split not supported
         raise NotImplemented
 
-    filePath = normpath(filePath)
+    filePath = normpath(filePath).replace('\\', '/')
     datasetFileBuffer[imageId] = filePath
     return filePath 
 

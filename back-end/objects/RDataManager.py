@@ -21,9 +21,9 @@ class RDataManager:
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
         self.data_root = datasetPath
-        self.test_root =osp.join(datasetPath, "test")
-        self.train_root = osp.join(datasetPath, 'train')
-        self.paired_root = osp.join(datasetPath, 'paired')
+        self.test_root =osp.join(datasetPath, "test").replace('\\', '/')
+        self.train_root = osp.join(datasetPath, 'train').replace('\\', '/')
+        self.paired_root = osp.join(datasetPath, 'paired').replace('\\', '/')
 
         self.testset = torchvision.datasets.ImageFolder(self.test_root)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root)

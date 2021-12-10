@@ -57,12 +57,12 @@ def generate_paired_data(mirroredDataPath, userEditFile):
     # Read user edit information
     with open(userEditFile) as f:
         userEditDict = json.load(f)
-    userEditDict = {os.path.normpath(k): userEditDict[k] for k in userEditDict.keys()}
+    userEditDict = {os.path.normpath(k).replace('\\', '/'): userEditDict[k] for k in userEditDict.keys()}
 
     # Get the image size of the original data set
-    d = os.listdir(mirroredDataPath)[0]
+    d = os.listdir(mirroredDataPath)[0].replace('\\', '/')
     classFolderMirrored = '{}/{}'.format(mirroredDataPath, d)
-    img = '{}/{}'.format(classFolderMirrored, os.listdir(classFolderMirrored)[0])
+    img = '{}/{}'.format(classFolderMirrored, os.listdir(classFolderMirrored)[0].replace('\\', '/'))
     with open(img, 'rb') as f:
         img = Image.open(f)
         targetSize = img.size[0]
@@ -71,18 +71,18 @@ def generate_paired_data(mirroredDataPath, userEditFile):
     image_idx = 0
     # iterate through each class folder (e.g. d = ./bird, ./cat, etc.)
     for d in os.listdir(mirroredDataPath):
-        classFolderMirrored = '{}/{}'.format(mirroredDataPath, d)
-        classFolderNew = '{}/{}'.format(newDataPath, d)
+        classFolderMirrored = '{}/{}'.format(mirroredDataPath, d.replace('\\', '/'))
+        classFolderNew = '{}/{}'.format(newDataPath, d.replace('\\', '/'))
         if not os.path.exists(classFolderNew):
             os.mkdir(classFolderNew)
 
         # Filter out files with extensions not in the 'image_extensions' variable
         imgNames = list(filter(lambda n: any(n.lower().endswith(ext) for ext in image_extensions), os.listdir(classFolderMirrored)))
         for imgName in imgNames:
-            imgNew = os.path.normpath('{}/{}'.format(classFolderNew, imgName))
+            imgNew = os.path.normpath('{}/{}'.format(classFolderNew, imgName)).replace('\\', '/')
 
             # search_key is '/train/0', '/train/1', etc.
-            searchKey = os.path.normpath('/{}/{}'.format(mirroredDataPath.split(os.sep)[-1], image_idx))
+            searchKey = os.path.normpath('/{}/{}'.format(mirroredDataPath.split(os.sep)[-1], image_idx)).replace('\\', '/')
             if dictLooseContains(userEditDict, searchKey):  # User edited the image. Creating paired image for this image
                                                             # If a paired image already exists for this image, it will be replaced
                 print("Found edit!")
@@ -101,12 +101,12 @@ def generate_paired_data(mirroredDataPath, userEditFile):
 
 # Check if the normalized key is in the dictionary
 def dictLooseContains(_dict, key):
-    return os.path.normpath(key) in _dict
+    return os.path.normpath(key).replace('\\', '/') in _dict
 
 
 # 模糊读取json的key
 def dictLooseGetKey(_dict, key):
-    looseKey = os.path.normpath(key)
+    looseKey = os.path.normpath(key).replace('\\', '/')
     if looseKey in _dict:
         return _dict[key]
     return None

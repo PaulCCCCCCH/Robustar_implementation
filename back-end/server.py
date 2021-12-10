@@ -1,7 +1,7 @@
 import torchvision.datasets as dset
 import json
 import os
-from os import path as osp
+import os.path as osp
 from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
 from objects.RServer import RServer
 from utils.train import initialize_model
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
 
 
-    server = RServer.createServer(configs=configs, datasetPath=osp.join(baseDir, 'dataset'))
+    server = RServer.createServer(configs=configs, datasetPath=osp.join(baseDir, 'dataset').replace('\\', '/'))
     model = initialize_model()
     RServer.setModel(model)
     import apis # register all api routes

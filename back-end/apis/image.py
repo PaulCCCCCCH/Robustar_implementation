@@ -3,7 +3,7 @@ import json
 from objects.RServer import RServer
 from flask import jsonify, redirect, send_from_directory, send_file
 import os
-from os import path as osp
+import os.path as osp
 from utils.image_utils import imageURLToPath
 
 server = RServer.getServer()
@@ -19,11 +19,11 @@ def get_train_img(split, image_id):
 def get_dataset_img(datasetImgPath):
     datasetImgPath = datasetImgPath.replace(
         "_mistake", "").replace("_correct", "")
-    return send_file(osp.join('/', datasetImgPath))
+    return send_file(osp.join('/', datasetImgPath).replace('\\', '/'))
 
 @app.route('/influence-images/<path:influenceImgPath>')
 def get_influence_img(influenceImgPath):
-    return send_file(osp.join('/', influenceImgPath))
+    return send_file(osp.join('/', influenceImgPath).replace('\\', '/'))
 
 
 # TODO: Need refactor

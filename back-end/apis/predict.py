@@ -7,7 +7,7 @@ from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import jsonify
 from utils.image_utils import imageURLToPath
-from os import path as osp
+import os.path as osp
 from utils.predict import convert_predict_to_array
 from utils.image_utils import imageURLToPath
 import json
@@ -47,7 +47,7 @@ def predict(dataset, imageIndex):
         datasetImgPath = imageURLToPath(imageId).replace("_mistake", "").replace("_correct", "")
 
         # try:
-        imgPath = osp.join(datasetPath, datasetImgPath)
+        imgPath = osp.join(datasetPath, datasetImgPath).replace('\\', '/')
 
         # TODO: 32 should not be hardcoded!
         output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
@@ -115,7 +115,7 @@ def get_correct_list(type):
         
         datasetPath = RServer.getServer().datasetPath
 
-        path = osp.join(datasetPath, 'type', path)
+        path = osp.join(datasetPath, 'type', path).replace('\\', '/')
         print(path)
         result[i] = getPredict(app.model.net, path, 224)
         i += 1
