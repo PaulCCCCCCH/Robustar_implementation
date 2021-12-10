@@ -9,8 +9,9 @@ Composed of two packages: `robustar` and `robustar-image-editor`. Packages are m
 First, make sure you are in `front-end` folder, and have `npm` installed. Then, execute the following:
 
 ```
-npm install -g webpack webpack-cli lerna prettier @vue-cli
+npm install -g webpack webpack-cli lerna prettier @vue/cli
 ```
+Remember to run the above with `sudo` if you are in a linux/mac environment.
 
 This command will automatically install dependencies for `robustar` and `robustar-image-editor`, and resolve the dependency between the two
 
