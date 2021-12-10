@@ -1,5 +1,5 @@
-from modules.visualize_module.flashtorch_.utils import apply_transforms, load_image
-from modules.visualize_module.flashtorch_.saliency import Backprop
+from ..flashtorch_.utils import apply_transforms, load_image
+from ..flashtorch_.saliency import Backprop
 import torch, matplotlib
 
 matplotlib.use('Agg')
@@ -22,6 +22,7 @@ def visualize(mymodel, imgpath, imgsize):
 
 
 if __name__ == '__main__':
+    # test
     import torchvision, torch
 
     # from modules.visualize_module.visualize.visual import visualize

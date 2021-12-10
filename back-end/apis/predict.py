@@ -1,7 +1,7 @@
 import torchvision
 from matplotlib import pyplot as plt
 
-from modules.visualize_module.visualize.test_visualize import visualize
+from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
@@ -12,7 +12,6 @@ from utils.predict import convert_predict_to_array
 from utils.image_utils import imageURLToPath
 import json
 from utils.predict import get_image_prediction
-from visualize import visual
 
 app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
