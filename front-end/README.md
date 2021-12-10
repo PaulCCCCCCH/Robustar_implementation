@@ -13,7 +13,7 @@ npm install -g webpack webpack-cli lerna prettier @vue/cli
 ```
 Remember to run the above with `sudo` if you are in a linux/mac environment.
 
-In '/front-end` folder, run 
+In `/front-end` folder, run 
 ```
 npm install
 ```
