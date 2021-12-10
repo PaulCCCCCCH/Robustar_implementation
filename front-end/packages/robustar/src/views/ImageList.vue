@@ -1,7 +1,9 @@
 <template>
   <div class="d-flex flex-column align-center">
     <!-- Page header-->
-    <div class="text-h5 text-center font-weight-medium my-4">Select the training image to edit</div>
+    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">
+      Select the training image to edit
+    </div>
 
     <!-- Image list controller -->
     <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
@@ -19,7 +21,7 @@
     </div>
 
     <!-- Image List -->
-    <div v-for="(imgline, row) in imageMatrix" :key="row" style="width: 80%">
+    <div v-for="(imgline, row) in imageMatrix" :key="row">
       <div class="d-flex">
         <div class="mb-8 mr-8 row-item" v-for="(url, col) in imgline" :key="col">
           <!-- minus 1 is necessary since Vue counts from 1 -->

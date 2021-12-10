@@ -1,20 +1,28 @@
 <template>
-  <div id="app">
-    <v-app id="inspire">
-      <Header />
-      <div class="pages">
-        <SideBar
-          :f_mini="f_mini"
-          :f_mini_return="f_mini_return"
-          @updatewindow="updatewindow"
-        ></SideBar>
+  <v-app>
+    <v-app-bar app color="white">
+      <!-- Robustar Logo -->
+      <a href="index">
+        <img src="./assets/images/brand/logo.png" style="width: 130px" alt="logo" />
+      </a>
 
-        <div id="page-content">
-          <router-view />
-        </div>
-      </div>
-    </v-app>
-  </div>
+      <v-spacer></v-spacer>
+
+      <!-- Full screen button -->
+      <v-btn icon color="primary" @click="toggleFullscreen">
+        <v-icon v-if="!isFullscreen">mdi-fullscreen</v-icon>
+        <v-icon v-else>mdi-fullscreen-exit</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
+
+    <v-main class="page-content">
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -31,6 +39,7 @@ export default {
     return {
       f_mini: false,
       f_mini_return: false,
+      isFullscreen: false,
     };
   },
   methods: {
@@ -42,9 +51,19 @@ export default {
       }
       console.log('123', f_mini_return);
     },
+    toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+      this.isFullscreen = !this.isFullscreen;
+    },
   },
   mounted() {
-    this.updatewindow(true);
+    // this.updatewindow(true);
   },
 };
 </script>
@@ -64,7 +83,12 @@ export default {
 }
 
 #app,
-#page-content {
-  height: 100%;
+.page-content {
+  min-height: 100%;
+  width: 100%;
+}
+
+body::-webkit-scrollbar {
+  display: none !important;
 }
 </style>
