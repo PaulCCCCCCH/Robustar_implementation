@@ -42,13 +42,13 @@ export default {
     }
   },
   methods: {
-    view_prediction(dataset, imageId) {
+    view_prediction(split, imageId) {
       const success = (response) => {
         let responseData = response.data.data;
         this.predDataArr = [responseData[0], responseData[1]]
         this.predImgUrl = []
         for (let i = 0; i < 4; i++) {
-          this.predImgUrl.push(`${configs.serverUrl}/influence-images`+responseData[2][i]);
+          this.predImgUrl.push(`${configs.serverUrl}/visualize`+responseData[2][i]);
         }
         console.log(responseData);
         console.log(this.predDataArr);
@@ -58,11 +58,11 @@ export default {
         console.log(err);
         alert("Server error. Check console.");
       };
-      // console.log(dataset);
+      // console.log(split);
       // console.log(imageId);
-      // console.log(`predict/${dataset}/${imageId}`);
+      // console.log(`predict/${split}/${imageId}`);
       APIPredict(
-        dataset,
+        split,
         imageId,
         success,
         failed
