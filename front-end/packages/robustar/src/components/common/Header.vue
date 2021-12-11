@@ -39,7 +39,7 @@
         </a>
       </div> -->
     </div>
-  </v-app>
+  </v-app-bar>
 </template>
 
 <script>
