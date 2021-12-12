@@ -67,10 +67,10 @@
                 </v-list-item>
               </template>
               <v-list>
-                <v-list-item>
+                <v-list-item @click="navigateTo('/image-list/validation_correct')">
                   <v-list-item-title> Correctly Classified </v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item @click="navigateTo('/image-list/validation_incorrect')">
                   <v-list-item-title> Incorrectly Classified </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -88,10 +88,10 @@
                 </v-list-item>
               </template>
               <v-list>
-                <v-list-item>
+                <v-list-item @click="navigateTo('/image-list/test_correct')">
                   <v-list-item-title> Correctly Classified </v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item @click="navigateTo('/image-list/test_incorrect')">
                   <v-list-item-title> Incorrectly Classified </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -117,7 +117,7 @@ export default {
   },
   methods: {
     navigateTo(path) {
-      if (this.$route.path != path) {
+      if (this.$route.path != path) {       
         this.$router.push(path);
       }
     },

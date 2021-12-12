@@ -157,7 +157,7 @@ def register_route(app):
     predictBuffer = {}
 
     # 用来记录正确的分类结果和错误的分类结果
-    CorrectBuffer, MistakeBuffer = None, None
+    correctTestBuffer, incorrectTestBuffer, correctValidationBuffer, incorrectValidationBuffer = None, None, None, None
 
 
 if __name__ == "__main__":

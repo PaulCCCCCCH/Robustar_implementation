@@ -25,6 +25,7 @@ Robustar reads from the following directories (absolute path, i.e. `Robustar2` f
 
 - `/Robuster2/checkpoint_images` for pre-trained weights
 - `/Robuster2/dataset/train` for training dataset. Each subfolder under this directory should contain images for a class, i.e. it should follow the format of pytorch `ImageFolder`. Check [here](https://developpaper.com/detailed-explanation-of-the-use-of-imagefolder-in-pytorch/) for more details about `ImageFolder`
+- `/Robuster2/dataset/validation` for validation dataset
 - `/Robuster2/dataset/test` for test dataset
 - `/Robuster2/dataset/paired` for paired dataset
 - `/Robuster2/influence_images` for calculated influence images

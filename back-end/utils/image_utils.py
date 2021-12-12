@@ -1,16 +1,29 @@
-from objects.RServer import RServer
-import json
 from os.path import normpath
-from utils.path_utils import split_path
+
+from objects.RServer import RServer
 
 dataManager = RServer.getServer().dataManager
-datasetFileBuffer = dataManager.datasetFileBuffer
+
+datasetDir = dataManager.data_root
 
 trainset = dataManager.trainset
 testset = dataManager.testset
+validationset = dataManager.validationset
+
+datasetFileBuffer = dataManager.datasetFileBuffer
+
+correctTestBuffer = dataManager.correctTestBuffer
+incorrectTestBuffer = dataManager.incorrectTestBuffer
+correctValidationBuffer = dataManager.correctValidationBuffer
+incorrectValidationBuffer = dataManager.incorrectValidationBuffer
+
+test_correct_root = dataManager.test_correct_root
+test_incorrect_root = dataManager.test_incorrect_root
+validation_correct_root = dataManager.validation_correct_root
+validation_incorrect_root = dataManager.validation_incorrect_root
 
 
-def imageURLToPath(imageId):
+def imageURLToPath(image_id):
     """
     Get the real path of the image specified by its id.
 
@@ -23,62 +36,74 @@ def imageURLToPath(imageId):
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg
     """
 
-    split, indexStr = imageId.split('/')
+    split, indexStr = image_id.split('/')
     imageIndex = int(indexStr)
 
     # If already buffered, just return
-    if imageId in datasetFileBuffer:
-        return datasetFileBuffer[imageId]
+    if image_id in datasetFileBuffer:
+        return datasetFileBuffer[image_id]
 
-    filePath = None
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
     elif split == 'test':
         filePath = testset.samples[imageIndex][0]
+    elif split == 'validation_correct':
+        filePath = get_validation_correct(True, imageIndex)[0]
+    elif split == 'validation_incorrect':
+        filePath = get_validation_correct(False, imageIndex)[0]
     elif split == 'test_correct':
-        filePath = get_correct(True, imageIndex)[0]
-    elif split == 'test_mistake':
-        filePath = get_correct(False, imageIndex)[0]
+        filePath = get_test_correct(True, imageIndex)[0]
+    elif split == 'test_incorrect':
+        filePath = get_test_correct(False, imageIndex)[0]
     else:
         # data split not supported
         raise NotImplemented
 
     filePath = normpath(filePath).replace('\\', '/')
-    datasetFileBuffer[imageId] = filePath
-    return filePath 
+    datasetFileBuffer[image_id] = filePath
+
+    return filePath
 
 
-def get_correct(isCorrect, id):
+def get_test_correct(is_correct, image_index):
+    if correctTestBuffer == [] or incorrectTestBuffer == []:
+        get_classify_test_list(correctTestBuffer, incorrectTestBuffer)
 
-    dataManager = RServer.getServer().dataManager
-    CorrectBuffer = dataManager.correctBuffer
-    MistakeBuffer = dataManager.mistakeBuffer
-
-    testset = dataManager.testset
-
-    if CorrectBuffer is None or MistakeBuffer is None:
-        CorrectBuffer, MistakeBuffer = get_classify_list()
-
-    if isCorrect:
-        img_num = CorrectBuffer[id]
+    if is_correct:
+        img_num = correctTestBuffer[image_index]
     else:
-        img_num = MistakeBuffer[id]
+        img_num = incorrectTestBuffer[image_index]
 
     return testset.samples[img_num]
 
 
-# TODO: Not implemented
-# 获得正确分类和错误分类的编号
-def get_classify_list():
-    correct_list, mistake_list = [], []
-    # 读取分类结果
-    with open('classify.json', 'r') as f:
-        results = json.load(f)
-    # 处理每一条分类结果
-    for i in range(len(results)):
-        r = results[i]
-        if r[0] == r[1]:
-            correct_list.append(i)
-        else:
-            mistake_list.append(i)
-    return correct_list, mistake_list
+def get_validation_correct(is_correct, image_index):
+    if correctValidationBuffer == [] or incorrectValidationBuffer == []:
+        get_classify_validation_list(correctValidationBuffer, incorrectValidationBuffer)
+
+    if is_correct:
+        img_num = correctValidationBuffer[image_index]
+    else:
+        img_num = incorrectValidationBuffer[image_index]
+
+    return validationset.samples[img_num]
+
+
+def get_classify_test_list(correct_test_buffer, incorrect_test_buffer):
+    with open(test_correct_root, 'r') as f:
+        for line in f:
+            correct_test_buffer.append(int(line))
+
+    with open(test_incorrect_root, 'r') as f:
+        for line in f:
+            incorrect_test_buffer.append(int(line))
+
+
+def get_classify_validation_list(correct_validation_buffer, incorrect_validation_buffer):
+    with open(validation_correct_root, 'r') as f:
+        for line in f:
+            correct_validation_buffer.append(int(line))
+
+    with open(validation_incorrect_root, 'r') as f:
+        for line in f:
+            incorrect_validation_buffer.append(int(line))

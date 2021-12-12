@@ -17,8 +17,7 @@ def get_train_img(split, image_id):
 # internal use only
 @app.route('/dataset/<path:datasetImgPath>')
 def get_dataset_img(datasetImgPath):
-    datasetImgPath = datasetImgPath.replace(
-        "_mistake", "").replace("_correct", "")
+    datasetImgPath = datasetImgPath.replace("_mistake", "").replace("_correct", "")
     return send_file(osp.join('/', datasetImgPath).replace('\\', '/'))
 
 @app.route('/visualize/<path:visualizeImgPath>')
