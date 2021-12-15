@@ -1,3 +1,5 @@
+import pickle
+
 import torch
 import torchvision
 
@@ -13,7 +15,7 @@ from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
 import modules.influence_module as ptif
-
+from utils.image_utils import imageIdToPath
 
 
 def ml_initialize(configs):
@@ -75,7 +77,7 @@ def update_info(status_dict):
 
 def start_train(configs):
     """
-    Starts training on a new thread.
+    Starts training on a new thread which calls back influence calculating.
     Returns the new thread.
     TODO: Set an 'exit flag' in thread object, and check regularly during training.
           This is the most elegant way that I can think of to signal a stop from the front end.
@@ -111,11 +113,12 @@ def start_train(configs):
         t.start()
 
         # os.system('tensorboard --logdir={} &'.format(logdir))
-
         # Start training on a new thread
         # train_thread = threading.Thread(target=trainer.start_train, args=(
         #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         # train_thread.start()
+
+        # Start training on a new thread which calls back influence calculating
         train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'), calculate_influence)
         train_thread.start()
 
@@ -126,8 +129,19 @@ def start_train(configs):
     return train_thread
 
 def calculate_influence(model):
+    """
+    Calculate the influence function for the model.
+
+    args:
+        model:  The trained model
+    """
+
     TRAIN_DATA_PATH = '/Robustar2/dataset/test'
     TEST_DATA_PATH = '/Robustar2/dataset/train'
+    INFLUENCES_SAVE_PATH = '/Robustar2/influence_images/influences.pkl'
+
+
+    influences = {}
 
     transform = transforms.Compose(
         [transforms.ToTensor(),
@@ -145,47 +159,43 @@ def calculate_influence(model):
     config['recursion_depth'] = len(trainset);
     config['r_averaging'] = 1;
     ptif.init_logging('logfile.log')
+
+    # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
+    #   e.g.    {
+    #               "0": {
+    #                       "523": 254.1763153076172,
+    #                       "719": 221.39866638183594,
+    #                       "667": 216.841064453125,
+    #                       "653": 214.35723876953125
+    #                      },
+    #               "1":{...},
+    #               ...
+    #           }
+
     max_influence_dicts = ptif.calc_img_wise(config, model, trainloader, testloader)
-    # max_influence_dicts = {
-    #     "0": {
-    #         "523": 254.1763153076172,
-    #         "719": 221.39866638183594,
-    #         "667": 216.841064453125,
-    #         "653": 214.35723876953125
-    #     }
-    # }
 
-    toPIL = transforms.ToPILImage()
+    for i in range(len(testset)):
+        train_img_paths = []
 
-    INFLUENCE_IMAGES_PATH = '/Robustar2/influence_images'
+        testId = "test/" + i
+        test_img_path = imageIdToPath(testId)
 
-    # for i in range(len(trainset)):
-    for i in range(1):
         max_influence_dict = max_influence_dicts[str(i)]
-        str_count_list = max_influence_dict.keys()
-        count_list = list(map(int, str_count_list))
+        trainIds = list(max_influence_dict.keys())
 
-        base_img_name = str(i)
+        for j in range(4):
+            trainId = "train/" + trainIds[i]
+            train_img_path = imageIdToPath(trainId)
+            train_img_paths.append(train_img_path)
 
-        count = 0
-        for image, label in trainloader:
-            if (count in count_list):
-                img_name_suffix = str(count_list.index(count))
-                img_name = base_img_name + '_' + img_name_suffix + '.jpg'
+        influences[test_img_path] = train_img_paths
 
-                save_path = os.path.join(INFLUENCE_IMAGES_PATH, img_name)
-
-                img = toPIL(image[0])
-                img.save(save_path)
-
-            count = count + 1
-
-
+    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
+        pickle.dump(influences, influence_file)
 
 class TrainThread(threading.Thread):
 
     def __init__(self, trainer, args, callback):
-        print("init")
         super(TrainThread, self).__init__()
         self.trainer = trainer
         self.args = args
@@ -195,7 +205,3 @@ class TrainThread(threading.Thread):
         call_back, epochs, auto_save = self.args
         self.trainer.start_train(call_back, epochs, auto_save)
         calculate_influence(self.trainer.net)
-
-if __name__ == "__main__":
-    model = torchvision.models.resnet18(pretrained=True).to('cpu')
-    calculate_influence(model)
