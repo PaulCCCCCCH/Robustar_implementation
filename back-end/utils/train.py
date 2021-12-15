@@ -15,7 +15,6 @@ from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
 import modules.influence_module as ptif
-from utils.image_utils import imageIdToPath
 
 
 def ml_initialize(configs):
@@ -136,27 +135,19 @@ def calculate_influence(model):
         model:  The trained model
     """
 
-    TRAIN_DATA_PATH = '/Robustar2/dataset/test'
-    TEST_DATA_PATH = '/Robustar2/dataset/train'
     INFLUENCES_SAVE_PATH = '/Robustar2/influence_images/influences.pkl'
 
 
     influences = {}
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    trainset = torchvision.datasets.ImageFolder(root=TRAIN_DATA_PATH, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1,shuffle=True, num_workers=2)
-
-    testset = torchvision.datasets.ImageFolder(root=TEST_DATA_PATH, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=2)
+    trainloader = model.trainloader
+    testloader = model.testloader
 
     config = ptif.get_default_config()
     config['gpu'] = -1;
     config['test_sample_num'] = 0;
-    config['recursion_depth'] = len(trainset);
+    config['recursion_depth'] = len(trainloader.dataset);
     config['r_averaging'] = 1;
     ptif.init_logging('logfile.log')
 
@@ -174,7 +165,9 @@ def calculate_influence(model):
 
     max_influence_dicts = ptif.calc_img_wise(config, model, trainloader, testloader)
 
-    for i in range(len(testset)):
+    from utils.image_utils import imageIdToPath
+
+    for i in range(len(testloader.dataset)):
         train_img_paths = []
 
         testId = "test/" + i
