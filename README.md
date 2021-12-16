@@ -18,3 +18,8 @@ You need to pass a config file (default `./configs.json`) to `robustar.sh`. It i
 ## Dev setup 
 
 See [backend doc](./back-end/README.md) and [frontend doc](./front-end/README.md) for more details
+
+
+## Notes
+### Image URL
+For any dataset provided by the user, an `image_url` uniquely identifies an image. An `image_url` looks like `<split>/<image_id>`, i.e. it consists of a string `split` and ae natural number `image_id`, concatenated with a slash `/`. For example, `train/102` stands for the 102th image in the training set, and visiting `http://localhost:8000/image/train/102` gives you the image. Translation between `image_url` and its absolute path is performed at the backend.

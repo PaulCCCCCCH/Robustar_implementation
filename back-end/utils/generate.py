@@ -112,6 +112,7 @@ def dictLooseGetKey(_dict, key):
     return None
 
 if __name__ == "__main__":
+    # Test
     with open('user-edit.json') as f:
         obj = json.load(f)
     data = get_image_data(obj['/train/1'], 224)

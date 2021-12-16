@@ -570,6 +570,9 @@ class Graphics {
     }
     this.imageName = name;
     this.canvasImage = canvasImage;
+    const { width, height } = this.getCanvasSize();
+    localStorage.setItem('image_width', width);
+    localStorage.setItem('image_height', height);
   }
 
   /**

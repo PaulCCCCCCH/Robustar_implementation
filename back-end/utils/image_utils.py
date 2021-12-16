@@ -10,7 +10,7 @@ trainset = dataManager.trainset
 testset = dataManager.testset
 
 
-def imageIdToPath(imageId):
+def imageURLToPath(imageId):
     """
     Get the real path of the image specified by its id.
 

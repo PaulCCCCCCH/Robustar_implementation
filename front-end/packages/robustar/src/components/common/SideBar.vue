@@ -116,33 +116,18 @@ export default {
   data() {
     return {
       drawer: true,
-      mini: 'false',
+      is_mini_side_bar: false,
     };
   },
-  props: {
-    f_mini: Boolean,
-    f_mini_return: Boolean,
-  },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
     navigateTo(path) {
       if (this.$route.path != path) {
         this.$router.push(path);
       }
     },
     changewindow() {
-      if (this.f_mini_return != this.mini) {
-        this.$emit('updatewindow', this.f_mini_return);
-      } else {
-        this.$emit('updatewindow', !this.f_mini_return);
-      }
-      console.log('min', this.mini);
-      console.log('min-re', this.f_mini_return);
+      this.is_mini_side_bar = !this.is_mini_side_bar;
+      this.$emit('updatewindow', this.is_mini_side_bar);
     },
   },
   created() {

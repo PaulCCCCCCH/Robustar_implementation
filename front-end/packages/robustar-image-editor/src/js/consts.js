@@ -331,8 +331,8 @@ export const defaultRotateRangeValues = {
 
 export const defaultDrawRangeValues = {
   min: 5,
-  max: 30,
-  value: 12,
+  max: 300,
+  value: 50,
 };
 
 export const defaultShapeStrokeValues = {

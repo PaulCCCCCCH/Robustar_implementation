@@ -8,7 +8,7 @@ import * as common from './common';
  * @param {function} fail fail callback function
  */
 const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
-  common.getRequest(`${dataset}/${startFrom}`, success, failed);
+  common.getRequest(`/${dataset}/${startFrom}`, success, failed);
 };
 
 /**
@@ -17,7 +17,7 @@ const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
  * @param {int} imageId the id of the image to retrieve
  */
 const APIGetImage = (dataset, imageId, success, failed) => {
-  common.getRequest(`${dataset}/${imageId}`, success, failed);
+  common.getRequest(`/${dataset}/${imageId}`, success, failed);
 };
 
 export { APIGetImagesInPage, APIGetImage };

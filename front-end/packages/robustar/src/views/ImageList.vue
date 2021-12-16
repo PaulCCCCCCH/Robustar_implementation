@@ -129,7 +129,7 @@ export default {
           const idx = imageCoord2Idx(row, col);
           const imgid = imagePageIdx2Id(this.currentPage, idx);
           // TODO: '/train/' should be a component prop, not hard-coded
-          line.push(`${configs.serverUrl}/${this.$route.params.phase}/${imgid}`);
+          line.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
         }
         this.imageMatrix.push(line);
       }

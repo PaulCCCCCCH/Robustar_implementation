@@ -43,13 +43,17 @@ export default {
     };
   },
   methods: {
-    updatewindow: function (f_mini_return) {
-      if (f_mini_return == true) {
-        document.getElementById('page-content').style.width = screen.width - 256 + 'px';
-      } else {
-        document.getElementById('page-content').style.width = screen.width - 56 + 'px';
+    updatewindow: function (is_mini_side_bar) {
+      const page_content = document.getElementById('page-content');
+      if (!page_content) {
+        return;
       }
-      console.log('123', f_mini_return);
+
+      if (is_mini_side_bar) {
+        page_content.style.width = screen.width - 56 + 'px';
+      } else {
+        page_content.style.width = screen.width - 256 + 'px';
+      }
     },
     toggleFullscreen() {
       if (!document.fullscreenElement) {
@@ -61,9 +65,6 @@ export default {
       }
       this.isFullscreen = !this.isFullscreen;
     },
-  },
-  mounted() {
-    // this.updatewindow(true);
   },
 };
 </script>
