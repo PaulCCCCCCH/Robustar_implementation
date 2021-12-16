@@ -28,11 +28,11 @@ class RDataManager:
         self.paired_root = osp.join(datasetDir, 'paired')
         self.visualize_root = osp.join(baseDir, 'visualize_images')
         self.influence_root = osp.join(baseDir, 'influence_images')
-        self.init_folders()
-
+        
         self.testset = torchvision.datasets.ImageFolder(self.test_root)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root)
 
+        self.init_folders()
 
         self.datasetFileBuffer = {}
         self.predictBuffer = {}
