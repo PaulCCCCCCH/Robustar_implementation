@@ -1,5 +1,6 @@
-from os.path import normpath as ospn
+from os.path import normpath
 import re
+
 
 def split_path(path):
     """
@@ -15,17 +16,17 @@ def split_path(path):
         filename
     """
 
-    path_split = ospn(path).split('/')
+    path_split = normpath(path).replace('\\', '/').split('/')
 
     # Only one segment in the path, e.g. 'folder'
     if len(path_split) == 1:
         return None, path_split[0]
 
-
     # Otherwise, split 'path/to/file/filename.py' to 'path/to/file' and 'filename.py'
     folder_path = '/'.join(path_split[:-1])
     filename = path_split[-1]
     return folder_path, filename
+
 
 def replace_folder(path, new_folder):
     """
@@ -40,7 +41,7 @@ def replace_folder(path, new_folder):
         new folder path
     """
 
-    dirs = ospn(path).split('/')
+    dirs = normpath(path).replace('\\', '/').split('/')
     dirs[-1] = new_folder
     return '/'.join(dirs)
 
@@ -65,12 +66,11 @@ def get_paired_path(img_path, prev_root, paired_root):
 
 if __name__ == '__main__':
     assert replace_folder('/Robustar2/dataset/train', 'paired') == '/Robustar2/dataset/paired'
-    assert get_paired_path('/Robustar2/dataset/train/1/2134.jpg', 
-    '/Robustar2/dataset/train', 
-    '/Robustar2/dataset/paired'
-    ) == '/Robustar2/dataset/paired/1/2134.jpg'
+    assert get_paired_path('/Robustar2/dataset/train/1/2134.jpg',
+                           '/Robustar2/dataset/train',
+                           '/Robustar2/dataset/paired'
+                           ) == '/Robustar2/dataset/paired/1/2134.jpg'
 
     print(split_path('/Robustar2/dataset/train/0/2134.jpg'))
     assert split_path('/Robustar2/dataset/train/0/2134.jpg') == ('/Robustar2/dataset/train/0', '2134.jpg')
     print('passed')
-

@@ -2,18 +2,17 @@ from numpy.lib.polynomial import roots
 import torchvision
 from matplotlib import pyplot as plt
 
-from modules.visualize_module.visualize.test_visualize import visualize
+from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import jsonify
 from utils.image_utils import imageURLToPath
-from os import path as osp
+import os.path as osp
 from utils.predict import convert_predict_to_array
 from utils.image_utils import imageURLToPath
 import json
 from utils.predict import get_image_prediction
-from visualize import visual
 
 app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
@@ -48,7 +47,7 @@ def predict(split, image_id):
         datasetImgPath = imageURLToPath(imageURL)
 
         # try:
-        imgPath = osp.join(server.baseDir, datasetImgPath)
+        imgPath = osp.join(server.baseDir, datasetImgPath).replace('\\', '/')
 
         # TODO: 32 should not be hardcoded!
         output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
@@ -115,7 +114,7 @@ def get_correct_list(type):
         
         datasetPath = RServer.getServer().datasetPath
 
-        path = osp.join(datasetPath, 'type', path)
+        path = osp.join(datasetPath, 'type', path).replace('\\', '/')
         print(path)
         result[i] = getPredict(app.model.net, path, 224)
         i += 1

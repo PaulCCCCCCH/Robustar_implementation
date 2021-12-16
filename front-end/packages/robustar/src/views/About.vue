@@ -50,9 +50,9 @@ export default {
         for (let i = 0; i < 4; i++) {
           this.predImgUrl.push(`${configs.serverUrl}/visualize`+responseData[2][i]);
         }
-        console.log(responseData);
-        console.log(this.predDataArr);
-        console.log(this.predImgUrl);
+        // console.log(responseData);
+        // console.log(this.predDataArr);
+        // console.log(this.predImgUrl);
       };
       const failed = (err) => {
         console.log(err);
