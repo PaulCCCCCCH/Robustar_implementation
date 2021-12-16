@@ -28,7 +28,6 @@ class RDataManager:
         self.validation_root = osp.join(datasetDir, 'validation').replace('\\', '/')
         self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
-        self.init_folders()
 
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
@@ -38,6 +37,7 @@ class RDataManager:
         self.testset = torchvision.datasets.ImageFolder(self.test_root)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root)
         self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+        self.init_folders()
 
         self.datasetFileBuffer = {}
         self.predictBuffer = {}

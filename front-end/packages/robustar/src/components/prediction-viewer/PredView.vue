@@ -39,20 +39,32 @@
         }"
       >
         <ul>
-          <li v-for="(item, index) in dataArr[1]" :key=index>
+          <li v-for="(item, index) in dataArr[1]" :key="index">
             <div
-              :style="{height:defaultConfig.figHeight/(arrLength+3)+'px',
-                      fontSize:defaultConfig.figHeight/(arrLength+3)*0.65+'px',
-                      transform:'translateX('+(-maxNegative*defaultConfig.figWidth/(maxNegative-maxPositive)-defaultConfig.figWidth*0.05)+'px) translateX(-100%)'}"
-            > {{dataArr[0][index]}} </div>
+              :style="{
+                height: defaultConfig.figHeight / (arrLength + 3) + 'px',
+                fontSize: (defaultConfig.figHeight / (arrLength + 3)) * 0.65 + 'px',
+                transform:
+                  'translateX(' +
+                  ((-maxNegative * defaultConfig.figWidth) / (maxNegative - maxPositive) -
+                    defaultConfig.figWidth * 0.05) +
+                  'px) translateX(-100%)',
+              }"
+            >
+              {{ dataArr[0][index] }}
+            </div>
             <div
               class="box"
               :title="item"
-              :class="item>=0?'box-pos':'box-neg'"
-              :style="{width:item>=0?item*defaultConfig.figWidth/(maxPositive-maxNegative)+'px'
-                                      :item*(-1)*defaultConfig.figWidth/(maxPositive-maxNegative)+'px',
-                      background:(item>=0)?defaultConfig.posColor:defaultConfig.negColor,
-                      height:defaultConfig.figHeight/(arrLength+3)+'px'}"
+              :class="item >= 0 ? 'box-pos' : 'box-neg'"
+              :style="{
+                width:
+                  item >= 0
+                    ? (item * defaultConfig.figWidth) / (maxPositive - maxNegative) + 'px'
+                    : (item * -1 * defaultConfig.figWidth) / (maxPositive - maxNegative) + 'px',
+                background: item >= 0 ? defaultConfig.posColor : defaultConfig.negColor,
+                height: defaultConfig.figHeight / (arrLength + 3) + 'px',
+              }"
             />
           </li>
         </ul>
@@ -85,7 +97,10 @@ export default {
   props: {
     dataArr: {
       type: Array,
-      default: () => [["bird", "cat", "crab", "dog", "fish", "frog", "insect", "primate", "turtle"], [0, 0, 0, 0.7, 0, 0, 0, 0, 0.3]]
+      default: () => [
+        ['bird', 'cat', 'crab', 'dog', 'fish', 'frog', 'insect', 'primate', 'turtle'],
+        [0, 0, 0, 0.7, 0, 0, 0, 0, 0.3],
+      ],
     },
     config: {
       type: Object,
@@ -123,16 +138,17 @@ export default {
   },
   created() {
     this.arrLength = this.dataArr[0].length;
-    setTimeout(function() {
-      if (this.defaultConfig.dataRange != null) {
-        this.maxNegative = this.defaultConfig.dataRange[0];
-        this.maxPositive = this.defaultConfig.dataRange[1];
-      } else {
-        for (var i = 0; i < this.arrLength; i++) {
-          if (this.dataArr[1][i]>this.maxPositive) this.maxPositive = this.dataArr[1][i];
-          if (this.dataArr[1][i]<this.maxNegative) this.maxNegative = this.dataArr[1][i];
+    setTimeout(
+      function () {
+        if (this.defaultConfig.dataRange != null) {
+          this.maxNegative = this.defaultConfig.dataRange[0];
+          this.maxPositive = this.defaultConfig.dataRange[1];
+        } else {
+          for (var i = 0; i < this.arrLength; i++) {
+            if (this.dataArr[1][i] > this.maxPositive) this.maxPositive = this.dataArr[1][i];
+            if (this.dataArr[1][i] < this.maxNegative) this.maxNegative = this.dataArr[1][i];
+          }
         }
-      }
       }.bind(this),
       0
     );

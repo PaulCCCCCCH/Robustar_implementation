@@ -117,6 +117,7 @@ export default {
     return {
       drawer: true,
       is_mini_side_bar: false,
+      mini: false,
     };
   },
   methods: {

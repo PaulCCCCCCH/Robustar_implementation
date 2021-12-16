@@ -1,4 +1,4 @@
-import * as common from './common'
+import * as common from './common';
 
 // TODO: the path should not be hard-coded
 /**
@@ -6,7 +6,7 @@ import * as common from './common'
  * @param {function} fail fail callback function
  */
 const APIPredict = (split, imageId, success, failed) => {
-    common.getRequest(`/predict/${split}/${imageId}`, success, failed)
-}
+  common.getRequest(`/predict/${split}/${imageId}`, success, failed);
+};
 
-export { APIPredict }
+export { APIPredict };

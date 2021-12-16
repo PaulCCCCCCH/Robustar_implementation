@@ -12,7 +12,7 @@ const APISendEdit = (split, image_id, image_height, image_width, image_base64, s
   const data = {
     image: image_base64,
     image_height,
-    image_width
+    image_width,
   };
   common.postRequest(data, `/edit/${split}/${image_id}`, success, failed);
 };

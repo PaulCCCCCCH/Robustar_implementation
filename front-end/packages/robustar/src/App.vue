@@ -18,9 +18,7 @@
     <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
 
     <v-main class="page-content">
-      <keep-alive>
-        <router-view />
-      </keep-alive>
+      <router-view />
     </v-main>
   </v-app>
 </template>
