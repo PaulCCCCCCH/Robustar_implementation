@@ -3,6 +3,5 @@
     "noEmit": true,
     "noImplicitAny": false
   },
-  "include": [
-    "../../index.d.ts", "./type-tests.ts"]
+  "include": ["../../index.d.ts", "./type-tests.ts"]
 }

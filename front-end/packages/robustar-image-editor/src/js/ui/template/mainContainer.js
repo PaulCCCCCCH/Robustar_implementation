@@ -6,6 +6,7 @@ export default ({
   loadButtonStyle,
   downloadButtonStyle,
   submenuStyle,
+  replaceDownload,
 }) => `
     <div class="tui-image-editor-main-container" style="${commonStyle}">
         <div class="tui-image-editor-header" style="${headerStyle}">
@@ -13,12 +14,25 @@ export default ({
                 <img src="${biImage}" />
             </div>
             <div class="tui-image-editor-header-buttons">
-                <div style="${loadButtonStyle}">
+                <div ${replaceDownload ? 'hidden' : ''}
+                style="${loadButtonStyle}">
                     ${locale.localize('Load')}
                     <input type="file" class="tui-image-editor-load-btn" />
                 </div>
-                <button class="tui-image-editor-download-btn" style="${downloadButtonStyle}">
+                <button class="tui-image-editor-download-btn" 
+                ${replaceDownload ? 'hidden' : ''} 
+                style="${downloadButtonStyle}">
                     ${locale.localize('Download')}
+                </button>
+                <button class="tui-image-editor-adjust-size-btn"
+                ${replaceDownload ? '' : 'hidden'} 
+                style="${loadButtonStyle}">
+                    ${locale.localize('Adjust Size')}
+                </button>
+                <button class="tui-image-editor-send-edit-btn"
+                ${replaceDownload ? '' : 'hidden'} 
+                style="${downloadButtonStyle}">
+                    ${locale.localize('Send Edit')}
                 </button>
             </div>
         </div>

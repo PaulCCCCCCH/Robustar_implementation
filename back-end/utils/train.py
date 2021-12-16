@@ -186,6 +186,7 @@ def calculate_influence(model):
     with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
         pickle.dump(influences, influence_file)
 
+
 class TrainThread(threading.Thread):
 
     def __init__(self, trainer, args, callback):

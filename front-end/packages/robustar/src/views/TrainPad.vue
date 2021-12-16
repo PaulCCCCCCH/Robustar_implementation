@@ -15,11 +15,9 @@
           true-value="yes"
           false-value="no"
         />
-        <label class="custom-control-label" for="shuffle-trainset"
-          >shuffle the trainset</label
-        >
+        <label class="custom-control-label" for="shuffle-trainset">shuffle the trainset</label>
 
-        <br>
+        <br />
         <!-- Save model -->
         <input
           type="checkbox"
@@ -30,9 +28,7 @@
           true-value="yes"
           false-value="no"
         />
-        <label class="custom-control-label" for="epoch-save"
-          >save the model per epoch</label
-        >
+        <label class="custom-control-label" for="epoch-save">save the model per epoch</label>
 
         <!-- Save path -->
         <div class="form-group">
@@ -140,9 +136,7 @@
             true-value="yes"
             false-value="no"
           />
-          <label class="custom-control-label" for="use-pretrained"
-            >Use paired training</label
-          >
+          <label class="custom-control-label" for="use-pretrained">Use paired training</label>
         </div>
 
         <!-- Options for paired training only -->
@@ -171,11 +165,7 @@
               aria-describedby="fullNameHelp"
               placeholder="Enter a value"
             >
-              <option
-                v-for="method in mixture_methods"
-                :value="method"
-                :key="method"
-              >
+              <option v-for="method in mixture_methods" :value="method" :key="method">
                 {{ method }}
               </option>
             </select>
@@ -191,9 +181,8 @@
               value="1e-4"
             />
             <small class="form-text text-muted">
-              The constant weight for the loss term calculated with paired
-              training data. Increasing the value will result in a stronger
-              regularization effect.
+              The constant weight for the loss term calculated with paired training data. Increasing
+              the value will result in a stronger regularization effect.
             </small>
           </div>
         </div>
@@ -209,65 +198,58 @@
   </div>
 </template>
 
-  <script>
-import { APIStartTrain } from "@/apis/train";
-import { APIGeneratePairedDataset } from "@/apis/generate";
+<script>
+import { APIStartTrain } from '@/apis/train';
 export default {
-  name: "TrainPad",
+  name: 'TrainPad',
   data() {
     return {
       model_options: [
-        "resnet-18-32x32",
-        "resnet-18",
-        "resnet-34",
-        "resnet-50",
-        "resnet-101",
-        "resnet-152",
-        "mobilenet-v2",
+        'resnet-18-32x32',
+        'resnet-18',
+        'resnet-34',
+        'resnet-50',
+        'resnet-101',
+        'resnet-152',
+        'mobilenet-v2',
       ],
       mixture_methods: [
-        "pure_black",
-        "noise",
-        "noise_weak",
-        "noise_minor",
-        "random_pure",
-        "hstrips",
-        "vstrips",
-        "mixture",
+        'pure_black',
+        'noise',
+        'noise_weak',
+        'noise_minor',
+        'random_pure',
+        'hstrips',
+        'vstrips',
+        'mixture',
       ],
 
       // Training configs
       configs: {
-        model: "resnet-18-32x32",
+        model: 'resnet-18-32x32',
         // weight: "/Robustar2/checkpoint_images",
-        weight: "",
-        train_path: "/Robustar2/dataset/train",
-        test_path: "/Robustar2/dataset/test",
-        class_path: "./model/cifar-class.txt",
-        port: "8000",
-        save_dir: "/Robustar2/checkpoints",
-        use_paired_train: "false",
-        mixture: "random_pure",
+        weight: '',
+        train_path: '/Robustar2/dataset/train',
+        test_path: '/Robustar2/dataset/test',
+        class_path: './model/cifar-class.txt',
+        port: '8000',
+        save_dir: '/Robustar2/checkpoints',
+        use_paired_train: 'false',
+        mixture: 'random_pure',
 
         // Selection for the following not implemented
-        paired_data_path: "/Robustar2/dataset/paired",
-        device: "cuda",
-        auto_save_model: "yes",
-        batch_size: "128",
-        shuffle: "yes",
+        paired_data_path: '/Robustar2/dataset/paired',
+        device: 'cuda',
+        auto_save_model: 'yes',
+        batch_size: '128',
+        shuffle: 'yes',
         learn_rate: 0.1,
-        pgd: "no PGD",
+        pgd: 'no PGD',
         paired_train_reg_coeff: 0.001,
         image_size: 32,
         epoch: 20,
         thread: 8,
-        pretrain: "no",
-      },
-
-      // Data generation configs
-      generate_configs: {
-        mirrored_data_path: "/Robustar2/dataset/train",
-        user_edit_path: "/Robustar2/user-edit.json",
+        pretrain: 'no',
       },
     };
   },
@@ -279,35 +261,17 @@ export default {
       const success = (response) => {
         // TODO: Error handling according to the code returned from the server
         console.log(response);
-        window.location.replace("http://localhost:6006");
+        window.location.replace('http://localhost:6006');
       };
       const failed = (err) => {
         console.log(err);
-        alert("Server error. Check console.");
+        alert('Server error. Check console.');
       };
       APIStartTrain(
         {
           configs: this.configs,
-          info: "placeholder",
+          info: 'placeholder',
         },
-        success,
-        failed
-      );
-    },
-    generate_paired_data() {
-      const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
-        console.log(response);
-        alert(response.data.msg);
-      };
-
-      const failed = (err) => {
-        console.log(err);
-        alert("Server error. Check console.");
-      };
-      APIGeneratePairedDataset(
-        this.generate_configs.mirrored_data_path,
-        this.generate_configs.user_edit_path,
         success,
         failed
       );
@@ -360,7 +324,7 @@ body {
 }
 
 .gutters-sm > .col,
-.gutters-sm > [class*="col-"] {
+.gutters-sm > [class*='col-'] {
   padding-right: 8px;
   padding-left: 8px;
 }

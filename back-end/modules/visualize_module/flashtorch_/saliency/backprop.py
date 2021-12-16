@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 
-
 from ..utils import (denormalize,
-                    format_for_plotting,
-                    standardize_and_clip)
+                     format_for_plotting,
+                     standardize_and_clip)
+
 
 class Backprop:
     """Provides an interface to perform backpropagation.
@@ -131,8 +131,8 @@ class Backprop:
         return gradients
 
     def visualize(self, input_, target_class, guided=False, use_gpu=False,
-                  figsize=(16, 4), cmap='viridis', alpha=.5,
-                  return_output=False,return_image=False):
+                  figsize=(4, 4), cmap='viridis', alpha=.5,
+                  return_output=False, return_image=False):
         """Calculates gradients and visualizes the output.
 
         A method that combines the backprop operation and visualization.
@@ -181,12 +181,12 @@ class Backprop:
              [(format_for_plotting(denormalize(input_)), None, None)]),
             ('Gradients across RGB channels',
              [(format_for_plotting(standardize_and_clip(gradients)),
-              None,
-              None)]),
+               None,
+               None)]),
             ('Max gradients',
              [(format_for_plotting(standardize_and_clip(max_gradients)),
-              cmap,
-              None)]),
+               cmap,
+               None)]),
             ('Overlay',
              [(format_for_plotting(denormalize(input_)), None, None),
               (format_for_plotting(standardize_and_clip(gradients)),
@@ -194,22 +194,23 @@ class Backprop:
                alpha)])
         ]
 
-        fig = plt.figure(figsize=figsize)
-
-        allImage=[]
+        allImage = []
 
         for i, (title, images) in enumerate(subplots):
-            ax = fig.add_subplot(1, len(subplots), i + 1)
+            fig = plt.figure(figsize=figsize)
+            ax = fig.add_subplot(1, 1, 1)
             ax.set_axis_off()
             ax.set_title(title)
 
             for image, cmap, alpha in images:
-                allImage.append(image)
                 ax.imshow(image, cmap=cmap, alpha=alpha)
+
+            allImage.append(fig)
+            plt.close()
 
         if return_output:
             return gradients, max_gradients
-        
+
         if return_image:
             return allImage
 

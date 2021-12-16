@@ -5,7 +5,7 @@ import templateHtml from '@/ui/template/submenu/draw';
 import { assignmentForDestroy, getRgb } from '@/util';
 import { defaultDrawRangeValues, eventNames, selectorNames } from '@/consts';
 
-const DRAW_OPACITY = 0.7;
+const DRAW_OPACITY = 1;
 
 /**
  * Draw ui class
@@ -26,7 +26,7 @@ class Draw extends Submenu {
     this._els = {
       lineSelectButton: this.selector('.tie-draw-line-select-button'),
       drawColorPicker: new Colorpicker(this.selector('.tie-draw-color'), {
-        defaultColor: '#00a9ff',
+        defaultColor: '#ffffff',
         toggleDirection: this.toggleDirection,
         usageStatistics: this.usageStatistics,
       }),

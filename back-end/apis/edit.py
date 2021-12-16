@@ -1,26 +1,41 @@
 from objects.RServer import RServer
-import json
+from objects.RResponse import RResponse
 from flask import request
-import os
+from io import BytesIO
+import numpy as np
+from PIL import Image
+import base64
+from utils.image_utils import imageURLToPath
+from utils.path_utils import get_paired_path
 
-app = RServer.getServer().getFlaskApp()
+server = RServer.getServer()
+app = server.getFlaskApp()
+dataManager = server.getDataManager()
 
-@app.route('/edit', methods=['POST'])
-def user_edit():
-    if 'src' in request.form and 'content' in request.form:
-        src = request.form.get("src")
-        content = request.form.get("content")
+@app.route('/edit/<split>/<image_id>', methods=['POST'])
+def user_edit(split, image_id):
+    json_data = request.get_json()
+    encoded_string = json_data['image'].split(',')[1]
+    decoded = base64.b64decode(encoded_string)
 
-        data = {}
-        file_path = 'user-edit.json'
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-        data[src] = content
+    h = int(json_data['image_height'])
+    w = int(json_data['image_width'])
+    with Image.open(BytesIO(decoded)) as img:
+        
+        img_path = imageURLToPath('{}/{}'.format(split, image_id))
 
-        with open(file_path, 'w') as f:
-            json.dump(data, f)
+        # TODO: Maybe support editing other splits as well? Or not?
+        if split != 'train':
+            raise NotImplemented('Currently we only support editing the `train` split!')
+        paired_img_path = get_paired_path(img_path, dataManager.train_root, dataManager.paired_root)
 
-        return "success"
-    return 'invalid image content'
+        to_save = img.resize((w, h))
+        to_save = to_save.convert('RGB') # image comming from canvas is RGBA
 
+        to_save.save(paired_img_path)
+
+    return RResponse.ok("Success!")
+
+
+if __name__ == '__main__':
+    print(RServer)

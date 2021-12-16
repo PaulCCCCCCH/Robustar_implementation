@@ -88,7 +88,9 @@ export default {
           this.loadImageFromURL(imagePath, imageName).then((sizeValue) => {
             exitCropOnAction();
             this.ui.initializeImgUrl = imagePath;
-            this.ui.resizeEditor({ imageSize: sizeValue });
+            this.ui.resizeEditor({
+              imageSize: sizeValue,
+            });
             this.clearUndoStack();
             this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
           }),
@@ -111,7 +113,9 @@ export default {
           this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
             exitCropOnAction();
             initFilterState();
-            this.ui.resizeEditor({ imageSize: sizeValue });
+            this.ui.resizeEditor({
+              imageSize: sizeValue,
+            });
             this.clearUndoStack();
             this._initHistory();
           });
@@ -140,7 +144,9 @@ export default {
               initFilterState();
               this.clearUndoStack();
               this.ui.activeMenuEvent();
-              this.ui.resizeEditor({ imageSize: sizeValue });
+              this.ui.resizeEditor({
+                imageSize: sizeValue,
+              });
               this._clearHistory();
               this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
             })
@@ -162,6 +168,18 @@ export default {
             w = window.open();
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
+        },
+        sendEdit: (apiSendEdit) => {
+          if (apiSendEdit && typeof apiSendEdit === 'function') {
+            const dataURL = this.toDataURL();
+            apiSendEdit(dataURL);
+          }
+        },
+        adjustSize: () => {
+          this.resize({
+            width: 500,
+            height: 500,
+          });
         },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
@@ -619,7 +637,14 @@ export default {
 
         this.addText('Double Click', {
           position: pos.originPosition,
-          styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+          styles: {
+            fill,
+            fontSize,
+            fontFamily,
+            fontStyle,
+            fontWeight,
+            underline,
+          },
         }).then(() => {
           this.changeCursor('default');
         });

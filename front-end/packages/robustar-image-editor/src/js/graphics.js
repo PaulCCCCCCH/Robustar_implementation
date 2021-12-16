@@ -377,7 +377,9 @@ class Graphics {
   getActiveSelectionFromObjects(objects) {
     const canvas = this.getCanvas();
 
-    return new fabric.ActiveSelection(objects, { canvas });
+    return new fabric.ActiveSelection(objects, {
+      canvas,
+    });
   }
 
   /**
@@ -462,7 +464,13 @@ class Graphics {
   zoom({ x, y }, zoomLevel) {
     const zoom = this.getComponent(components.ZOOM);
 
-    zoom.zoom({ x, y }, zoomLevel);
+    zoom.zoom(
+      {
+        x,
+        y,
+      },
+      zoomLevel
+    );
   }
 
   /**
@@ -562,6 +570,9 @@ class Graphics {
     }
     this.imageName = name;
     this.canvasImage = canvasImage;
+    const { width, height } = this.getCanvasSize();
+    localStorage.setItem('image_width', width);
+    localStorage.setItem('image_height', height);
   }
 
   /**
