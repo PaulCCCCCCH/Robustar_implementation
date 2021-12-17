@@ -26,7 +26,6 @@ class RServer:
         self.baseDir = baseDir
         self.datasetPath = datasetDir
         self.app = app
-        self.dataManager = RDataManager(baseDir, datasetDir)
         self.configs = configs
         self.modelWrapper = None
 
@@ -48,6 +47,10 @@ class RServer:
     @staticmethod
     def getDataManager():
         return RServer.serverInstance.dataManager
+
+    @staticmethod
+    def setDataManager(dataManager):
+        RServer.serverInstance.dataManager = dataManager
 
     @staticmethod
     def getServerConfigs():

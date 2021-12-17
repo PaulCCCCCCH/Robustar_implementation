@@ -6,7 +6,8 @@ import os
 class RModelWrapper:
     # model=Model("resnet-18-32x32",'./model/weight/resnet18_cifar_model.pth','cpu')
     def __init__(self, network_type, net_path, device, pretrained):
-        self.device = torch.device(device)
+        # self.device = torch.device(device)
+        self.device = device # We keep device as string to allow for easy comparison
         self.init_model(network_type, pretrained == pretrained)
         self.modelwork_type = network_type
         if(net_path != ""):
