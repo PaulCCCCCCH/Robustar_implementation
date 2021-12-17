@@ -31,7 +31,7 @@
           <!-- Module 2: Annotate -->
           <v-list-item @click="navigateTo('/edit')">
             <v-list-item-icon>
-              <v-icon class="side-bar-level1-icon">mdi-bookmark</v-icon>
+              <v-icon class="side-bar-level1-icon">mdi-draw</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               <div class="side-bar-level1-title">
@@ -40,7 +40,20 @@
             </v-list-item-title>
           </v-list-item>
 
-          <!-- Module 3: Inspect data -->
+          <!-- Module 3: Influence-->
+          <v-list-item @click="navigateTo('/influence-pad')">
+            <v-list-item-icon>
+              <v-icon class="side-bar-level1-icon">mdi-vector-link</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              <div class="side-bar-level1-title">
+                <span>Influence</span>
+              </div>
+            </v-list-item-title>
+          </v-list-item>
+
+
+          <!-- Module 4: Inspect data -->
           <v-list-group prepend-icon="mdi-eye" eager>
             <template v-slot:activator>
               <v-list-item-title class="side-bar-level1-title"> Inspect Data </v-list-item-title>

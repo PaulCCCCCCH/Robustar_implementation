@@ -1,0 +1,11 @@
+2021-12-17 14:52:12,476: 127.0.0.1 - - [17/Dec/2021 14:52:12] "POST /influence HTTP/1.1" 200 -
+2021-12-17 14:53:40,994: 127.0.0.1 - - [17/Dec/2021 14:53:40] "POST /influence HTTP/1.1" 200 -
+2021-12-17 14:53:42,537: Running on: 2 images per class.
+2021-12-17 14:53:42,537: Starting at img number: 0 per class.
+2021-12-17 14:54:10,373: 127.0.0.1 - - [17/Dec/2021 14:54:10] "POST /influence HTTP/1.1" 200 -
+2021-12-17 14:54:11,851: Running on: 2 images per class.
+2021-12-17 14:54:11,852: Starting at img number: 0 per class.
+2021-12-17 16:44:49,070: 127.0.0.1 - - [17/Dec/2021 16:44:49] "POST /influence HTTP/1.1" 200 -
+2021-12-17 16:49:45,738: 127.0.0.1 - - [17/Dec/2021 16:49:45] "POST /influence HTTP/1.1" 200 -
+2021-12-17 16:49:47,913: Running on: 2 images per class.
+2021-12-17 16:49:47,915: Starting at img number: 0 per class.

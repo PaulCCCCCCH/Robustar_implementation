@@ -1,8 +1,3 @@
-import pickle
-
-import torch
-import torchvision
-
 from ml import DataSet, PairedDataset, Trainer
 import sys
 import math
@@ -14,8 +9,6 @@ import torchvision.transforms as transforms
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
-import modules.influence_module as ptif
-
 
 def ml_initialize(configs):
 
@@ -35,15 +28,17 @@ def ml_initialize(configs):
     testset = configs['test_path']
     device = RServer.getServerConfigs()['device']
 
+    dataManager = RServer.getDataManager()
+    transforms = dataManager.transforms
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset, paired_data_path, image_size, classes_path, paired_train_mixture)
+            trainset, paired_data_path, image_size, transforms, classes_path, paired_train_mixture)
     else:
-        train_set = DataSet(trainset, image_size, classes_path)
+        train_set = DataSet(trainset, image_size, transforms, classes_path)
 
-    test_set = DataSet(testset, image_size=int(
-        configs['image_size']), classes_path=configs['class_path'])
+    test_set = DataSet(testset, int(
+        configs['image_size']), transforms, classes_path=configs['class_path'])
 
     modelwrapper = initialize_model() # Model will be initialized with server config
     model = modelwrapper.model
@@ -117,8 +112,8 @@ def start_train(configs):
         #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         # train_thread.start()
 
-        # Start training on a new thread which calls back influence calculating
-        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'), calculate_influence)
+        # Start training on a new thread
+        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         train_thread.start()
 
     except Exception as e:
@@ -127,69 +122,10 @@ def start_train(configs):
 
     return train_thread
 
-def calculate_influence(model):
-    """
-    Calculate the influence function for the model.
-
-    args:
-        model:  The trained model
-    """
-
-    INFLUENCES_SAVE_PATH = '/Robustar2/influence_images/influences.pkl'
-
-
-    influences = {}
-
-
-    trainloader = model.trainloader
-    testloader = model.testloader
-
-    config = ptif.get_default_config()
-    config['gpu'] = -1;
-    config['test_sample_num'] = 0;
-    config['recursion_depth'] = len(trainloader.dataset);
-    config['r_averaging'] = 1;
-    ptif.init_logging('logfile.log')
-
-    # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
-    #   e.g.    {
-    #               "0": {
-    #                       "523": 254.1763153076172,
-    #                       "719": 221.39866638183594,
-    #                       "667": 216.841064453125,
-    #                       "653": 214.35723876953125
-    #                      },
-    #               "1":{...},
-    #               ...
-    #           }
-
-    max_influence_dicts = ptif.calc_img_wise(config, model, trainloader, testloader)
-
-    from utils.image_utils import imageIdToPath
-
-    for i in range(len(testloader.dataset)):
-        train_img_paths = []
-
-        testId = "test/" + i
-        test_img_path = imageIdToPath(testId)
-
-        max_influence_dict = max_influence_dicts[str(i)]
-        trainIds = list(max_influence_dict.keys())
-
-        for j in range(4):
-            trainId = "train/" + trainIds[i]
-            train_img_path = imageIdToPath(trainId)
-            train_img_paths.append(train_img_path)
-
-        influences[test_img_path] = train_img_paths
-
-    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
-        pickle.dump(influences, influence_file)
-
 
 class TrainThread(threading.Thread):
 
-    def __init__(self, trainer, args, callback):
+    def __init__(self, trainer, args, callback=None):
         super(TrainThread, self).__init__()
         self.trainer = trainer
         self.args = args
@@ -198,4 +134,3 @@ class TrainThread(threading.Thread):
     def run(self):
         call_back, epochs, auto_save = self.args
         self.trainer.start_train(call_back, epochs, auto_save)
-        calculate_influence(self.trainer.net)

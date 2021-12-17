@@ -1,6 +1,7 @@
 from numpy.lib.polynomial import roots
 import torchvision
 from matplotlib import pyplot as plt
+from flask import request
 
 from modules.visualize_module.visualize.test_visualize import visualize
 from objects.RDataManager import RDataManager
@@ -9,7 +10,7 @@ from objects.RResponse import RResponse
 from flask import jsonify
 from utils.image_utils import imageURLToPath
 from os import path as osp
-from utils.predict import convert_predict_to_array
+from utils.predict import convert_predict_to_array, CalcInfluenceThread
 from utils.image_utils import imageURLToPath
 import json
 from utils.predict import get_image_prediction
@@ -50,8 +51,7 @@ def predict(split, image_id):
         # try:
         imgPath = osp.join(server.baseDir, datasetImgPath)
 
-        # TODO: 32 should not be hardcoded!
-        output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
+        output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
 
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
@@ -61,7 +61,7 @@ def predict(split, image_id):
 
         model = modelWrapper.model
 
-        output = visualize(model, imgPath, 32, server.configs['device'])
+        output = visualize(model, imgPath, dataManager.image_size, server.configs['device'])
         if len(output) != 4:
             raise ValueError("Invalid number of predict visualize figures. Please check.")
 
@@ -95,6 +95,41 @@ def predict(split, image_id):
     #     print(e)
     #     # TODO: And design a good error return as well
     #     return "0_0_0_0_0_0_0_0_0_0"
+
+
+@app.route('/influence/<split>/<image>')
+def get_influence(split, image_id):
+    """
+    Get the influence for an image specified by image_url
+    """
+    influence_dict = dataManager.get_influence_dict()
+    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
+    if target_img_path in influence_dict:
+        return RResponse.ok(influence_dict[target_img_path], 'Success')
+    return RResponse.fail('Image is not found or influence for that image is not calculated')
+
+
+@app.route('/influence', methods=['POST'])
+def calculate_influence():
+    """
+    Calculates the influence for the test set.
+    example request body:
+        {
+            "configs": {
+                "n_test_per_class": 2 // number of test samples per class for which we calculate influence 
+            }
+        }
+
+    """
+    json_data = request.get_json()
+    configs = json_data['configs']
+    calcInfluenceThread = CalcInfluenceThread(
+        modelWrapper, 
+        dataManager, 
+        test_sample_num_per_class=int(configs['n_test_per_class'])
+    )
+    calcInfluenceThread.start()
+    return RResponse.ok({}, "Influence calculation started!")
 
 
 ##########################################################
