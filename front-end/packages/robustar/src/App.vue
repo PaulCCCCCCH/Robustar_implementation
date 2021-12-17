@@ -1,18 +1,26 @@
 <template>
-  <div id="app">
-    <v-app id="inspire">
-      <Header />
-      <div class="pages">
-        <SideBar
-          @updatewindow="updatewindow"
-        ></SideBar>
+  <v-app>
+    <v-app-bar app color="white">
+      <!-- Robustar Logo -->
+      <a href="index">
+        <img src="./assets/images/brand/logo.png" style="width: 130px" alt="logo" />
+      </a>
 
-        <div id="page-content">
-          <router-view />
-        </div>
-      </div>
-    </v-app>
-  </div>
+      <v-spacer></v-spacer>
+
+      <!-- Full screen button -->
+      <v-btn icon color="primary" @click="toggleFullscreen">
+        <v-icon v-if="!isFullscreen">mdi-fullscreen</v-icon>
+        <v-icon v-else>mdi-fullscreen-exit</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <SideBar></SideBar>
+
+    <v-main class="page-content">
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -27,20 +35,31 @@ export default {
   },
   data() {
     return {
+      isFullscreen: false,
     };
   },
   methods: {
-    updatewindow: function (is_mini_side_bar) {
-      const page_content = document.getElementById('page-content')
-      if (!page_content) {
-        return
-      }
+    // updatewindow: function (is_mini_side_bar) {
+    //   const page_content = document.getElementById('page-content');
+    //   if (!page_content) {
+    //     return;
+    //   }
 
-      if (is_mini_side_bar) {
-        page_content.style.width = screen.width - 56 + 'px';
+    //   if (is_mini_side_bar) {
+    //     page_content.style.width = screen.width - 56 + 'px';
+    //   } else {
+    //     page_content.style.width = screen.width - 256 + 'px';
+    //   }
+    // },
+    toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
       } else {
-        page_content.style.width = screen.width - 256 + 'px';
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
       }
+      this.isFullscreen = !this.isFullscreen;
     },
   },
 };
@@ -61,7 +80,12 @@ export default {
 }
 
 #app,
-#page-content {
-  height: 100%;
+.page-content {
+  min-height: 100%;
+  width: 100%;
+}
+
+body::-webkit-scrollbar {
+  display: none !important;
 }
 </style>

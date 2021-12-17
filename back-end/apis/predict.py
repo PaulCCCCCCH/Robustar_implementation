@@ -3,7 +3,7 @@ import torchvision
 from matplotlib import pyplot as plt
 from flask import request
 
-from modules.visualize_module.visualize.test_visualize import visualize
+from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
@@ -14,7 +14,6 @@ from utils.predict import convert_predict_to_array, CalcInfluenceThread
 from utils.image_utils import imageURLToPath
 import json
 from utils.predict import get_image_prediction
-from visualize import visual
 
 app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
@@ -49,7 +48,7 @@ def predict(split, image_id):
         datasetImgPath = imageURLToPath(imageURL)
 
         # try:
-        imgPath = osp.join(server.baseDir, datasetImgPath)
+        imgPath = osp.join(server.baseDir, datasetImgPath).replace('\\', '/')
 
         output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
 
@@ -150,7 +149,7 @@ def get_correct_list(type):
         
         datasetPath = RServer.getServer().datasetPath
 
-        path = osp.join(datasetPath, 'type', path)
+        path = osp.join(datasetPath, 'type', path).replace('\\', '/')
         print(path)
         result[i] = getPredict(app.model.net, path, 224)
         i += 1

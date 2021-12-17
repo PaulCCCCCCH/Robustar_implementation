@@ -1,200 +1,156 @@
 <template>
-  <div id="training-settings-page" class="container">
-    <el-card class="box-card form-group">
-      <div slot="header" class="clearfix text-center">
-        <h1>Training Settings</h1>
-      </div>
-      <div>
-        <h3>System settings</h3>
-
+  <div class="d-flex flex-column align-center">
+    <v-sheet rounded width="800" elevation="3" class="my-8 pa-4">
+      <div class="text-h4 text-center font-weight-medium">Training Settings</div>
+      <v-divider class="mt-4 mb-8"></v-divider>
+      <v-form>
+        <div class="text-h5 mb-4">System settings</div>
         <!-- Shuffle training set  -->
-        <input
-          type="checkbox"
-          checked=""
+        <v-checkbox
           v-model="configs.shuffle"
+          label="shuffle the trainset"
           true-value="yes"
           false-value="no"
-        />
-        <label class="custom-control-label" for="shuffle-trainset">shuffle the trainset</label>
-
-        <br />
+          :ripple="false"
+        ></v-checkbox>
         <!-- Save model -->
-        <input
-          type="checkbox"
-          class="custom-control-input"
-          id="epoch-save"
-          checked=""
+        <v-checkbox
           v-model="configs.auto_save_model"
+          label="save the model per epoch"
           true-value="yes"
           false-value="no"
-        />
-        <label class="custom-control-label" for="epoch-save">save the model per epoch</label>
-
+          :ripple="false"
+          class="mt-n2 mb-1"
+        ></v-checkbox>
         <!-- Save path -->
-        <div class="form-group">
-          <label>Save model to</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            v-model="configs.save_dir"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <div class="form-group">
-          <label>Select training device</label>
-          <select
-            type="text"
-            class="form-control"
-            v-model="configs.device"
-            aria-describedby="fullNameHelp"
-          >
-            <option value="cpu">cpu</option>
-            <option value="cuda">cuda</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Number of dataloader workers</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            v-model="configs.thread"
-            value="8"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <hr />
-
-        <!-- <button type="button" @click="update_server" class="btn btn-primary">Update Server</button> -->
-        <!-- <button type="reset" class="btn btn-light" onclick="location.replace('http://home.0cdl.com:6006')">Start Training</button> -->
-
-        <h3>Hyperparameters</h3>
-        <div class="form-group">
-          <label>learning rate</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            value="0.1"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <div class="form-group">
-          <label>Epoch</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            value="0.1"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <div class="form-group">
-          <label>image size</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            value="32"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <div class="form-group">
-          <label>batch size</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            value="64"
-          />
-          <small class="form-text text-muted"></small>
-        </div>
-
-        <hr />
-
-        <h3>Paired Training</h3>
+        <v-text-field
+          v-model="configs.save_dir"
+          label="save model to"
+          outlined
+          clearable
+        ></v-text-field>
+        <!-- Select device -->
+        <v-select
+          v-model="configs.device"
+          :items="[
+            { text: 'cpu', value: 'cpu' },
+            { text: 'cuda', value: 'cuda' },
+          ]"
+          label="Select training device"
+          outlined
+        ></v-select>
+        <!-- Set num of dataloader workers -->
+        <v-text-field
+          v-model="configs.thread"
+          label="Number of dataloader workers"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <v-divider class="mt-4 mb-8"></v-divider>
+        <div class="text-h5 mb-4">Hyperparameters</div>
+        <!-- Set learning rate -->
+        <v-text-field
+          value="0.1"
+          label="Learning rate"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <!-- Set Epoch -->
+        <v-text-field value="10" label="Epoch" outlined clearable type="number"></v-text-field>
+        <!-- Set Image size -->
+        <v-text-field value="32" label="Image size" outlined clearable type="number"></v-text-field>
+        <!-- Set Batch size -->
+        <v-text-field
+          value="128"
+          label="Batch size"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <v-divider class="mt-4 mb-8"></v-divider>
+        <div class="text-h5 mb-4">Paired Training</div>
         <!-- Use paired training ? -->
-        <div class="custom-control custom-checkbox">
-          <input
-            type="checkbox"
-            id="use-pretrained"
-            class="custom-control-input"
-            v-model="configs.use_paired_train"
-            true-value="yes"
-            false-value="no"
-          />
-          <label class="custom-control-label" for="use-pretrained">Use paired training</label>
-        </div>
-
-        <!-- Options for paired training only -->
+        <v-checkbox
+          v-model="configs.use_paired_train"
+          label="use paired training"
+          true-value="yes"
+          false-value="no"
+          :ripple="false"
+          class="mb-2"
+        ></v-checkbox>
         <div v-if="configs.use_paired_train === 'yes'">
-          <!-- Paired data path-->
-          <div class="form-group">
-            <label>Specify the path to the paired training set</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="configs.paired_data_path"
-              aria-describedby="fullNameHelp"
-              placeholder="Enter a value"
-              value="/Robustar2/dataset/paired"
-            />
-            <small class="form-text text-muted"></small>
-          </div>
-
-          <!-- Mixture methods -->
-          <div class="form-group">
-            <label>Paired data noise</label>
-            <select
-              type="text"
-              class="form-control"
-              v-model="configs.mixture"
-              aria-describedby="fullNameHelp"
-              placeholder="Enter a value"
-            >
-              <option v-for="method in mixture_methods" :value="method" :key="method">
-                {{ method }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Paired training strength</label>
-            <input
-              type="text"
-              class="form-control"
-              aria-describedby="fullNameHelp"
-              placeholder="Enter a value"
-              value="1e-4"
-            />
-            <small class="form-text text-muted">
-              The constant weight for the loss term calculated with paired training data. Increasing
-              the value will result in a stronger regularization effect.
-            </small>
-          </div>
+          <!-- Paired data path -->
+          <v-text-field
+            v-model="configs.paired_data_path"
+            label="specify the path to the paired training set"
+            outlined
+            clearable
+          ></v-text-field>
+          <v-select
+            v-model="configs.mixture"
+            :items="mixture_methods"
+            label="Paired data noise"
+            outlined
+          ></v-select>
+          <v-text-field
+            value="1e-4"
+            label="Paired training strength"
+            outlined
+            clearable
+            messages="The constant weight for the loss term calculated with paired training data. Increasing the value will result in a stronger regularization effect."
+          ></v-text-field>
         </div>
+        <v-divider class="my-8"></v-divider>
+        <div class="d-flex flex-column align-center my-4">
+          <v-btn depressed color="primary" class="mx-auto" @click="startTraining">
+            Start Training
+          </v-btn>
+        </div>
+      </v-form>
+    </v-sheet>
 
-        <hr />
-        <button type="button" class="btn btn-primary" @click="start_training">
-          Start Training
-        </button>
-      </div>
+    <!-- api feedback -->
 
-      <!-- <button class="btn btn-info" type="button">Save configs</button> -->
-    </el-card>
+    <v-overlay :value="sending" opacity="0.7">
+      <v-progress-circular indeterminate size="30" class="mr-4"></v-progress-circular>
+      <span style="vertical-align: middle"> The training is going on. Please wait... </span>
+    </v-overlay>
+
+    <!-- training succeeded -->
+    <v-snackbar
+      rounded
+      dark
+      right
+      v-model="snackbar"
+      timeout="3000"
+      elevation="3"
+      transition="slide-x-reverse-transition"
+      class="mb-2 mr-2"
+    >
+      <div class="white--text">Training succeeded</div>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="accent" text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
+      </template>
+    </v-snackbar>
+
+    <!-- training failed -->
+    <v-snackbar
+      rounded
+      dark
+      right
+      v-model="snackbarError"
+      timeout="3000"
+      elevation="3"
+      transition="slide-x-reverse-transition"
+      class="mb-2 mr-2"
+    >
+      <div class="white--text">Training failed</div>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="error" text v-bind="attrs" @click="snackbarError = false"> Close </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -204,6 +160,10 @@ export default {
   name: 'TrainPad',
   data() {
     return {
+      sending: false,
+      snackbar: false,
+      snackbarError: false,
+
       model_options: [
         'resnet-18-32x32',
         'resnet-18',
@@ -254,26 +214,25 @@ export default {
     };
   },
   methods: {
-    print_config() {
-      console.log(this.configs);
+    trainingSuccess(res) {
+      console.log(res);
+      this.sending = false;
+      this.snackbar = true;
     },
-    start_training() {
-      const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
-        console.log(response);
-        window.location.replace('http://localhost:6006');
-      };
-      const failed = (err) => {
-        console.log(err);
-        alert('Server error. Check console.');
-      };
+    trainingFailed(res) {
+      console.log(res);
+      this.sending = false;
+      this.snackbarError = true;
+    },
+    startTraining() {
+      this.sending = true;
       APIStartTrain(
         {
           configs: this.configs,
           info: 'placeholder',
         },
-        success,
-        failed
+        this.trainingSuccess,
+        this.trainingFailed
       );
     },
   },
@@ -281,7 +240,7 @@ export default {
 </script>
 
 <style type="text/css">
-body {
+/* body {
   margin-top: 20px;
   color: #1a202c;
   text-align: left;
@@ -344,5 +303,5 @@ body {
 
 .shadow-none {
   box-shadow: none !important;
-}
+} */
 </style>

@@ -10,10 +10,13 @@ export default ({
 }) => `
     <div class="tui-image-editor-main-container" style="${commonStyle}">
         <div class="tui-image-editor-header" style="${headerStyle}">
+            <!--
             <div class="tui-image-editor-header-logo">
                 <img src="${biImage}" />
             </div>
+            -->
             <div class="tui-image-editor-header-buttons">
+                <!--
                 <div ${replaceDownload ? 'hidden' : ''}
                 style="${loadButtonStyle}">
                     ${locale.localize('Load')}
@@ -24,6 +27,7 @@ export default ({
                 style="${downloadButtonStyle}">
                     ${locale.localize('Download')}
                 </button>
+                -->
                 <button class="tui-image-editor-adjust-size-btn"
                 ${replaceDownload ? '' : 'hidden'} 
                 style="${loadButtonStyle}">

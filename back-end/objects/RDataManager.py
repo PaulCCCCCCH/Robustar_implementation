@@ -15,7 +15,6 @@ import torch
 from torchvision import transforms
 
 
-
 # The data interface
 class RDataManager:
 
@@ -25,15 +24,18 @@ class RDataManager:
         # splits = ['train', 'test']
         self.data_root = datasetDir
         self.base_dir = baseDir
-        self.image_size = image_size
-        self.image_padding = image_padding
-        self.test_root =osp.join(datasetDir, "test")
-        self.train_root = osp.join(datasetDir, 'train')
-        self.paired_root = osp.join(datasetDir, 'paired')
-        self.visualize_root = osp.join(baseDir, 'visualize_images')
-        self.influence_root = osp.join(baseDir, 'influence_images')
-        self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl')
+        self.test_root = osp.join(datasetDir, "test").replace('\\', '/')
+        self.train_root = osp.join(datasetDir, 'train').replace('\\', '/')
+        self.paired_root = osp.join(datasetDir, 'paired').replace('\\', '/')
+        self.validation_root = osp.join(datasetDir, 'validation').replace('\\', '/')
+        self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
+        self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
+        self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
 
+        self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
+        self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
+        self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
+        self.validation_incorrect_root = osp.join(datasetDir, 'validation_incorrect.txt').replace('\\', '/')
         # Build transforms
         # TODO: Use different transforms according to image_padding variable
         # TODO: We need to double check to make sure that
@@ -49,20 +51,23 @@ class RDataManager:
         
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
+        self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
 
         self.testloader = torch.utils.data.DataLoader(
             self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
         self.trainloader = torch.utils.data.DataLoader(
             self.trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
-
+        # TODO: Init dev loader as well
         self._init_folders()
 
         self.datasetFileBuffer = {}
         self.predictBuffer = {}
-        self.correctBuffer = {}
-        self.mistakeBuffer = {}
         self.influenceBuffer = {}
 
+        self.correctValidationBuffer = []
+        self.incorrectValidationBuffer = []
+        self.correctTestBuffer = []
+        self.incorrectTestBuffer = []
         self.reload_influence_dict()
 
     def reload_influence_dict(self):
@@ -94,9 +99,9 @@ class RDataManager:
         for img_path, label in self.trainset.samples:
             paired_img_path = get_paired_path(img_path, self.train_root, self.paired_root)
 
-            if osp.exists(paired_img_path): # Ignore existing images
+            if osp.exists(paired_img_path):  # Ignore existing images
                 continue
-                
+
             folder_path, _ = split_path(paired_img_path)
             os.makedirs(folder_path, exist_ok=True)
 
@@ -106,7 +111,6 @@ class RDataManager:
     
 
 if __name__ == '__main__':
-
     # Test
     dataManager = RDataManager('/Robustar2/dataset')
     # print(dataManager.trainset.imgs[0])

@@ -1,7 +1,7 @@
 import torchvision.datasets as dset
 import json
 import os
-from os import path as osp
+import os.path as osp
 from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
@@ -37,22 +37,17 @@ def register_route(app):
             """
         pass
 
-
     @app.route('/main/<path:path>')
     def main_route(path):
         return send_from_directory("web", path)
-
 
     @app.route('/img/<filename>')
     def get_file_page(filename):
         return send_from_directory("./img", filename)
 
-
     @app.route('/data/chart-labels.js')
     def get_chart_labels():
         return "window.labels='23333'"
-
-
 
     proc = None
 
@@ -80,7 +75,6 @@ def register_route(app):
         # text/html is required for most browsers to show th$
         return flask.Response(inner(), mimetype='text/html')
 
-
     @app.route('/user-edit-list', methods=['POST', 'GET'])
     def get_user_edit_list():
         data = {}
@@ -91,7 +85,6 @@ def register_route(app):
                 return jsonify(list(data.keys()))
                 # return str(list(data.keys()))
         return 'fail to get user edit list'
-
 
     @app.route('/v1/dataset/<type>/<start>/<end>', methods=['POST', 'GET'])
     def send_dataset(type, start, end):
@@ -105,11 +98,9 @@ def register_route(app):
         result['status_code'] = 200
         return jsonify(result)
 
-
     @app.route('/image/<path:imagepath>')
     def send_image_api(imagepath):
         return send_from_directory('.', imagepath)
-
 
     @app.route('/user-edit-id-list', methods=['POST', 'GET'])
     def get_user_edit_id_list():
@@ -131,7 +122,6 @@ def register_route(app):
                 return jsonify(data)
         return 'fail to get user edit list'
 
-
     @app.route('/get-edit', methods=['POST'])
     def get_user_edit():
         if 'src' in request.form:
@@ -146,7 +136,6 @@ def register_route(app):
 
     # 根据图片路径返回图片
 
-
     @app.route('/dataset/<path:datasetImgPath>')
     def get_dataset_img(datasetImgPath):
         datasetImgPath = datasetImgPath.replace(
@@ -155,27 +144,21 @@ def register_route(app):
 
     # 返回神经网络关注的地方
 
-
     @app.route('/imgv/<random>')
     def get_image_visualize(random):
         return send_from_directory("./visualize", 'img-v.png')
 
     # 返回神经网络关注的地方
 
-
     @app.route('/imgv/<num>/<random>')
     def get_image_visualize_id(num, random):
-        return send_from_directory("./visualize", 'img-'+str(num)+'.png')
-
+        return send_from_directory("./visualize", 'img-' + str(num) + '.png')
 
     datasetFileBuffer = {}
     predictBuffer = {}
 
     # 用来记录正确的分类结果和错误的分类结果
-    CorrectBuffer, MistakeBuffer = None, None
-
-
-
+    correctTestBuffer, incorrectTestBuffer, correctValidationBuffer, incorrectValidationBuffer = None, None, None, None
 
 
 if __name__ == "__main__":
@@ -195,8 +178,8 @@ if __name__ == "__main__":
     app.model = model
     app.configs = configs
     """
-    baseDir = osp.join('/', 'Robustar2')
-    datasetDir = osp.join(baseDir, 'dataset')
+    baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
+    datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
@@ -214,7 +197,7 @@ if __name__ == "__main__":
 
     model = initialize_model()
     RServer.setModel(model)
-
     import apis # register all api routes
 
-    server.run(port='8000', host='0.0.0.0', debug=False) 
+
+    server.run(port='8000', host='0.0.0.0', debug=False)
