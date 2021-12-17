@@ -1,37 +1,72 @@
 <template>
-  <div id="training-settings-page" class="container">
-    <el-card class="box-card form-group">
-      <div slot="header" class="clearfix text-center">
-        <h1>Influence Calculation</h1>
-      </div>
-      <div>
-        <h3>Settings</h3>
-
-        <!-- Select number of test samples per class-->
-        <div class="form-group">
-          <label>Number of test samples for which we calculate influence</label>
-          <input
-            type="number"
-            class="form-control"
-            aria-describedby="fullNameHelp"
-            placeholder="Enter a value"
-            v-model="configs.n_test_per_class"
-            value="10"
-          />
-          <small class="form-text text-muted">A value of -1 means calculating influence for the entire test set</small>
+  <div class="d-flex flex-column align-center">
+    <v-sheet rounded width="800" elevation="3" class="my-8 pa-4">
+      <div class="text-h4 text-center font-weight-medium">Influence Calculation</div>
+      <v-divider class="mt-4 mb-8"></v-divider>
+      <v-form>
+        <div class="text-h5 mb-4">settings</div>
+        <!-- Set num of test samples per class for which we calculate influence-->
+        <v-text-field
+          v-model="configs.n_test_per_class"
+          label="Number of test samples for which we calculate influence"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <small class="form-text text-muted">A value of -1 means calculating influence for the entire test set</small>
+        <v-divider class="my-8"></v-divider>
+        <div class="d-flex flex-column align-center my-4">
+          <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
+              Start calculation
+          </v-btn>
         </div>
+      </v-form>
+    </v-sheet>
 
-        <hr />
+    <!-- api feedback -->
 
-        <button type="button" class="btn btn-primary" @click="start_calculation">
-          Start calculation
-        </button>
-      </div>
+    <v-overlay :value="sending" opacity="0.7">
+      <v-progress-circular indeterminate size="30" class="mr-4"></v-progress-circular>
+      <span style="vertical-align: middle"> calculating influence. Please wait... </span>
+    </v-overlay>
 
-      <!-- <button class="btn btn-info" type="button">Save configs</button> -->
-    </el-card>
+    <!-- training succeeded -->
+    <v-snackbar
+      rounded
+      dark
+      right
+      v-model="snackbar"
+      timeout="3000"
+      elevation="3"
+      transition="slide-x-reverse-transition"
+      class="mb-2 mr-2"
+    >
+      <div class="white--text">Influence calculation started</div>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="accent" text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
+      </template>
+    </v-snackbar>
+
+    <!-- training failed -->
+    <v-snackbar
+      rounded
+      dark
+      right
+      v-model="snackbarError"
+      timeout="3000"
+      elevation="3"
+      transition="slide-x-reverse-transition"
+      class="mb-2 mr-2"
+    >
+      <div class="white--text">Influence calculation failed</div>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="error" text v-bind="attrs" @click="snackbarError = false"> Close </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
+
+
 
 <script>
 import { APICalculateInfluence } from '@/apis/predict';
@@ -39,7 +74,11 @@ export default {
   name: 'InfluencePad',
   data() {
     return {
-     // Training configs
+      sending: false,
+      snackbar: false,
+      snackbarError: false,
+
+      // influence calculation settings
       configs: {
         n_test_per_class: 10,
       },
@@ -66,70 +105,3 @@ export default {
   },
 };
 </script>
-
-<style type="text/css">
-body {
-  margin-top: 20px;
-  color: #1a202c;
-  text-align: left;
-  background-color: #e2e8f0;
-}
-
-.main-body {
-  padding: 15px;
-}
-
-.nav-link {
-  color: #4a5568;
-}
-
-.card {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-}
-
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: border-box;
-  border: 0 solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.25rem;
-}
-
-.card-body {
-  flex: 1 1 auto;
-  min-height: 1px;
-  padding: 1rem;
-}
-
-.gutters-sm {
-  margin-right: -8px;
-  margin-left: -8px;
-}
-
-.gutters-sm > .col,
-.gutters-sm > [class*='col-'] {
-  padding-right: 8px;
-  padding-left: 8px;
-}
-
-.mb-3,
-.my-3 {
-  margin-bottom: 1rem !important;
-}
-
-.bg-gray-300 {
-  background-color: #e2e8f0;
-}
-
-.h-100 {
-  height: 100% !important;
-}
-
-.shadow-none {
-  box-shadow: none !important;
-}
-</style>

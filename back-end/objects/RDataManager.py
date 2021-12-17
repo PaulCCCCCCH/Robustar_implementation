@@ -24,6 +24,11 @@ class RDataManager:
         # splits = ['train', 'test']
         self.data_root = datasetDir
         self.base_dir = baseDir
+        self.batch_size = image_size
+        self.shuffle = shuffle
+        self.num_workers = num_workers
+        self.image_size = image_size
+        self.image_padding = image_padding
         self.test_root = osp.join(datasetDir, "test").replace('\\', '/')
         self.train_root = osp.join(datasetDir, 'train').replace('\\', '/')
         self.paired_root = osp.join(datasetDir, 'paired').replace('\\', '/')
@@ -36,6 +41,7 @@ class RDataManager:
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
         self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
         self.validation_incorrect_root = osp.join(datasetDir, 'validation_incorrect.txt').replace('\\', '/')
+
         # Build transforms
         # TODO: Use different transforms according to image_padding variable
         # TODO: We need to double check to make sure that
@@ -51,13 +57,18 @@ class RDataManager:
         
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
-        self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+        if not os.path.exists(self.validation_root):
+            self.validationset = self.testset
+        else:
+            self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
 
         self.testloader = torch.utils.data.DataLoader(
             self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
         self.trainloader = torch.utils.data.DataLoader(
             self.trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
-        # TODO: Init dev loader as well
+        self.validationloader= torch.utils.data.DataLoader(
+            self.validationset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+
         self._init_folders()
 
         self.datasetFileBuffer = {}
