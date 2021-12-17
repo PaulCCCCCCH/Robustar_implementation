@@ -97,6 +97,19 @@
               </v-list>
             </v-menu>
           </v-list-group>
+
+          <!-- Module 4: Test -->
+          <v-list-item @click="navigateTo('/test')">
+            <v-list-item-icon>
+              <v-icon class="side-bar-level1-icon">mdi-code-braces</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              <div class="side-bar-level1-title">
+                <span>Test</span>
+              </div>
+            </v-list-item-title>
+          </v-list-item>
+          
         </v-list>
         <div id="nav">
           <router-link to="/">Home</router-link> |
