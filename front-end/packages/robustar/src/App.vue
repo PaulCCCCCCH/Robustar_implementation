@@ -15,7 +15,7 @@
       </v-btn>
     </v-app-bar>
 
-    <SideBar :f_mini="f_mini" :f_mini_return="f_mini_return" @updatewindow="updatewindow"></SideBar>
+    <SideBar></SideBar>
 
     <v-main class="page-content">
       <router-view />
@@ -35,24 +35,22 @@ export default {
   },
   data() {
     return {
-      f_mini: false,
-      f_mini_return: false,
       isFullscreen: false,
     };
   },
   methods: {
-    updatewindow: function (is_mini_side_bar) {
-      const page_content = document.getElementById('page-content');
-      if (!page_content) {
-        return;
-      }
+    // updatewindow: function (is_mini_side_bar) {
+    //   const page_content = document.getElementById('page-content');
+    //   if (!page_content) {
+    //     return;
+    //   }
 
-      if (is_mini_side_bar) {
-        page_content.style.width = screen.width - 56 + 'px';
-      } else {
-        page_content.style.width = screen.width - 256 + 'px';
-      }
-    },
+    //   if (is_mini_side_bar) {
+    //     page_content.style.width = screen.width - 56 + 'px';
+    //   } else {
+    //     page_content.style.width = screen.width - 256 + 'px';
+    //   }
+    // },
     toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
