@@ -11,3 +11,4 @@ from .generate import *
 from .image import *
 from .predict import *
 from .train import *
+from .test import *

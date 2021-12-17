@@ -5,78 +5,25 @@
         <h1>Test Settings</h1>
       </div>
       <div>
-        <button type="button" class="btn btn-primary" @click="start_training">
+        <button type="button" class="btn btn-primary" @click="start_testing">
           Start Testing
         </button>
       </div>
-
-      <!-- <button class="btn btn-info" type="button">Save configs</button> -->
     </el-card>
   </div>
 </template>
 
 <script>
-import { APIStartTrain } from '@/apis/train';
+import { APIStartTest } from '@/apis/test';
 export default {
-  name: 'TrainPad',
+  name: 'TestPad',
   data() {
     return {
-      model_options: [
-        'resnet-18-32x32',
-        'resnet-18',
-        'resnet-34',
-        'resnet-50',
-        'resnet-101',
-        'resnet-152',
-        'mobilenet-v2',
-      ],
-      mixture_methods: [
-        'pure_black',
-        'noise',
-        'noise_weak',
-        'noise_minor',
-        'random_pure',
-        'hstrips',
-        'vstrips',
-        'mixture',
-      ],
-
-      // Training configs
-      configs: {
-        model: 'resnet-18-32x32',
-        // weight: "/Robustar2/checkpoint_images",
-        weight: '',
-        train_path: '/Robustar2/dataset/train',
-        test_path: '/Robustar2/dataset/test',
-        class_path: './model/cifar-class.txt',
-        port: '8000',
-        save_dir: '/Robustar2/checkpoints',
-        use_paired_train: 'false',
-        mixture: 'random_pure',
-
-        // Selection for the following not implemented
-        paired_data_path: '/Robustar2/dataset/paired',
-        device: 'cuda',
-        auto_save_model: 'yes',
-        batch_size: '128',
-        shuffle: 'yes',
-        learn_rate: 0.1,
-        pgd: 'no PGD',
-        paired_train_reg_coeff: 0.001,
-        image_size: 32,
-        epoch: 20,
-        thread: 8,
-        pretrain: 'no',
-      },
     };
   },
   methods: {
-    print_config() {
-      console.log(this.configs);
-    },
-    start_training() {
+    start_testing() {
       const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
         console.log(response);
         window.location.replace('http://localhost:6006');
       };
@@ -84,11 +31,7 @@ export default {
         console.log(err);
         alert('Server error. Check console.');
       };
-      APIStartTrain(
-        {
-          configs: this.configs,
-          info: 'placeholder',
-        },
+      APIStartTest(
         success,
         failed
       );
