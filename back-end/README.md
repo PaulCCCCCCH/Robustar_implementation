@@ -4,7 +4,7 @@
 ```
 cd back-end # If you are not already in this folder
 pip install -r requirements.txt
-python run server.py
+python server.py
 ```
 
 

@@ -1,8 +1,12 @@
 from modules.visualize_module.flashtorch_.utils import apply_transforms, load_image
 from objects.RModelWrapper import RModelWrapper
 import torch
+import modules.influence_module as ptif
+import threading
+from objects.RDataManager import RDataManager
+import pickle
 
-# 将预测结果转换为字符串
+# Turns prediction results into array
 def convert_predict_to_array(output):
     """
     args:
@@ -40,3 +44,77 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
 
     out_probs = torch.nn.functional.softmax(out_score, 1)
     return out_probs
+
+
+def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, test_sample_num_per_class=1):
+    """
+    Calculate the influence function for the model.
+
+    args:
+        model:          The trained model (PyTorch nn.module)
+        dataManager:    RDataManager instance
+
+        num:    Number of test samples for which we calculate influence. If set to -1, it calculates
+                influence for the entire dataset.
+    """
+
+    INFLUENCES_SAVE_PATH = dataManager.influence_file_path
+    influences = {}
+
+    trainloader = dataManager.trainloader
+    testloader = dataManager.testloader
+
+    config = ptif.get_default_config()
+    config['gpu'] = -1 if modelWrapper.device == 'cpu' else 0
+    config['test_sample_num'] = test_sample_num_per_class
+    config['recursion_depth'] = len(trainloader.dataset)
+    config['r_averaging'] = 1
+    ptif.init_logging('logfile.log')
+
+    # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
+    #   e.g.    {
+    #               "0": {
+    #                       "523": 254.1763153076172,
+    #                       "719": 221.39866638183594,
+    #                       "667": 216.841064453125,
+    #                       "653": 214.35723876953125
+    #                      },
+    #               "1":{...},
+    #               ...
+    #           }
+
+    # TODO: change argument from testloader to misclassified test loader
+    # as we are only interested in the influence for misclassified samples
+    max_influence_dicts = ptif.calc_img_wise(config, modelWrapper.model, trainloader, testloader) 
+
+    from utils.image_utils import imageIdToPath
+
+    for i in range(len(testloader.dataset)):
+        train_img_paths = []
+
+        testId = "test/" + i
+        test_img_path = imageIdToPath(testId)
+
+        max_influence_dict = max_influence_dicts[str(i)]
+        trainIds = list(max_influence_dict.keys())
+
+        for j in range(4):
+            trainId = "train/" + trainIds[i]
+            train_img_path = imageIdToPath(trainId)
+            train_img_paths.append(train_img_path)
+
+        influences[test_img_path] = train_img_paths
+
+    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
+        pickle.dump(influences, influence_file)
+
+    
+class CalcInfluenceThread(threading.Thread):
+    def __init__(self, modelWrapper:RModelWrapper, dataManager:RDataManager, test_sample_num_per_class):
+        super(CalcInfluenceThread, self).__init__()
+        self.modelWrapper = modelWrapper
+        self.dataManager = dataManager
+        self.test_sample_num_per_class = test_sample_num_per_class
+
+    def run(self):
+        calculate_influence(self.modelWrapper, self.dataManager, self.test_sample_num_per_class)
