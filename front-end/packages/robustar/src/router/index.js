@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import ImageList from '../views/ImageList.vue';
 import TrainPad from '../views/TrainPad.vue';
+import InfluencePad from '../views/InfluencePad.vue';
 import EditImage from '@/views/EditImage';
 import TestPad from '@/views/TestPad';
 
@@ -44,6 +45,11 @@ const routes = [
     component: TestPad,
     props: true,
   },
+  {
+    path: '/influence-pad',
+    name: 'InfluencePad',
+    component: InfluencePad
+  }
 ];
 
 const router = new VueRouter({
