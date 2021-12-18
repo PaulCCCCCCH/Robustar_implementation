@@ -43,7 +43,6 @@ const routes = [
     path: '/test',
     name: 'TestPad',
     component: TestPad,
-    props: true,
   },
   {
     path: '/influence-pad',

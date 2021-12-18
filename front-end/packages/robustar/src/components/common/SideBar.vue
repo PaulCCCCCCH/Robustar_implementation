@@ -53,51 +53,6 @@
           </div>
         </v-list-group>
       </div>
-
-<!-- <<<<<<< HEAD
-            
-            <v-menu open-on-hover right :offset-x="true">
-              <template v-slot:activator="{ on, attrs }">
-                <v-list-item class="side-bar-level2-title" v-bind="attrs" v-on="on">
-                  <v-list-item-title>
-                    <div class="side-bar-level1-title">
-                      <span>Test Data</span>
-                    </div>
-                  </v-list-item-title>
-                </v-list-item>
-              </template>
-              <v-list>
-                <v-list-item @click="navigateTo('/image-list/test_correct')">
-                  <v-list-item-title> Correctly Classified </v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="navigateTo('/image-list/test_incorrect')">
-                  <v-list-item-title> Incorrectly Classified </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-list-group>
-
-          
-          <v-list-item @click="navigateTo('/test')">
-            <v-list-item-icon>
-              <v-icon class="side-bar-level1-icon">mdi-code-braces</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              <div class="side-bar-level1-title">
-                <span>Test</span>
-              </div>
-            </v-list-item-title>
-          </v-list-item>
-          
-        </v-list>
-        <div id="nav">
-          <router-link to="/">Home</router-link> |
-          <router-link to="/about">About</router-link>
-        </div>
-      </v-navigation-drawer>
-    </v-card>
-  </div>
--->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -120,15 +75,18 @@ export default {
             {
               text: 'Validation Data',
               icon: '',
-              children: [{ text: 'Correctly Classified' }, { text: 'Incorrectly Classified' }],
+              children: [{ text: 'Correctly Classified', link: 'image-list/validation_correct' },
+                         { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' }],
             },
             {
               text: 'Test Data',
               icon: '',
-              children: [{ text: 'Correctly Classified' }, { text: 'Incorrectly Classified' }],
+              children: [{ text: 'Correctly Classified', link: 'image-list/test_correct' },
+                         { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' }],
             },
           ],
         },
+        { text: 'Test', icon: 'mdi-code-braces', link: 'test' },
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
     };
