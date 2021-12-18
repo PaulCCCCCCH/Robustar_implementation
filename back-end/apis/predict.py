@@ -35,7 +35,6 @@ def predict(split, image_id):
         [attribute, output_array, predict_fig_routes]
     """
 
-
     # e.g.  train/10, test/300
     imageURL = "{}/{}".format(split, image_id).replace("_mistake", "").replace("_correct", "")
     visualize_root = dataManager.visualize_root
@@ -77,6 +76,8 @@ def predict(split, image_id):
     # get attributes
     if split == "train":
         attribute = dataManager.trainset.classes
+    elif split == "validation":
+        attribute = dataManager.validationset.classes
     elif split == "test":
         attribute = dataManager.testset.classes
     else:
@@ -107,11 +108,11 @@ def get_correct_list(type):
     from visualize import getPredict
     result = {}
     i = 0
-    while(True):
-        path = imageURLToPath(type+"/"+str(i))
-        if(path == "none"):
+    while (True):
+        path = imageURLToPath(type + "/" + str(i))
+        if (path == "none"):
             break
-        
+
         datasetPath = RServer.getServer().datasetPath
 
         path = osp.join(datasetPath, 'type', path).replace('\\', '/')
@@ -119,15 +120,16 @@ def get_correct_list(type):
         result[i] = getPredict(app.model.net, path, 224)
         i += 1
         print("current calculate", i)
-    with open('model/model_output'+type+'.json', 'w') as f:
+    with open('model/model_output' + type + '.json', 'w') as f:
         json.dump(result, f)
     return jsonify(result)
+
 
 # 将编号转化为图片路径
 @app.route('/predictid/<folder>/<imageid>')
 def get_predict_img_from_id(folder, imageid):
-    url = imageURLToPath(folder+'/'+str(imageid))
-    filePath = folder+'/'+url
+    url = imageURLToPath(folder + '/' + str(imageid))
+    filePath = folder + '/' + url
     return get_predict_img(filePath)
 
 
@@ -136,8 +138,8 @@ def get_random_influence_img(number):
     import random
     import math
     random_num = random.randint(1, 1000)
-    random_num = math.floor(float(number)*1000)
-    url = imageURLToPath('train'+'/'+str(random_num))
+    random_num = math.floor(float(number) * 1000)
+    url = imageURLToPath('train' + '/' + str(random_num))
     # return redirect('/dataset/train/'+url)
     return '/dataset/train/' + url
 
@@ -146,7 +148,7 @@ def get_random_influence_img(number):
 def get_influence_dic(img_id, helpful_num, harmful_num):
     result = {}
     result['success'] = 1
-    if(not check_influence(img_id)):
+    if (not check_influence(img_id)):
         result['success'] = 0
         return jsonify(result)
     helpful_num = int(helpful_num)

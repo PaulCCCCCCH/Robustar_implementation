@@ -46,6 +46,8 @@ class RDataManager:
         self.incorrectValidationBuffer = []
         self.correctTestBuffer = []
         self.incorrectTestBuffer = []
+        self.get_classify_validation_list()
+        self.get_classify_test_list()
 
     def init_folders(self):
         if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
@@ -71,6 +73,40 @@ class RDataManager:
 
             with open(paired_img_path, 'wb') as f:
                 pickle.dump(None, f)
+
+    def get_classify_validation_list(self):
+        if not osp.exists(self.validation_correct_root):
+            f = open(self.validation_correct_root, 'w')  # cannot use os.mknod because it's not supported by Windows
+            f.close()
+        else:
+            with open(self.validation_correct_root, 'r') as f:
+                for line in f:
+                    self.correctValidationBuffer.append(int(line))
+
+        if not osp.exists(self.validation_incorrect_root):
+            f = open(self.validation_incorrect_root, 'w')
+            f.close()
+        else:
+            with open(self.validation_incorrect_root, 'r') as f:
+                for line in f:
+                    self.incorrectValidationBuffer.append(int(line))
+
+    def get_classify_test_list(self):
+        if not osp.exists(self.test_correct_root):
+            f = open(self.test_correct_root, 'w')
+            f.close()
+        else:
+            with open(self.test_correct_root, 'r') as f:
+                for line in f:
+                    self.correctTestBuffer.append(int(line))
+
+        if not osp.exists(self.test_incorrect_root):
+            f = open(self.test_incorrect_root, 'w')
+            f.close()
+        else:
+            with open(self.test_incorrect_root, 'r') as f:
+                for line in f:
+                    self.incorrectTestBuffer.append(int(line))
 
 
 if __name__ == '__main__':

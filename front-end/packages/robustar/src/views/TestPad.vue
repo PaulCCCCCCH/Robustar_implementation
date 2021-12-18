@@ -5,8 +5,11 @@
         <h1>Test Settings</h1>
       </div>
       <div>
-        <button type="button" class="btn btn-primary" @click="start_testing">
-          Start Testing
+        <button type="button" class="btn btn-primary" @click="start_testing('validation')">
+          Start Testing on Validation Set
+        </button>
+        <button type="button" class="btn btn-primary" @click="start_testing('test')">
+          Start Testing on Test Set
         </button>
       </div>
     </el-card>
@@ -22,16 +25,19 @@ export default {
     };
   },
   methods: {
-    start_testing() {
+    start_testing(split) {
       const success = (response) => {
+        // TODO: deal with RResponse.fail
         console.log(response);
-        window.location.replace('http://localhost:6006');
       };
       const failed = (err) => {
         console.log(err);
         alert('Server error. Check console.');
       };
       APIStartTest(
+        {
+          split: split,
+        },
         success,
         failed
       );
