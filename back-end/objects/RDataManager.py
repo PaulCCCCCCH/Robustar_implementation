@@ -18,7 +18,8 @@ from torchvision import transforms
 # The data interface
 class RDataManager:
 
-    def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32, image_padding='none'):
+    def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
+                 image_padding='none'):
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
@@ -37,6 +38,8 @@ class RDataManager:
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
 
+        self.reload_influence_dict()
+
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
         self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
@@ -54,7 +57,7 @@ class RDataManager:
             transforms.ToTensor(),
             transforms.Normalize(means, stds)
         ])
-        
+
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
         if not os.path.exists(self.validation_root):
@@ -66,7 +69,7 @@ class RDataManager:
             self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
         self.trainloader = torch.utils.data.DataLoader(
             self.trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
-        self.validationloader= torch.utils.data.DataLoader(
+        self.validationloader = torch.utils.data.DataLoader(
             self.validationset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         self._init_folders()
@@ -79,7 +82,9 @@ class RDataManager:
         self.incorrectValidationBuffer = []
         self.correctTestBuffer = []
         self.incorrectTestBuffer = []
-        self.reload_influence_dict()
+
+        self.get_classify_validation_list()
+        self.get_classify_test_list()
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
@@ -97,7 +102,7 @@ class RDataManager:
         self._init_visualize_root()
 
     def _init_influence_root(self):
-        os.makedirs(self.influence_root, exists_ok=True)
+        os.makedirs(self.influence_root, exist_ok=True)
 
     def _init_visualize_root(self):
         os.makedirs(self.visualize_root, exist_ok=True)
@@ -119,7 +124,40 @@ class RDataManager:
             with open(paired_img_path, 'wb') as f:
                 pickle.dump(None, f)
 
-    
+    def get_classify_validation_list(self):
+        if not osp.exists(self.validation_correct_root):
+            f = open(self.validation_correct_root, 'w')  # cannot use os.mknod because it's not supported by Windows
+            f.close()
+        else:
+            with open(self.validation_correct_root, 'r') as f:
+                for line in f:
+                    self.correctValidationBuffer.append(int(line))
+
+        if not osp.exists(self.validation_incorrect_root):
+            f = open(self.validation_incorrect_root, 'w')
+            f.close()
+        else:
+            with open(self.validation_incorrect_root, 'r') as f:
+                for line in f:
+                    self.incorrectValidationBuffer.append(int(line))
+
+    def get_classify_test_list(self):
+        if not osp.exists(self.test_correct_root):
+            f = open(self.test_correct_root, 'w')
+            f.close()
+        else:
+            with open(self.test_correct_root, 'r') as f:
+                for line in f:
+                    self.correctTestBuffer.append(int(line))
+
+        if not osp.exists(self.test_incorrect_root):
+            f = open(self.test_incorrect_root, 'w')
+            f.close()
+        else:
+            with open(self.test_incorrect_root, 'r') as f:
+                for line in f:
+                    self.incorrectTestBuffer.append(int(line))
+
 
 if __name__ == '__main__':
     # Test

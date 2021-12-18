@@ -5,6 +5,7 @@ import ImageList from '../views/ImageList.vue';
 import TrainPad from '../views/TrainPad.vue';
 import InfluencePad from '../views/InfluencePad.vue';
 import EditImage from '@/views/EditImage';
+import TestPad from '@/views/TestPad';
 
 Vue.use(VueRouter);
 
@@ -37,6 +38,11 @@ const routes = [
     name: 'EditImage',
     component: EditImage,
     props: true,
+  },
+  {
+    path: '/test',
+    name: 'TestPad',
+    component: TestPad,
   },
   {
     path: '/influence-pad',

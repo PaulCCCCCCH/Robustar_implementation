@@ -12,11 +12,6 @@ validationset = dataManager.validationset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
-correctTestBuffer = dataManager.correctTestBuffer
-incorrectTestBuffer = dataManager.incorrectTestBuffer
-correctValidationBuffer = dataManager.correctValidationBuffer
-incorrectValidationBuffer = dataManager.incorrectValidationBuffer
-
 test_correct_root = dataManager.test_correct_root
 test_incorrect_root = dataManager.test_incorrect_root
 validation_correct_root = dataManager.validation_correct_root
@@ -45,6 +40,8 @@ def imageURLToPath(image_id):
 
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
+    elif split == 'validation':
+        filePath = validationset.samples[imageIndex][0]
     elif split == 'test':
         filePath = testset.samples[imageIndex][0]
     elif split == 'validation_correct':
@@ -65,21 +62,9 @@ def imageURLToPath(image_id):
     return filePath
 
 
-def get_test_correct(is_correct, image_index):
-    if correctTestBuffer == [] or incorrectTestBuffer == []:
-        get_classify_test_list(correctTestBuffer, incorrectTestBuffer)
-
-    if is_correct:
-        img_num = correctTestBuffer[image_index]
-    else:
-        img_num = incorrectTestBuffer[image_index]
-
-    return testset.samples[img_num]
-
-
 def get_validation_correct(is_correct, image_index):
-    if correctValidationBuffer == [] or incorrectValidationBuffer == []:
-        get_classify_validation_list(correctValidationBuffer, incorrectValidationBuffer)
+    correctValidationBuffer = dataManager.correctValidationBuffer
+    incorrectValidationBuffer = dataManager.incorrectValidationBuffer
 
     if is_correct:
         img_num = correctValidationBuffer[image_index]
@@ -89,21 +74,13 @@ def get_validation_correct(is_correct, image_index):
     return validationset.samples[img_num]
 
 
-def get_classify_test_list(correct_test_buffer, incorrect_test_buffer):
-    with open(test_correct_root, 'r') as f:
-        for line in f:
-            correct_test_buffer.append(int(line))
+def get_test_correct(is_correct, image_index):
+    correctTestBuffer = dataManager.correctTestBuffer
+    incorrectTestBuffer = dataManager.incorrectTestBuffer
 
-    with open(test_incorrect_root, 'r') as f:
-        for line in f:
-            incorrect_test_buffer.append(int(line))
+    if is_correct:
+        img_num = correctTestBuffer[image_index]
+    else:
+        img_num = incorrectTestBuffer[image_index]
 
-
-def get_classify_validation_list(correct_validation_buffer, incorrect_validation_buffer):
-    with open(validation_correct_root, 'r') as f:
-        for line in f:
-            correct_validation_buffer.append(int(line))
-
-    with open(validation_incorrect_root, 'r') as f:
-        for line in f:
-            incorrect_validation_buffer.append(int(line))
+    return testset.samples[img_num]

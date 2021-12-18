@@ -53,7 +53,6 @@
           </div>
         </v-list-group>
       </div>
-
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -76,15 +75,18 @@ export default {
             {
               text: 'Validation Data',
               icon: '',
-              children: [{ text: 'Correctly Classified' }, { text: 'Incorrectly Classified' }],
+              children: [{ text: 'Correctly Classified', link: 'image-list/validation_correct' },
+                         { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' }],
             },
             {
               text: 'Test Data',
               icon: '',
-              children: [{ text: 'Correctly Classified' }, { text: 'Incorrectly Classified' }],
+              children: [{ text: 'Correctly Classified', link: 'image-list/test_correct' },
+                         { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' }],
             },
           ],
         },
+        { text: 'Test', icon: 'mdi-code-braces', link: 'test' },
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
     };
