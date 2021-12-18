@@ -32,12 +32,11 @@ def predict(split, image_id):
         split:    'train', 'test' or 'dev'
         image_id: The index of the image within the dataset
     returns:
-        TODO: Need to design a good format here.
         [attribute, output_array, predict_fig_routes]
     """
 
     # e.g.  train/10, test/300
-    imageURL = "{}/{}".format(split, image_id).replace("_mistake", "").replace("_correct", "")
+    imageURL = "{}/{}".format(split, image_id)
     visualize_root = dataManager.visualize_root
 
     if imageURL in predictBuffer:
