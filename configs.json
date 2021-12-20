@@ -1,7 +1,7 @@
 {
     "weight_to_load": "resnet-34.pth",
     "model_arch": "resnet-18-32x32",
-    "device": "cuda",
+    "device": "cpu",
     "pre_trained": true,
     "batch_size": 16,
     "shuffle": true,
