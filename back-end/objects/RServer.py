@@ -23,7 +23,7 @@ class RServer:
 
         self.datasetPath = datasetPath
         self.app = app
-        self.dataManager = RDataManager(datasetPath)
+        self.dataManager = RDataManager(datasetPath, configs['image_size'], configs['image_padding'])
         self.configs = configs
         self.modelWrapper = None
 
