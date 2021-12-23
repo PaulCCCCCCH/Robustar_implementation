@@ -8,16 +8,16 @@
     <!-- Image list controller -->
     <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
       <!-- Previous page button -->
-      <v-btn outlined color="primary" @click="prevPage"> Prev Page </v-btn>
+      <v-btn depressed color="primary" @click="prevPage"> Prev Page </v-btn>
 
       <!-- Refresh page button & page number -->
       <div class="d-flex">
-        <v-btn class="mr-4" outlined color="primary" @click="loadImages"> Goto Page </v-btn>
+        <v-btn class="mr-4" depressed color="primary" @click="loadImages"> Goto Page </v-btn>
         <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
       </div>
 
       <!-- Next page button -->
-      <v-btn outlined color="primary" @click="nextPage"> Next Page </v-btn>
+      <v-btn depressed color="primary" @click="nextPage"> Next Page </v-btn>
     </div>
 
     <!-- Image List -->
