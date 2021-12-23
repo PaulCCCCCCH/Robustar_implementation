@@ -2,19 +2,18 @@
   <div class="about">
     <h1>This is an about page</h1>
     <img alt="Vue logo" src="../assets/logo.png" />
-    <button type="button" class="btn btn-primary">mybutton</button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '0')">
+    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '0')">
       testPredictionViewer /train/0
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '2000')">
+    </v-btn>
+    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '2000')">
       test /train/2000
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '4000')">
+    </v-btn>
+    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '4000')">
       test /train/4000
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('test', '100')">
+    </v-btn>
+    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('test', '100')">
       test /test/100
-    </button>
+    </v-btn>
 
     <PredView :dataArr="predDataArr" :config="predViewConfig" style="padding-left: 500px" />
 

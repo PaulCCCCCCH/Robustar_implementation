@@ -1,7 +1,8 @@
 # Robustar_migration
 
-## Running
-Everything is set up in docker. Run `robustar.sh` for details.
+#### Contributor
+- [Yuhao Zhang](mailto:yhao.zhang98@gmail.com)
+- [Leyang Hu](mailto:leonleyanghu@gmail.com)
 
 ## Configuration File
 You need to pass a config file (default `./configs.json`) to `robustar.sh`. It is a `JSON` file with the following fields:
