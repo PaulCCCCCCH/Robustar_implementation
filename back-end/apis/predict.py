@@ -96,13 +96,15 @@ def predict(split, image_id):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/<split>/<image>')
+@app.route('/influence/<split>/<image_id>')
 def get_influence(split, image_id):
     """
     Get the influence for an image specified by image_url
     """
     influence_dict = dataManager.get_influence_dict()
     target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
+    print(target_img_path)
+    print(influence_dict.keys())
     if target_img_path in influence_dict:
         return RResponse.ok(influence_dict[target_img_path], 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
@@ -115,7 +117,8 @@ def calculate_influence():
     example request body:
         {
             "configs": {
-                "n_test_per_class": 2 // number of test samples per class for which we calculate influence 
+                "test_sample_num": 2, // number of test samples per class for which we calculate influence 
+                "r_averaging": 10 
             }
         }
 
@@ -125,7 +128,8 @@ def calculate_influence():
     calcInfluenceThread = CalcInfluenceThread(
         modelWrapper, 
         dataManager, 
-        test_sample_num_per_class=int(configs['n_test_per_class'])
+        test_sample_num=int(configs['test_sample_num']),
+        r_averaging=int(configs['r_averaging'])
     )
     calcInfluenceThread.start()
     return RResponse.ok({}, "Influence calculation started!")

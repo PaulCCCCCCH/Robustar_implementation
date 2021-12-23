@@ -38,7 +38,6 @@ class RDataManager:
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
 
-        self.reload_influence_dict()
 
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
@@ -86,10 +85,18 @@ class RDataManager:
         self.get_classify_validation_list()
         self.get_classify_test_list()
 
+        self.reload_influence_dict()
+
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
             print("Loading influence dictionary!")
-            self.influenceBuffer = pickle.load(self.influence_file_path)
+            with open(self.influence_file_path, 'rb') as f:
+                try:
+                    self.influenceBuffer = pickle.load(f)
+                except Exception as e:
+                    print("Influence function file not read because it is contaminated. \
+                    Please delete it manually and start the server again!")
+
         else:
             print("No influence dictionary found!")
 

@@ -342,7 +342,7 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
                 torch.sum(k * j).data
                 for k, j in zip(grad_z_vec, s_test_vec)
             ]) / train_dataset_size
-        influences.append(tmp_influence)
+        influences.append(tmp_influence.cpu())
 
         max_influence_dict[i] = tmp_influence.item()
         max_influence_dict = dict(sorted(max_influence_dict.items(), key=lambda kv: abs(kv[1]), reverse=True))
