@@ -51,7 +51,7 @@
 <script>
 import ImageEditor from '../components/image-editor/ImageEditor';
 import { APISendEdit } from '@/apis/edit';
-import { getNextImageByIdAndURL } from '@/utils/image_utils'
+import { getNextImageByIdAndURL } from '@/utils/image_utils';
 
 export default {
   components: {
@@ -86,7 +86,7 @@ export default {
       console.log(res);
       const id = localStorage.getItem('image_id');
       const url = localStorage.getItem('image_url');
-      const [ newId, newUrl ] = getNextImageByIdAndURL(id, url)
+      const [newId, newUrl] = getNextImageByIdAndURL(id, url);
       localStorage.setItem('image_id', newId);
       localStorage.setItem('image_url', newUrl);
       this.$refs.editor.initInstance();
@@ -101,10 +101,17 @@ export default {
     sendEdit(image_base64) {
       this.sending = true;
       const image_id = localStorage.getItem('image_id') || '';
-      const height = localStorage.getItem('image_height')
-      const width = localStorage.getItem('image_width')
-      APISendEdit('train', image_id, height, width, image_base64, 
-        this.sendEditSuccess, this.sendEditFailed);
+      const height = localStorage.getItem('image_height');
+      const width = localStorage.getItem('image_width');
+      APISendEdit(
+        'train',
+        image_id,
+        height,
+        width,
+        image_base64,
+        this.sendEditSuccess,
+        this.sendEditFailed
+      );
     },
   },
 };

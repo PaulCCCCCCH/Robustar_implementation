@@ -1,36 +1,18 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <button type="button" class="btn btn-primary">mybutton</button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '0')">
-      testPredictionViewer /train/0
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '2000')">
-      test /train/2000
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('train', '4000')">
-      test /train/4000
-    </button>
-    <button type="button" class="btn btn-primary" @click="view_prediction('test', '100')">
-      test /test/100
-    </button>
-
     <PredView :dataArr="predDataArr" :config="predViewConfig" style="padding-left: 500px" />
-
-    <div v-for="(url, index) in predImgUrl" :key="index" style="padding-left: 500px">
-      <img :src="url" style="width: 100px" />
+    <Visualizer :ImgUrl="predImgUrl" style="padding-left: 500px">
     </div>
-  </div>
 </template>
 
 <script>
 import PredView from '@/components/prediction-viewer/PredView.vue';
+import Visualizer from '../components/prediction-viewer/Visualizer.vue';
 import { APIPredict } from '@/apis/predict';
 import { configs } from '@/configs.js';
 
 export default {
-  components: { PredView },
+  components: { PredView, Visualizer },
   data() {
     return {
       predDataArr: [
@@ -50,16 +32,24 @@ export default {
       configs: configs,
     };
   },
+  mounted() {
+    this.view_prediction(split, image_id);
+  },
   methods: {
-    view_prediction(split, imageId) {
+    view_prediction(split, image_id) {
       const success = (response) => {
         let responseData = response.data.data;
+        const split = localStorage.getItem('split');
+        const image_id = localStorage.getItem('image_id');
         this.predDataArr = [responseData[0], responseData[1]];
         this.predImgUrl = [];
         for (let i = 0; i < 4; i++) {
           this.predImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
         }
+        console.log(success);
+        console.log(split);
         console.log(responseData);
+        console.log(image_id);
         console.log(this.predDataArr);
         console.log(this.predImgUrl);
       };
@@ -74,6 +64,3 @@ export default {
     },
   },
 };
-</script>
-
-<style></style>

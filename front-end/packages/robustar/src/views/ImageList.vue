@@ -59,7 +59,13 @@
                     <v-icon left>mdi-pencil</v-icon>
                     Annotate
                   </v-btn>
-                  <v-btn outlined large color="white" width="150px">
+                  <v-btn
+                    outlined
+                    large
+                    color="white"
+                    width="150px"
+                    @click="predictImage(row, col, url)"
+                  >
                     <v-icon left>mdi-cogs</v-icon>
                     Predict
                   </v-btn>
@@ -118,6 +124,15 @@ export default {
       localStorage.setItem('image_id', image_id);
       localStorage.setItem('image_url', url);
       this.$router.push({ name: 'EditImage' });
+    },
+    predictImage(row, col, url) {
+      const idx = imageCoord2Idx(row, col);
+      const image_id = imagePageIdx2Id(this.currentPage, idx);
+      localStorage.setItem('image_id', image_id);
+      localStorage.setItem('image_url', url);
+      var split = ['train', 'test', 'dev'];
+      localStorage.setItem('split', split);
+      this.$router.push({ name: 'predict' });
     },
     loadImages() {
       this.imageMatrix = [];

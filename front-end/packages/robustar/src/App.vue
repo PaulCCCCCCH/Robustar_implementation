@@ -3,9 +3,7 @@
     <v-app id="inspire">
       <Header />
       <div class="pages">
-        <SideBar
-          @updatewindow="updatewindow"
-        ></SideBar>
+        <SideBar @updatewindow="updatewindow"></SideBar>
 
         <div id="page-content">
           <router-view />
@@ -26,14 +24,13 @@ export default {
     SideBar,
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     updatewindow: function (is_mini_side_bar) {
-      const page_content = document.getElementById('page-content')
+      const page_content = document.getElementById('page-content');
       if (!page_content) {
-        return
+        return;
       }
 
       if (is_mini_side_bar) {

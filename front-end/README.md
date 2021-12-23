@@ -11,14 +11,17 @@ First, make sure you are in `front-end` folder, and have `npm` installed. Then, 
 ```
 npm install -g webpack webpack-cli lerna prettier @vue/cli
 ```
+
 Remember to run the above with `sudo` if you are in a linux/mac environment.
 
-In `/front-end` folder, run 
+In `/front-end` folder, run
+
 ```
 npm install
 ```
 
 Finally, run the following command, which will automatically install dependencies for `robustar` and `robustar-image-editor`, and resolve the dependency between the two
+
 ```
 lerna bootstrap
 ```
