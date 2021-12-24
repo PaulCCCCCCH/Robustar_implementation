@@ -4,6 +4,9 @@
       adjust
     </v-btn> -->
 
+    <div style="position: absolute; z-index: 10; top: 50px">
+      <Visualizer />
+    </div>
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
 
     <v-overlay :value="sending" opacity="0.7">
@@ -49,13 +52,15 @@
   </div>
 </template>
 <script>
-import ImageEditor from '../components/image-editor/ImageEditor';
+import ImageEditor from '@/components/image-editor/ImageEditor';
 import { APISendEdit } from '@/apis/edit';
 import { getNextImageByIdAndURL } from '@/utils/image_utils';
+import  Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
   components: {
-    ImageEditor: ImageEditor,
+    ImageEditor,
+    Visualizer,
   },
   data() {
     return {

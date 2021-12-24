@@ -75,9 +75,9 @@ def predict(split, image_id):
     # get attributes
     if split == "train":
         attribute = dataManager.trainset.classes
-    elif split == "validation":
+    elif split in ("validation", "validation_correct", "validation_incorrect"):
         attribute = dataManager.validationset.classes
-    elif split == "test":
+    elif split in ("test", "test_correct", "test_incorrect"):
         attribute = dataManager.testset.classes
     else:
         raise ValueError("Wrong split. Please check.")

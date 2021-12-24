@@ -56,12 +56,18 @@
                     large
                     color="white"
                     width="150px"
-                    @click="editImage(row, col, url)"
+                    @click="gotoImage(row, col, url, 'EditImage')"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     Annotate
                   </v-btn>
-                  <v-btn outlined large color="white" width="150px">
+                  <v-btn
+                    outlined
+                    large
+                    color="white"
+                    width="150px"
+                    @click="gotoImage(row, col, url, 'Prediction')"
+                  >
                     <v-icon left>mdi-cogs</v-icon>
                     Predict
                   </v-btn>
@@ -114,12 +120,13 @@ export default {
       this.currentPage--;
       this.loadImages();
     },
-    editImage(row, col, url) {
+    gotoImage(row, col, url, componentName) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
+      localStorage.setItem('split', this.$route.params.split)
       localStorage.setItem('image_id', image_id);
       localStorage.setItem('image_url', url);
-      this.$router.push({ name: 'EditImage' });
+      this.$router.push({ name: componentName });
     },
     loadImages() {
       this.imageMatrix = [];
