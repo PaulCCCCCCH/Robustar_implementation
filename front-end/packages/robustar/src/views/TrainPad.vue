@@ -241,13 +241,13 @@ export default {
         this.trainingFailed
       );
     },
-    stopSuccess(res){
+    stopSuccess(res) {
       console.log(res);
-      alert("Successfully stop training");
+      alert('Successfully stop training');
     },
-    stopFailed(res){
+    stopFailed(res) {
       console.log(res);
-      alert("Failed to stop training");
+      alert('Failed to stop training');
     },
     stopTraining() {
       APIStopTrain(this.stopSuccess, this.stopFailed);

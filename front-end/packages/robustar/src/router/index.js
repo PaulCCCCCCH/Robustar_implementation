@@ -47,8 +47,8 @@ const routes = [
   {
     path: '/influence-pad',
     name: 'InfluencePad',
-    component: InfluencePad
-  }
+    component: InfluencePad,
+  },
 ];
 
 const router = new VueRouter({

@@ -13,11 +13,13 @@
           clearable
           type="number"
         ></v-text-field>
-        <small class="form-text text-muted">A value of -1 means calculating influence for the entire test set</small>
+        <small class="form-text text-muted"
+          >A value of -1 means calculating influence for the entire test set</small
+        >
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
-              Start calculation
+            Start calculation
           </v-btn>
         </div>
       </v-form>
@@ -65,8 +67,6 @@
     </v-snackbar>
   </div>
 </template>
-
-
 
 <script>
 import { APICalculateInfluence } from '@/apis/predict';

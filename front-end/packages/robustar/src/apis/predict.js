@@ -13,9 +13,7 @@ const APIPredict = (split, imageId, success, failed) => {
  * @param {function} fail fail callback function
  */
 const APICalculateInfluence = (configs, success, failed) => {
-    common.postRequest(configs, '/influence', success, failed)
-}
+  common.postRequest(configs, '/influence', success, failed);
+};
 
-
-
-export { APIPredict, APICalculateInfluence }
+export { APIPredict, APICalculateInfluence };

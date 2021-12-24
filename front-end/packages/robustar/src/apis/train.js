@@ -13,4 +13,4 @@ const APIStopTrain = (success, failed) => {
   common.getRequest(`/train/stop`, success, failed);
 };
 
-export { APIStartTrain , APIStopTrain };
+export { APIStartTrain, APIStopTrain };
