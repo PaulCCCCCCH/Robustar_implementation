@@ -10,6 +10,7 @@
           'translateX(' + (defaultConfig.componentWidth - defaultConfig.figWidth) / 2 + 'px)',
       }"
     >
+      <h2 class='d-flex justify-center align-center'> Model Prediction </h2>
       <div
         class="chart-border"
         style="transform: translateX(100%) translateX(-1px)"
