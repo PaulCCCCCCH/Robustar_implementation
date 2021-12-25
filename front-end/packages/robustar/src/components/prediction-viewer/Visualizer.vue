@@ -1,8 +1,13 @@
 <template>
   <div class="d-flex flex-row justify-space-between align-center" style='width: 100%; padding: 30px'>
     <!-- View the prediction-->
-    <PredView :dataArr="predDataArr" :config="predViewConfig" />
-    <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" /> 
+    <div style="position: relative; z-index: 10">
+      <PredView :dataArr="predDataArr" :config="predViewConfig" />
+    </div>
+    <!-- View model focus -->
+    <div style="position: relative; z-index: 10">
+      <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" /> 
+    </div>
   </div>
 </template>
 
