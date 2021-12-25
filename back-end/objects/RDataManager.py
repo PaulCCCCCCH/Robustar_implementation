@@ -95,6 +95,7 @@ class RDataManager:
             print("Loading influence dictionary!")
             with open(self.influence_file_path, 'rb') as f:
                 try:
+                    # TODO: Check image_url -> image_path consistency here!
                     self.influenceBuffer = pickle.load(f)
                 except Exception as e:
                     print("Influence function file not read because it is contaminated. \

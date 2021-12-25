@@ -100,9 +100,12 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, te
         trainIds = list(max_influence_dict.keys())
 
         for j in range(4):
-            trainId = "train/" + str(trainIds[j])
-            train_img_path = imageURLToPath(trainId)
-            train_img_paths.append(train_img_path)
+            trainUrl = "train/" + str(trainIds[j])
+            train_img_path = imageURLToPath(trainUrl)
+            # TODO: Stores both image path and image url. 
+            # Adding / removing samples to training set will cause inconsistency
+            # Need to check consistency in data manager when loading.
+            train_img_paths.append((train_img_path, trainUrl)) 
 
         influences[test_img_path] = train_img_paths
 

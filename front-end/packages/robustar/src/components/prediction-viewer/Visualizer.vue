@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column justify-center align-center" style='width: 30vw'>
+  <div class="d-flex flex-row justify-space-between align-center" style='width: 100%; padding: 30px'>
     <!-- View the prediction-->
     <PredView :dataArr="predDataArr" :config="predViewConfig" />
     <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" /> 
@@ -65,12 +65,14 @@ export default {
           this.influImgUrl = []
           return
         }
+        console.log(response)
 
         const responseData = response.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          const url = responseData[i]
-          this.influImgUrl.push(`${configs.serverUrl}/dataset/${url}`)
+          // responseData[i] is a length 2 array [image_path, image_url]
+          const url = responseData[i][1]  
+          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`)
         }
 
       }
