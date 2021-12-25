@@ -12,11 +12,13 @@ OPT_PORT=8000
 OPT_IMAGE_TAG=latest
 OPT_NAME=robustar
 
+RUN_MODE='HELP'
 TRAIN_FOLDER='./'
 TEST_FOLDER='./'
 INFLU_FOLDER='./'
 CHECK_FOLDER='./'
 CONFIG_FILE='configs.json'
+CUDA_VERSION=''
 
 # Discover platform and set default IP depending on it.
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -28,7 +30,7 @@ elif [[ "$OSTYPE" == "cygwin" ]]; then
   # POSIX compatibility layer and Linux environment emulation for Windows
   IP="" # Docker IP for Windows
 else
-  'echo "Running on unrecognized platform" '
+  echo "Running on unrecognized platform"
 fi
 
 #Set fonts for Help.
@@ -39,12 +41,12 @@ REV=`tput smso`
 #Help function
 function HELP {
   echo -e \\n"Help documentation for ${BOLD}${SCRIPT}.${NORM}"\\n
-  echo -e "${REV}Basic usage:${NORM} ${BOLD}${SCRIPT} [command]${NORM}"\\n
+  echo -e "${REV}Basic usage:${NORM} ${BOLD}${SCRIPT} -m [command]${NORM} [options]"\\n
   echo -e "[command] can be one of the following: setup, run."\\n
-  echo -e "${BOLD}setup${NORM} will prepare and pulling the docker image."\\n
+  echo -e "${BOLD}setup${NORM} will prepare and pull the docker image, and create a new container for it."\\n
   echo -e "${BOLD}run${NORM} will start to run the system."\\n
   # echo -e "${BOLD}gulp${NORM} will start gulp (which should not be expected to return). ${BOLD}gulp${NORM} can only be run if a container is already running (most likely from running robustar run)."\\n
-  echo "Command line switches are optional. The following switches are recognized."
+  echo "Command line switches [options] are optional. The following switches are recognized."
   echo "${REV}-p${NORM}  --Sets the value for the ${BOLD}port docker forwards to${NORM}. Default is ${BOLD}${OPT_PORT}${NORM}."
   echo "${REV}-a${NORM}  --Sets the value for the ${BOLD}tag of the image${NORM}. Default is ${BOLD}${OPT_IMAGE_TAG}${NORM}."
   echo "${REV}-n${NORM}  --Sets the value for the ${BOLD}name of the docker container${NORM}. Default is ${BOLD}${OPT_NAME}${NORM}."
@@ -60,20 +62,23 @@ function HELP {
 
 function SETUP {
     # bash --login '/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh'
-    docker pull cdonglin/robustar:$OPT_IMAGE_TAG
-}
-
-function RUN {
-  docker run --name ${OPT_NAME} \
-      -ti \ 
-      -p 127.0.0.1:${OPT_PORT}:8000 \
-      cdonglin/robustar:${OPT_IMAGE_TAG} \
-      --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/datset/train \
+    docker pull $IMAGE_NAME && \
+    docker create --name ${OPT_NAME} \
+      -p 127.0.0.1:${OPT_PORT}:80 \
+      -p 127.0.0.1:6848:8000\
+      --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
       --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
       --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
       --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
       -v ${CONFIG_FILE}:/Robustar2/configs.json \
-      /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}"
+      $IMAGE_NAME
+      # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
+
+    
+}
+
+function RUN {
+  docker start ${OPT_NAME}
 }
 
 
@@ -84,33 +89,36 @@ function RUN {
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get my unrecognized option code to work.
 
-while getopts :p:a:n:h FLAG; do
+while getopts :m:p:a:n:t:h:e:i:c:o FLAG; do
   case $FLAG in
-    p)  #set option "a"
+    m) 
+      RUN_MODE=$OPTARG
+      ;;
+    p)
       OPT_PORT=$OPTARG
       ;;
-    a)  #set option "b"
+    a)
       OPT_IMAGE_TAG=$OPTARG
       ;;
-    n)  #set option "c"
+    n)
       OPT_NAME=$OPTARG
       ;;
-    t)  #set option "d"
+    t)
       TRAIN_FOLDER=$OPTARG
       ;;
-    e)  #set option "e"
+    e)
       TEST_FOLDER=$OPTARG
       ;;
-    i)  #set option "f"
+    i)
       INFLU_FOLDER=$OPTARG
       ;;
-    c)  #set option "g"
+    c)
       CHECK_FOLDER=$OPTARG
       ;;
-    o)  #set option "h"
+    o)
       CONFIG_FILE=$OPTARG
       ;;
-    h)  #show help
+    h)
       HELP
       exit 0
       ;;
@@ -124,32 +132,28 @@ while getopts :p:a:n:h FLAG; do
       ;;
   esac
 done
-
-shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 ### End getopts code ###
 
 #Check the number of arguments. If none are passed, print help and exit.
 NUMARGS=$#
 if [ $NUMARGS -eq 0 ]; then
   HELP
+  exit 1
 fi
 
 ### Main loop to process command ###
-while [ $# -ne 0 ]; do
-  COMMAND=$1
-  if [ "$COMMAND" == "setup" ]; then
-    SETUP
-    exit 1
-  elif [ "$COMMAND" == "run" ]; then
-    RUN
-    exit 1
-  else
-    HELP
-    exit 1
-  fi
-  shift  #Move on to next command
-done
+IMAGE_NAME="paulcccccch/robustar:${OPT_IMAGE_TAG}"
 
+if [ "$RUN_MODE" == "setup" ]; then
+  SETUP
+  exit 0
+elif [ "$RUN_MODE" == "run" ]; then
+  RUN
+  exit 0
+else
+  HELP
+  exit 1
+fi
 
 ### End main loop ###
 exit 0

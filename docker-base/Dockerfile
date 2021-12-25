@@ -6,8 +6,11 @@ WORKDIR /Robustar2
 RUN apt-get -y update && \
     apt-get -y upgrade && \
 	apt-get -y install curl sudo python3.7 python3-pip
-RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-RUN sudo apt-get install nodejs -y
+
+## We use NGINX for production. Node no longer needed.
+# RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+# RUN sudo apt-get install nodejs -y
+RUN apt-get -y install nginx
 
 # alias
 RUN echo 'alias python=python3.7'>>~/.bashrc

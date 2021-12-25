@@ -1,8 +1,14 @@
 # Robustar_migration
 
-#### Contributor
-- [Yuhao Zhang](mailto:yhao.zhang98@gmail.com)
-- [Leyang Hu](mailto:leonleyanghu@gmail.com)
+## To Run Docker
+
+First, run `robustar.sh -m setup <options>` to create the robustar container. For a list of `<options>`, please run `robustar.sh` with no arguments. Make sure you set up the mounting directories and port forwarding correctly.
+
+Then, run `robustar.sh -m run`. 
+
+If at any point you wish to change the setting, please remove the docker container and setup a new one. You can run `docker container ls -a` to see a list of containers, and use `docker container rm <name>` to remove.
+
+Please make sure port 6848 on your machine is available. 
 
 ## Configuration File
 You need to pass a config file (default `./configs.json`) to `robustar.sh`. It is a `JSON` file with the following fields:
@@ -15,6 +21,24 @@ You need to pass a config file (default `./configs.json`) to `robustar.sh`. It i
 
 
 
+## Build Dev Docker Image
+In front-end directory, run ` lerna run build `.   
+
+Then, return back to root directory and run
+```
+docker build --build-arg VCUDA=<cuda version> .
+```
+where `<cuda version>` is chosen from `cpu`, `9.2`, `10.2`, `11.1` and `11.3`.
+
+Adjust the tag of the docker image with
+```
+docker tag <image_id> <user_id>/<repo>:<version>
+```
+
+Finally, push onto DockerHub with:
+```
+docker push <user_id>/<repo>:<version>
+```
 
 ## Dev setup 
 
