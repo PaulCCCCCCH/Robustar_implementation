@@ -62,23 +62,23 @@ function HELP {
 
 function SETUP {
     # bash --login '/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh'
-    docker pull $IMAGE_NAME && \
-    docker create --name ${OPT_NAME} \
-      -p 127.0.0.1:${OPT_PORT}:80 \
-      -p 127.0.0.1:6848:8000\
-      --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
-      --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
-      --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
-      --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
-      -v ${CONFIG_FILE}:/Robustar2/configs.json \
-      $IMAGE_NAME
-      # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
-
-    
+    docker pull $IMAGE_NAME
 }
 
 function RUN {
-  docker start ${OPT_NAME}
+  docker run --name ${OPT_NAME} -it -d \
+    -p 127.0.0.1:${OPT_PORT}:80 \
+    -p 127.0.0.1:6848:8000 \
+    --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
+    --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
+    --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
+    --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
+    -v C:\\Robustar2\\configs.json:/Robustar2/configs.json \
+    $IMAGE_NAME
+
+  echo "Robustar is available at http://localhost:$OPT_PORT "
+    # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
+  # docker cp ${CONFIG_FILE} ${OPT_NAME}:/Robustar2/configs.json
 }
 
 

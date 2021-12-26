@@ -2,9 +2,9 @@
 
 ## To Run Docker
 
-First, run `robustar.sh -m setup <options>` to create the robustar container. For a list of `<options>`, please run `robustar.sh` with no arguments. Make sure you set up the mounting directories and port forwarding correctly.
+First, run `robustar.sh -m setup -a <version_name>` to pull robustar image. 
 
-Then, run `robustar.sh -m run`. 
+Then, run `robustar.sh -m run <options> `. For a list of `<options>`, please run `robustar.sh` with no arguments. Make sure you set up the mounting directories and port forwarding correctly.
 
 If at any point you wish to change the setting, please remove the docker container and setup a new one. You can run `docker container ls -a` to see a list of containers, and use `docker container rm <name>` to remove.
 
@@ -21,7 +21,7 @@ You need to pass a config file (default `./configs.json`) to `robustar.sh`. It i
 
 
 
-## Build Dev Docker Image
+## Build Docker Image
 In front-end directory, run ` lerna run build `.   
 
 Then, return back to root directory and run

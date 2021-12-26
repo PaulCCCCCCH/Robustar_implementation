@@ -43,8 +43,10 @@ export default {
   mounted() {
     const split = localStorage.getItem('split');
     const image_id = localStorage.getItem('image_id');
-    this.view_prediction(split, image_id)
-    this.get_influence(split, image_id)
+    if (split && image_id) {
+      this.view_prediction(split, image_id)
+      this.get_influence(split, image_id)
+    }
   },
   methods: {
     view_prediction(split, image_id) {

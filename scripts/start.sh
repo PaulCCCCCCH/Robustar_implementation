@@ -2,4 +2,5 @@
 service nginx restart
 
 # Start backend server
+cd back-end
 python3.7 server.py
