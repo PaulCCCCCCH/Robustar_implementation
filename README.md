@@ -8,7 +8,7 @@ Then, run `robustar.sh -m run <options> `. For a list of `<options>`, please run
 
 If at any point you wish to change the setting, please remove the docker container and setup a new one. You can run `docker container ls -a` to see a list of containers, and use `docker container rm <name>` to remove.
 
-Please make sure port 6848 on your machine is available. 
+Please make sure port 6848 and 6006 on your machine are available. 
 
 ## Configuration File
 You need to pass a config file (default `./configs.json`) to `robustar.sh`. It is a `JSON` file with the following fields:
