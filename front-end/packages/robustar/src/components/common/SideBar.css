@@ -1,0 +1,40 @@
+.side-bar {
+  position: fixed;
+  background-color: white;
+  left: 0;
+  height: 100%;
+  max-width: 256px;
+  padding-top: 50px;
+}
+
+v-card {
+  height: 100%;
+}
+
+.side-bar-level1-icon {
+  margin-right: 0px;
+}
+
+.side-bar-level1-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.side-bar-level2-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 20px 0 70px;
+}
+
+.side-bar-level3-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 20px 0 40px;
+}
+
+.sub-sub-menu {
+  color: gray;
+}

@@ -1,38 +1,63 @@
-# Front End
-Developed with `Vue2`
+# Robustar Frontend
 
-## Project Structure
+Composed of two packages: `robustar` and `robustar-image-editor`. Packages are managed with `Lerna`.
 
-### Key Folders
-- `src/router`: Defines the mapping between url and component to be rendered. E.g. Entering `localhost:8080/train` will show you the `src/components/Train.vue` component.
-- `src/view`: Defines different views. We define a `view` to be an aggregation of `components`. E.g. `Home.vue` is composed of `Header` (`src/components/Header.vue`), `SideBar` (`src/components/SideBar.vue`), and some other stuff (depending on the url).
-- `src/components`: Defines reusable components. Components are further divided into sub-folders for clarity.
-- `src/assets`: Stores different resource files, e.g. icons and images.
-- `src/utils`: Contains reusable utility functions written in pure javascript, e.g. a function that converts image id to image path.
-- `src/apis`: Each file here contains a group of api calls to the backend, e.g. calls to start/pause/stop/inspect training grouped in `src/apis/train.js`.
+`robustar-image-editor` is adopted from `tui.image-editor`
 
+## Environment Setup for Developers
 
-### Key Files
-- `src/App.vue`: Defines the root `Vue` object to which all other `Vue` components will be attached.
-- `src/main.css`: Global styles.
-- `src/main.js`: Entry point of the entire website. It attaches the root `Vue` object to the root `DOM`.
-- `src/configs.js`: Stores constants that are used across the app, e.g. `ImageList` shows `3` * `6` images per page.
+First, make sure you are in `front-end` folder, and have `npm` installed. Then, execute the following:
 
-
-## Run
 ```
-    npm install
-    npm run serve
+npm install -g webpack webpack-cli lerna prettier @vue/cli
 ```
 
+Remember to run the above with `sudo` if you are in a linux/mac environment.
 
-## TODO List
-- Cannot view misclassified and correctly classified images separately
-- Drawing Functionalities
-- Viewing influence 
+In `/front-end` folder, run
 
+```
+npm install
+```
 
-## Bug List
+Finally, run the following command, which will automatically install dependencies for `robustar` and `robustar-image-editor`, and resolve the dependency between the two
 
-### ImageList
-- `Next Page` calls `currentPage++` without bounding.
+```
+lerna bootstrap
+```
+
+You are now all set with the environment.
+
+## Important!
+
+Before you push to remote repo, make sure you go back to `front-end` and run
+
+```
+prettier --write .
+```
+
+to fix any styling issues.
+
+## Run locally
+
+To run `robustar`, first build the `robustar-image-editor` with
+
+```
+lerna run build:editor --stream
+```
+
+Then, run `robustar` with
+
+```
+lerna run serve:main --stream
+```
+
+Note that whenever you make changes to `robustar-image-editor`, you will have to **build editor again** with `lerna run build:editor`, so that changes take effect on `robustar`. Alternatively, you could run editor alone to view real-time changes:
+
+```
+lerna run serve:editor --stream
+```
+
+## Notes
+
+- Fabric Canvas object [doc](http://fabricjs.com/docs/fabric.Canvas.html#toCanvasElement). Use this to draw.

@@ -319,7 +319,9 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
     # Calculate the influence function
     train_dataset_size = len(train_loader.dataset)
     influences = []
+    max_influence_dict = {}
     for i in range(train_dataset_size):
+        print(i)
         z, t = train_loader.dataset[i]
         z = train_loader.collate_fn([z])
         t = train_loader.collate_fn([t])
@@ -331,7 +333,6 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
             time_delta = time_b - time_a
             logging.info(f"Time for grad_z iter:"
                          f" {time_delta.total_seconds() * 1000}")
-
         tmp_influence = -sum(
             [
                 ####################
@@ -341,16 +342,25 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
                 torch.sum(k * j).data
                 for k, j in zip(grad_z_vec, s_test_vec)
             ]) / train_dataset_size
-        influences.append(tmp_influence)
-        display_progress("Calc. influence function: ", i, train_dataset_size)
+        influences.append(tmp_influence.cpu())
 
-    for i in range(len(influences)):
-        influences[i]=influences[i].cpu()
+        max_influence_dict[i] = tmp_influence.item()
+        max_influence_dict = dict(sorted(max_influence_dict.items(), key=lambda kv: abs(kv[1]), reverse=True))
+        def dict_slice(adict, start, end):
+            keys = adict.keys()
+            dict_slice = {}
+            for k in list(keys)[start:end]:
+                dict_slice[k] = adict[k]
+            return dict_slice
+        if(i > 3):
+            max_influence_dict = dict_slice(max_influence_dict, 0, 4)
+
+        display_progress("Calc. influence function: ", i, train_dataset_size)
 
     harmful = np.argsort(influences)
     helpful = harmful[::-1]
 
-    return influences, harmful.tolist(), helpful.tolist(), test_id_num
+    return max_influence_dict, influences, harmful.tolist(), helpful.tolist(), test_id_num
 
 
 def get_dataset_sample_ids_per_class(class_id, num_samples, test_loader,
@@ -448,13 +458,14 @@ def calc_img_wise(config, model, train_loader, test_loader):
     # Set up logging and save the metadata conf file
     logging.info(f"Running on: {test_sample_num} images per class.")
     logging.info(f"Starting at img number: {test_start_index} per class.")
-    influences_meta['test_sample_index_list'] = sample_list
+    # influences_meta['test_sample_index_list'] = sample_list
     influences_meta_fn = f"influences_results_meta_{test_start_index}-" \
                          f"{test_sample_num}.json"
     influences_meta_path = outdir.joinpath(influences_meta_fn)
     save_json(influences_meta, influences_meta_path)
 
     influences = {}
+    max_influence_dicts = {}
     # Main loop for calculating the influence function one test sample per
     # iteration.
     for j in range(test_dataset_iter_len):
@@ -470,7 +481,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
             i = j
 
         start_time = time.time()
-        influence, harmful, helpful, _ = calc_influence_single(
+        max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
             model, train_loader, test_loader, test_id_num=i, gpu=config['gpu'],
             recursion_depth=config['recursion_depth'], r=config['r_averaging'])
         end_time = time.time()
@@ -493,6 +504,14 @@ def calc_img_wise(config, model, train_loader, test_loader):
                                               f"{test_sample_num}"
                                               f"_last-i_{i}.json")
         save_json(influences, tmp_influences_path)
+
+        max_influence_dicts[str(i)] = max_influence_dict
+        max_influences_path = outdir.joinpath(f"max_influences_dicts_"
+                                              f"{test_start_index}_"
+                                              f"{test_sample_num}"
+                                              f"_last-i_{i}.json")
+        save_json(max_influence_dicts, max_influences_path)
+
         display_progress("Test samples processed: ", j, test_dataset_iter_len)
 
     logging.info(f"The results for this run are:")
@@ -507,7 +526,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
                                       f"{test_sample_num}.json")
     save_json(influences, influences_path)
 
-    return influences
+    return max_influence_dicts
 
 
 def calc_all_grad_then_test(config, model, train_loader, test_loader):

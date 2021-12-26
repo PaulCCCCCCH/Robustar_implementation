@@ -121,7 +121,7 @@ def init_logging(filename=None):
 def get_default_config():
     """Returns a default config file"""
     config = {
-        'outdir': 'outdir',
+        'outdir': 'influence_list',
         'seed': 42,
         'gpu': 0,
         'dataset': 'CIFAR10',

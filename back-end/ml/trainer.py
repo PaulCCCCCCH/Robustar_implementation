@@ -136,7 +136,6 @@ class Trainer():
     def train(self, epoch, debug_info=True, save_best=True, pgd=False, merge=1):
         starttime = time.time()
         loader = self.trainloader
-        print("Start Training")
         criterion = torch.nn.CrossEntropyLoss()
         pgd_attack = PGD(self.net, eps=0.2, alpha=2/255,
                          iters=2) if pgd else self.returna

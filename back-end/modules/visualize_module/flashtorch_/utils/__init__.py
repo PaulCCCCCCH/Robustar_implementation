@@ -7,10 +7,9 @@ transformation.
 """
 from PIL import Image
 
-import matplotlib.pyplot as plt
-
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as F
+from objects.RServer import RServer
 
 from .imagenet import *
 
@@ -29,6 +28,7 @@ def load_image(image_path):
 
 
 def apply_transforms(image, size=224):
+    # TODO: Make this transform global
     """Transforms a PIL image to torch.Tensor.
 
     Applies a series of tranformations on PIL image including a conversion
@@ -65,18 +65,9 @@ def apply_transforms(image, size=224):
     if not isinstance(image, Image.Image):
         image = F.to_pil_image(image)
 
-    means = [0.485, 0.456, 0.406]
-    stds = [0.229, 0.224, 0.225]
+    dataManager = RServer.getDataManager()
 
-    # means = [0.5, 0.5, 0.5]
-    # stds = [0.5, 0.5, 0.5]
-
-    transform = transforms.Compose([
-        transforms.Resize(size),
-        transforms.CenterCrop(size),
-        transforms.ToTensor(),
-        transforms.Normalize(means, stds)
-    ])
+    transform = dataManager.transforms
 
     tensor = transform(image).unsqueeze(0)
 
