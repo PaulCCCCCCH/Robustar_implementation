@@ -48,17 +48,17 @@ const routes = [
   {
     path: '/influence-pad',
     name: 'InfluencePad',
-    component: InfluencePad
+    component: InfluencePad,
   },
   {
     path: '/predict',
     name: 'Prediction',
-    component: Prediction
+    component: Prediction,
   },
 ];
 
 const router = new VueRouter({
-    routes,
+  routes,
 });
 
 export default router;

@@ -15,8 +15,8 @@ function getNextImageByIdAndURL(image_id, image_url) {
  * gives ["10", "train"]
  */
 function getImageUrlFromFullUrl(full_url) {
-  const arr = full_url.split('/')
-  return [arr[arr.length - 1], arr[arr.length - 2]]
+  const arr = full_url.split('/');
+  return [arr[arr.length - 1], arr[arr.length - 2]];
 }
 
 export { getNextImageByIdAndURL, getImageUrlFromFullUrl };
