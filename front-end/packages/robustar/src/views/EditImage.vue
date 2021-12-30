@@ -4,7 +4,7 @@
       adjust
     </v-btn> -->
 
-    <div style="position: absolute; z-index: 10; top: 50px; width: 100%">
+    <div style="position: absolute; top: 50px; width: 100%">
       <Visualizer />
     </div>
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
