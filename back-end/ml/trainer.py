@@ -22,6 +22,7 @@ class Trainer():
         self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
+        self.stop = False
 
         # Start the tensorboard
 
@@ -152,6 +153,13 @@ class Trainer():
             # storeLoader(loader)
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
+
+                if self.stop:
+                    endtime = time.time()
+                    print("Time consumption:", endtime-starttime)
+                    print("Trainning stopped!")
+                    return 
+                    
 
                 if self.use_paired_train:
                     inputs, labels = data[0]

@@ -31,7 +31,7 @@
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
-              Start calculation
+            Start calculation
           </v-btn>
         </div>
       </v-form>
@@ -79,8 +79,6 @@
     </v-snackbar>
   </div>
 </template>
-
-
 
 <script>
 import { APICalculateInfluence } from '@/apis/predict';

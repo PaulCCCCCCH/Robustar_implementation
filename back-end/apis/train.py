@@ -6,6 +6,28 @@ from objects.RResponse import RResponse
 app = RServer.getServer().getFlaskApp()
 
 
+class ThreadPool:
+    threads = []
+
+    @staticmethod
+    def append(thread):
+        ThreadPool.threads.append(thread)
+
+    @staticmethod
+    def stop():
+        while ThreadPool.threads:
+            t = ThreadPool.threads.pop()
+            t.stop()
+
+@app.route('/train/stop', methods=['GET'])
+def stop_training():
+    try:
+        ThreadPool.stop()
+    except:
+        return RResponse.fail("Failed", -1)
+    
+    return RResponse.ok("Training stopped!")
+
 @app.route('/train', methods=['POST'])
 def start_training():
     """
@@ -34,6 +56,8 @@ def start_training():
     if not train_thread:
         print("Failed")
         return RResponse.fail("Failed", -1)
+
+    ThreadPool.append(train_thread)
 
     # Training started succesfully!
     print("Training started!")
