@@ -60,8 +60,9 @@ def initialize_model():
     weight_to_load = server_configs['weight_to_load']
     device = server_configs['device']
     pre_trained = server_configs['pre_trained']
+    num_classes = server_configs['num_classes']
 
-    return RModelWrapper(model_arch, weight_to_load, device, pre_trained)
+    return RModelWrapper(model_arch, weight_to_load, device, pre_trained, num_classes)
 
 
 def update_info(status_dict):

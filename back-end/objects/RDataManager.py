@@ -13,13 +13,16 @@ import os
 from utils.path_utils import get_paired_path, split_path
 import torch
 from torchvision import transforms
+from PIL import Image
+import torchvision.transforms.functional as transF
 
 
 # The data interface
 class RDataManager:
 
     def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
-                 image_padding='none'):
+                 image_padding='short_side'):
+    # def __init__(self, datasetPath, image_size, image_padding):
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
@@ -38,7 +41,6 @@ class RDataManager:
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
 
-        self.reload_influence_dict()
 
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
@@ -52,8 +54,8 @@ class RDataManager:
         means = [0.485, 0.456, 0.406]
         stds = [0.229, 0.224, 0.225]
         self.transforms = transforms.Compose([
-            transforms.Resize(image_size),
-            transforms.CenterCrop(image_size),
+            SquarePad(image_padding),
+            transforms.Resize((image_size)),
             transforms.ToTensor(),
             transforms.Normalize(means, stds)
         ])
@@ -86,10 +88,19 @@ class RDataManager:
         self.get_classify_validation_list()
         self.get_classify_test_list()
 
+        self.reload_influence_dict()
+
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
             print("Loading influence dictionary!")
-            self.influenceBuffer = pickle.load(self.influence_file_path)
+            with open(self.influence_file_path, 'rb') as f:
+                try:
+                    # TODO: Check image_url -> image_path consistency here!
+                    self.influenceBuffer = pickle.load(f)
+                except Exception as e:
+                    print("Influence function file not read because it is contaminated. \
+                    Please delete it manually and start the server again!")
+
         else:
             print("No influence dictionary found!")
 
@@ -159,8 +170,44 @@ class RDataManager:
                     self.incorrectTestBuffer.append(int(line))
 
 
+
+# Return a square image
+class SquarePad:
+    image_padding = 'constant'
+
+    def __init__(self, image_padding):
+        self.image_padding = image_padding
+
+    def __call__(self, image):
+        # Reference: https://discuss.pytorch.org/t/how-to-resize-and-pad-in-a-torchvision-transforms-compose/71850/10
+        if self.image_padding =='none':
+            return image
+        elif self.image_padding == 'short_side':
+            # Calculate the size of paddings
+            max_size = max(image.size)
+            pad_left, pad_top = [(max_size - size) // 2 for size in image.size]
+            pad_right, pad_bottom = [max_size - (size + pad) for size, pad in zip(image.size, [pad_left, pad_top])]
+            padding = (pad_left, pad_top, pad_right, pad_bottom)
+            return transF.pad(image, padding, 0, 'constant')
+
+        # TODO: Support more padding modes. E.g. pad both sides to given image size 
+        else:
+            raise NotImplemented
+
 if __name__ == '__main__':
+
     # Test
-    dataManager = RDataManager('/Robustar2/dataset')
+    # dataManager = RDataManager('/Robustar2/dataset')
     # print(dataManager.trainset.imgs[0])
-    print(osp.exists('/Robustar2/x'))
+    # print(osp.exists('/Robustar2/x'))
+
+    transforms = transforms.Compose([
+        SquarePad('short_side'),
+        transforms.Resize((600, 600)),
+    ])
+
+    img = Image.open('C:\\Users\\paulc\\Desktop\\temp.png')
+    print(img.size)
+    trans = transforms(img)
+    trans.save('C:\\Users\\paulc\\Desktop\\temp_trans.png')
+

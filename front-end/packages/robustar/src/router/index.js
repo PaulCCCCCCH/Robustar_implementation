@@ -5,6 +5,7 @@ import ImageList from '../views/ImageList.vue';
 import TrainPad from '../views/TrainPad.vue';
 import InfluencePad from '../views/InfluencePad.vue';
 import EditImage from '@/views/EditImage';
+import Prediction from '@/views/Prediction.vue';
 import TestPad from '@/views/TestPad';
 
 Vue.use(VueRouter);
@@ -47,12 +48,17 @@ const routes = [
   {
     path: '/influence-pad',
     name: 'InfluencePad',
-    component: InfluencePad,
+    component: InfluencePad
+  },
+  {
+    path: '/predict',
+    name: 'Prediction',
+    component: Prediction
   },
 ];
 
 const router = new VueRouter({
-  routes,
+    routes,
 });
 
 export default router;

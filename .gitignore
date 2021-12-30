@@ -16,6 +16,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 back-end/runs
+back-end/influence_list
 
 # Editor directories and files
 .idea

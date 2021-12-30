@@ -7,5 +7,6 @@
     "shuffle": true,
     "num_workers": 8,
     "image_size": 32,
-    "image_padding": "none"
+    "image_padding": "short_side",
+    "num_classes": 10
 }

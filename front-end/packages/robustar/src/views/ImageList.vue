@@ -8,16 +8,16 @@
     <!-- Image list controller -->
     <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
       <!-- Previous page button -->
-      <v-btn outlined color="primary" @click="prevPage"> Prev Page </v-btn>
+      <v-btn depressed color="primary" @click="prevPage"> Prev Page </v-btn>
 
       <!-- Refresh page button & page number -->
       <div class="d-flex">
-        <v-btn class="mr-4" outlined color="primary" @click="loadImages"> Goto Page </v-btn>
+        <v-btn class="mr-4" depressed color="primary" @click="loadImages"> Goto Page </v-btn>
         <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
       </div>
 
       <!-- Next page button -->
-      <v-btn outlined color="primary" @click="nextPage"> Next Page </v-btn>
+      <v-btn depressed color="primary" @click="nextPage"> Next Page </v-btn>
     </div>
 
     <!-- Image List -->
@@ -48,12 +48,18 @@
                     large
                     color="white"
                     width="150px"
-                    @click="editImage(row, col, url)"
+                    @click="gotoImage(row, col, url, 'EditImage')"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     Annotate
                   </v-btn>
-                  <v-btn outlined large color="white" width="150px">
+                  <v-btn
+                    outlined
+                    large
+                    color="white"
+                    width="150px"
+                    @click="gotoImage(row, col, url, 'Prediction')"
+                  >
                     <v-icon left>mdi-cogs</v-icon>
                     Predict
                   </v-btn>
@@ -106,12 +112,13 @@ export default {
       this.currentPage--;
       this.loadImages();
     },
-    editImage(row, col, url) {
+    gotoImage(row, col, url, componentName) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
+      localStorage.setItem('split', this.$route.params.split)
       localStorage.setItem('image_id', image_id);
       localStorage.setItem('image_url', url);
-      this.$router.push({ name: 'EditImage' });
+      this.$router.push({ name: componentName });
     },
     loadImages() {
       this.imageMatrix = [];

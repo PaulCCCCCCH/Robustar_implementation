@@ -7,15 +7,27 @@
         <div class="text-h5 mb-4">settings</div>
         <!-- Set num of test samples per class for which we calculate influence-->
         <v-text-field
-          v-model="configs.n_test_per_class"
-          label="Number of test samples for which we calculate influence"
+          v-model="configs.test_sample_num"
+          label="Number of test samples for which we calculate influence (integer).
+          This number will be multiplied with the number of classes in the dataset"
           outlined
           clearable
           type="number"
+          hint="A value of -1 means calculating influence for the entire test set"
         ></v-text-field>
-        <small class="form-text text-muted"
-          >A value of -1 means calculating influence for the entire test set</small
-        >
+
+        <br>
+        <!-- Set r_averaging -->
+        <v-text-field
+          v-model="configs.r_averaging"
+          label="r_averaging (integer)"
+          outlined
+          clearable
+          type="number"
+          hint="Number of iterations of which to take the avg.
+            of the h_estimate calculation; recursion_depth = len(train_data) / r."
+        ></v-text-field>
+ 
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
@@ -80,7 +92,8 @@ export default {
 
       // influence calculation settings
       configs: {
-        n_test_per_class: 10,
+        test_sample_num: 10,
+        r_averaging: 1
       },
     };
   },

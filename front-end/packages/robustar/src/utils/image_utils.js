@@ -10,4 +10,13 @@ function getNextImageByIdAndURL(image_id, image_url) {
   return [newId, newUrl];
 }
 
-export { getNextImageByIdAndURL };
+/*
+ * Return image id and split from a full url, e.g. 'http://localhost:8080/route/train/10
+ * gives ["10", "train"]
+ */
+function getImageUrlFromFullUrl(full_url) {
+  const arr = full_url.split('/')
+  return [arr[arr.length - 1], arr[arr.length - 2]]
+}
+
+export { getNextImageByIdAndURL, getImageUrlFromFullUrl };
