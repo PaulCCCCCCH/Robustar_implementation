@@ -18,6 +18,7 @@
     <SideBar></SideBar>
 
     <v-main class="page-content">
+      <Notification></Notification>
       <router-view />
     </v-main>
   </v-app>
@@ -26,12 +27,14 @@
 <script>
 import Header from '@/components/common/Header';
 import SideBar from '@/components/common/SideBar';
+import Notification from '@/components/common/Notification';
 
 export default {
   name: 'App',
   components: {
     Header,
     SideBar,
+    Notification,
   },
   data() {
     return {

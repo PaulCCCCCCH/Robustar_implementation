@@ -75,4 +75,4 @@ const whiteTheme = {
   'colorpicker.title.color': '#000',
 };
 
-export default whiteTheme
+export default whiteTheme;

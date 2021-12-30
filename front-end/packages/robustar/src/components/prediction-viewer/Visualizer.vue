@@ -1,12 +1,15 @@
 <template>
-  <div class="d-flex flex-row justify-space-between align-center" style='width: 100%; padding: 30px'>
+  <div
+    class="d-flex flex-row justify-space-between align-center"
+    style="width: 100%; padding: 30px"
+  >
     <!-- View the prediction-->
     <div style="position: relative; z-index: 10">
       <PredView :dataArr="predDataArr" :config="predViewConfig" />
     </div>
     <!-- View model focus -->
     <div style="position: relative; z-index: 10">
-      <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" /> 
+      <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" />
     </div>
   </div>
 </template>
@@ -44,8 +47,8 @@ export default {
     const split = localStorage.getItem('split');
     const image_id = localStorage.getItem('image_id');
     if (split && image_id) {
-      this.view_prediction(split, image_id)
-      this.get_influence(split, image_id)
+      this.view_prediction(split, image_id);
+      this.get_influence(split, image_id);
     }
   },
   methods: {
@@ -69,28 +72,26 @@ export default {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
-          this.influImgUrl = []
-          return
+          this.influImgUrl = [];
+          return;
         }
-        console.log(response)
+        console.log(response);
 
         const responseData = response.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
-          const url = responseData[i][1]  
-          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`)
+          const url = responseData[i][1];
+          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`);
         }
-
-      }
+      };
 
       const failed = (err) => {
-        console.log(err)
-      }
+        console.log(err);
+      };
 
-      APIGetInfluenceImages(split, imageId, success, failed)
-    }
-
+      APIGetInfluenceImages(split, imageId, success, failed);
+    },
   },
 };
 </script>
