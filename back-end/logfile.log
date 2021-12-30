@@ -1,0 +1,2471 @@
+2021-12-30 16:19:41,716: 127.0.0.1 - - [30/Dec/2021 16:19:41] "POST /influence HTTP/1.1" 200 -
+2021-12-30 16:19:51,290: 127.0.0.1 - - [30/Dec/2021 16:19:51] "OPTIONS /influence HTTP/1.1" 200 -
+2021-12-30 16:19:51,542: 127.0.0.1 - - [30/Dec/2021 16:19:51] "POST /influence HTTP/1.1" 200 -
+2021-12-30 16:19:53,925: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/7 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:53,925: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/5 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:53,929: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/10 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:53,934: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/3 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:53,937: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/16 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:53,939: 127.0.0.1 - - [30/Dec/2021 16:19:53] "[32mGET /image/train/8 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,243: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,247: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,252: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,255: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,257: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,260: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /dataset//Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:54,566: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,568: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,570: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,571: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,576: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,578: 127.0.0.1 - - [30/Dec/2021 16:19:54] "GET /dataset/Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:54,883: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/11 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,887: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/15 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,889: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,891: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/17 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,906: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/0 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:54,908: 127.0.0.1 - - [30/Dec/2021 16:19:54] "[32mGET /image/train/6 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,196: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,201: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,209: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,221: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 16:19:55,223: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,226: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,518: 127.0.0.1 - - [30/Dec/2021 16:19:55] "GET /dataset/Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:55,519: 127.0.0.1 - - [30/Dec/2021 16:19:55] "GET /dataset/Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:55,534: 127.0.0.1 - - [30/Dec/2021 16:19:55] "GET /dataset/Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:55,535: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/12 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,539: 127.0.0.1 - - [30/Dec/2021 16:19:55] "GET /dataset/Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:55,548: 127.0.0.1 - - [30/Dec/2021 16:19:55] "GET /dataset/Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:55,828: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/9 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,833: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/2 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,842: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/14 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,852: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /dataset//Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:55,854: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/13 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:55,856: 127.0.0.1 - - [30/Dec/2021 16:19:55] "[32mGET /image/train/4 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:56,142: 127.0.0.1 - - [30/Dec/2021 16:19:56] "[32mGET /dataset//Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:56,156: 127.0.0.1 - - [30/Dec/2021 16:19:56] "[36mGET /dataset/Robustar2/dataset/train/0/0_10020.jpg HTTP/1.1[0m" 304 -
+2021-12-30 16:19:56,160: 127.0.0.1 - - [30/Dec/2021 16:19:56] "[32mGET /dataset//Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:56,172: 127.0.0.1 - - [30/Dec/2021 16:19:56] "[32mGET /dataset//Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:56,173: 127.0.0.1 - - [30/Dec/2021 16:19:56] "GET /dataset/Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:56,175: 127.0.0.1 - - [30/Dec/2021 16:19:56] "[32mGET /dataset//Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:56,466: 127.0.0.1 - - [30/Dec/2021 16:19:56] "GET /dataset/Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:56,474: 127.0.0.1 - - [30/Dec/2021 16:19:56] "GET /dataset/Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:56,486: 127.0.0.1 - - [30/Dec/2021 16:19:56] "GET /dataset/Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:56,494: 127.0.0.1 - - [30/Dec/2021 16:19:56] "GET /dataset/Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:57,856: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/18 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:57,857: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/19 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:57,859: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/20 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:57,861: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/21 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:57,868: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/22 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:57,870: 127.0.0.1 - - [30/Dec/2021 16:19:57] "[32mGET /image/train/23 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,170: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10197.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,172: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10202.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,174: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10205.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,176: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10212.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,179: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10215.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,181: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /dataset//Robustar2/dataset/train/0/0_10243.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:58,478: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10197.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,480: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10202.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,483: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10205.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,485: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10212.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,490: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10215.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,490: 127.0.0.1 - - [30/Dec/2021 16:19:58] "GET /dataset/Robustar2/dataset/train/0/0_10243.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:58,787: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/24 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,791: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/25 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,792: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/26 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,796: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/27 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,798: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/28 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:58,803: 127.0.0.1 - - [30/Dec/2021 16:19:58] "[32mGET /image/train/29 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,095: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10265.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,105: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10266.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,112: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10267.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,115: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10275.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,122: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10297.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,125: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /dataset//Robustar2/dataset/train/0/0_10301.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:19:59,409: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10265.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,414: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10266.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,431: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10267.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,434: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10275.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,437: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10297.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,442: 127.0.0.1 - - [30/Dec/2021 16:19:59] "GET /dataset/Robustar2/dataset/train/0/0_10301.jpg HTTP/1.1" 200 -
+2021-12-30 16:19:59,717: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/30 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,719: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/31 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,743: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/32 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,750: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/33 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,753: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/34 HTTP/1.1[0m" 302 -
+2021-12-30 16:19:59,755: 127.0.0.1 - - [30/Dec/2021 16:19:59] "[32mGET /image/train/35 HTTP/1.1[0m" 302 -
+2021-12-30 16:20:00,025: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10323.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,026: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10326.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,058: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10330.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,064: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10332.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,068: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10334.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,071: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[32mGET /dataset//Robustar2/dataset/train/0/0_10338.jpg HTTP/1.1[0m" 308 -
+2021-12-30 16:20:00,340: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10323.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,342: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10326.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,370: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10330.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,375: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10332.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,377: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10334.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,386: 127.0.0.1 - - [30/Dec/2021 16:20:00] "GET /dataset/Robustar2/dataset/train/0/0_10338.jpg HTTP/1.1" 200 -
+2021-12-30 16:20:00,774: Exception on /predict/train/20 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 16:20:00,782: 127.0.0.1 - - [30/Dec/2021 16:20:00] "[35m[1mGET /predict/train/20 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:01,077: 127.0.0.1 - - [30/Dec/2021 16:20:01] "GET /influence/train/20 HTTP/1.1" 200 -
+2021-12-30 16:20:07,288: Exception on /image/validation_correct/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,289: Exception on /image/validation_correct/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,289: Exception on /image/validation_correct/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,290: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/0 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,291: Exception on /image/validation_correct/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,292: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/1 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,292: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/2 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,293: Exception on /image/validation_correct/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,294: Exception on /image/validation_correct/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,295: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/3 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,295: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/4 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,296: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/5 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,605: Exception on /image/validation_correct/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,605: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/16 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,607: Exception on /image/validation_correct/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,608: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/17 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,609: Exception on /image/validation_correct/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,610: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/13 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,611: Exception on /image/validation_correct/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,612: Exception on /image/validation_correct/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,613: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/12 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,613: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/14 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,614: Exception on /image/validation_correct/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,615: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/15 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,909: Exception on /image/validation_correct/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,909: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/6 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,912: Exception on /image/validation_correct/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,913: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/7 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,916: Exception on /image/validation_correct/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,916: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/8 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,925: Exception on /image/validation_correct/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,926: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/9 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,927: Exception on /image/validation_correct/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,927: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/10 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:07,928: Exception on /image/validation_correct/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:07,929: 127.0.0.1 - - [30/Dec/2021 16:20:07] "[35m[1mGET /image/validation_correct/11 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,544: Exception on /image/validation_incorrect/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,545: Exception on /image/validation_incorrect/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,545: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/0 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,546: Exception on /image/validation_incorrect/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,547: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/1 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,548: Exception on /image/validation_incorrect/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,552: Exception on /image/validation_incorrect/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,554: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/3 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,555: Exception on /image/validation_incorrect/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,556: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/2 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,557: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/4 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,557: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/5 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,858: Exception on /image/validation_incorrect/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,858: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/14 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,875: Exception on /image/validation_incorrect/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,876: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/12 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,879: Exception on /image/validation_incorrect/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,880: Exception on /image/validation_incorrect/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,880: Exception on /image/validation_incorrect/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,880: Exception on /image/validation_incorrect/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:09,881: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/15 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,882: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/13 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,882: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/16 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:09,886: 127.0.0.1 - - [30/Dec/2021 16:20:09] "[35m[1mGET /image/validation_incorrect/17 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,162: Exception on /image/validation_incorrect/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,163: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/6 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,180: Exception on /image/validation_incorrect/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,181: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/7 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,192: Exception on /image/validation_incorrect/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,194: Exception on /image/validation_incorrect/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,194: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/8 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,194: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/10 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,195: Exception on /image/validation_incorrect/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,196: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/9 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:10,197: Exception on /image/validation_incorrect/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 50, in imageURLToPath
+    filePath = get_validation_correct(False, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 72, in get_validation_correct
+    img_num = incorrectValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:10,199: 127.0.0.1 - - [30/Dec/2021 16:20:10] "[35m[1mGET /image/validation_incorrect/11 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,091: Exception on /image/test_correct/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,092: Exception on /image/test_correct/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,092: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/0 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,093: Exception on /image/test_correct/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,094: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/1 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,094: Exception on /image/test_correct/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,095: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/2 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,096: Exception on /image/test_correct/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,097: Exception on /image/test_correct/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,098: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/3 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,099: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/4 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,100: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/5 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,401: Exception on /image/test_correct/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,401: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/15 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,409: Exception on /image/test_correct/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,410: Exception on /image/test_correct/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,411: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/17 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,411: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/14 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,412: Exception on /image/test_correct/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,413: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/13 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,413: Exception on /image/test_correct/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,416: Exception on /image/test_correct/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,417: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/12 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,418: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/16 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,707: Exception on /image/test_correct/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,708: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/6 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,720: Exception on /image/test_correct/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,721: Exception on /image/test_correct/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,722: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/7 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,723: Exception on /image/test_correct/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,723: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/8 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,724: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/9 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,728: Exception on /image/test_correct/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,729: Exception on /image/test_correct/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 16:20:11,730: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/10 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:11,730: 127.0.0.1 - - [30/Dec/2021 16:20:11] "[35m[1mGET /image/test_correct/11 HTTP/1.1[0m" 500 -
+2021-12-30 16:20:14,853: 127.0.0.1 - - [30/Dec/2021 16:20:14] "OPTIONS /test HTTP/1.1" 200 -
+2021-12-30 16:20:15,107: 127.0.0.1 - - [30/Dec/2021 16:20:15] "POST /test HTTP/1.1" 200 -
+2021-12-30 16:20:16,717: 127.0.0.1 - - [30/Dec/2021 16:20:16] "POST /test HTTP/1.1" 200 -
+2021-12-30 17:02:03,502: Exception on /predict/train/20 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 17:02:03,503: 127.0.0.1 - - [30/Dec/2021 17:02:03] "GET /influence/train/20 HTTP/1.1" 200 -
+2021-12-30 17:02:03,504: 127.0.0.1 - - [30/Dec/2021 17:02:03] "[35m[1mGET /predict/train/20 HTTP/1.1[0m" 500 -
+2021-12-30 17:02:03,526: 127.0.0.1 - - [30/Dec/2021 17:02:03] "[32mGET /image/train/20 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:05,251: 127.0.0.1 - - [30/Dec/2021 17:02:05] "[36mGET /dataset/Robustar2/dataset/train/0/0_10205.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,521: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/7 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,523: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/13 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,526: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/14 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,527: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/5 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,529: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/9 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,534: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[32mGET /image/train/3 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:09,860: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,872: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,873: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,875: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,879: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:09,882: 127.0.0.1 - - [30/Dec/2021 17:02:09] "[36mGET /dataset/Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,174: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/10 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,179: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/17 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,183: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,192: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/11 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,194: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/15 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,196: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/2 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,496: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,527: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,531: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,543: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,545: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,547: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[36mGET /dataset/Robustar2/dataset/train/0/0_10020.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:10,808: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/12 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,843: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/0 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,860: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/16 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,863: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/8 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,868: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/6 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:10,877: 127.0.0.1 - - [30/Dec/2021 17:02:10] "[32mGET /image/train/4 HTTP/1.1[0m" 302 -
+2021-12-30 17:02:11,129: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:11,159: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:11,181: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:11,193: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:11,195: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1[0m" 304 -
+2021-12-30 17:02:11,197: 127.0.0.1 - - [30/Dec/2021 17:02:11] "[36mGET /dataset/Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:26:13,979: 127.0.0.1 - - [30/Dec/2021 20:26:13] "OPTIONS /test HTTP/1.1" 200 -
+2021-12-30 20:26:14,230: 127.0.0.1 - - [30/Dec/2021 20:26:14] "POST /test HTTP/1.1" 200 -
+2021-12-30 20:28:10,969: 127.0.0.1 - - [30/Dec/2021 20:28:10] "OPTIONS /train HTTP/1.1" 200 -
+2021-12-30 20:28:11,628: 127.0.0.1 - - [30/Dec/2021 20:28:11] "POST /train HTTP/1.1" 200 -
+2021-12-30 20:28:26,158: 127.0.0.1 - - [30/Dec/2021 20:28:26] "OPTIONS /train HTTP/1.1" 200 -
+2021-12-30 20:28:26,873: 127.0.0.1 - - [30/Dec/2021 20:28:26] "POST /train HTTP/1.1" 200 -
+2021-12-30 20:29:43,076: 127.0.0.1 - - [30/Dec/2021 20:29:43] "GET /influence/train/43 HTTP/1.1" 200 -
+2021-12-30 20:29:43,075: Exception on /predict/train/43 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:29:43,078: 127.0.0.1 - - [30/Dec/2021 20:29:43] "[35m[1mGET /predict/train/43 HTTP/1.1[0m" 500 -
+2021-12-30 20:29:43,158: 127.0.0.1 - - [30/Dec/2021 20:29:43] "[32mGET /image/train/43 HTTP/1.1[0m" 302 -
+2021-12-30 20:29:44,276: 127.0.0.1 - - [30/Dec/2021 20:29:44] "[36mGET /dataset/Robustar2/dataset/train/0/0_10399.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,098: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/14 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,100: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/5 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,102: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/4 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,105: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/6 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,109: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/12 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,113: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/8 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,449: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,453: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,463: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,465: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,466: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,468: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[36mGET /dataset/Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:17,756: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/16 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,765: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,770: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/9 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,781: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/2 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,783: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/3 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:17,786: 127.0.0.1 - - [30/Dec/2021 20:30:17] "[32mGET /image/train/15 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,078: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,086: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,094: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,115: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10020.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,116: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,117: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,386: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/17 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,397: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/11 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,414: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/0 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,447: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/7 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,449: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/13 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,451: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[32mGET /image/train/10 HTTP/1.1[0m" 302 -
+2021-12-30 20:30:18,704: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,708: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,725: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,766: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,814: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:18,817: 127.0.0.1 - - [30/Dec/2021 20:30:18] "[36mGET /dataset/Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:30:21,366: Exception on /image/validation_correct/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,367: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/0 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,368: Exception on /image/validation_correct/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,369: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,369: Exception on /image/validation_correct/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,372: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/2 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,371: Exception on /image/validation_correct/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,378: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/3 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,376: Exception on /image/validation_correct/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,380: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/4 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,380: Exception on /image/validation_correct/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,382: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/5 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,674: Exception on /image/validation_correct/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,675: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/16 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,679: Exception on /image/validation_correct/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,680: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/12 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,682: Exception on /image/validation_correct/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,683: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/13 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,698: Exception on /image/validation_correct/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,699: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/15 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,700: Exception on /image/validation_correct/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,701: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/17 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,701: Exception on /image/validation_correct/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,702: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/14 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,981: Exception on /image/validation_correct/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,982: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/6 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,984: Exception on /image/validation_correct/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,984: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/7 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:21,986: Exception on /image/validation_correct/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:21,987: 127.0.0.1 - - [30/Dec/2021 20:30:21] "[35m[1mGET /image/validation_correct/8 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:22,002: Exception on /image/validation_correct/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:22,033: 127.0.0.1 - - [30/Dec/2021 20:30:22] "[35m[1mGET /image/validation_correct/9 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:22,035: Exception on /image/validation_correct/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:22,037: 127.0.0.1 - - [30/Dec/2021 20:30:22] "[35m[1mGET /image/validation_correct/10 HTTP/1.1[0m" 500 -
+2021-12-30 20:30:22,039: Exception on /image/validation_correct/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:30:22,084: 127.0.0.1 - - [30/Dec/2021 20:30:22] "[35m[1mGET /image/validation_correct/11 HTTP/1.1[0m" 500 -
+2021-12-30 20:32:35,088: Exception on /predict/train/43 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:32:35,089: 127.0.0.1 - - [30/Dec/2021 20:32:35] "[35m[1mGET /predict/train/43 HTTP/1.1[0m" 500 -
+2021-12-30 20:32:35,110: 127.0.0.1 - - [30/Dec/2021 20:32:35] "GET /influence/train/43 HTTP/1.1" 200 -
+2021-12-30 20:32:39,856: Exception on /predict/train/43 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:32:39,859: 127.0.0.1 - - [30/Dec/2021 20:32:39] "[35m[1mGET /predict/train/43 HTTP/1.1[0m" 500 -
+2021-12-30 20:32:40,191: 127.0.0.1 - - [30/Dec/2021 20:32:40] "GET /influence/train/43 HTTP/1.1" 200 -
+2021-12-30 20:32:53,946: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/12 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:53,948: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/4 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:53,950: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/15 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:53,963: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/6 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:53,966: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/11 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:53,970: 127.0.0.1 - - [30/Dec/2021 20:32:53] "[32mGET /image/train/0 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,309: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,330: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,331: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,332: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,334: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,338: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,615: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/5 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,638: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/3 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,654: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/13 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,659: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/16 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,662: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/7 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,664: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[32mGET /image/train/9 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:54,934: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,961: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,994: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:54,996: 127.0.0.1 - - [30/Dec/2021 20:32:54] "[36mGET /dataset/Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:55,013: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[36mGET /dataset/Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:55,014: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[36mGET /dataset/Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:55,199: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:32:55,200: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:32:55,246: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/10 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,272: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/8 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,315: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/2 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,317: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/14 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,332: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/17 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,335: 127.0.0.1 - - [30/Dec/2021 20:32:55] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:32:55,500: 127.0.0.1 - - [30/Dec/2021 20:32:55] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:32:57,013: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:57,014: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:57,015: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_10020.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:57,017: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:57,018: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:32:57,019: 127.0.0.1 - - [30/Dec/2021 20:32:57] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:33:12,614: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:33:12,614: 127.0.0.1 - - [30/Dec/2021 20:33:12] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:33:12,619: 127.0.0.1 - - [30/Dec/2021 20:33:12] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:33:12,620: 127.0.0.1 - - [30/Dec/2021 20:33:12] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:33:15,702: 127.0.0.1 - - [30/Dec/2021 20:33:15] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:38:50,944: 127.0.0.1 - - [30/Dec/2021 20:38:50] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:38:50,946: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:38:50,947: 127.0.0.1 - - [30/Dec/2021 20:38:50] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:38:51,009: 127.0.0.1 - - [30/Dec/2021 20:38:51] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:38:52,683: 127.0.0.1 - - [30/Dec/2021 20:38:52] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:20,655: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:40:20,656: 127.0.0.1 - - [30/Dec/2021 20:40:20] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:20,664: 127.0.0.1 - - [30/Dec/2021 20:40:20] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:40:20,692: 127.0.0.1 - - [30/Dec/2021 20:40:20] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:22,176: 127.0.0.1 - - [30/Dec/2021 20:40:22] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:29,740: 127.0.0.1 - - [30/Dec/2021 20:40:29] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:40:29,739: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:40:29,741: 127.0.0.1 - - [30/Dec/2021 20:40:29] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:29,801: 127.0.0.1 - - [30/Dec/2021 20:40:29] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:31,047: 127.0.0.1 - - [30/Dec/2021 20:40:31] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:40,187: 127.0.0.1 - - [30/Dec/2021 20:40:40] "GET /influence/train/1 HTTP/1.1" 200 -
+2021-12-30 20:40:40,186: Exception on /predict/train/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 51, in predict
+    output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+  File "F:\Robustar_migration\back-end\utils\predict.py", line 37, in get_image_prediction
+    image = apply_transforms(image,imgsize)
+  File "F:\Robustar_migration\back-end\modules\visualize_module\flashtorch_\utils\__init__.py", line 72, in apply_transforms
+    tensor = transform(image).unsqueeze(0)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\torchvision\transforms\transforms.py", line 61, in __call__
+    img = t(img)
+  File "F:\Robustar_migration\back-end\objects\RDataManager.py", line 195, in __call__
+    raise NotImplemented
+TypeError: exceptions must derive from BaseException
+2021-12-30 20:40:40,188: 127.0.0.1 - - [30/Dec/2021 20:40:40] "[35m[1mGET /predict/train/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:46,824: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/13 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:46,826: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/0 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:46,830: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/4 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:46,834: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/11 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:46,836: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/6 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:46,838: 127.0.0.1 - - [30/Dec/2021 20:40:46] "[32mGET /image/train/3 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,183: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10141.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,185: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10008.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,187: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10031.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,190: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10124.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,193: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10050.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,197: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10024.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,492: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/12 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,497: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/2 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,500: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/14 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,502: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/10 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,519: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/7 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,520: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[32mGET /image/train/16 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:47,828: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10130.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,831: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10020.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,836: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10146.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,838: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_1012.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,853: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10061.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:47,854: 127.0.0.1 - - [30/Dec/2021 20:40:47] "[36mGET /dataset/Robustar2/dataset/train/0/0_10151.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,154: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/8 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,169: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/1 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,171: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/17 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,185: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/5 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,188: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/15 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,190: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[32mGET /image/train/9 HTTP/1.1[0m" 302 -
+2021-12-30 20:40:48,476: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10064.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,489: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10010.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,496: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10159.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,521: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10043.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,528: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10148.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:48,530: 127.0.0.1 - - [30/Dec/2021 20:40:48] "[36mGET /dataset/Robustar2/dataset/train/0/0_10115.jpg HTTP/1.1[0m" 304 -
+2021-12-30 20:40:52,050: Exception on /image/validation_correct/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,066: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/0 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,064: Exception on /image/validation_correct/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,067: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,065: Exception on /image/validation_correct/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,069: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/2 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,067: Exception on /image/validation_correct/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,071: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/3 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,070: Exception on /image/validation_correct/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,072: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/4 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,073: Exception on /image/validation_correct/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,073: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/5 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,372: Exception on /image/validation_correct/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,372: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/17 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,398: Exception on /image/validation_correct/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,399: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/14 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,399: Exception on /image/validation_correct/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,400: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/12 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,401: Exception on /image/validation_correct/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,402: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/13 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,403: Exception on /image/validation_correct/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,404: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/15 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,403: Exception on /image/validation_correct/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,404: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/16 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,680: Exception on /image/validation_correct/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,682: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/6 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,716: Exception on /image/validation_correct/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,717: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/7 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,717: Exception on /image/validation_correct/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,718: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/8 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,733: Exception on /image/validation_correct/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,734: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/9 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,733: Exception on /image/validation_correct/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,735: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/10 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:52,735: Exception on /image/validation_correct/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 48, in imageURLToPath
+    filePath = get_validation_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 70, in get_validation_correct
+    img_num = correctValidationBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:52,736: 127.0.0.1 - - [30/Dec/2021 20:40:52] "[35m[1mGET /image/validation_correct/11 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,116: Exception on /image/test_correct/0 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,117: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/0 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,118: Exception on /image/test_correct/1 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,119: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/1 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,119: Exception on /image/test_correct/2 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,120: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/2 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,122: Exception on /image/test_correct/3 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,123: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/3 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,124: Exception on /image/test_correct/4 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,125: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/4 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,125: Exception on /image/test_correct/5 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,126: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/5 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,437: Exception on /image/test_correct/12 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,437: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/12 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,461: Exception on /image/test_correct/15 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,463: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/15 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,461: Exception on /image/test_correct/14 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,465: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/14 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,463: Exception on /image/test_correct/16 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,468: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/16 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,466: Exception on /image/test_correct/17 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,469: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/17 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,468: Exception on /image/test_correct/13 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,470: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/13 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,751: Exception on /image/test_correct/6 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,752: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/6 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,769: Exception on /image/test_correct/7 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,769: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/7 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,779: Exception on /image/test_correct/8 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,780: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/8 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,793: Exception on /image/test_correct/9 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,795: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/9 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,794: Exception on /image/test_correct/10 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,796: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/10 HTTP/1.1[0m" 500 -
+2021-12-30 20:40:54,795: Exception on /image/test_correct/11 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 14, in get_train_img
+    url = imageURLToPath('/'.join([split, image_id]))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 52, in imageURLToPath
+    filePath = get_test_correct(True, imageIndex)[0]
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 82, in get_test_correct
+    img_num = correctTestBuffer[image_index]
+IndexError: list index out of range
+2021-12-30 20:40:54,797: 127.0.0.1 - - [30/Dec/2021 20:40:54] "[35m[1mGET /image/test_correct/11 HTTP/1.1[0m" 500 -

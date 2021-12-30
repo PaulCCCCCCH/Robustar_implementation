@@ -7,7 +7,7 @@
 <script>
 import ImageEditor from '@robustar/image-editor';
 import '@robustar/image-editor/dist/tui-image-editor.css';
-import whiteTheme from './white-theme.js'
+import whiteTheme from './white-theme.js';
 
 const includeUIOptions = {
   includeUI: {
@@ -16,7 +16,7 @@ const includeUIOptions = {
       path: '',
       name: '',
     },
-    theme: whiteTheme
+    theme: whiteTheme,
   },
 };
 const editorDefaultOptions = {
@@ -118,3 +118,13 @@ export default {
   },
 };
 </script>
+
+<style>
+.tui-image-editor-range-wrap .range {
+  color: black !important;
+}
+
+.tui-image-editor-range-wrap label {
+  color: black !important;
+}
+</style>

@@ -123,7 +123,7 @@ export default {
     gotoImage(row, col, url, componentName) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
-      localStorage.setItem('split', this.$route.params.split)
+      localStorage.setItem('split', this.$route.params.split);
       localStorage.setItem('image_id', image_id);
       localStorage.setItem('image_url', url);
       this.$router.push({ name: componentName });

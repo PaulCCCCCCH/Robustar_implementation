@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 50px">
     <Visualizer />
-    </div>
+  </div>
 </template>
 
 <script>

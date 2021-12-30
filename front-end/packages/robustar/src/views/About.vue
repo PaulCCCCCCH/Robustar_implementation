@@ -40,8 +40,6 @@
     <div v-for="(url, index) in influImgUrl" :key="index" style="padding-left: 500px">
       <img :src="url" style="width: 100px" />
     </div>
-
-
   </div>
 </template>
 
@@ -98,25 +96,24 @@ export default {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
-          this.influImgUrl = []
-          return
+          this.influImgUrl = [];
+          return;
         }
 
         const responseData = response.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          const url = responseData[i]
-          this.influImgUrl.push(`${configs.serverUrl}/dataset/${url}`)
+          const url = responseData[i];
+          this.influImgUrl.push(`${configs.serverUrl}/dataset/${url}`);
         }
-
-      }
+      };
 
       const failed = (err) => {
-        console.log(err)
-      }
+        console.log(err);
+      };
 
-      APIGetInfluenceImages(split, imageId, success, failed)
-    }
+      APIGetInfluenceImages(split, imageId, success, failed);
+    },
   },
 };
 </script>
