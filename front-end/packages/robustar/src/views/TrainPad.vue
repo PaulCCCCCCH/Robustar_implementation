@@ -108,13 +108,18 @@
             Start Training
           </v-btn>
         </div>
+        <div class="d-flex flex-column align-center my-4">
+          <v-btn depressed color="primary" class="mx-auto" @click="stopTraining">
+            Stop Training
+          </v-btn>
+        </div>
       </v-form>
     </v-sheet>
   </div>
 </template>
 
 <script>
-import { APIStartTrain } from '@/apis/train';
+import { APIStartTrain, APIStopTrain } from '@/apis/train';
 export default {
   name: 'TrainPad',
   data() {
@@ -173,7 +178,7 @@ export default {
       console.log(res);
       this.$root.finishProcessing();
       this.$root.alert('success', 'Training succeeded');
-      window.location.replace('http://localhost:6006');
+      window.open('http://localhost:6006');
     },
     trainingFailed(res) {
       console.log(res);
@@ -190,6 +195,17 @@ export default {
         this.trainingSuccess,
         this.trainingFailed
       );
+    },
+    stopSuccess(res) {
+      console.log(res);
+      alert('Successfully stop training');
+    },
+    stopFailed(res) {
+      console.log(res);
+      alert('Failed to stop training');
+    },
+    stopTraining() {
+      APIStopTrain(this.stopSuccess, this.stopFailed);
     },
   },
 };

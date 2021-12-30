@@ -39,15 +39,7 @@
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="
-                    d-flex
-                    flex-column
-                    transition-fast-in-fast-out
-                    primary
-                    v-card--reveal
-                    text-h5
-                    white--text
-                  "
+                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
                   style="height: 100%"
                 >
                   <v-btn
