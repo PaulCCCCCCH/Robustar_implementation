@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <ul>
-      <li v-for="(item, key) of configs">{{key}}:{{item}}</li>
-    </ul>
+  <div class="d-flex flex-column align-center">
+    <table border="1" cellspacing="2" cellpadding="0">
+      <tr v-for="(value, key) of configs">
+        <th class="key">{{key}}</th>
+        <td class="value">{{value}}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
