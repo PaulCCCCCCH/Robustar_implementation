@@ -1,3 +1,4 @@
+
 from os.path import normpath
 
 from objects.RServer import RServer
@@ -21,12 +22,10 @@ validation_incorrect_root = dataManager.validation_incorrect_root
 def imageURLToPath(image_id):
     """
     Get the real path of the image specified by its id.
-
     args: 
         imageId:    The id of the image consisting of the dataset split (train/dev/test) 
                     and an index.
                     e.g.  train/10, test/300
-
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg
     """
@@ -54,12 +53,29 @@ def imageURLToPath(image_id):
         filePath = get_test_correct(False, imageIndex)[0]
     else:
         # data split not supported
-        raise NotImplemented
+        raise NotImplemented('Data split not supported')
 
     filePath = normpath(filePath).replace('\\', '/')
     datasetFileBuffer[image_id] = filePath
 
     return filePath
+
+def getSplitLength(split):
+    """
+    Get the length of a data split
+
+    args: 
+        split:  e.g. 'train', 'validation', 'test_correct'
+
+    returns:
+        The length of the data split as an integer
+    """
+
+    if split not in dataManager.split_dict:
+        raise NotImplemented('Data split not supported')
+
+    return len(dataManager.split_dict[split])
+
 
 
 def get_validation_correct(is_correct, image_index):

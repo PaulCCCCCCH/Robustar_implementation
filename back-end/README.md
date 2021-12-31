@@ -23,14 +23,14 @@ https://hub.docker.com/r/cdonglin/robustar
 
 Robustar reads from the following directories (absolute path, i.e. `Robustar2` folder is placed immediatly under `/` of your file system. Specifically, for linux and MacOS, put the folder under `/` directory. For Windows, put it directly under the volumn your operating system is installed (usually `C:`).
 
-- `/Robuster2/checkpoint_images` for pre-trained weights
-- `/Robuster2/dataset/train` for training dataset. Each subfolder under this directory should contain images for a class, i.e. it should follow the format of pytorch `ImageFolder`. Check [here](https://developpaper.com/detailed-explanation-of-the-use-of-imagefolder-in-pytorch/) for more details about `ImageFolder`
-- `/Robuster2/dataset/validation` for validation dataset
-- `/Robuster2/dataset/test` for test dataset
-- `/Robuster2/dataset/paired` for paired dataset
-- `/Robuster2/influence_images` for calculated influence images
-- `/Robuster2/user-edit.json` for user edit.
-- `/Robuster2/configs.json` for server configs. You directly may copy `configs.json` in the repository over.
+- `/robustar2/checkpoint_images` for pre-trained weights
+- `/robustar2/dataset/train` for training dataset. Each subfolder under this directory should contain images for a class, i.e. it should follow the format of pytorch `ImageFolder`. Check [here](https://developpaper.com/detailed-explanation-of-the-use-of-imagefolder-in-pytorch/) for more details about `ImageFolder`
+- `/robustar2/dataset/validation` for validation dataset
+- `/robustar2/dataset/test` for test dataset
+- `/robustar2/dataset/paired` for paired dataset
+- `/robustar2/influence_images` for calculated influence images
+- `/robustar2/user-edit.json` for user edit.
+- `/robustar2/configs.json` for server configs. You directly may copy `configs.json` in the repository over.
 
 You can download our example dataset [here](https://drive.google.com/file/d/1DTaPnWV91C9VXZ9JOBz7hoDxfyUXBpUv/view?usp=sharing)
 

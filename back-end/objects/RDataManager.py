@@ -89,6 +89,16 @@ class RDataManager:
         self.get_classify_test_list()
 
         self.reload_influence_dict()
+        self.split_dict = {
+            'train': self.trainset.samples,
+            'validation': self.validationset.samples,
+            'test': self.testset.samples,
+            'validation_correct': self.correctValidationBuffer,
+            'validation_incorrect': self.incorrectValidationBuffer,
+            'test_correct': self.correctTestBuffer,
+            'test_incorrect': self.incorrectTestBuffer
+        }
+
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
@@ -168,6 +178,23 @@ class RDataManager:
             with open(self.test_incorrect_root, 'r') as f:
                 for line in f:
                     self.incorrectTestBuffer.append(int(line))
+
+    def _pull_item(self, index, buffer):
+        if index >= len(buffer):
+            return None
+        return buffer[index]
+
+    def get_correct_validation(self, index):
+        return self._pull_item(index, self.correctValidationBuffer)
+
+    def get_incorrect_validation(self, index):
+        return self._pull_item(index, self.incorrectValidationBuffer)
+
+    def get_correct_test(self, index):
+        return self._pull_item(index, self.correctTestBuffer)
+
+    def get_incorrect_test(self, index):
+        return self._pull_item(index, self.incorrectTestBuffer)
 
 
 

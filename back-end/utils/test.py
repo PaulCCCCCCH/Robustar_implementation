@@ -53,7 +53,7 @@ def start_test(split):
                 # print(imgPath)
 
                 # TODO: 32 should not be hardcoded!
-                output = get_image_prediction(modelWrapper, imgPath, 32, argmax=False)
+                output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
                 output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
                 max_value = 0
@@ -84,6 +84,9 @@ def start_test(split):
                 dataManager.incorrectTestBuffer = incorrect_buffer
             else:
                 raise NotImplemented
+
+            dataManager.split_dict[split + '_correct'] = correct_buffer 
+            dataManager.split_dict[split + '_incorrect'] = incorrect_buffer 
 
             correct_file.close()
             incorrect_file.close()
