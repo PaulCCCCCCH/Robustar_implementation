@@ -184,6 +184,12 @@ if __name__ == "__main__":
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
+    class2label = configs['class_to_label_file']
+    
+    if class2label:
+        with open(osp.join(baseDir, class2label)) as jsonfile:
+            class2label = json.load(jsonfile)
+
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir)
     dataManager = RDataManager(
         baseDir, datasetDir, 
@@ -192,6 +198,7 @@ if __name__ == "__main__":
         num_workers=configs['num_workers'],
         image_size=configs['image_size'],
         image_padding=configs['image_padding'],
+        class2label_mapping=class2label
     )
     RServer.setDataManager(dataManager)
 
