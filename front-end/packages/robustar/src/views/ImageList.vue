@@ -1,38 +1,38 @@
 <template>
-  <div class="d-flex flex-column align-center">
+  <div class="d-flex flex-column align-center" style="width: 100%">
     <!-- Page header-->
-    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">
-      Select the image to edit
-    </div>
+    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div>
 
     <!-- Image list controller -->
     <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
       <!-- Previous page button -->
-      <v-btn depressed color="primary" @click="prevPage"> Prev Page </v-btn>
+      <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
+        Prev Page
+      </v-btn>
 
       <!-- Refresh page button & page number -->
       <div class="d-flex">
         <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
-        <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
+        <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
       </div>
 
       <!-- Next page button -->
-      <v-btn v-if="isListEnd" depressed disabled color="primary" @click="nextPage"> Next Page </v-btn>
-      <v-btn v-else depressed color="primary" @click="nextPage"> Next Page </v-btn>
+      <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
+        Next Page
+      </v-btn>
     </div>
 
     <!-- Image List -->
-    <div v-for="(imgline, row) in imageMatrix" :key="row">
-      <div class="d-flex">
-        <div class="mb-8 mr-8 row-item" v-for="(url, col) in imgline" :key="col">
+    <div style="width: auto">
+      <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
+        <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
           <!-- minus 1 is necessary since Vue counts from 1 -->
           <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
           <v-hover v-slot="{ hover }">
-            <v-img :src="url" alt="invalid image URL" height="200px" width="200px" @error="onListEnd">
+            <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular
-                    v-if="!isListEnd"
                     indeterminate
                     color="primary lighten-3"
                   ></v-progress-circular>
@@ -41,7 +41,15 @@
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
+                  class="
+                    d-flex
+                    flex-column
+                    transition-fast-in-fast-out
+                    primary
+                    v-card--reveal
+                    text-h5
+                    white--text
+                  "
                   style="height: 100%"
                 >
                   <v-btn
@@ -82,7 +90,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength } from '@/apis/images'
+import { APIGetSplitLength } from '@/apis/images';
 
 export default {
   name: 'ImageList',
@@ -90,10 +98,11 @@ export default {
   data() {
     return {
       currentPage: 0,
+      inputPage: 0,
+      maxPage: 0,
       imageMatrix: [],
       configs: configs,
-      isListEnd: false,
-      splitLength: 1000
+      splitLength: 1000,
     };
   },
   mounted() {
@@ -106,24 +115,22 @@ export default {
       this.getMaxPage();
       this.loadImages();
     },
+    currentPage() {
+      this.inputPage = this.currentPage;
+      this.loadImages();
+    },
   },
   methods: {
     getMaxPage() {
-      APIGetSplitLength(this.$route.params.split,
-        (res) => {this.splitLength = res.data.data; console.log(res.data.data)},
+      APIGetSplitLength(
+        this.$route.params.split,
+        (res) => {
+          this.splitLength = res.data.data;
+          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0));
+          console.log(res.data.data);
+        },
         (err) => console.log(err)
-      )
-    }, 
-    nextPage() {
-      this.currentPage++;
-      this.loadImages();
-    },
-    prevPage() {
-      if (this.currentPage <= 0) {
-        return;
-      }
-      this.currentPage--;
-      this.loadImages();
+      );
     },
     gotoImage(row, col, url, componentName) {
       const idx = imageCoord2Idx(row, col);
@@ -133,32 +140,47 @@ export default {
       localStorage.setItem('image_url', url);
       this.$router.push({ name: componentName });
     },
-    calcMaxPage() {
-      return getPageNumber(Math.max(this.splitLength - 1, 0));
-    },
     gotoPage() {
-      this.currentPage = Math.min(this.calcMaxPage(), this.currentPage);
-      console.log(this.currentPage)
-      this.loadImages();
+      this.inputPage = Number(this.inputPage);
+      if (this.inputPage > this.maxPage) {
+        this.$root.alert('error', 'This is the end of the list.');
+        this.inputPage = this.maxPage;
+      }
+      this.currentPage = this.inputPage;
     },
     loadImages() {
-      this.isListEnd = false;
       this.imageMatrix = [];
-      for (let row = 0; row < configs.imageListRow; row++) {
-        let line = [];
-        for (let col = 0; col < configs.imageListCol; col++) {
+      let { imageListRow, imageListCol } = configs;
+      let imgNumOfLastLine = 0;
+
+      // last page
+      if (this.currentPage === this.maxPage && this.maxPage > 0) {
+        const imgNumOfLastPage = this.splitLength - configs.imagePerPage * this.maxPage;
+        imageListRow = Math.floor(imgNumOfLastPage / imageListCol);
+        imgNumOfLastLine = imgNumOfLastPage % imageListCol;
+      }
+
+      for (let row = 0; row < imageListRow; row++) {
+        const line = [];
+        for (let col = 0; col < imageListCol; col++) {
           const idx = imageCoord2Idx(row, col);
           const imgid = imagePageIdx2Id(this.currentPage, idx);
-          // TODO: '/train/' should be a component prop, not hard-coded
           line.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
         }
         this.imageMatrix.push(line);
       }
+
+      // last row of last page
+      if (imgNumOfLastLine > 0) {
+        const lastLine = [];
+        for (let col = 0; col < imgNumOfLastLine; col++) {
+          const idx = imageCoord2Idx(imageListRow, col);
+          const imgid = imagePageIdx2Id(this.currentPage, idx);
+          lastLine.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
+        }
+        this.imageMatrix.push(lastLine);
+      }
     },
-    onListEnd() {
-      this.isListEnd = true;
-      this.$root.alert('error', 'This is the end of the list.');
-    }
   },
 };
 </script>
