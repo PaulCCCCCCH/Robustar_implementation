@@ -86,7 +86,7 @@
           class="num"
           :style="{ fontSize: (defaultConfig.figHeight / (arrLength + 3)) * 0.65 + 'px' }"
         >
-          {{ maxPositive }}
+          {{ String(maxPositive).slice(0,6) }}
         </div>
       </div>
     </div>
@@ -139,6 +139,7 @@ export default {
   },
   created() {
     this.arrLength = this.dataArr[0].length;
+    setInterval(()=>{this.maxPositive = Math.max(...this.dataArr[1])}, 100);
     setTimeout(
       function () {
         if (this.defaultConfig.dataRange != null) {
