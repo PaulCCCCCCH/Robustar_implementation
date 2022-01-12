@@ -8,6 +8,5 @@
     "num_workers": 8,
     "image_size": 32,
     "image_padding": "short_side",
-    "num_classes": 10,
-    "class_to_label_file": "class2label.json"
+    "num_classes": 10
 }

@@ -7,11 +7,10 @@ app = RServer.getServer().getFlaskApp()
 
 @app.route('/config', methods=['GET'])
 def get_config():
-    # Try to start training thread
+    # Return server configs to the client
     print("DEBUG: Fetching configs...")
     try:
         configs = RServer.getServerConfigs()
-        # print(split)
         return RResponse.ok(configs)
     except:
         return RResponse.fail("Failed", -1)

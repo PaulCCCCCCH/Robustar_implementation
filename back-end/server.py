@@ -184,7 +184,7 @@ if __name__ == "__main__":
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
-    class2labelPath = osp.join(baseDir, configs['class_to_label_file'])
+    class2labelPath = osp.join(baseDir, 'class2label.json')
     class2labelMapping = {}
     if os.path.exists(class2labelPath):
         try:
