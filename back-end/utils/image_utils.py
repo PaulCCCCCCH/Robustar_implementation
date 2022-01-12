@@ -1,4 +1,3 @@
-
 from os.path import normpath
 
 from objects.RServer import RServer
@@ -27,7 +26,7 @@ def imageURLToPath(image_id):
                     and an index.
                     e.g.  train/10, test/300
     returns:
-        imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg
+        imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
     split, indexStr = image_id.split('/')
@@ -60,6 +59,73 @@ def imageURLToPath(image_id):
 
     return filePath
 
+
+def getClassStart(split):
+    if split == 'train':
+        dataset_ls = trainset.samples
+        dataset_len = len(dataset_ls)
+        class_ls = trainset.classes
+        class_idx = trainset.class_to_idx
+    elif split == 'validation' or split == 'validation_correct' or split == 'validation_incorrect':
+        dataset_ls = validationset.samples
+        dataset_len = len(dataset_ls)
+        class_ls = validationset.classes
+        class_idx = validationset.class_to_idx
+    elif split == 'test' or split == 'test_correct' or split == 'test_incorrect':
+        dataset_ls = testset.samples
+        dataset_len = len(dataset_ls)
+        class_ls = testset.classes
+        class_idx = testset.class_to_idx
+    else:
+        raise NotImplemented('Data split not supported')
+
+    for i in range(len(class_ls)):
+        num = binarySearchLeftBorderTuple(dataset_ls, dataset_len, i)
+        class_idx[class_ls[i]] = num
+
+    if split == 'validation_correct':
+        buffer = dataManager.correctValidationBuffer
+    elif split == 'validation_incorrect':
+        buffer = dataManager.incorrectValidationBuffer
+    elif split == 'test_correct':
+        buffer = dataManager.correctTestBuffer
+    elif split == 'test_incorrect':
+        buffer = dataManager.incorrectTestBuffer
+    else:
+        return class_idx
+
+    for i in range(len(class_ls)):
+        num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+        class_idx[class_ls[i]] = num
+
+    return class_idx
+
+
+def binarySearchLeftBorderTuple(ls, length, target):
+    left = 0
+    right = length
+    while left < right:
+        mid = (left + right) // 2
+        print(left, right, mid, ls[mid])
+        if ls[mid][1] >= target:
+            right = mid
+        else:
+            left = mid + 1
+    return left
+
+
+def binarySearchLeftBorder(ls, length, target):
+    left = 0
+    right = length
+    while left < right:
+        mid = (left + right) // 2
+        if ls[mid] >= target:
+            right = mid
+        else:
+            left = mid + 1
+    return left
+
+
 def getSplitLength(split):
     """
     Get the length of a data split
@@ -75,7 +141,6 @@ def getSplitLength(split):
         raise NotImplemented('Data split not supported')
 
     return len(dataManager.split_dict[split])
-
 
 
 def get_validation_correct(is_correct, image_index):
