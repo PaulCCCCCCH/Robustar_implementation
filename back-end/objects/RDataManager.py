@@ -21,7 +21,7 @@ import torchvision.transforms.functional as transF
 class RDataManager:
 
     def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
-                 image_padding='short_side'):
+                 image_padding='short_side', class2label_mapping=None):
     # def __init__(self, datasetPath, image_size, image_padding):
 
         # TODO: Support customized splits by taking a list of splits as argument
@@ -40,6 +40,7 @@ class RDataManager:
         self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
+        self.class2label = class2label_mapping
 
 
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
@@ -62,10 +63,14 @@ class RDataManager:
 
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
+        datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
             self.validationset = self.testset
         else:
             self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+
+        datasets.append(self.validationset)
+        self.readify_classes(datasets)
 
         self.testloader = torch.utils.data.DataLoader(
             self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -98,7 +103,14 @@ class RDataManager:
             'test_correct': self.correctTestBuffer,
             'test_incorrect': self.incorrectTestBuffer
         }
-
+    
+    def readify_classes(self, datasets):
+        def change_classes(mapping, dataset):
+            classes = dataset.classes
+            classes = [mapping.get(c, c) for c in classes]
+            dataset.classes = classes
+        for ds in datasets:
+            change_classes(self.class2label, ds)
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
