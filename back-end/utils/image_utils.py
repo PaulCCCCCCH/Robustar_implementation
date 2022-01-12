@@ -78,6 +78,7 @@ def getClassStart(split):
         class_idx = testset.class_to_idx
     else:
         raise NotImplemented('Data split not supported')
+    print(class_idx)
 
     for i in range(len(class_ls)):
         num = binarySearchLeftBorderTuple(dataset_ls, dataset_len, i)
@@ -106,7 +107,6 @@ def binarySearchLeftBorderTuple(ls, length, target):
     right = length
     while left < right:
         mid = (left + right) // 2
-        print(left, right, mid, ls[mid])
         if ls[mid][1] >= target:
             right = mid
         else:

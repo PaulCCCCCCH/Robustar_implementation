@@ -188,7 +188,7 @@ if __name__ == "__main__":
     class2labelMapping = {}
     if os.path.exists(class2labelPath):
         try:
-            with class2labelPath as jsonfile:
+            with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
         except Exception as e:
             print('Class to label file invalid!')

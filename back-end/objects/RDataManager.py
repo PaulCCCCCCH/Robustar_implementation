@@ -101,12 +101,14 @@ class RDataManager:
             'test_correct': self.correctTestBuffer,
             'test_incorrect': self.incorrectTestBuffer
         }
+
     
     def readify_classes(self, datasets):
         def change_classes(mapping, dataset):
             classes = dataset.classes
             classes = [mapping.get(c, c) for c in classes]
             dataset.classes = classes
+            dataset.class_to_idx = {c: idx for idx, c in enumerate(classes)}
         for ds in datasets:
             change_classes(self.class2label, ds)
 

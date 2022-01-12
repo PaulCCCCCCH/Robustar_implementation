@@ -24,7 +24,7 @@
       <div class="d-flex" style="width: 30%">
         <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass"> Goto Class </v-btn>
         <v-btn class="mr-4" v-else depressed disabled color="primary" @click="nextPage"> Goto Class </v-btn>
-        <v-select :items="className" v-model="selectedClass" dense label="Class Name"></v-select>
+        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
       
     </div>
@@ -90,7 +90,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength, APIGetClassName } from '@/apis/images'
+import { APIGetSplitLength, APIGetClassNames } from '@/apis/images'
 
 export default {
   name: 'ImageList',
@@ -102,24 +102,24 @@ export default {
       configs: configs,
       isListEnd: false,
       splitLength: 1000,
-      className: [],
+      classNames: [],
       classStartIdx: {},
       selectedClass: 0
     };
   },
   mounted() {
     this.getMaxPage();
-    this.getClassName();
+    this.getClassNames();
     this.loadImages();
   },
   watch: {
     $route() {
       this.currentPage = 0;
-      this.className = [];
+      this.classNames = [];
       this.classStartIdx = {};
       this.selectedClass = 0;
       this.getMaxPage();
-      this.getClassName();
+      this.getClassNames();
       this.loadImages();
     },
   },
@@ -141,12 +141,12 @@ export default {
       this.currentPage--;
       this.loadImages();
     },
-    getClassName() {
-      APIGetClassName(this.$route.params.split,
+    getClassNames() {
+      APIGetClassNames(this.$route.params.split,
         (res) => {
           console.log(res.data.data);
           this.classStartIdx = res.data.data;
-          this.className = Object.keys(this.classStartIdx);
+          this.classNames = Object.keys(this.classStartIdx);
         },
         (err) => console.log(err)
       )
