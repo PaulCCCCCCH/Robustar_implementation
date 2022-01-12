@@ -66,9 +66,10 @@ class RDataManager:
         datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
             self.validationset = self.testset
-            datasets.append(self.validationset)
         else:
             self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+
+        datasets.append(self.validationset)
         self.readify_classes(datasets)
 
         self.testloader = torch.utils.data.DataLoader(
@@ -106,7 +107,7 @@ class RDataManager:
     def readify_classes(self, datasets):
         def change_classes(mapping, dataset):
             classes = dataset.classes
-            classes = [mapping.get(c, 'Unknown Class') for c in classes]
+            classes = [mapping.get(c, c) for c in classes]
             dataset.classes = classes
         for ds in datasets:
             change_classes(self.class2label, ds)
