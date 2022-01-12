@@ -184,12 +184,13 @@ if __name__ == "__main__":
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
-    class2labelPath = osp.join(baseDir, configs['class_to_label_file'])
+    class2labelPath = osp.join(baseDir, 'class2label.json')
     class2labelMapping = {}
     if os.path.exists(class2labelPath):
         try:
-            with class2labelPath as jsonfile:
+            with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
+                print('Class to label file loaded!')
         except Exception as e:
             print('Class to label file invalid!')
             class2labelMapping = {}
