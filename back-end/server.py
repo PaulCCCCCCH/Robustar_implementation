@@ -184,6 +184,18 @@ if __name__ == "__main__":
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
+    class2labelPath = osp.join(baseDir, 'class2label.json')
+    class2labelMapping = {}
+    if os.path.exists(class2labelPath):
+        try:
+            with class2labelPath as jsonfile:
+                class2labelMapping = json.load(jsonfile)
+        except Exception as e:
+            print('Class to label file invalid!')
+            class2labelMapping = {}
+    else:
+        print('Class to label file not found!')
+
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir)
     dataManager = RDataManager(
         baseDir, datasetDir, 
@@ -192,6 +204,7 @@ if __name__ == "__main__":
         num_workers=configs['num_workers'],
         image_size=configs['image_size'],
         image_padding=configs['image_padding'],
+        class2label_mapping=class2labelMapping
     )
     RServer.setDataManager(dataManager)
 
