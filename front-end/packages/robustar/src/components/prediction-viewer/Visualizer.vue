@@ -56,7 +56,6 @@ export default {
       const success = (response) => {
         let cap = 10;
         let responseData = response.data.data;
-        this.predDataArr = [responseData[0], responseData[1]];
         let temp_buffer = responseData[0].map((e, i)=>{return [e, responseData[1][i]]});
         temp_buffer.sort((a, b)=>{return b[1]-a[1]})
         if(temp_buffer.length>cap)temp_buffer = temp_buffer.slice(0, cap);
