@@ -4,14 +4,14 @@
     <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div>
 
     <!-- Image list controller -->
-    <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
+    <div class="d-flex justify-space-between px-16 py-8" style="width: 80%">
       <!-- Previous page button -->
       <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
         Prev Page
       </v-btn>
 
       <!-- Refresh page button & page number -->
-      <div class="d-flex">
+      <div class="d-flex" style="width: 30%">
         <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
         <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
       </div>
@@ -20,6 +20,17 @@
       <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
         Next Page
       </v-btn>
+
+      <!-- Class filter -->
+      <div class="d-flex" style="width: 30%">
+        <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass">
+          Goto Class
+        </v-btn>
+        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="nextPage">
+          Goto Class
+        </v-btn>
+        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
+      </div>
     </div>
 
     <!-- Image List -->
@@ -90,7 +101,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength } from '@/apis/images';
+import { APIGetSplitLength, APIGetClassNames } from '@/apis/images';
 
 export default {
   name: 'ImageList',
@@ -102,17 +113,26 @@ export default {
       maxPage: 0,
       imageMatrix: [],
       configs: configs,
+      isListEnd: false,
       splitLength: 1000,
+      classNames: [],
+      classStartIdx: {},
+      selectedClass: 0,
     };
   },
   mounted() {
     this.getMaxPage();
+    this.getClassNames();
     this.loadImages();
   },
   watch: {
     $route() {
       this.currentPage = 0;
+      this.classNames = [];
+      this.classStartIdx = {};
+      this.selectedClass = 0;
       this.getMaxPage();
+      this.getClassNames();
       this.loadImages();
     },
     currentPage() {
@@ -132,6 +152,17 @@ export default {
         (err) => console.log(err)
       );
     },
+    getClassNames() {
+      APIGetClassNames(
+        this.$route.params.split,
+        (res) => {
+          console.log(res.data.data);
+          this.classStartIdx = res.data.data;
+          this.classNames = Object.keys(this.classStartIdx);
+        },
+        (err) => console.log(err)
+      );
+    },
     gotoImage(row, col, url, componentName) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
@@ -147,6 +178,11 @@ export default {
         this.inputPage = this.maxPage;
       }
       this.currentPage = this.inputPage;
+    },
+    gotoClass() {
+      let startIdx = this.classStartIdx[this.selectedClass];
+      this.currentPage = Math.floor(startIdx / configs.imageListRow / configs.imageListCol);
+      this.loadImages();
     },
     loadImages() {
       this.imageMatrix = [];

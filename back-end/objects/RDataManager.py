@@ -21,8 +21,7 @@ import torchvision.transforms.functional as transF
 class RDataManager:
 
     def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
-                 image_padding='short_side'):
-    # def __init__(self, datasetPath, image_size, image_padding):
+                 image_padding='short_side', class2label_mapping=None):
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
@@ -40,7 +39,7 @@ class RDataManager:
         self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
-
+        self.class2label = class2label_mapping
 
         self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
@@ -62,10 +61,14 @@ class RDataManager:
 
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
+        datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
             self.validationset = self.testset
         else:
             self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+
+        datasets.append(self.validationset)
+        self.readify_classes(datasets)
 
         self.testloader = torch.utils.data.DataLoader(
             self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -99,6 +102,15 @@ class RDataManager:
             'test_incorrect': self.incorrectTestBuffer
         }
 
+    
+    def readify_classes(self, datasets):
+        def change_classes(mapping, dataset):
+            classes = dataset.classes
+            classes = [mapping.get(c, c) for c in classes]
+            dataset.classes = classes
+            dataset.class_to_idx = {c: idx for idx, c in enumerate(classes)}
+        for ds in datasets:
+            change_classes(self.class2label, ds)
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
@@ -197,7 +209,6 @@ class RDataManager:
         return self._pull_item(index, self.incorrectTestBuffer)
 
 
-
 # Return a square image
 class SquarePad:
     image_padding = 'constant'
@@ -207,7 +218,7 @@ class SquarePad:
 
     def __call__(self, image):
         # Reference: https://discuss.pytorch.org/t/how-to-resize-and-pad-in-a-torchvision-transforms-compose/71850/10
-        if self.image_padding =='none':
+        if self.image_padding == 'none':
             return image
         elif self.image_padding == 'short_side':
             # Calculate the size of paddings
@@ -221,8 +232,8 @@ class SquarePad:
         else:
             raise NotImplemented
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     # Test
     # dataManager = RDataManager('/Robustar2/dataset')
     # print(dataManager.trainset.imgs[0])
@@ -237,4 +248,3 @@ if __name__ == '__main__':
     print(img.size)
     trans = transforms(img)
     trans.save('C:\\Users\\paulc\\Desktop\\temp_trans.png')
-
