@@ -31,40 +31,51 @@ export default {
     startGettingConfig() {
       APIGetConfig(this.getConfigSuccess, this.getConfigFailed);
     },
-    changeName() {
-      if (configs.key == batch_size) {
-        name = 'Batch Size';
-        configs.key = name;
-      }
-    },
   },
   beforeMount() {
     this.startGettingConfig();
-    this.changeName();
   },
 };
 </script>
 
 <style>
-.table {
-  margin: auto;
-  border-top: 1px solid #e6eaee;
-  border-left: 1px solid #e6eaee;
+table {
+  width: 60%;
+  margin: 0 auto;
+  padding-top: 10px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.4em;
+  font-style: normal;
+  border-collapse:separate;
 }
+
 .key {
-  width: 200px;
-  background-color: #eff3f6;
-  color: #393c3e;
-  border-bottom: 1px solid #e6eaee;
-  border-right: 1px solid #e6eaee;
+    color:#fff;
+    width: 40%;
+    text-shadow:1px 1px 1px #2E7FD1;
+    background-color:#74A2CF;
+    border:1px solid #4E88C2;
+    border-right:3px solid #74A2CF;
+    padding:0px 10px;
+    background: linear-gradient(to right, #74A2CF , #2E7FD1);
+    -moz-border-radius:5px 0px 0px 5px;
+    -webkit-border-top-left-radius:5px;
+    -webkit-border-bottom-left-radius:5px;
+    border-top-left-radius:5px;
+    border-bottom-left-radius:5px;
 }
 .value {
-  width: 250px;
-  height: 35px;
-  line-height: 35px;
-  box-sizing: border-box;
-  padding: 0 10px;
-  border-bottom: 1px solid #e6eaee;
-  border-right: 1px solid #e6eaee;
+    padding:10px;
+    width: 60%;
+    text-align:center;
+    background-color:#E5F2FF;
+    border: 2px solid #E9EFF5;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    color:#666;
+    text-shadow:1px 1px 1px #fff;
 }
 </style>
