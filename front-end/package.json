@@ -14,6 +14,7 @@
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
+    "cypress": "^9.2.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-tui": "^4.2.0",
@@ -51,7 +52,8 @@
     "build": "lerna run build",
     "build:editor": "lerna run --scope @robustar/image-editor build --stream",
     "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "lerna run --scope @robustar/robustar serve --stream"
+    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
+    "cypress:open": "cypress open"
   },
   "workspaces": [
     "apps/*"
