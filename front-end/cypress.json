@@ -1,6 +1,12 @@
 {
-  "chromeWebSecurity":false,
+  "chromeWebSecurity":true,
   "viewportWidth": 1920,
   "viewportHeight": 1080,
-  "baseUrl": "http://localhost:8080/#/"
+  "baseUrl": "http://localhost:8080/#/",
+  "component": {
+    "componentFolder": "packages/robustar/src",
+    "testFiles": "**/*spec.{js,jsx,ts,tsx}",
+    "viewportHeight": 600,
+    "viewportWidth": 800
+  }
 }
