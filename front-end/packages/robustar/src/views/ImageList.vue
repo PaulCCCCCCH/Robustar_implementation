@@ -23,7 +23,7 @@
       <!-- Class filter -->
       <div class="d-flex" style="width: 30%">
         <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass"> Goto Class </v-btn>
-        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="nextPage"> Goto Class </v-btn>
+        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="gotoClass"> Goto Class </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
       
