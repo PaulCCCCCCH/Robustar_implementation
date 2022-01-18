@@ -86,7 +86,7 @@
           class="num"
           :style="{ fontSize: (defaultConfig.figHeight / (arrLength + 3)) * 0.65 + 'px' }"
         >
-          {{ maxPositive }}
+          {{ String(maxPositive).slice(0,6) }}
         </div>
       </div>
     </div>
@@ -124,11 +124,10 @@ export default {
         // bottom line color
         lineColor: '#262626',
         // the maximan border and the minimun border
-        dataRange: null,
+        dataRange: [0, 1],
       },
 
       arrLength: 0,
-      maxPositive: 0,
       maxNegative: 0,
     };
   },
@@ -137,24 +136,15 @@ export default {
       this.updateConfig();
     },
   },
-  created() {
-    this.arrLength = this.dataArr[0].length;
-    setTimeout(
-      function () {
-        if (this.defaultConfig.dataRange != null) {
-          this.maxNegative = this.defaultConfig.dataRange[0];
-          this.maxPositive = this.defaultConfig.dataRange[1];
-        } else {
-          for (var i = 0; i < this.arrLength; i++) {
-            if (this.dataArr[1][i] > this.maxPositive) this.maxPositive = this.dataArr[1][i];
-            if (this.dataArr[1][i] < this.maxNegative) this.maxNegative = this.dataArr[1][i];
-          }
-        }
-      }.bind(this),
-      0
-    );
+  computed: {
+    maxPositive() {
+       return Math.max(...this.dataArr[1]) 
+    } 
   },
+
   mounted() {
+    this.arrLength = this.dataArr[0].length;
+    this.maxNegative = 0;
     this.updateConfig();
   },
   methods: {
