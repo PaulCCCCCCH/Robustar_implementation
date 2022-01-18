@@ -1,3 +1,4 @@
+from torch._C import _valgrind_toggle_and_dump_stats
 import torchvision.datasets as dset
 import json
 import os
@@ -160,6 +161,32 @@ def register_route(app):
     # 用来记录正确的分类结果和错误的分类结果
     correctTestBuffer, incorrectTestBuffer, correctValidationBuffer, incorrectValidationBuffer = None, None, None, None
 
+def precheck():
+    def check_num_classes_consistency():
+        configs = RServer.getServerConfigs()
+        data_manager = RServer.getDataManager()
+        trainset = data_manager.trainset
+        testset = data_manager.testset
+        validationset = data_manager.validationset
+
+        classes_num = configs["num_classes"]
+        error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
+        errors = []
+        if len(trainset.classes)!=classes_num:
+            errors.append(
+                error_template.format(classes_num, "Training Set", len(trainset.classes))
+            )
+        if len(testset.classes)!=classes_num:
+            errors.append(
+                error_template.format(classes_num, "Test Set", len(trainset.classes))
+            )
+        if len(validationset.classes)!=classes_num:
+            errors.append(
+                error_template.format(classes_num, "Validation Set", len(trainset.classes))
+            )
+        assert len(errors)==0, "\n".join(errors)
+    check_num_classes_consistency()
+    
 
 if __name__ == "__main__":
     """
@@ -184,6 +211,19 @@ if __name__ == "__main__":
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
+    class2labelPath = osp.join(baseDir, 'class2label.json')
+    class2labelMapping = {}
+    if os.path.exists(class2labelPath):
+        try:
+            with open(class2labelPath) as jsonfile:
+                class2labelMapping = json.load(jsonfile)
+                print('Class to label file loaded!')
+        except Exception as e:
+            print('Class to label file invalid!')
+            class2labelMapping = {}
+    else:
+        print('Class to label file not found!')
+
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir)
     dataManager = RDataManager(
         baseDir, datasetDir, 
@@ -192,6 +232,7 @@ if __name__ == "__main__":
         num_workers=configs['num_workers'],
         image_size=configs['image_size'],
         image_padding=configs['image_padding'],
+        class2label_mapping=class2labelMapping
     )
     RServer.setDataManager(dataManager)
 
@@ -199,5 +240,6 @@ if __name__ == "__main__":
     RServer.setModel(model)
     import apis # register all api routes
 
+    precheck()
 
     server.run(port='8000', host='0.0.0.0', debug=False)

@@ -91,6 +91,7 @@ export default {
           ],
         },
         { text: 'Test', icon: 'mdi-code-braces', link: 'test' },
+        { text: 'Config', icon: 'mdi-file-table-box', link: 'config'},
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
     };

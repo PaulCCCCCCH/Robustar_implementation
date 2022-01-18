@@ -54,8 +54,15 @@ export default {
   methods: {
     view_prediction(split, image_id) {
       const success = (response) => {
+        let cap = 10;
         let responseData = response.data.data;
-        this.predDataArr = [responseData[0], responseData[1]];
+        let temp_buffer = responseData[0].map((e, i)=>{return [e, responseData[1][i]]});
+        temp_buffer.sort((a, b)=>{return b[1]-a[1]})
+        if(temp_buffer.length>cap)temp_buffer = temp_buffer.slice(0, cap);
+        this.predDataArr = [
+          temp_buffer.map((e)=>{return e[0]}),
+          temp_buffer.map((e)=>{return e[1]})
+        ]
         this.predImgUrl = [];
         for (let i = 0; i < 4; i++) {
           this.predImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
