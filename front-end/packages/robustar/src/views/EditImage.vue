@@ -3,10 +3,11 @@
     <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
       adjust
     </v-btn> -->
-    <div style="position: absolute; top: 50px; width: 100%">
+    <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
+    <div class='d-flex flex-row justify-space-between' style="width: 100%; height: 100%">
+      <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
       <Visualizer />
     </div>
-    <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
   </div>
 </template>
 <script>

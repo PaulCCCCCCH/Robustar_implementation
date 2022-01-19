@@ -1,34 +1,61 @@
 <template>
-  <div
-    class="d-flex flex-row justify-space-between align-center"
-    style="width: 100%; padding: 30px"
-  >
-    <!-- View the prediction-->
-    <div style="position: relative; z-index: 10">
-      <PredView :dataArr="predDataArr" :config="predViewConfig" />
-    </div>
-    <!-- View model focus -->
-    <div style="position: relative; z-index: 10">
-      <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" />
-    </div>
+  <div>
+    <v-expansion-panels
+      :multiple='true'
+      v-model='panels'  
+    >
+      <!-- Model Prediction -->
+      <v-expansion-panel>
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Model Prediction
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div class='d-flex justify-center align-center'>
+            <PredView :dataArr="predDataArr" :config="predViewConfig" />
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+
+      <!-- View Model Focus -->
+      <v-expansion-panel>
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Model Focus
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <FocusView :focusImgUrl="focusImgUrl" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <!-- View Influence -->
+      <v-expansion-panel>
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Influence Images
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <InfluView :influImgUrl="influImgUrl" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 
 <script>
 import PredView from '@/components/prediction-viewer/PredView.vue';
-import VisuView from '@/components/prediction-viewer/VisuView.vue';
+import InfluView from '@/components/prediction-viewer/InfluView.vue';
+import FocusView from '@/components/prediction-viewer/FocusView.vue';
 import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
 import { configs } from '@/configs.js';
 
 export default {
-  components: { PredView, VisuView },
+  components: { PredView, InfluView, FocusView},
   data() {
     return {
       predDataArr: [
         ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'],
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
       ],
-      predImgUrl: [],
+      focusImgUrl: [],
       influImgUrl: [],
       predViewConfig: {
         componentWidth: 300,
@@ -40,6 +67,7 @@ export default {
         dataRange: [0, 1],
       },
       configs: configs,
+      panels: [0, 1, 2]
     };
   },
 
@@ -63,9 +91,9 @@ export default {
           temp_buffer.map((e)=>{return e[0]}),
           temp_buffer.map((e)=>{return e[1]})
         ]
-        this.predImgUrl = [];
+        this.focusImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          this.predImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
+          this.focusImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
         }
       };
       const failed = (err) => {
