@@ -5,7 +5,9 @@
       v-model='panels'  
     >
       <!-- Model Prediction -->
-      <v-expansion-panel>
+      <v-expansion-panel
+        @click="toggle_panel"
+      >
         <v-expansion-panel-header expand-icon='mdi-menu-down'>
           Model Prediction
         </v-expansion-panel-header>
@@ -18,7 +20,9 @@
 
 
       <!-- View Model Focus -->
-      <v-expansion-panel>
+      <v-expansion-panel
+        @change="toggle_panel"
+      >
         <v-expansion-panel-header expand-icon='mdi-menu-down'>
           Model Focus
         </v-expansion-panel-header>
@@ -28,7 +32,9 @@
       </v-expansion-panel>
 
       <!-- View Influence -->
-      <v-expansion-panel>
+      <v-expansion-panel
+        @change="toggle_panel"
+      >
         <v-expansion-panel-header expand-icon='mdi-menu-down'>
           Influence Images
         </v-expansion-panel-header>
@@ -67,7 +73,7 @@ export default {
         dataRange: [0, 1],
       },
       configs: configs,
-      panels: [0, 1, 2]
+      panels: []
     };
   },
 
@@ -78,6 +84,13 @@ export default {
       this.view_prediction(split, image_id);
       this.get_influence(split, image_id);
     }
+
+    const panels = localStorage.getItem("visualization_panels");
+    console.log(panels)
+    if (panels) {
+      this.panels = JSON.parse(panels);
+    }
+
   },
   methods: {
     view_prediction(split, image_id) {
@@ -127,6 +140,12 @@ export default {
 
       APIGetInfluenceImages(split, imageId, success, failed);
     },
+
+    toggle_panel() {
+      setTimeout(() => {
+        localStorage.setItem("visualization_panels", JSON.stringify(this.panels))
+      }, 0);
+    }
   },
 };
 </script>
