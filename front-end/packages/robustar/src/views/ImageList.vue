@@ -88,7 +88,7 @@
       </div>
     </div>
     
-    <div style="width: 50%" v-if="image_id">
+    <div style="width: 50%" v-if="image_id !== ''">
       <Visualizer :image_id="String(image_id)" :split="split"/>
     </div>
     </div>
