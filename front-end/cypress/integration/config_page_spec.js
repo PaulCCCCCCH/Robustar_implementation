@@ -1,7 +1,7 @@
 describe('The Config Page', () => {
   beforeEach(() => {
-    cy.visit('config')
-  })
+    cy.visit('config');
+  });
 
   it('displays table of configs', () => {
     const configs = [
@@ -14,11 +14,11 @@ describe('The Config Page', () => {
       'num_workers',
       'pre_trained',
       'shuffle',
-      'weight_to_load'
-    ]
+      'weight_to_load',
+    ];
 
     cy.get('.key').each(($el, index, $list) => {
-      cy.wrap($el).should('contain', configs[index])
-    })
+      cy.wrap($el).should('contain', configs[index]);
+    });
   });
-})
+});

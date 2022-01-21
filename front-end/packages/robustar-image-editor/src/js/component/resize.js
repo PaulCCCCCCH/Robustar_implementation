@@ -82,6 +82,18 @@ class Resize extends Component {
         width: canvasImage.width * canvasImage.scaleX,
         height: canvasImage.height * canvasImage.scaleY,
       };
+
+      const objects = this.getCanvas().getObjects();
+      // eslint-disable-next-line no-console
+      console.log(objects);
+      // eslint-disable-next-line guard-for-in
+      // for (const i in objects) {
+      //   objects[i].scaleX = scaleValues.scaleX;
+      //   objects[i].scaleY = scaleValues.scaleY;
+      //   objects[i].left = objects[i].left * scaleValues.scaleX;
+      //   objects[i].top = objects[i].top * scaleValues.scaleY;
+      //   objects[i].setCoords();
+      // }
     }
 
     this.adjustCanvasDimensionBase();
