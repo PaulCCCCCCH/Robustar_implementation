@@ -1,34 +1,77 @@
 <template>
-  <div
-    class="d-flex flex-row justify-space-between align-center"
-    style="width: 100%; padding: 30px"
-  >
-    <!-- View the prediction-->
-    <div style="position: relative; z-index: 10">
-      <PredView :dataArr="predDataArr" :config="predViewConfig" />
-    </div>
-    <!-- View model focus -->
-    <div style="position: relative; z-index: 10">
-      <VisuView :influImgUrl="influImgUrl" :predImgUrl="predImgUrl" />
-    </div>
+  <div>
+    <v-expansion-panels
+      :multiple='true'
+      v-model='panels'  
+    >
+      <!-- Model Prediction -->
+      <v-expansion-panel
+        @click="toggle_panel"
+      >
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Model Prediction
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div class='d-flex justify-center align-center'>
+            <PredView :dataArr="predDataArr" :config="predViewConfig" />
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+
+      <!-- View Model Focus -->
+      <v-expansion-panel
+        @change="toggle_panel"
+      >
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Model Focus
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <FocusView :focusImgUrl="focusImgUrl" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <!-- View Influence -->
+      <v-expansion-panel
+        @change="toggle_panel"
+      >
+        <v-expansion-panel-header expand-icon='mdi-menu-down'>
+          Influence Images
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <InfluView :influImgUrl="influImgUrl" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 
 <script>
 import PredView from '@/components/prediction-viewer/PredView.vue';
-import VisuView from '@/components/prediction-viewer/VisuView.vue';
+import InfluView from '@/components/prediction-viewer/InfluView.vue';
+import FocusView from '@/components/prediction-viewer/FocusView.vue';
 import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
 import { configs } from '@/configs.js';
 
 export default {
-  components: { PredView, VisuView },
+  components: { PredView, InfluView, FocusView},
+  props: {
+    split: {
+      type: String,
+      default: () => ""
+    },
+    image_id: {
+      type: String,
+      default: () => ""
+    }
+  },
   data() {
     return {
       predDataArr: [
         ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'],
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
       ],
-      predImgUrl: [],
+      focusImgUrl: [],
       influImgUrl: [],
       predViewConfig: {
         componentWidth: 300,
@@ -40,25 +83,45 @@ export default {
         dataRange: [0, 1],
       },
       configs: configs,
+      panels: []
     };
   },
-
-  mounted() {
-    const split = localStorage.getItem('split');
-    const image_id = localStorage.getItem('image_id');
-    if (split && image_id) {
-      this.view_prediction(split, image_id);
-      this.get_influence(split, image_id);
+  watch: {
+    image_id: function() {
+      this.get_visualize_data()
+    },
+    split: function() {
+      this.get_visualize_data()
     }
+  }, 
+  mounted() {
+    const panels = localStorage.getItem("visualizer_panels");
+    if (panels) {
+      this.panels = JSON.parse(panels);
+    }
+    this.get_visualize_data();
   },
   methods: {
+    get_visualize_data() {
+      if (this.split && this.image_id) {
+        this.view_prediction(this.split, this.image_id);
+        this.get_influence(this.split, this.image_id);
+      }
+    },
     view_prediction(split, image_id) {
       const success = (response) => {
+        let cap = 10;
         let responseData = response.data.data;
-        this.predDataArr = [responseData[0], responseData[1]];
-        this.predImgUrl = [];
+        let temp_buffer = responseData[0].map((e, i)=>{return [e, responseData[1][i]]});
+        temp_buffer.sort((a, b)=>{return b[1]-a[1]})
+        if(temp_buffer.length>cap)temp_buffer = temp_buffer.slice(0, cap);
+        this.predDataArr = [
+          temp_buffer.map((e)=>{return e[0]}),
+          temp_buffer.map((e)=>{return e[1]})
+        ]
+        this.focusImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          this.predImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
+          this.focusImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
         }
       };
       const failed = (err) => {
@@ -92,6 +155,12 @@ export default {
 
       APIGetInfluenceImages(split, imageId, success, failed);
     },
+
+    toggle_panel() {
+      setTimeout(() => {
+        localStorage.setItem("visualizer_panels", JSON.stringify(this.panels))
+      }, 0);
+    }
   },
 };
 </script>
