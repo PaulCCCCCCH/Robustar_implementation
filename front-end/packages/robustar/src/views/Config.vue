@@ -1,12 +1,19 @@
 <template>
-  <div>
-    <table class="table">
-      <tr v-for="(value, key) of configs">
-        <th class="key">{{ key }}</th>
-        <td class="value">{{ value }}</td>
-      </tr>
-    </table>
-  </div>
+  
+  <v-sheet rounded width="800" elevation="3" class="my-8 pa-4" style="margin: 0 auto">
+    <div class="text-h4 text-center font-weight-medium">Configuration</div>
+    <v-divider class="mt-4 mb-8"></v-divider>
+    <v-simple-table class="pad">
+      <template v-slot:default>
+        <tbody>
+          <tr v-for="(value, key) of configs">
+            <td class="key">{{ key }}</td>
+            <td class="value">{{ value }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
+  </v-sheet>
 </template>
 
 <script>
@@ -39,43 +46,26 @@ export default {
 </script>
 
 <style>
-table {
-  width: 60%;
+.pad {
   margin: 0 auto;
-  padding-top: 10px;
-  font-family: "Trebuchet MS", sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1.4em;
-  font-style: normal;
-  border-collapse:separate;
+  /* display: flex; */
+  padding-top: 3px;
+  /* border-collapse:separate; */
 }
 
 .key {
-    color:#fff;
-    width: 40%;
-    text-shadow:1px 1px 1px #2E7FD1;
-    background-color:#74A2CF;
-    border:1px solid #4E88C2;
+    font-size: 1.1rem !important;
+    font-weight: 600;
+    line-height: 1.7rem;
+    letter-spacing: normal !important;
+    text-align: center;
     border-right:3px solid #74A2CF;
-    padding:0px 10px;
-    background: linear-gradient(to right, #74A2CF , #2E7FD1);
-    -moz-border-radius:5px 0px 0px 5px;
-    -webkit-border-top-left-radius:5px;
-    -webkit-border-bottom-left-radius:5px;
-    border-top-left-radius:5px;
-    border-bottom-left-radius:5px;
 }
 .value {
-    padding:10px;
-    width: 60%;
-    text-align:center;
-    background-color:#E5F2FF;
-    border: 2px solid #E9EFF5;
-    -moz-border-radius:2px;
-    -webkit-border-radius:2px;
-    border-radius:2px;
-    color:#666;
-    text-shadow:1px 1px 1px #fff;
+    font-size: 1.0rem !important;
+    font-weight: 500;
+    line-height: 1.7rem;
+    letter-spacing: normal !important;
+    text-align: right;
 }
 </style>
