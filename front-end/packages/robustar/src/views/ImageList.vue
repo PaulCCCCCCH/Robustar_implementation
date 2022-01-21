@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column align-center" style="width: 100%">
     <!-- Page header-->
-    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div>
+    <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
     <!-- Image list controller -->
     <div class="d-flex justify-space-between px-16 py-8" style="width: 80%">
@@ -28,6 +28,7 @@
       </div>
     </div>
 
+    <div class="d-flex flex-row justify-space-around">
     <!-- Image List -->
     <div style="width: auto">
       <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
@@ -74,7 +75,7 @@
                     large
                     color="white"
                     width="150px"
-                    @click="gotoImage(row, col, url, 'Prediction')"
+                    @click="setCurrentImage(row, col, url)"
                   >
                     <v-icon left>mdi-cogs</v-icon>
                     Predict
@@ -85,6 +86,11 @@
           </v-hover>
         </div>
       </div>
+    </div>
+    
+    <div style="width: 50%" v-if="image_id">
+      <Visualizer :image_id="String(image_id)" :split="split"/>
+    </div>
     </div>
 
     <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
@@ -97,10 +103,13 @@
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
 import { APIGetSplitLength, APIGetClassNames } from '@/apis/images'
+import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
   name: 'ImageList',
-  components: {},
+  components: {
+    Visualizer,
+  },
   data() {
     return {
       currentPage: 0,
@@ -111,7 +120,10 @@ export default {
       splitLength: 1000,
       classNames: [],
       classStartIdx: {},
-      selectedClass: 0
+      selectedClass: 0,
+      split: "",
+      image_id: "",
+      image_url: ""
     };
   },
   mounted() {
@@ -156,12 +168,18 @@ export default {
         (err) => console.log(err)
       )
     },
-    gotoImage(row, col, url, componentName) {
+    setCurrentImage(row, col, url) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
+      this.split = this.$route.params.split;
+      this.image_id = image_id;
+      this.image_url = url;
       localStorage.setItem('split', this.$route.params.split);
       localStorage.setItem('image_id', image_id);
       localStorage.setItem('image_url', url);
+    },
+    gotoImage(row, col, url, componentName) {
+      this.setCurrentImage(row, col, url)
       this.$router.push({ name: componentName });
     },
     gotoPage() {

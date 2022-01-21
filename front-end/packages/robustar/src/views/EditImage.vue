@@ -6,7 +6,7 @@
     <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
     <div class='d-flex flex-row justify-space-between' style="width: 100%; height: 100%">
       <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
-      <Visualizer />
+      <Visualizer :image_id="image_id" :split="split"/>
     </div>
   </div>
 </template>
@@ -30,7 +30,13 @@ export default {
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
       },
+      image_id: "",
+      image_url: "",
+      split: ""
     };
+  },
+  mounted() {
+    this.loadImageInfo()
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -38,15 +44,18 @@ export default {
     });
   },
   methods: {
+    loadImageInfo() {
+        this.image_id = localStorage.getItem('image_id');
+        this.image_url = localStorage.getItem('image_url');
+        this.split = localStorage.getItem('split');
+    },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
     sendEditSuccess(res) {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
-      const id = localStorage.getItem('image_id');
-      const url = localStorage.getItem('image_url');
-      const [newId, newUrl] = getNextImageByIdAndURL(id, url);
+      const [newId, newUrl] = getNextImageByIdAndURL(this.image_id, this.image_url);
       localStorage.setItem('image_id', newId);
       localStorage.setItem('image_url', newUrl);
       this.$refs.editor.initInstance();

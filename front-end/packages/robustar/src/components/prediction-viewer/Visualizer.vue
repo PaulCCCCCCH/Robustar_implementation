@@ -55,6 +55,16 @@ import { configs } from '@/configs.js';
 
 export default {
   components: { PredView, InfluView, FocusView},
+  props: {
+    split: {
+      type: String,
+      default: () => ""
+    },
+    image_id: {
+      type: String,
+      default: () => ""
+    }
+  },
   data() {
     return {
       predDataArr: [
@@ -76,23 +86,28 @@ export default {
       panels: []
     };
   },
-
-  mounted() {
-    const split = localStorage.getItem('split');
-    const image_id = localStorage.getItem('image_id');
-    if (split && image_id) {
-      this.view_prediction(split, image_id);
-      this.get_influence(split, image_id);
+  watch: {
+    image_id: function() {
+      this.get_visualize_data()
+    },
+    split: function() {
+      this.get_visualize_data()
     }
-
-    const panels = localStorage.getItem("visualization_panels");
-    console.log(panels)
+  }, 
+  mounted() {
+    const panels = localStorage.getItem("visualizer_panels");
     if (panels) {
       this.panels = JSON.parse(panels);
     }
-
+    this.get_visualize_data();
   },
   methods: {
+    get_visualize_data() {
+      if (this.split && this.image_id) {
+        this.view_prediction(this.split, this.image_id);
+        this.get_influence(this.split, this.image_id);
+      }
+    },
     view_prediction(split, image_id) {
       const success = (response) => {
         let cap = 10;
@@ -143,7 +158,7 @@ export default {
 
     toggle_panel() {
       setTimeout(() => {
-        localStorage.setItem("visualization_panels", JSON.stringify(this.panels))
+        localStorage.setItem("visualizer_panels", JSON.stringify(this.panels))
       }, 0);
     }
   },
