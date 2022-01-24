@@ -83,17 +83,17 @@ class Resize extends Component {
         height: canvasImage.height * canvasImage.scaleY,
       };
 
-      const objects = this.getCanvas().getObjects();
-      // eslint-disable-next-line no-console
-      console.log(objects);
-      // eslint-disable-next-line guard-for-in
-      // for (const i in objects) {
-      //   objects[i].scaleX = scaleValues.scaleX;
-      //   objects[i].scaleY = scaleValues.scaleY;
-      //   objects[i].left = objects[i].left * scaleValues.scaleX;
-      //   objects[i].top = objects[i].top * scaleValues.scaleY;
-      //   objects[i].setCoords();
-      // }
+      // scale the objects (e.g. path) on the image
+      this.getCanvas().forEachObject((object) => {
+        // object.left = (object.left / object.scaleX) * scaleValues.scaleX;
+        // object.top = (object.top / object.scaleY) * scaleValues.scaleY;
+        object.scaleX = scaleValues.scaleX / 10;
+        object.scaleY = scaleValues.scaleY / 10;
+        object.center();
+        object.setCoords();
+        // eslint-disable-next-line no-console
+        console.log(object);
+      });
     }
 
     this.adjustCanvasDimensionBase();

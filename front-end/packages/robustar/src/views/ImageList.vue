@@ -23,10 +23,7 @@
 
       <!-- Class filter -->
       <div class="d-flex" style="width: 30%">
-        <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass">
-          Goto Class
-        </v-btn>
-        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="nextPage">
+        <v-btn :disabled="selectedClass === 0" class="mr-4" depressed color="primary" @click="gotoClass">
           Goto Class
         </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
@@ -132,26 +129,30 @@ export default {
     };
   },
   mounted() {
-    this.getMaxPage();
-    this.getClassNames();
-    this.loadImages();
+    this.init();
   },
   watch: {
     $route() {
-      this.currentPage = 0;
-      this.classNames = [];
-      this.classStartIdx = {};
-      this.selectedClass = 0;
-      this.getMaxPage();
-      this.getClassNames();
-      this.loadImages();
+      sessionStorage.setItem(this.split, this.currentPage);
+      this.init()
     },
     currentPage() {
       this.inputPage = this.currentPage;
       this.loadImages();
     },
   },
+  beforeRouteLeave(to, from, next) {
+    sessionStorage.setItem(this.split, this.currentPage);
+    next();
+  },
   methods: {
+    init() {
+      this.split = this.$route.params.split;
+      this.currentPage = Number(sessionStorage.getItem(this.$route.params.split)) || 0
+      this.getMaxPage();
+      this.getClassNames();
+      this.loadImages();
+    },
     getMaxPage() {
       APIGetSplitLength(
         this.$route.params.split,
@@ -177,12 +178,11 @@ export default {
     setCurrentImage(row, col, url) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
-      this.split = this.$route.params.split;
       this.image_id = image_id;
       this.image_url = url;
-      localStorage.setItem('split', this.$route.params.split);
-      localStorage.setItem('image_id', image_id);
-      localStorage.setItem('image_url', url);
+      sessionStorage.setItem('split', this.$route.params.split);
+      sessionStorage.setItem('image_id', image_id);
+      sessionStorage.setItem('image_url', url);
     },
     gotoImage(row, col, url, componentName) {
       this.setCurrentImage(row, col, url);

@@ -86,7 +86,7 @@
           class="num"
           :style="{ fontSize: (defaultConfig.figHeight / (arrLength + 3)) * 0.65 + 'px' }"
         >
-          {{ String(maxPositive).slice(0,6) }}
+          {{ String(maxPositive).slice(0, 6) }}
         </div>
       </div>
     </div>
@@ -138,8 +138,8 @@ export default {
   },
   computed: {
     maxPositive() {
-       return Math.max(...this.dataArr[1]) 
-    } 
+      return Math.max(...this.dataArr[1]);
+    },
   },
 
   mounted() {
