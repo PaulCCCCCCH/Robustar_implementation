@@ -84,16 +84,14 @@ class Resize extends Component {
       };
 
       // scale the objects (e.g. path) on the image
-      this.getCanvas().forEachObject((object) => {
-        // object.left = (object.left / object.scaleX) * scaleValues.scaleX;
-        // object.top = (object.top / object.scaleY) * scaleValues.scaleY;
-        object.scaleX = scaleValues.scaleX / 10;
-        object.scaleY = scaleValues.scaleY / 10;
-        object.center();
-        object.setCoords();
-        // eslint-disable-next-line no-console
-        console.log(object);
-      });
+      // this.getCanvas().forEachObject((object) => {
+      //   object.left = (object.left / object.scaleX) * scaleValues.scaleX;
+      //   object.top = (object.top / object.scaleY) * scaleValues.scaleY;
+      //   object.scaleX = scaleValues.scaleX / 10;
+      //   object.scaleY = scaleValues.scaleY / 10;
+      //   object.center();
+      //   object.setCoords();
+      // });
     }
 
     this.adjustCanvasDimensionBase();
