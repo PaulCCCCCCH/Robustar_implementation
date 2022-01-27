@@ -187,8 +187,7 @@ def precheck():
         assert len(errors)==0, "\n".join(errors)
     check_num_classes_consistency()
     
-
-if __name__ == "__main__":
+def create_server():
     """
     from ml import DataSet, Model, ImageIdConvertor
     #from visual import visualObj
@@ -242,4 +241,8 @@ if __name__ == "__main__":
 
     precheck()
 
+    return server
+
+if __name__ == "__main__":
+    server = create_server()
     server.run(port='8000', host='0.0.0.0', debug=False)
