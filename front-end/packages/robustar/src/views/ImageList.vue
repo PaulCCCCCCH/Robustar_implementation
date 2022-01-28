@@ -127,9 +127,7 @@ export default {
     };
   },
   mounted() {
-    this.getMaxPage();
-    this.getClassNames();
-    this.loadImages();
+    this.initImageList();
   },
   watch: {
     $route() {
@@ -137,9 +135,7 @@ export default {
       this.classNames = [];
       this.classStartIdx = {};
       this.selectedClass = 0;
-      this.getMaxPage();
-      this.getClassNames();
-      this.loadImages();
+      this.initImageList();
     },
     currentPage() {
       this.inputPage = this.currentPage;
@@ -147,13 +143,14 @@ export default {
     },
   },
   methods: {
-    getMaxPage() {
+    initImageList() {
       APIGetSplitLength(
         this.$route.params.split,
         (res) => {
           this.splitLength = res.data.data;
           this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0));
           console.log(res.data.data);
+          this.getClassNames();
         },
         (err) => console.log(err)
       );
@@ -164,6 +161,7 @@ export default {
           console.log(res.data.data);
           this.classStartIdx = res.data.data;
           this.classNames = Object.keys(this.classStartIdx);
+          this.loadImages();
         },
         (err) => console.log(err)
       )
@@ -201,7 +199,7 @@ export default {
       let imgNumOfLastLine = 0;
 
       // last page
-      if (this.currentPage === this.maxPage && this.maxPage > 0) {
+      if (this.currentPage === this.maxPage) {
         const imgNumOfLastPage = this.splitLength - configs.imagePerPage * this.maxPage;
         imageListRow = Math.floor(imgNumOfLastPage / imageListCol);
         imgNumOfLastLine = imgNumOfLastPage % imageListCol;
