@@ -7,7 +7,7 @@ import InfluencePad from '../views/InfluencePad.vue';
 import EditImage from '@/views/EditImage';
 import Prediction from '@/views/Prediction.vue';
 import TestPad from '@/views/TestPad';
-import Config from '@/views/Config'
+import Config from '@/views/Config';
 
 Vue.use(VueRouter);
 
@@ -59,7 +59,7 @@ const routes = [
   {
     path: '/config',
     name: 'Config',
-    component: Config
+    component: Config,
   },
 ];
 
