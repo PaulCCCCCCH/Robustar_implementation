@@ -14,7 +14,7 @@
 
     <v-list nav>
       <!-- first level -->
-      <div v-for="(item, i) in items" :key="i">
+      <div v-for="item in items" :key="item.text">
         <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
@@ -22,12 +22,15 @@
           <v-list-item-content>
             <v-list-item-title v-text="item.text"></v-list-item-title> </v-list-item-content
         ></v-list-item>
-        <v-list-group v-else :value="false" :prepend-icon="item.icon">
+        <v-list-group v-else :value="isGroupActive" :prepend-icon="item.icon" no-action>
           <template v-slot:activator>
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
           </template>
+
           <!-- second level -->
-          <div v-for="(child, i) in item.children" :key="i">
+          <div v-for="child in item.children" :key="child.text">
             <v-list-item v-if="!child.children" color="primary" :to="{ path: '/' + child.link }">
               <v-list-item-icon>
                 <v-icon v-text="child.icon"></v-icon>
@@ -35,7 +38,7 @@
               <v-list-item-content>
                 <v-list-item-title v-text="child.text"></v-list-item-title> </v-list-item-content
             ></v-list-item>
-            <v-list-group v-else :value="true" no-action sub-group>
+            <v-list-group v-else no-action sub-group>
               <template v-slot:activator>
                 <v-list-item-content>
                   <v-list-item-title>{{ child.text }}</v-list-item-title>
@@ -43,8 +46,8 @@
               </template>
               <!-- third level -->
               <v-list-item
-                v-for="(desc, i) in child.children"
-                :key="i"
+                v-for="desc in child.children"
+                :key="desc.text"
                 :to="{ path: '/' + desc.link }"
               >
                 <v-list-item-subtitle v-text="desc.text"></v-list-item-subtitle>
@@ -95,6 +98,11 @@ export default {
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
     };
+  },
+  computed: {
+    isGroupActive() {
+      return this.$route.path.startsWith('/image-list/');
+    },
   },
   methods: {
     navigateTo(path) {
