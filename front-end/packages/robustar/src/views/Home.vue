@@ -4,9 +4,9 @@
       <br />
       <h1>Start your exploration!</h1>
       <br /><br />
-      <div class="d-flex flex-nowrap">
-        <div class="featureItem" v-for="(item, i) in items" :key="i">
-          <v-list-item :to="{ path: '/' + item.link }">
+      <div class="d-flex flex-wrap justify-space-around" >
+        <div class="featureItem" v-for="(item, i) in items" :key="i" >
+          <v-list-item :to="{ path: '/' + item.link }" class="d-flex align-start">
             <div>
               <v-list-item-icon>
                 <v-icon v-text="item.icon"></v-icon>
@@ -27,9 +27,8 @@
 </template>
 <style>
 .featureItem {
-  justify-content: space-between;
   height: auto;
-  width: 300px;
+  width: 45%; 
   padding: 20px 30px;
   margin: 5px;
   border-radius: 10px;
