@@ -48,6 +48,9 @@ export default {
         this.image_id = localStorage.getItem('image_id');
         this.image_url = localStorage.getItem('image_url');
         this.split = localStorage.getItem('split');
+        if (this.split === 'annotated') {
+          this.split = 'train'
+        }
     },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });

@@ -1,10 +1,3 @@
-'''
-Author: Chonghan Chen (paulcccccch@gmail.com)
------
-Last Modified: Tuesday, 7th December 2021 10:45:14 pm
-Modified By: Chonghan Chen (paulcccccch@gmail.com)
------
-'''
 from genericpath import exists
 import pickle
 import torchvision
@@ -45,6 +38,7 @@ class RDataManager:
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
         self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
         self.validation_incorrect_root = osp.join(datasetDir, 'validation_incorrect.txt').replace('\\', '/')
+        self.annotated_root = osp.join(datasetDir, 'annotated.txt').replace('\\', '/')
 
         # Build transforms
         # TODO: Use different transforms according to image_padding variable
@@ -87,9 +81,11 @@ class RDataManager:
         self.incorrectValidationBuffer = []
         self.correctTestBuffer = []
         self.incorrectTestBuffer = []
+        self.annotatedBuffer= []
 
         self.get_classify_validation_list()
         self.get_classify_test_list()
+        self.get_annotated_list()
 
         self.reload_influence_dict()
         self.split_dict = {
@@ -99,9 +95,13 @@ class RDataManager:
             'validation_correct': self.correctValidationBuffer,
             'validation_incorrect': self.incorrectValidationBuffer,
             'test_correct': self.correctTestBuffer,
-            'test_incorrect': self.incorrectTestBuffer
+            'test_incorrect': self.incorrectTestBuffer,
+            'annotated': self.annotatedBuffer
         }
 
+        self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
+        # self.pairedloader = torch.utils.data.DataLoader(
+            # self.pairedloader, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     
     def readify_classes(self, datasets):
         def change_classes(mapping, dataset):
@@ -174,6 +174,7 @@ class RDataManager:
                 for line in f:
                     self.incorrectValidationBuffer.append(int(line))
 
+
     def get_classify_test_list(self):
         if not osp.exists(self.test_correct_root):
             f = open(self.test_correct_root, 'w')
@@ -190,6 +191,21 @@ class RDataManager:
             with open(self.test_incorrect_root, 'r') as f:
                 for line in f:
                     self.incorrectTestBuffer.append(int(line))
+
+    def get_annotated_list(self):
+        if not osp.exists(self.annotated_root):
+            f = open(self.annotated_root, 'w')
+            f.close()
+        else:
+            with open(self.annotated_root, 'r') as f:
+                for line in f:
+                    self.annotatedBuffer.append(int(line))
+
+    def dump_annotated_list(self):
+        if self.annotatedBuffer:
+            with open(self.annotated_root, 'w') as f:
+                for img_idx in self.annotatedBuffer:
+                    f.write(str(img_idx) + '\n')
 
     def _pull_item(self, index, buffer):
         if index >= len(buffer):
