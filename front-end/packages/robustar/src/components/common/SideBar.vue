@@ -14,7 +14,7 @@
 
     <v-list nav>
       <!-- first level -->
-      <div v-for="(item, i) in items" :key="i">
+      <div v-for="(item, i) in items" :key="i" class="font-weight-medium">
         <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
@@ -27,7 +27,7 @@
             <v-list-item-title>{{ item.text }}</v-list-item-title>
           </template>
           <!-- second level -->
-          <div v-for="(child, i) in item.children" :key="i">
+          <div v-for="(child, i) in item.children" :key="i" class="font-weight-medium">
             <v-list-item v-if="!child.children" color="primary" :to="{ path: '/' + child.link }">
               <v-list-item-icon>
                 <v-icon v-text="child.icon"></v-icon>

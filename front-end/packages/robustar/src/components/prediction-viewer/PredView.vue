@@ -118,7 +118,8 @@ export default {
         // width of the figure
         figWidth: 300,
         // line color of positive numbers
-        posColor: '#f22323',
+        // posColor: '#f22323',
+        posColor: '#1976d2 ',
         // line color of negative numbers
         negColor: '#00a000',
         // bottom line color
