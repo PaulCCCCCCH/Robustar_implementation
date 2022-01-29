@@ -19,4 +19,16 @@ function getImageUrlFromFullUrl(full_url) {
   return [arr[arr.length - 1], arr[arr.length - 2]];
 }
 
-export { getNextImageByIdAndURL, getImageUrlFromFullUrl };
+/*
+ * Replace the split and image id in a full url, e.g. 
+ * Changing 'http://localhost:8080/route/train/10
+ * to 'http://localhost:8080/route/annotated/20
+ */
+function replaceSplitAndId(full_url, split, image_id) {
+  const arr = full_url.split('/');
+  const newUrl = arr.slice(0, arr.length - 2).join('/') + `/${split}` + `/${image_id}`;
+  return newUrl
+}
+
+
+export { getNextImageByIdAndURL, getImageUrlFromFullUrl, replaceSplitAndId };

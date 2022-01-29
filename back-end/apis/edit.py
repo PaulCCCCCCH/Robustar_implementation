@@ -34,7 +34,15 @@ def user_edit(split, image_id):
 
         to_save.save(paired_img_path)
 
-        dataManager.annotatedBuffer.append(int(image_id))
+        print(dataManager.annotatedBuffer)
+        print(dataManager.annotatedInvBuffer)
+        if int(image_id) in dataManager.annotatedInvBuffer:
+            save_idx = dataManager.annotatedInvBuffer[int(image_id)]
+        else:
+            save_idx = len(dataManager.annotatedBuffer)
+            dataManager.annotatedInvBuffer[int(image_id)] = save_idx
+        dataManager.annotatedBuffer[save_idx] = int(image_id)
+
         dataManager.dump_annotated_list() # TODO: Change this to SQLite
 
     return RResponse.ok("Success!")

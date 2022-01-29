@@ -137,6 +137,7 @@ const {
  *  @param {number} [options.selectionStyle.rotatingPointOffset] - selection rotating point length
  *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  *  @param {function} [options.apiSendEdit] - API to send user edit to the server. If not given, will download the image instead.
+ *  @param {function} [options.apiLoadEdit] - API to load previously annotated image.
  * @example
  * var ImageEditor = require('tui-image-editor');
  * var blackTheme = require('./js/theme/black-theme.js');
@@ -185,9 +186,10 @@ class ImageEditor {
       const UIOption = options.includeUI;
       UIOption.usageStatistics = options.usageStatistics;
 
-      // Send edit api configs
+      // Send/Load edit api configs
       UIOption.replaceDownload = !!options.apiSendEdit;
       UIOption.apiSendEdit = options.apiSendEdit;
+      UIOption.apiLoadEdit = options.apiLoadEdit;
 
       this.ui = new UI(wrapper, UIOption, this.getActions());
       options = this.ui.setUiDefaultSelectionStyle(options);

@@ -103,8 +103,6 @@ def get_influence(split, image_id):
     """
     influence_dict = dataManager.get_influence_dict()
     target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
-    print(target_img_path)
-    print(influence_dict.keys())
     if target_img_path in influence_dict:
         return RResponse.ok(influence_dict[target_img_path], 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')

@@ -141,6 +141,8 @@ def getSplitLength(split):
 
     if split not in dataManager.split_dict:
         raise NotImplemented('Data split not supported')
+    if split == 'annotated':
+        return len(dataManager.split_dict[split][0])
 
     return len(dataManager.split_dict[split])
 
@@ -168,6 +170,11 @@ def get_test_correct(is_correct, image_index):
 
     return testset.samples[img_num]
 
+def get_annotated_from_train(train_image_index):
+    if int(train_image_index) in dataManager.annotatedInvBuffer:
+        return dataManager.annotatedInvBuffer[int(train_image_index)]
+    return None
+
 def get_annotated(image_index):
-    img_num = dataManager.annotatedBuffer[image_index]
+    img_num = dataManager.annotatedBuffer[int(image_index)]
     return pairedset.samples[img_num]

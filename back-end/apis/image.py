@@ -4,7 +4,7 @@ from flask import redirect, send_file
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import imageURLToPath, getSplitLength, getClassStart
+from utils.image_utils import imageURLToPath, getSplitLength, getClassStart, get_annotated_from_train
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -20,6 +20,18 @@ def get_train_img(split, image_id):
     return redirect('/dataset/' + url)
 
 
+@app.route('/image/get-annotated/<image_id>')
+def get_annotated(image_id):
+    """
+    image_id: train image id
+    returns corresponding paired image id, if exists
+    """
+    annotated_idx = get_annotated_from_train(image_id)
+    if annotated_idx is None:
+        return RResponse.ok(-1)
+    return RResponse.ok(annotated_idx)
+
+
 @app.route('/image/class/<split>')
 def get_class_page(split):
     return RResponse.ok(getClassStart(split))
@@ -33,7 +45,11 @@ def get_split_length(split):
 # internal use only
 @app.route('/dataset/<path:dataset_img_path>')
 def get_dataset_img(dataset_img_path):
-    return send_file(osp.join('/', dataset_img_path).replace('\\', '/'))
+    normal_path = osp.join('/', dataset_img_path).replace('\\', '/')
+    if osp.exists(normal_path):
+        return send_file(normal_path)
+    else:
+        return RResponse.fail()
 
 
 @app.route('/visualize/<path:visualize_img_path>')

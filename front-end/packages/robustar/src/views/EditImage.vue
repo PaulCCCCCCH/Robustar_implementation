@@ -13,7 +13,8 @@
 <script>
 import ImageEditor from '@/components/image-editor/ImageEditor';
 import { APISendEdit } from '@/apis/edit';
-import { getNextImageByIdAndURL } from '@/utils/image_utils';
+import { APIGetAnnotated } from '@/apis/images';
+import { getNextImageByIdAndURL, replaceSplitAndId } from '@/utils/image_utils';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -29,6 +30,7 @@ export default {
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
+        apiLoadEdit: this.loadEdit.bind(this),
       },
       image_id: "",
       image_url: "",
@@ -52,6 +54,31 @@ export default {
           this.split = 'train'
         }
     },
+    loadEditSuccess(res) {
+      const edit_id = res.data.data
+      console.log(edit_id)
+      if (edit_id === -1) {
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'No previous annotation found');
+      } else {
+        localStorage.setItem('image_id', edit_id);
+        localStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'annotated', edit_id)); 
+        this.$refs.editor.initInstance();
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Previous annotation loaded');
+      }
+    },
+    loadEditFailed(res) {
+      console.log(res);
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'No');
+    },
+    loadEdit() {
+      this.$root.startProcessing(
+        'Loading previous annotation. Please wait...'
+      );
+      APIGetAnnotated(this.image_id, this.loadEditSuccess, this.loadEditFailed)
+    },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
@@ -59,6 +86,8 @@ export default {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
       const [newId, newUrl] = getNextImageByIdAndURL(this.image_id, this.image_url);
+      this.image_id = `${newId}`;
+      this.image_url = `${newUrl}`;
       localStorage.setItem('image_id', newId);
       localStorage.setItem('image_url', newUrl);
       this.$refs.editor.initInstance();

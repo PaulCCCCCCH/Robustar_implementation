@@ -81,7 +81,8 @@ class RDataManager:
         self.incorrectValidationBuffer = []
         self.correctTestBuffer = []
         self.incorrectTestBuffer = []
-        self.annotatedBuffer= []
+        self.annotatedBuffer= {}
+        self.annotatedInvBuffer= {}
 
         self.get_classify_validation_list()
         self.get_classify_test_list()
@@ -96,7 +97,7 @@ class RDataManager:
             'validation_incorrect': self.incorrectValidationBuffer,
             'test_correct': self.correctTestBuffer,
             'test_incorrect': self.incorrectTestBuffer,
-            'annotated': self.annotatedBuffer
+            'annotated': (self.annotatedBuffer, self.annotatedInvBuffer)
         }
 
         self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
@@ -198,13 +199,15 @@ class RDataManager:
             f.close()
         else:
             with open(self.annotated_root, 'r') as f:
-                for line in f:
-                    self.annotatedBuffer.append(int(line))
+                for idx, line in enumerate(f):
+                    self.annotatedBuffer[idx] = (int(line))
+                    self.annotatedInvBuffer[int(line)] = idx
 
     def dump_annotated_list(self):
+        print("Dumpping: {}".format(self.annotatedBuffer))
         if self.annotatedBuffer:
             with open(self.annotated_root, 'w') as f:
-                for img_idx in self.annotatedBuffer:
+                for _, img_idx in self.annotatedBuffer.items():
                     f.write(str(img_idx) + '\n')
 
     def _pull_item(self, index, buffer):
