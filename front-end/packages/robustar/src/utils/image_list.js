@@ -14,7 +14,7 @@ const imageCoord2Idx = (row, col) => {
 };
 
 const getPageNumber = (imageIdx) => {
-  return Math.floor(imageIdx / configs.imagePerPage)
-}
+  return Math.floor(imageIdx / configs.imagePerPage);
+};
 
 export { imagePageIdx2Id, imageCoord2Idx, getPageNumber };

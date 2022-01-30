@@ -4,9 +4,9 @@
       adjust
     </v-btn> -->
     <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
-    <div class='d-flex flex-row justify-space-between' style="width: 100%; height: 100%">
+    <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
       <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
-      <Visualizer :image_id="image_id" :split="split"/>
+      <Visualizer :image_id="image_id" :split="split" />
     </div>
   </div>
 </template>
@@ -32,13 +32,13 @@ export default {
         apiSendEdit: this.sendEdit.bind(this),
         apiLoadEdit: this.loadEdit.bind(this),
       },
-      image_id: "",
-      image_url: "",
-      split: ""
+      image_id: '',
+      image_url: '',
+      split: '',
     };
   },
   mounted() {
-    this.loadImageInfo()
+    this.loadImageInfo();
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -47,9 +47,9 @@ export default {
   },
   methods: {
     loadImageInfo() {
-        this.image_id = localStorage.getItem('image_id');
-        this.image_url = localStorage.getItem('image_url');
-        this.split = localStorage.getItem('split');
+        this.image_id = sessionStorage.getItem('image_id');
+        this.image_url = sessionStorage.getItem('image_url');
+        this.split = sessionStorage.getItem('split');
         if (this.split === 'annotated') {
           this.split = 'train'
         }
@@ -61,9 +61,9 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('error', 'No previous annotation found');
       } else {
-        localStorage.setItem('image_id', edit_id);
-        localStorage.setItem('split', 'annotated');
-        localStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'annotated', edit_id)); 
+        sessionStorage.setItem('image_id', edit_id);
+        sessionStorage.setItem('split', 'annotated');
+        sessionStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'annotated', edit_id)); 
         this.$refs.editor.initInstance();
         this.$root.finishProcessing();
         this.$root.alert('success', 'Previous annotation loaded');
@@ -89,8 +89,8 @@ export default {
       const [newId, newUrl] = getNextImageByIdAndURL(this.image_id, this.image_url);
       this.image_id = `${newId}`;
       this.image_url = `${newUrl}`;
-      localStorage.setItem('image_id', newId);
-      localStorage.setItem('image_url', newUrl);
+      sessionStorage.setItem('image_id', newId);
+      sessionStorage.setItem('image_url', newUrl);
       this.$refs.editor.initInstance();
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
@@ -104,10 +104,10 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_id = localStorage.getItem('image_id') || '';
-      const height = localStorage.getItem('image_height');
-      const width = localStorage.getItem('image_width');
-      const split = localStorage.getItem('split')
+      const image_id = sessionStorage.getItem('image_id') || '';
+      const height = sessionStorage.getItem('image_height');
+      const width = sessionStorage.getItem('image_width');
+      const split = sessionStorage.getItem('split');
       APISendEdit(
         split,
         image_id,

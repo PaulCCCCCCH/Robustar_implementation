@@ -14,10 +14,9 @@ const APIGetSplitLength = (split, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
- const APIGetClassNames = (split, success, failed) => {
+const APIGetClassNames = (split, success, failed) => {
   common.getRequest(`/image/class/${split}`, success, failed);
 };
-
 
 /**
  * @param {string} image_id

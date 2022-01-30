@@ -20,77 +20,79 @@
       <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
         Next Page
       </v-btn>
+
       <!-- Class filter -->
       <div class="d-flex" style="width: 30%">
-        <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass"> Goto Class </v-btn>
-        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="gotoClass"> Goto Class </v-btn>
+        <v-btn :disabled="selectedClass === 0" class="mr-4" depressed color="primary" @click="gotoClass">
+          Goto Class
+        </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
     </div>
 
     <div class="d-flex flex-row justify-space-around">
-    <!-- Image List -->
-    <div style="width: auto">
-      <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
-        <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
-          <!-- minus 1 is necessary since Vue counts from 1 -->
-          <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
-          <v-hover v-slot="{ hover }">
-            <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
-              <template v-slot:placeholder>
-                <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular
-                    indeterminate
-                    color="primary lighten-3"
-                  ></v-progress-circular>
-                </v-row>
-              </template>
-              <v-expand-transition>
-                <div
-                  v-if="hover"
-                  class="
-                    d-flex
-                    flex-column
-                    transition-fast-in-fast-out
-                    primary
-                    v-card--reveal
-                    text-h5
-                    white--text
-                  "
-                  style="height: 100%"
-                >
-                  <v-btn
-                    class="mb-4"
-                    outlined
-                    large
-                    color="white"
-                    width="150px"
-                    @click="gotoImage(row, col, url, 'EditImage')"
+      <!-- Image List -->
+      <div style="width: auto">
+        <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
+          <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
+            <!-- minus 1 is necessary since Vue counts from 1 -->
+            <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
+            <v-hover v-slot="{ hover }">
+              <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
+                <template v-slot:placeholder>
+                  <v-row class="fill-height ma-0" align="center" justify="center">
+                    <v-progress-circular
+                      indeterminate
+                      color="primary lighten-3"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+                <v-expand-transition>
+                  <div
+                    v-if="hover"
+                    class="
+                      d-flex
+                      flex-column
+                      transition-fast-in-fast-out
+                      primary
+                      v-card--reveal
+                      text-h5
+                      white--text
+                    "
+                    style="height: 100%"
                   >
-                    <v-icon left>mdi-pencil</v-icon>
-                    Annotate
-                  </v-btn>
-                  <v-btn
-                    outlined
-                    large
-                    color="white"
-                    width="150px"
-                    @click="setCurrentImage(row, col, url)"
-                  >
-                    <v-icon left>mdi-cogs</v-icon>
-                    Predict
-                  </v-btn>
-                </div>
-              </v-expand-transition>
-            </v-img>
-          </v-hover>
+                    <v-btn
+                      class="mb-4"
+                      outlined
+                      large
+                      color="white"
+                      width="150px"
+                      @click="gotoImage(row, col, url, 'EditImage')"
+                    >
+                      <v-icon left>mdi-pencil</v-icon>
+                      Annotate
+                    </v-btn>
+                    <v-btn
+                      outlined
+                      large
+                      color="white"
+                      width="150px"
+                      @click="setCurrentImage(row, col, url)"
+                    >
+                      <v-icon left>mdi-cogs</v-icon>
+                      Predict
+                    </v-btn>
+                  </div>
+                </v-expand-transition>
+              </v-img>
+            </v-hover>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div style="width: 50%" v-if="image_id !== ''">
-      <Visualizer :image_id="String(image_id)" :split="split"/>
-    </div>
+
+      <div style="width: 50%" v-if="image_id !== ''">
+        <Visualizer :image_id="String(image_id)" :split="split" />
+      </div>
     </div>
 
     <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
@@ -102,7 +104,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength, APIGetClassNames } from '@/apis/images'
+import { APIGetSplitLength, APIGetClassNames } from '@/apis/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -121,9 +123,9 @@ export default {
       classNames: [],
       classStartIdx: {},
       selectedClass: 0,
-      split: "",
-      image_id: "",
-      image_url: ""
+      split: '',
+      image_id: '',
+      image_url: '',
     };
   },
   mounted() {
@@ -131,6 +133,7 @@ export default {
   },
   watch: {
     $route() {
+      sessionStorage.setItem(this.split, this.currentPage);
       this.currentPage = 0;
       this.classNames = [];
       this.classStartIdx = {};
@@ -142,8 +145,14 @@ export default {
       this.loadImages();
     },
   },
+  beforeRouteLeave(to, from, next) {
+    sessionStorage.setItem(this.split, this.currentPage);
+    next();
+  },
   methods: {
     initImageList() {
+      this.split = this.$route.params.split;
+      this.currentPage = Number(sessionStorage.getItem(this.$route.params.split)) || 0
       APIGetSplitLength(
         this.$route.params.split,
         (res) => {
@@ -156,7 +165,8 @@ export default {
       );
     },
     getClassNames() {
-      APIGetClassNames(this.$route.params.split,
+      APIGetClassNames(
+        this.$route.params.split,
         (res) => {
           console.log(res.data.data);
           this.classStartIdx = res.data.data;
@@ -164,20 +174,19 @@ export default {
           this.loadImages();
         },
         (err) => console.log(err)
-      )
+      );
     },
     setCurrentImage(row, col, url) {
       const idx = imageCoord2Idx(row, col);
       const image_id = imagePageIdx2Id(this.currentPage, idx);
-      this.split = this.$route.params.split;
       this.image_id = image_id;
       this.image_url = url;
-      localStorage.setItem('split', this.$route.params.split);
-      localStorage.setItem('image_id', image_id);
-      localStorage.setItem('image_url', url);
+      sessionStorage.setItem('split', this.$route.params.split);
+      sessionStorage.setItem('image_id', image_id);
+      sessionStorage.setItem('image_url', url);
     },
     gotoImage(row, col, url, componentName) {
-      this.setCurrentImage(row, col, url)
+      this.setCurrentImage(row, col, url);
       this.$router.push({ name: componentName });
     },
     gotoPage() {
