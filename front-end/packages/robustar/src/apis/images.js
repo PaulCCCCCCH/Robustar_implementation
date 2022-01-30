@@ -1,9 +1,7 @@
 import * as common from './common';
 
 /**
- * FIXME: Just an example. Not currently used.
- * @param {string} dataset either 'train' or 'test'
- * @param {int} startFrom the id of the first image in the page
+ * @param {string} split
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
@@ -11,6 +9,14 @@ const APIGetSplitLength = (split, success, failed) => {
   common.getRequest(`/image/${split}`, success, failed);
 };
 
+/**
+ * @param {string} split
+ * @param {function} success success callback function
+ * @param {function} fail fail callback function
+ */
+const APIGetClassNames = (split, success, failed) => {
+  common.getRequest(`/image/class/${split}`, success, failed);
+};
 
 /**
  * FIXME: Just an example. Not currently used.
@@ -32,4 +38,4 @@ const APIGetImage = (dataset, imageId, success, failed) => {
   common.getRequest(`/${dataset}/${imageId}`, success, failed);
 };
 
-export { APIGetImagesInPage, APIGetImage, APIGetSplitLength };
+export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames };

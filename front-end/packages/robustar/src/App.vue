@@ -69,13 +69,12 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
+/* #app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale(0);
   color: #2c3e50;
-  background-color: #eee;
-}
+} */
 
 .pages {
   margin: 0px 0px 0px 40px;
@@ -87,10 +86,5 @@ export default {
 .page-content {
   min-height: 100%;
   width: 100%;
-}
-
-
-body::-webkit-scrollbar {
-  display: none !important;
 }
 </style>

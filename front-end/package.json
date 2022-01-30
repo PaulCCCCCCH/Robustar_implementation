@@ -7,13 +7,17 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@cypress/vue": "^2.2.3",
+    "@cypress/webpack-dev-server": "^1.8.0",
     "@storybook/builder-webpack5": "^6.3.10",
     "@storybook/cli": "^5.1.11",
     "@storybook/manager-webpack5": "^6.3.10",
     "@storybook/react": "^6.3.12",
+    "@vue/cli-service": "^4.5.15",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
+    "cypress": "^9.2.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-tui": "^4.2.0",
@@ -23,6 +27,7 @@
     "eslint-plugin-vue": "^7.17.0",
     "eslint-webpack-plugin": "^3.0.1",
     "file-saver": "^2.0.5",
+    "html-webpack-plugin": "^4.5.2",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
@@ -41,7 +46,7 @@
     "vue-template-compiler": "^2.6.14",
     "webpack": "^5.52.0",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.2.0",
+    "webpack-dev-server": "^4.7.3",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
@@ -51,7 +56,9 @@
     "build": "lerna run build",
     "build:editor": "lerna run --scope @robustar/image-editor build --stream",
     "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "lerna run --scope @robustar/robustar serve --stream"
+    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
+    "cypress:e2e": "cypress open",
+    "cypress:component": "cypress open-ct"
   },
   "workspaces": [
     "apps/*"

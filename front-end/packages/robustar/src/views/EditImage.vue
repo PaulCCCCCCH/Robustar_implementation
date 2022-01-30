@@ -3,10 +3,11 @@
     <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
       adjust
     </v-btn> -->
-    <div style="position: absolute; top: 50px; width: 100%">
-      <Visualizer />
+    <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
+    <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
+      <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
+      <Visualizer :image_id="image_id" :split="split" />
     </div>
-    <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
   </div>
 </template>
 <script>
@@ -29,7 +30,13 @@ export default {
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
       },
+      image_id: '',
+      image_url: '',
+      split: '',
     };
+  },
+  mounted() {
+    this.loadImageInfo();
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -37,17 +44,20 @@ export default {
     });
   },
   methods: {
+    loadImageInfo() {
+      this.image_id = sessionStorage.getItem('image_id');
+      this.image_url = sessionStorage.getItem('image_url');
+      this.split = sessionStorage.getItem('split');
+    },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
     sendEditSuccess(res) {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
-      const id = localStorage.getItem('image_id');
-      const url = localStorage.getItem('image_url');
-      const [newId, newUrl] = getNextImageByIdAndURL(id, url);
-      localStorage.setItem('image_id', newId);
-      localStorage.setItem('image_url', newUrl);
+      const [newId, newUrl] = getNextImageByIdAndURL(this.image_id, this.image_url);
+      sessionStorage.setItem('image_id', newId);
+      sessionStorage.setItem('image_url', newUrl);
       this.$refs.editor.initInstance();
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
@@ -61,9 +71,9 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_id = localStorage.getItem('image_id') || '';
-      const height = localStorage.getItem('image_height');
-      const width = localStorage.getItem('image_width');
+      const image_id = sessionStorage.getItem('image_id') || '';
+      const height = sessionStorage.getItem('image_height');
+      const width = sessionStorage.getItem('image_width');
       APISendEdit(
         'train',
         image_id,
