@@ -9,6 +9,7 @@ datasetDir = dataManager.data_root
 trainset = dataManager.trainset
 testset = dataManager.testset
 validationset = dataManager.validationset
+pairedset = dataManager.pairedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
@@ -35,9 +36,10 @@ def imageURLToPath(image_id):
     # If already buffered, just return
     if image_id in datasetFileBuffer:
         return datasetFileBuffer[image_id]
-
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
+    elif split == 'annotated':
+        filePath = get_annotated(imageIndex)[0]
     elif split == 'validation':
         filePath = validationset.samples[imageIndex][0]
     elif split == 'test':
@@ -61,7 +63,7 @@ def imageURLToPath(image_id):
 
 
 def getClassStart(split):
-    if split == 'train':
+    if split == 'train' or split == 'annotated':
         dataset_ls = trainset.samples
         dataset_len = len(dataset_ls)
         class_ls = trainset.classes
@@ -139,6 +141,8 @@ def getSplitLength(split):
 
     if split not in dataManager.split_dict:
         raise NotImplemented('Data split not supported')
+    if split == 'annotated':
+        return len(dataManager.split_dict[split][0])
 
     return len(dataManager.split_dict[split])
 
@@ -165,3 +169,15 @@ def get_test_correct(is_correct, image_index):
         img_num = incorrectTestBuffer[image_index]
 
     return testset.samples[img_num]
+
+def get_annotated_from_train(train_image_index):
+    if int(train_image_index) in dataManager.annotatedInvBuffer:
+        return dataManager.annotatedInvBuffer[int(train_image_index)]
+    return None
+
+def get_train_from_annotated(annotated_image_index):
+    return dataManager.annotatedBuffer[int(annotated_image_index)]
+
+def get_annotated(image_index):
+    img_num = dataManager.annotatedBuffer[int(image_index)]
+    return pairedset.samples[img_num]

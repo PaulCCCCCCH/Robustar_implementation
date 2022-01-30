@@ -75,6 +75,7 @@ export default {
           icon: 'mdi-eye',
           children: [
             { text: 'Training Data', icon: '', link: 'image-list/train' },
+            { text: 'Annotated Data', icon: '', link: 'image-list/annotated' },
             {
               text: 'Validation Data',
               icon: '',

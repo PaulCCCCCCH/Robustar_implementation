@@ -19,6 +19,17 @@ const APIGetClassNames = (split, success, failed) => {
 };
 
 /**
+ * @param {string} image_id
+ * @param {function} success success callback function
+ * @param {function} fail fail callback function
+ */
+ const APIGetAnnotated = (image_id, success, failed) => {
+  common.getRequest(`/image/get-annotated/${image_id}`, success, failed);
+};
+
+
+
+/**
  * FIXME: Just an example. Not currently used.
  * @param {string} dataset either 'train' or 'test'
  * @param {int} startFrom the id of the first image in the page
@@ -38,4 +49,4 @@ const APIGetImage = (dataset, imageId, success, failed) => {
   common.getRequest(`/${dataset}/${imageId}`, success, failed);
 };
 
-export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames };
+export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames, APIGetAnnotated };

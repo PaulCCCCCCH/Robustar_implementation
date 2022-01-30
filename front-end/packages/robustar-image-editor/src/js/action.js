@@ -181,6 +181,9 @@ export default {
             height: 500,
           });
         },
+        loadEdit: (apiLoadEdit) => {
+          apiLoadEdit();
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },

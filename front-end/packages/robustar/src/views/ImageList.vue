@@ -129,12 +129,16 @@ export default {
     };
   },
   mounted() {
-    this.init();
+    this.initImageList();
   },
   watch: {
     $route() {
       sessionStorage.setItem(this.split, this.currentPage);
-      this.init()
+      this.currentPage = 0;
+      this.classNames = [];
+      this.classStartIdx = {};
+      this.selectedClass = 0;
+      this.initImageList();
     },
     currentPage() {
       this.inputPage = this.currentPage;
@@ -146,20 +150,16 @@ export default {
     next();
   },
   methods: {
-    init() {
+    initImageList() {
       this.split = this.$route.params.split;
       this.currentPage = Number(sessionStorage.getItem(this.$route.params.split)) || 0
-      this.getMaxPage();
-      this.getClassNames();
-      this.loadImages();
-    },
-    getMaxPage() {
       APIGetSplitLength(
         this.$route.params.split,
         (res) => {
           this.splitLength = res.data.data;
           this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0));
           console.log(res.data.data);
+          this.getClassNames();
         },
         (err) => console.log(err)
       );
@@ -171,6 +171,7 @@ export default {
           console.log(res.data.data);
           this.classStartIdx = res.data.data;
           this.classNames = Object.keys(this.classStartIdx);
+          this.loadImages();
         },
         (err) => console.log(err)
       );
@@ -207,7 +208,7 @@ export default {
       let imgNumOfLastLine = 0;
 
       // last page
-      if (this.currentPage === this.maxPage && this.maxPage > 0) {
+      if (this.currentPage === this.maxPage) {
         const imgNumOfLastPage = this.splitLength - configs.imagePerPage * this.maxPage;
         imageListRow = Math.floor(imgNumOfLastPage / imageListCol);
         imgNumOfLastLine = imgNumOfLastPage % imageListCol;

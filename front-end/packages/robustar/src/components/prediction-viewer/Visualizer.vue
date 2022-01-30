@@ -89,6 +89,9 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
+    if (this.split === 'annotated') {
+      this.split = 'train'
+    }
     this.get_visualize_data();
   },
   methods: {
