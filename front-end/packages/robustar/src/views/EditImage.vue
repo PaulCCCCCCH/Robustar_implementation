@@ -62,6 +62,7 @@ export default {
         this.$root.alert('error', 'No previous annotation found');
       } else {
         localStorage.setItem('image_id', edit_id);
+        localStorage.setItem('split', 'annotated');
         localStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'annotated', edit_id)); 
         this.$refs.editor.initInstance();
         this.$root.finishProcessing();
@@ -106,8 +107,9 @@ export default {
       const image_id = localStorage.getItem('image_id') || '';
       const height = localStorage.getItem('image_height');
       const width = localStorage.getItem('image_width');
+      const split = localStorage.getItem('split')
       APISendEdit(
-        'train',
+        split,
         image_id,
         height,
         width,

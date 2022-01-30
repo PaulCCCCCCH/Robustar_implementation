@@ -175,6 +175,9 @@ def get_annotated_from_train(train_image_index):
         return dataManager.annotatedInvBuffer[int(train_image_index)]
     return None
 
+def get_train_from_annotated(annotated_image_index):
+    return dataManager.annotatedBuffer[int(annotated_image_index)]
+
 def get_annotated(image_index):
     img_num = dataManager.annotatedBuffer[int(image_index)]
     return pairedset.samples[img_num]

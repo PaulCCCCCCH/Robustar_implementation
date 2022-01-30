@@ -204,7 +204,6 @@ class RDataManager:
                     self.annotatedInvBuffer[int(line)] = idx
 
     def dump_annotated_list(self):
-        print("Dumpping: {}".format(self.annotatedBuffer))
         if self.annotatedBuffer:
             with open(self.annotated_root, 'w') as f:
                 for _, img_idx in self.annotatedBuffer.items():
