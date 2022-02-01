@@ -4,32 +4,39 @@
       <br />
       <h1>Start your exploration!</h1>
       <br /><br />
-      <div class="d-flex flex-nowrap">
-        <div class="featureItem" v-for="(item, i) in items" :key="i">
-          <v-list-item :to="{ path: '/' + item.link }">
-            <div>
-              <v-list-item-icon>
-                <v-icon v-text="item.icon"></v-icon>
-              </v-list-item-icon>
-            </div>
-            <div>
-              <v-list-item-content
-                class="font-weight-medium"
-                v-text="item.text"
-              ></v-list-item-content>
-              <v-list-item-content v-text="item.explain"></v-list-item-content>
-            </div>
-          </v-list-item>
+      <v-hover>
+        <div class="d-flex flex-wrap justify-space-around">
+          <div
+            class="featureItem"
+            v-for="(item, i) in items"
+            :key="i"
+            @mouseover="hoverIndex = i"
+            @mouseout="hoverIndex = -1"
+          >
+            <v-list-item :to="{ path: '/' + item.link }" class="d-flex align-start" color="primary">
+              <div>
+                <v-list-item-icon  :class="{ hoverBg: i == hoverIndex }">
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+              </div>
+              <div :class="{ hoverBg: i == hoverIndex }">
+                <v-list-item-content
+                  class="font-weight-medium"
+                  v-text="item.text"
+                ></v-list-item-content>
+                <v-list-item-content v-text="item.explain"></v-list-item-content>
+              </div>
+            </v-list-item>
+          </div>
         </div>
-      </div>
+      </v-hover>
     </div>
   </div>
 </template>
 <style>
 .featureItem {
-  justify-content: space-between;
   height: auto;
-  width: 300px;
+  width: 45%;
   padding: 20px 30px;
   margin: 5px;
   border-radius: 10px;
@@ -38,6 +45,10 @@
 }
 .container {
   text-align: center;
+}
+
+.hoverBg {
+  color: #1976d2;
 }
 </style>
 
@@ -75,6 +86,7 @@ export default {
           explain: 'The users can use the drawing tools to brush out the superficial pixels',
         },
       ],
+      hoverIndex: -1,
     };
   },
   methods: {
