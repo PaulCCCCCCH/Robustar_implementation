@@ -79,18 +79,20 @@ export default {
             {
               text: 'Validation Data',
               icon: '',
-              children: [
-                { text: 'Correctly Classified', link: 'image-list/validation_correct' },
-                { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
-              ],
+              link: 'image-list/validation',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/validation_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
+              // ],
             },
             {
               text: 'Test Data',
               icon: '',
-              children: [
-                { text: 'Correctly Classified', link: 'image-list/test_correct' },
-                { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
-              ],
+              link: 'image-list/test',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/test_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
+              // ],
             },
           ],
         },
