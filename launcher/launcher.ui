@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>807</width>
     <height>680</height>
    </rect>
   </property>
@@ -257,7 +257,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,0,1">
           <item>
            <widget class="QLabel" name="label_4">
             <property name="font">
@@ -272,6 +272,34 @@
            </widget>
           </item>
           <item>
+           <widget class="QLineEdit" name="trainPathDisplay">
+            <property name="minimumSize">
+             <size>
+              <width>211</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>211</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="trainPathButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -279,9 +307,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>28</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>135</width>
+              <width>28</width>
               <height>16777215</height>
              </size>
             </property>
@@ -292,7 +326,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -314,6 +348,22 @@
            </widget>
           </item>
           <item>
+           <widget class="QLineEdit" name="validationPathDisplay">
+            <property name="maximumSize">
+             <size>
+              <width>211</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="validationPathButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -321,9 +371,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>28</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>135</width>
+              <width>28</width>
               <height>16777215</height>
              </size>
             </property>
@@ -334,7 +390,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -356,6 +412,22 @@
            </widget>
           </item>
           <item>
+           <widget class="QLineEdit" name="testPathDisplay">
+            <property name="maximumSize">
+             <size>
+              <width>211</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="testPathButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -363,9 +435,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>28</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>135</width>
+              <width>28</width>
               <height>16777215</height>
              </size>
             </property>
@@ -376,7 +454,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -398,6 +476,22 @@
            </widget>
           </item>
           <item>
+           <widget class="QLineEdit" name="checkPointPathDisplay">
+            <property name="maximumSize">
+             <size>
+              <width>211</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="checkPointPathButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -405,9 +499,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>28</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>135</width>
+              <width>28</width>
               <height>16777215</height>
              </size>
             </property>
@@ -418,7 +518,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -440,6 +540,22 @@
            </widget>
           </item>
           <item>
+           <widget class="QLineEdit" name="influencePathDisplay">
+            <property name="maximumSize">
+             <size>
+              <width>211</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="influencePathButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -447,9 +563,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>28</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>135</width>
+              <width>28</width>
               <height>16777215</height>
              </size>
             </property>
@@ -460,7 +582,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -517,8 +639,7 @@
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>Start/Stop
-Server</string>
+        <string>Start Server</string>
        </property>
       </widget>
       <widget class="QWidget" name="layoutWidget">

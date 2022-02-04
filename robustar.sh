@@ -75,7 +75,6 @@ function RUN {
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
     -v $CONFIG_FILE:/Robustar2/configs.json \
-    --gpus all \
     $IMAGE_NAME && echo "Robustar is available at http://localhost:$OPT_PORT "
     # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
   # docker cp ${CONFIG_FILE} ${OPT_NAME}:/Robustar2/configs.json

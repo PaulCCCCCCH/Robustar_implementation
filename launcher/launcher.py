@@ -13,6 +13,9 @@ class Launcher(QWidget):
         # Set the default path of the path choosing window
         self.cwd = '/'
 
+        # Set the starting state of the server
+        self.runningState = False
+
         # Set the default configuration
         self.configs = {
                         'containerName': 'robustar',
@@ -55,27 +58,40 @@ class Launcher(QWidget):
 
     def chooseTrainPath(self):
         self.configs['trainPath'] = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
+        self.ui.trainPathDisplay.setText(self.configs['trainPath'])
         
     def chooseValidationPath(self):
         self.configs['validationPath'] = QFileDialog.getExistingDirectory(self, "Choose Validation Set Path", self.cwd)
+        self.ui.validationPathDisplay.setText(self.configs['validationPath'])
 
     def chooseTestPath(self):
         self.configs['testPath'] = QFileDialog.getExistingDirectory(self, "Choose Test Set Path", self.cwd)
+        self.ui.testPathDisplay.setText(self.configs['testPath'])
 
     def chooseCheckPointPath(self):
         self.configs['checkPointPath'] = QFileDialog.getExistingDirectory(self, "Choose Check Points Path", self.cwd)
+        self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
 
     def chooseInfluencePath(self):
         self.configs['influencePath'] = QFileDialog.getExistingDirectory(self, "Choose Influence Result Path", self.cwd)
+        self.ui.influencePathDisplay.setText(self.configs['influencePath'])
 
     def loadConfig(self):
         self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.loadPath, 'r') as f:
                 self.configs = json.load(f)
+
+                # Update the UI according to the loaded file
                 self.ui.nameInput.setText(self.configs['containerName'])
                 self.ui.versionComboBox.setCurrentText(self.configs['imageVersion'])
                 self.ui.portInput.setText(self.configs['portNumber'])
+                self.ui.trainPathDisplay.setText(self.configs['trainPath'])
+                self.ui.validationPathDisplay.setText(self.configs['validationPath'])
+                self.ui.testPathDisplay.setText(self.configs['testPath'])
+                self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
+                self.ui.influencePathDisplay.setText(self.configs['influencePath'])
+
         except FileNotFoundError:
             print('Load path not found')
 
@@ -87,16 +103,24 @@ class Launcher(QWidget):
         except FileNotFoundError:
             print('Save path not found')
 
-
-
-
     def controlServer(self):
-        setupCommand = 'docker pull paulcccccch/robustar:' + self.configs['imageVersion']
+        # setupCommand = 'docker pull paulcccccch/robustar:' + self.configs['imageVersion']
+        # self.runShellCommand(setupCommand)
 
-        self.runShellCommand(setupCommand)
-
-        runCommand = self.getRunCommand()
-        self.runShellCommand(runCommand)
+        if self.runningState == False:
+            runCommand = self.getRunCommand()
+            runReturnCode = self.runShellCommand(runCommand)
+            if runReturnCode == 0:
+                self.runningState = True
+                self.ui.serverControlButton.setText('Stop Server')
+                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+                QApplication.processEvents()
+        else:
+            stopCommand = 'docker stop ' + self.configs['containerName']
+            self.runShellCommand(stopCommand)
+            self.runningState = False
+            self.ui.serverControlButton.setText('Start Server')
 
 
     # Concatenate the command to be executed
@@ -110,8 +134,7 @@ class Launcher(QWidget):
                        '--mount type=bind,source=' + self.configs['influencePath'] + ',target=/Robustar2/influence_images ' +\
                        '--mount type=bind,source=' + self.configs['checkPointPath'] + ',target=/Robustar2/checkpoint_images ' +\
                        '-v ' + self.configs['configFile'] + ':/Robustar2/configs.json ' +\
-                       '--gpus all ' +\
-                       'paulcccccch/robustar:' + self.configs['imageVersion'] + ' echo "Robustar is available at http://localhost:' + self.configs['portNumber'] + ' \"'
+                       'paulcccccch/robustar:' + self.configs['imageVersion']
 
         return runCommand
 
@@ -139,10 +162,11 @@ class Launcher(QWidget):
             # Check if the process has finished
             return_code = process.poll()
             if return_code is not None:
-                print('RETURN CODE', return_code)
-                self.ui.messageBrowser.append('RETURN CODE ' + str(return_code))
-                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                QApplication.processEvents()
+                # print('RETURN CODE', return_code)
+                # self.ui.messageBrowser.append('RETURN CODE ' + str(return_code))
+                # self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+                # QApplication.processEvents()
+
                 # Process has finished, read rest of the output
                 for output in process.stdout.readlines():
                     if (len(output) != 0):
@@ -151,6 +175,12 @@ class Launcher(QWidget):
                         self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
                         QApplication.processEvents()
                 break
+
+        self.ui.messageBrowser.append('\n')
+        self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+        QApplication.processEvents()
+
+        return return_code
 
 
 app = QApplication([])
