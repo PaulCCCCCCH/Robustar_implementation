@@ -31,6 +31,7 @@ class RDataManager:
         self.validation_root = osp.join(datasetDir, 'validation').replace('\\', '/')
         self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
+        self.proposed_annotation_root = osp.join(baseDir, 'proposed_annotation').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
         self.class2label = class2label_mapping
 
@@ -83,6 +84,7 @@ class RDataManager:
         self.incorrectTestBuffer = []
         self.annotatedBuffer= {}
         self.annotatedInvBuffer= {}
+        self.proposedAnnotationBuffer = {}
 
         self.get_classify_validation_list()
         self.get_classify_test_list()
@@ -133,14 +135,9 @@ class RDataManager:
     def _init_folders(self):
         if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
             self._init_paired_folder()
-        self._init_visualize_root()
-
-    def _init_influence_root(self):
-        os.makedirs(self.influence_root, exist_ok=True)
-
-    def _init_visualize_root(self):
-        os.makedirs(self.visualize_root, exist_ok=True)
-
+        for root in [self.visualize_root, self.influence_root, self.proposed_annotation_root]:
+            os.makedirs(root, exist_ok=True)
+            
     def _init_paired_folder(self):
         # Initializes paired folder. Ignores files that already exists
         if not osp.exists(self.paired_root):

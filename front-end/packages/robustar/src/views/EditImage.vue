@@ -32,9 +32,10 @@ export default {
         apiSendEdit: this.sendEdit.bind(this),
         apiLoadEdit: this.loadEdit.bind(this),
       },
-      image_id: '',
+      image_id: '', // corresponding training set id
       image_url: '',
       split: '',
+      edit_id: '', // corresponding paired set id
     };
   },
   mounted() {

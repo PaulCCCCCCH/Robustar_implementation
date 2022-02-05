@@ -32,6 +32,17 @@
           <InfluView :influImgUrl="influImgUrl" />
         </v-expansion-panel-content>
       </v-expansion-panel>
+
+      <!-- View Proposed Annotation -->
+      <v-expansion-panel @change="toggle_panel">
+        <v-expansion-panel-header expand-icon="mdi-menu-down">
+          Proposed annotation
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-img :src="proposedEditUrl" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
     </v-expansion-panels>
   </div>
 </template>
@@ -41,6 +52,7 @@ import PredView from '@/components/prediction-viewer/PredView.vue';
 import InfluView from '@/components/prediction-viewer/InfluView.vue';
 import FocusView from '@/components/prediction-viewer/FocusView.vue';
 import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
+import { APIGetProposedEdit } from '@/apis/edit';
 import { configs } from '@/configs.js';
 
 export default {
@@ -72,6 +84,7 @@ export default {
         // lineColor: "#abcedf",
         dataRange: [0, 1],
       },
+      proposedEditUrl: "",
       configs: configs,
       panels: [],
     };
@@ -99,7 +112,22 @@ export default {
       if (this.split && this.image_id) {
         this.view_prediction(this.split, this.image_id);
         this.get_influence(this.split, this.image_id);
+        this.get_proposed_edit(this.split, this.image_id);
       }
+    },
+    get_proposed_edit(split, image_id) {
+      const success = (response) => {
+        if (response.data.code == -1) {
+          this.proposedEditUrl = "";
+          return;
+        }
+        const imgUrl = response.data.data;
+        this.proposedEditUrl = `${configs.imagePathServerUrl}/${imgUrl}`;
+      }
+      const failed = (err) => {
+        console.log(err);
+      }
+      APIGetProposedEdit(split, image_id, success, failed);
     },
     view_prediction(split, image_id) {
       const success = (response) => {

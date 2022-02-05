@@ -187,7 +187,9 @@ export default {
     },
     gotoImage(row, col, url, componentName) {
       this.setCurrentImage(row, col, url);
-      this.$router.push({ name: componentName });
+      this.$router.push({ 
+        name: componentName, 
+        params: {mode: this.$route.params.split} });
     },
     gotoPage() {
       this.inputPage = Number(this.inputPage);

@@ -36,7 +36,7 @@ const routes = [
     component: TrainPad,
   },
   {
-    path: '/edit',
+    path: '/edit/:mode',
     name: 'EditImage',
     component: EditImage,
     props: true,

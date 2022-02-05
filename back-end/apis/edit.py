@@ -7,6 +7,7 @@ from PIL import Image
 import base64
 from utils.image_utils import imageURLToPath, get_train_from_annotated
 from utils.path_utils import get_paired_path
+import os.path as osp
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -49,6 +50,40 @@ def user_edit(split, image_id):
         dataManager.dump_annotated_list() # TODO: Change this to SQLite
 
     return RResponse.ok("Success!")
+
+
+@app.route('/propose/<split>/<image_id>')
+def propose_edit(split, image_id):
+    """
+    Get edited image proposed by auto annotator
+
+    args: 
+        split:    'train', 'test' or 'dev'
+        image_id: The index of the image within the dataset
+    returns:
+        proposed image path that can be placed in <img> tag
+    """
+
+    # Just in case front end passed wrong parameters 
+    assert split != 'annotated'
+
+    image_url = '{}/{}'.format(split, image_id)
+    proposedAnnotationBuffer = dataManager.proposedAnnotationBuffer
+
+    proposed_image_path = ""
+    if image_url in proposedAnnotationBuffer:
+        proposed_image_path= proposedAnnotationBuffer[image_url]
+    else:
+        image_path = imageURLToPath(image_url)
+        pil_image = server.getAutoAnnotator().annotate_single(image_path, dataManager.image_size)
+        image_name = image_url.replace('.', '_').replace('/', '_').replace('\\', '_')
+        proposed_image_path = osp.join(dataManager.proposed_annotation_root, image_name) + '.jpg'
+        pil_image.save(proposed_image_path)
+        proposedAnnotationBuffer[image_url] = proposed_image_path
+        
+    return RResponse.ok(proposed_image_path)
+
+
 
 
 if __name__ == '__main__':

@@ -19,23 +19,23 @@ validation_correct_root = dataManager.validation_correct_root
 validation_incorrect_root = dataManager.validation_incorrect_root
 
 
-def imageURLToPath(image_id):
+def imageURLToPath(image_url):
     """
-    Get the real path of the image specified by its id.
+    Get the real path of the image specified by its url.
     args: 
-        imageId:    The id of the image consisting of the dataset split (train/dev/test) 
-                    and an index.
+        imageId:    The url of the image consisting of the dataset split (train/dev/test) 
+                    and an index(id).
                     e.g.  train/10, test/300
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
-    split, indexStr = image_id.split('/')
+    split, indexStr = image_url.split('/')
     imageIndex = int(indexStr)
 
     # If already buffered, just return
-    if image_id in datasetFileBuffer:
-        return datasetFileBuffer[image_id]
+    if image_url in datasetFileBuffer:
+        return datasetFileBuffer[image_url]
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
     elif split == 'annotated':
@@ -57,7 +57,7 @@ def imageURLToPath(image_id):
         raise NotImplemented('Data split not supported')
 
     filePath = normpath(filePath).replace('\\', '/')
-    datasetFileBuffer[image_id] = filePath
+    datasetFileBuffer[image_url] = filePath
 
     return filePath
 

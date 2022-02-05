@@ -42,7 +42,6 @@ def get_split_length(split):
     return RResponse.ok(getSplitLength(split))
 
 
-# internal use only
 @app.route('/dataset/<path:dataset_img_path>')
 def get_dataset_img(dataset_img_path):
     normal_path = osp.join('/', dataset_img_path).replace('\\', '/')
@@ -51,13 +50,6 @@ def get_dataset_img(dataset_img_path):
     else:
         return RResponse.fail()
 
-
 @app.route('/visualize/<path:visualize_img_path>')
 def get_influence_img(visualize_img_path):
     return send_file(osp.join('/', visualize_img_path).replace('\\', '/'))
-
-
-# TODO: Need refactor
-@app.route('/dataset-info/<path:data_origin_id>')
-def get_image_file(data_origin_id):
-    return imageURLToPath(data_origin_id)
