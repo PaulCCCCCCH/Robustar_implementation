@@ -72,7 +72,7 @@ def predict(split, image_id):
         output_object = [output_array, predict_fig_routes]
 
     # get attributes
-    if split == "train":
+    if split in ("train", 'annotated'):
         attribute = dataManager.trainset.classes
     elif split in ("validation", "validation_correct", "validation_incorrect"):
         attribute = dataManager.validationset.classes

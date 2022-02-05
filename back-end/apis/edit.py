@@ -65,7 +65,9 @@ def propose_edit(split, image_id):
     """
 
     # Just in case front end passed wrong parameters 
-    assert split != 'annotated'
+    if split == 'annotated':
+        split = 'train'
+        image_id = get_train_from_annotated(image_id)
 
     image_url = '{}/{}'.format(split, image_id)
     proposedAnnotationBuffer = dataManager.proposedAnnotationBuffer

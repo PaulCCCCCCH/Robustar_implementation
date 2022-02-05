@@ -51,7 +51,7 @@ export default {
         this.image_id = sessionStorage.getItem('image_id');
         this.image_url = sessionStorage.getItem('image_url');
         this.split = sessionStorage.getItem('split');
-        if (this.split === 'annotated') {
+        if (this.split === 'annotated' && this.router.params.mode !== 'annotate') {
           this.split = 'train'
         }
     },
