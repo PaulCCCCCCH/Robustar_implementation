@@ -9,6 +9,7 @@ Modified By: Chonghan Chen (paulcccccch@gmail.com)
 from .RDataManager import RDataManager
 from flask import Flask
 import os.path as osp
+from flask_socketio import SocketIO
 
 
 # Wrapper for flask server instance
@@ -21,7 +22,9 @@ class RServer:
     
         app = Flask(__name__)
         app.after_request(self.afterRequest)
+        socket_ = SocketIO(app)
 
+        self.socket_ = socket_
         self.datasetDir = datasetDir
         self.baseDir = baseDir
         self.datasetPath = datasetDir
@@ -63,6 +66,10 @@ class RServer:
     @staticmethod
     def setModel(modelWrapper):
         RServer.serverInstance.modelWrapper = modelWrapper
+
+    @staticmethod
+    def getSocket():
+        return RServer.getServer().socket_
         
     
     def afterRequest(self, resp):
@@ -77,4 +84,5 @@ class RServer:
         self.port = port
         self.host = host
         self.debug = debug
-        self.app.run(port=port, host=host, debug=debug)
+        # self.app.run(port=port, host=host, debug=debug)
+        self.socket_.run(self.app, port=port, host=host, debug=debug)

@@ -9,6 +9,9 @@
       <v-spacer></v-spacer>
 
       <!-- Full screen button -->
+      <v-btn icon color="primary" @click="toggleTaskspanel">
+        <v-icon>mdi-format-list-bulleted-type</v-icon>
+      </v-btn>
       <v-btn icon color="primary" @click="toggleFullscreen">
         <v-icon v-if="!isFullscreen">mdi-fullscreen</v-icon>
         <v-icon v-else>mdi-fullscreen-exit</v-icon>
@@ -18,6 +21,43 @@
     <SideBar></SideBar>
 
     <v-main class="page-content">
+      <v-row v-if="!isTaskspanelHidden" align="center" justify="center">
+        <v-col cols="12" lg="6"></v-col>
+        <v-col cols="12" lg="6">
+
+        <v-card
+          style="position:fixed; width: 40%; z-index:10; padding-top:3rem; padding-bottom: 3rem; align: center;"
+          elevation="4"
+        >
+        <v-row align="center" justify="center">
+          <v-col cols="12" lg="3" align="center" justify="center">Training</v-col>
+          <v-col cols="12" lg="6" align="center" justify="center">
+            <v-row align="center" justify="center">
+              <v-col cols="12" v-bind:lg="training" style="padding-left:0; padding-right:0;">
+                <v-progress-linear
+                  color="primary"
+                  height="4"
+                  indeterminate
+                  buffer-value="100"
+                ></v-progress-linear>
+              </v-col>
+              <v-col cols="12" v-bind:lg="nonTraining" style="padding-left:0; padding-right:0;">
+                <v-progress-linear
+                  color="secondary"
+                  height="4"
+                  buffer-value="100"
+                ></v-progress-linear>
+              </v-col>
+            </v-row>
+          </v-col align="center" justify="center">
+          <v-col cols="12" lg="3">Time left</v-col>
+        </v-row>
+        
+        </v-card>
+        
+        </v-col>
+      </v-row>
+
       <Notification></Notification>
       <router-view />
     </v-main>
@@ -39,8 +79,24 @@ export default {
   data() {
     return {
       isFullscreen: false,
+      isTaskspanelHidden: true,
+      training: 6,
+      nonTraining: 6,
     };
   },
+  // created: function() {
+  //   console.log("Starting connection to WebSocket Server")
+  //   this.connection = new WebSocket("http://localhost:5000")
+
+  //   this.connection.onmessage = function(event) {
+  //     console.log(event);
+  //   }
+
+  //   this.connection.onopen = function(event) {
+  //     console.log(event)
+  //     console.log("Successfully connected to the echo websocket server...")
+  //   }
+  // },
   methods: {
     // updatewindow: function (is_mini_side_bar) {
     //   const page_content = document.getElementById('page-content');
@@ -64,6 +120,9 @@ export default {
       }
       this.isFullscreen = !this.isFullscreen;
     },
+    toggleTaskspanel() {
+      this.isTaskspanelHidden = !this.isTaskspanelHidden;
+    }
   },
 };
 </script>
