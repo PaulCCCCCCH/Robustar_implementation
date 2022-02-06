@@ -23,7 +23,12 @@ class RTask:
     
     @staticmethod
     def exit_task(pid):
-        for task in 
+        for task in RTask.tasks:
+            if task.pid == pid:
+                break
+        else:
+            return
+        RTask.tasks.remove(task)
 
     def __init__(self, pid, task_type, total):
         # id
