@@ -6,7 +6,7 @@ Brief: A Task Panel Class that Monitor all classes
 '''
 from time import time
 from datetime import timedelta
-from threading import Loack
+from threading import Lock
 class TaskType:
     Training = 0
     Test = 1
@@ -14,21 +14,53 @@ class TaskType:
 
     mapping = ['Training', 'Test', 'Influence']
 
+def with_lock(func):
+    def wrapper(*wargs, **kwargs):
+        RTask.lock.acquire()
+        res = func(*wargs, **kwargs)
+        RTask.lock.release()
+        return res
+    return wrapper
+
 class RTask:
     tasks = []
+    lock = Lock()
+
+    # This one should not be locked because it's purely a low-level implementation
+    # otherwise may have deadlock
+    @staticmethod
+    def find_task(pid):
+        for task in RTask.tasks:
+            if task.pid == pid:
+                return task
+        return None
 
     @staticmethod
+    @with_lock
     def create_task(pid, task_type, total):
         RTask.tasks.append(RTask(pid, task_type, total))
     
     @staticmethod
+    @with_lock
     def exit_task(pid):
-        for task in RTask.tasks:
-            if task.pid == pid:
-                break
-        else:
-            return
+        task = RTask.find_task(pid)
+        if not task:
+            raise Exception("Task not found")
         RTask.tasks.remove(task)
+    
+    @staticmethod
+    @with_lock
+    def update_task(pid):
+        task = RTask.find_task(pid)
+        task.update()
+
+    @staticmethod
+    # @with_lock
+    def get_tasks_digest():
+        digest = []
+        for task in RTask.tasks:
+            digest.append((task.get_readable_label(), task.get_readable_time()))
+        return digest
 
     def __init__(self, pid, task_type, total):
         # id
@@ -44,16 +76,13 @@ class RTask:
         self.elapsed_time = 0
         self.elapsed_readable_time = 'Unknown'
 
-        # add to field
-        RTask.tasks.append()
-
-
     def start(self):
         self.__init__(self.pid, self.task_type, self.total)
 
     def make_time_readable(self, t):
         try:
-            res = str(timedelta(seconds=t))
+            assert t>=0
+            res = str(timedelta(seconds=int(t)))
         except:
             res = 'Unknown'
         return res
@@ -62,12 +91,14 @@ class RTask:
         self.n += 1
         self.elapsed_time = time()-self.start_time
         rate = self.elapsed_time/self.n
-        self.remaining_time = (self.total-self.n)/rate
+        self.remaining_time = (self.total-self.n)*rate
+
+        self.elapsed_readable_time = self.make_time_readable(self.elapsed_time)
         self.remaining_readable_time = self.make_time_readable(self.remaining_time)
     
     def get_readable_label(self):
         return f"{TaskType.mapping[self.task_type]}({self.pid})"
     
     def get_readable_time(self):
-        return f"{self.n}/{self.total}[{self.elapsed_readable_time<<self.remaining_readable_time}]"
+        return f"{self.n}/{self.total}[{self.elapsed_readable_time}<<{self.remaining_readable_time}]"
 
