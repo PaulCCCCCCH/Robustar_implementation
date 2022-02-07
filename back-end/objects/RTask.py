@@ -55,7 +55,7 @@ class RTask:
         task.update()
 
     @staticmethod
-    # @with_lock
+    @with_lock
     def get_tasks_digest():
         digest = []
         for task in RTask.tasks:
