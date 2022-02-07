@@ -7,6 +7,10 @@ Brief: A Task Panel Class that Monitor all classes
 from time import time
 from datetime import timedelta
 from threading import Lock
+
+'''
+TODO: make all thread apis create here
+'''
 class TaskType:
     Training = 0
     Test = 1
