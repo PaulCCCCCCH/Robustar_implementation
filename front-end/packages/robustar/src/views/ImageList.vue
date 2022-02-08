@@ -1,119 +1,124 @@
 <template>
-  <div class="d-flex flex-column align-center pt-8" style="width: 100%">
-    <!-- Page header-->
-    <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
-
-    <div
-      v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
-      class="d-flex mb-4"
-      style="width: 200px"
-    >
-      <v-select :items="classification" v-model="split" dense @change="resetImageList"></v-select>
+  <div class="d-flex justify-center align-center" style="height: 100%">
+    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text">
+      Sorry, image list is empty
     </div>
 
-    <!-- Page navigator -->
-    <div class="d-flex justify-center mb-4">
-      <!-- Previous page button -->
-      <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
-        Prev Page
-      </v-btn>
+    <div v-else class="d-flex flex-column align-center pt-8" style="width: 100%">
+      <!-- Page header-->
+      <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
-      <!-- Refresh page button & page number -->
-      <div class="d-flex mx-8">
-        <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
-        <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+      <div
+        v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
+        class="d-flex mb-4"
+        style="width: 200px"
+      >
+        <v-select :items="classification" v-model="split" dense @change="resetImageList"></v-select>
       </div>
 
-      <!-- Next page button -->
-      <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
-        Next Page
-      </v-btn>
-    </div>
+      <!-- Page navigator -->
+      <div class="d-flex justify-center mb-4">
+        <!-- Previous page button -->
+        <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
+          Prev Page
+        </v-btn>
 
-    <!-- Class filter -->
-    <div class="d-flex mb-4" style="width: 300px">
-      <v-btn
-        :disabled="selectedClass === 0"
-        class="mr-4"
-        depressed
-        color="primary"
-        @click="gotoClass"
-      >
-        Goto Class
-      </v-btn>
-      <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
-    </div>
+        <!-- Refresh page button & page number -->
+        <div class="d-flex mx-8">
+          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
+          <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+        </div>
 
-    <v-divider class="mb-8" style="width: 60%"></v-divider>
+        <!-- Next page button -->
+        <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
+          Next Page
+        </v-btn>
+      </div>
 
-    <div class="d-flex flex-row justify-space-around">
-      <!-- Image List -->
-      <div style="width: auto">
-        <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
-          <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
-            <!-- minus 1 is necessary since Vue counts from 1 -->
-            <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
-            <v-hover v-slot="{ hover }">
-              <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
-                <template v-slot:placeholder>
-                  <v-row class="fill-height ma-0" align="center" justify="center">
-                    <v-progress-circular
-                      indeterminate
-                      color="primary lighten-3"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-                <v-expand-transition>
-                  <div
-                    v-if="hover"
-                    class="
-                      d-flex
-                      flex-column
-                      transition-fast-in-fast-out
-                      primary
-                      v-card--reveal
-                      text-h5
-                      white--text
-                    "
-                    style="height: 100%"
-                  >
-                    <v-btn
-                      class="mb-4"
-                      outlined
-                      large
-                      color="white"
-                      width="150px"
-                      @click="gotoImage(row, col, url, 'EditImage')"
+      <!-- Class filter -->
+      <div class="d-flex mb-4" style="width: 300px">
+        <v-btn
+          :disabled="selectedClass === 0"
+          class="mr-4"
+          depressed
+          color="primary"
+          @click="gotoClass"
+        >
+          Goto Class
+        </v-btn>
+        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
+      </div>
+
+      <v-divider class="mb-8" style="width: 60%"></v-divider>
+
+      <div class="d-flex flex-row justify-space-around">
+        <!-- Image List -->
+        <div style="width: auto">
+          <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
+            <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
+              <!-- minus 1 is necessary since Vue counts from 1 -->
+              <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
+              <v-hover v-slot="{ hover }">
+                <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
+                  <template v-slot:placeholder>
+                    <v-row class="fill-height ma-0" align="center" justify="center">
+                      <v-progress-circular
+                        indeterminate
+                        color="primary lighten-3"
+                      ></v-progress-circular>
+                    </v-row>
+                  </template>
+                  <v-expand-transition>
+                    <div
+                      v-if="hover"
+                      class="
+                        d-flex
+                        flex-column
+                        transition-fast-in-fast-out
+                        primary
+                        v-card--reveal
+                        text-h5
+                        white--text
+                      "
+                      style="height: 100%"
                     >
-                      <v-icon left>mdi-pencil</v-icon>
-                      Annotate
-                    </v-btn>
-                    <v-btn
-                      outlined
-                      large
-                      color="white"
-                      width="150px"
-                      @click="setCurrentImage(row, col, url)"
-                    >
-                      <v-icon left>mdi-cogs</v-icon>
-                      Predict
-                    </v-btn>
-                  </div>
-                </v-expand-transition>
-              </v-img>
-            </v-hover>
+                      <v-btn
+                        class="mb-4"
+                        outlined
+                        large
+                        color="white"
+                        width="150px"
+                        @click="gotoImage(row, col, url, 'EditImage')"
+                      >
+                        <v-icon left>mdi-pencil</v-icon>
+                        Annotate
+                      </v-btn>
+                      <v-btn
+                        outlined
+                        large
+                        color="white"
+                        width="150px"
+                        @click="setCurrentImage(row, col, url)"
+                      >
+                        <v-icon left>mdi-cogs</v-icon>
+                        Predict
+                      </v-btn>
+                    </div>
+                  </v-expand-transition>
+                </v-img>
+              </v-hover>
+            </div>
           </div>
         </div>
       </div>
-
-      <div style="width: 50%" v-if="image_id !== ''">
-        <Visualizer :image_id="String(image_id)" :split="split" />
-      </div>
     </div>
 
-    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
-      Sorry, image list is empty
-    </div>
+    <Visualizer
+      :is-active="image_id !== ''"
+      :image_id="String(image_id)"
+      :split="split"
+      @close="image_id = ''"
+    />
   </div>
 </template>
 

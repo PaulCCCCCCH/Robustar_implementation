@@ -1,6 +1,10 @@
 <template>
-  <div>
-    <v-expansion-panels :multiple="true" v-model="panels">
+  <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1" height="100%">
+    <v-btn class="mb-2" icon @click="closeVisualizer">
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
+
+    <v-expansion-panels class="panel-container" :multiple="true" v-model="panels">
       <!-- Model Prediction -->
       <v-expansion-panel @click="toggle_panel">
         <v-expansion-panel-header expand-icon="mdi-menu-down">
@@ -31,9 +35,8 @@
         <v-expansion-panel-content>
           <InfluView :influImgUrl="influImgUrl" />
         </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </div>
+      </v-expansion-panel> </v-expansion-panels
+  ></v-sheet>
 </template>
 
 <script>
@@ -46,6 +49,10 @@ import { configs } from '@/configs.js';
 export default {
   components: { PredView, InfluView, FocusView },
   props: {
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
     split: {
       type: String,
       default: () => '',
@@ -90,7 +97,7 @@ export default {
       this.panels = JSON.parse(panels);
     }
     if (this.split === 'annotated') {
-      this.split = 'train'
+      this.split = 'train';
     }
     this.get_visualize_data();
   },
@@ -162,6 +169,20 @@ export default {
         sessionStorage.setItem('visualizer_panels', JSON.stringify(this.panels));
       }, 0);
     },
+
+    closeVisualizer() {
+      this.$emit('close');
+    },
   },
 };
 </script>
+
+<style scoped>
+.panel-container {
+  /* position: fixed;
+  top: 50vh;
+  right: 0; */
+  width: auto;
+  /* height: 100%; */
+}
+</style>
