@@ -1,5 +1,6 @@
 import json
 import subprocess
+import docker
 
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QWidget
@@ -9,6 +10,9 @@ class Launcher(QWidget):
         # Initialize the UI
         super(Launcher, self).__init__()
         self.ui = QUiLoader().load('launcher.ui')
+
+        # Initialize the client to communicate with the Docker daemon
+        self.client = docker.from_env()
 
         # Set the default path of the path choosing window
         self.cwd = '/'
@@ -22,7 +26,6 @@ class Launcher(QWidget):
                         'imageVersion': 'cuda11.1-0.0.1-beta',
                         'portNumber': '8000',
                         'trainPath': '/Robustar2/dataset/train',
-                        'validationPath': '/Robustar2/dataset/validation',
                         'testPath': '/Robustar2/dataset/test',
                         'checkPointPath': '/Robustar2/checkpoint_images',
                         'influencePath': '/Robustar2/influence_images',
@@ -35,13 +38,13 @@ class Launcher(QWidget):
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.changeImageVersion)
         self.ui.trainPathButton.clicked.connect(self.chooseTrainPath)
-        self.ui.validationPathButton.clicked.connect(self.chooseValidationPath)
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.chooseInfluencePath)
         self.ui.loadConfigButton.clicked.connect(self.loadConfig)
         self.ui.saveConfigButton.clicked.connect(self.saveConfig)
-        self.ui.serverControlButton.clicked.connect(self.controlServer)
+        self.ui.startServerButton.clicked.connect(self.startServer)
+        self.ui.stopServerButton.clicked.connect(self.stopServer)
 
         # Set the default command to execute in shell
         self.command = ''
@@ -59,10 +62,6 @@ class Launcher(QWidget):
     def chooseTrainPath(self):
         self.configs['trainPath'] = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
         self.ui.trainPathDisplay.setText(self.configs['trainPath'])
-        
-    def chooseValidationPath(self):
-        self.configs['validationPath'] = QFileDialog.getExistingDirectory(self, "Choose Validation Set Path", self.cwd)
-        self.ui.validationPathDisplay.setText(self.configs['validationPath'])
 
     def chooseTestPath(self):
         self.configs['testPath'] = QFileDialog.getExistingDirectory(self, "Choose Test Set Path", self.cwd)
@@ -87,7 +86,6 @@ class Launcher(QWidget):
                 self.ui.versionComboBox.setCurrentText(self.configs['imageVersion'])
                 self.ui.portInput.setText(self.configs['portNumber'])
                 self.ui.trainPathDisplay.setText(self.configs['trainPath'])
-                self.ui.validationPathDisplay.setText(self.configs['validationPath'])
                 self.ui.testPathDisplay.setText(self.configs['testPath'])
                 self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
                 self.ui.influencePathDisplay.setText(self.configs['influencePath'])
@@ -103,29 +101,97 @@ class Launcher(QWidget):
         except FileNotFoundError:
             print('Save path not found')
 
-    def controlServer(self):
+    def startServer(self):
         # setupCommand = 'docker pull paulcccccch/robustar:' + self.configs['imageVersion']
         # self.runShellCommand(setupCommand)
 
-        if self.runningState == False:
-            runCommand = self.getRunCommand()
-            runReturnCode = self.runShellCommand(runCommand)
-            if runReturnCode == 0:
-                self.runningState = True
-                self.ui.serverControlButton.setText('Stop Server')
-                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
-                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                QApplication.processEvents()
-        else:
-            stopCommand = 'docker stop ' + self.configs['containerName']
-            self.runShellCommand(stopCommand)
-            self.runningState = False
-            self.ui.serverControlButton.setText('Start Server')
+        # if self.runningState == False:
+        #     runCommand = self.getRunCommand()
+        #     runReturnCode = self.runShellCommand(runCommand)
+        #     if runReturnCode == 0:
+        #         self.runningState = True
+        #         self.ui.serverControlButton.setText('Stop Server')
+        #         self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+        #         self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+        #         QApplication.processEvents()
+        # else:
+        #     stopCommand = 'docker stop ' + self.configs['containerName']
+        #     self.runShellCommand(stopCommand)
+        #     self.runningState = False
+        #     self.ui.serverControlButton.setText('Start Server')
+
+        image = 'paulcccccch/robustar:' + self.configs['imageVersion']
+
+
+        try:
+            # Get the container with the input name
+            self.container = self.client.containers.get(self.configs['containerName'])
+            # If the container has exited
+            # Restart the container
+            if self.container.status == 'exited':
+                self.container.restart()
+            # If the container is running
+            elif self.container.status == 'running':
+                print('The server has already been running')
+            # If the container is in other status
+            else:
+                print('Unexpected status')
+                exit(1)
+        # If the container with the input name has not been created yet
+        # Create a new container and run it
+        except docker.errors.NotFound:
+            self.container = self.client.containers.run(image,
+                                                        detach=True,
+                                                        name=self.configs['containerName'],
+                                                        ports={
+                                                            '80/tcp': (
+                                                                '127.0.0.1', int(self.configs['portNumber'])),
+                                                            '8000/tcp': ('127.0.0.1', 6848),
+                                                            '6006/tcp': ('127.0.0.1', 6006),
+                                                        },
+                                                        mounts=[
+                                                            docker.types.Mount(target='/Robustar2/dataset/train',
+                                                                               source=self.configs['trainPath'],
+                                                                               type='bind'),
+                                                            docker.types.Mount(target='/Robustar2/dataset/test',
+                                                                               source=self.configs['testPath'],
+                                                                               type='bind'),
+                                                            docker.types.Mount(target='/Robustar2/influence_images',
+                                                                               source=self.configs['influencePath'],
+                                                                               type='bind'),
+                                                            docker.types.Mount(
+                                                                target='/Robustar2/checkpoint_images ',
+                                                                source=self.configs['checkPointPath'],
+                                                                type='bind'),
+                                                        ],
+                                                        volumes=[
+                                                            self.configs['configFile'] + ':/Robustar2/configs.json']
+                                                        )
+        except docker.errors.APIError:
+            print('The server returns an error')
+
+
+
+
+    def stopServer(self):
+        try:
+            self.container = self.client.containers.get(self.configs['containerName'])
+            self.container.stop()
+        except docker.errors.NotFound:
+            print('The server has not been created yet')
+        except docker.errors.APIError:
+            print('The server returns an error')
+
+
+
+
+
+
 
 
     # Concatenate the command to be executed
     def getRunCommand(self):
-        runCommand = 'docker run --name ' + self.configs['containerName'] + ' -it -d ' +\
+        runCommand = 'docker run --name ' + self.configs['containerName'] + ' -d ' +\
                        '-p 127.0.0.1:' + self.configs['portNumber'] + ':80 ' +\
                        '-p 127.0.0.1:6848:8000 ' +\
                        '-p 127.0.0.1:6006:6006 ' +\
@@ -137,6 +203,15 @@ class Launcher(QWidget):
                        'paulcccccch/robustar:' + self.configs['imageVersion']
 
         return runCommand
+
+
+
+
+
+
+
+
+
 
     # Run a shell command and update UI according to it
     def runShellCommand(self, command):
