@@ -26,7 +26,9 @@ class Launcher(QWidget):
         self.configs = {
                         'containerName': 'robustar',
                         'imageVersion': 'cuda11.1-0.0.1-beta',
-                        'portNumber': '8000',
+                        'websitePort': '8000',
+                        'backendPort': '6848',
+                        'tensorboardPort': '6006',
                         'trainPath': '/Robustar2/dataset/train',
                         'testPath': '/Robustar2/dataset/test',
                         'checkPointPath': '/Robustar2/checkpoint_images',
@@ -39,6 +41,9 @@ class Launcher(QWidget):
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.changeImageVersion)
+        self.ui.websitePortInput.textEdited.connect(self.changeWebsitePort)
+        self.ui.backendPortInput.textEdited.connect(self.changeBackendPort)
+        self.ui.tensorboardPortInput.textEdited.connect(self.changeTensorboardPort)
         self.ui.trainPathButton.clicked.connect(self.chooseTrainPath)
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
@@ -58,8 +63,14 @@ class Launcher(QWidget):
     def changeImageVersion(self):
         self.configs['imageVersion'] = self.ui.versionComboBox.currentText()
 
-    def changePortNumber(self):
-        self.configs['portNumber'] = self.ui.portInput.text()
+    def changeWebsitePort(self):
+        self.configs['websitePort'] = self.ui.websitePortInput.text()
+
+    def changeBackendPort(self):
+        self.configs['backendPort'] = self.ui.backendPortInput.text()
+
+    def changeTensorboardPort(self):
+        self.configs['tensorboardPort'] = self.ui.tensorboardPortInput.text()
 
     def chooseTrainPath(self):
         self.configs['trainPath'] = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
@@ -86,7 +97,9 @@ class Launcher(QWidget):
                 # Update the UI according to the loaded file
                 self.ui.nameInput.setText(self.configs['containerName'])
                 self.ui.versionComboBox.setCurrentText(self.configs['imageVersion'])
-                self.ui.portInput.setText(self.configs['portNumber'])
+                self.ui.websitePortInput.setText(self.configs['websitePort'])
+                self.ui.backendPortInput.setText(self.configs['backendPort'])
+                self.ui.tensorboardPortInput.setText(self.configs['tensorboardPort'])
                 self.ui.trainPathDisplay.setText(self.configs['trainPath'])
                 self.ui.testPathDisplay.setText(self.configs['testPath'])
                 self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
@@ -113,7 +126,7 @@ class Launcher(QWidget):
         #     if runReturnCode == 0:
         #         self.runningState = True
         #         self.ui.serverControlButton.setText('Stop Server')
-        #         self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+        #         self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['websitePort'])
         #         self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
         #         QApplication.processEvents()
         # else:
@@ -133,7 +146,7 @@ class Launcher(QWidget):
             if self.container.status == 'exited':
                 self.container.restart()
                 print('The server is now restarted')
-                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['websitePort'])
                 self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
                 QApplication.processEvents()
             # If the container is running
@@ -162,7 +175,7 @@ class Launcher(QWidget):
                     name=self.configs['containerName'],
                     ports={
                         '80/tcp': (
-                            '127.0.0.1', int(self.configs['portNumber'])),
+                            '127.0.0.1', int(self.configs['websitePort'])),
                         '8000/tcp': ('127.0.0.1', 6848),
                         '6006/tcp': ('127.0.0.1', 6006),
                     },
@@ -188,7 +201,7 @@ class Launcher(QWidget):
                     ]
                 )
                 print('The server is now started')
-                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['websitePort'])
                 self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
                 QApplication.processEvents()
             # If the version only uses cpu
@@ -199,7 +212,7 @@ class Launcher(QWidget):
                     name=self.configs['containerName'],
                     ports={
                         '80/tcp': (
-                            '127.0.0.1', int(self.configs['portNumber'])),
+                            '127.0.0.1', int(self.configs['websitePort'])),
                         '8000/tcp': ('127.0.0.1', 6848),
                         '6006/tcp': ('127.0.0.1', 6006),
                     },
@@ -222,7 +235,7 @@ class Launcher(QWidget):
                         self.configs['configFile'] + ':/Robustar2/configs.json']
                 )
                 print('The server is now started')
-                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['portNumber'])
+                self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['websitePort'])
                 self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
                 QApplication.processEvents()
         except docker.errors.APIError:
@@ -280,7 +293,7 @@ class Launcher(QWidget):
     # Concatenate the command to be executed
     # def getRunCommand(self):
     #     runCommand = 'docker run --name ' + self.configs['containerName'] + ' -d ' +\
-    #                    '-p 127.0.0.1:' + self.configs['portNumber'] + ':80 ' +\
+    #                    '-p 127.0.0.1:' + self.configs['websitePort'] + ':80 ' +\
     #                    '-p 127.0.0.1:6848:8000 ' +\
     #                    '-p 127.0.0.1:6006:6006 ' +\
     #                    '--mount type=bind,source=' + self.configs['trainPath'] + ',target=/Robustar2/dataset/train ' +\
