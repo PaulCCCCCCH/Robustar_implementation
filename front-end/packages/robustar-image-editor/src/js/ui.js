@@ -390,6 +390,7 @@ class Ui {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
       sendEdit: this._selectedElement.querySelectorAll('.tui-image-editor-send-edit-btn'),
       loadEdit: this._selectedElement.querySelectorAll('.tui-image-editor-load-edit-btn'),
+      autoEdit: this._selectedElement.querySelectorAll('.tui-image-editor-auto-edit-btn'),
       adjustSize: this._selectedElement.querySelectorAll('.tui-image-editor-adjust-size-btn'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
@@ -627,6 +628,23 @@ class Ui {
   }
 
   /**
+   * Add auto edit event.
+   * @private
+   */
+  _addAutoEditEvent() {
+    this.eventHandler.autoEdit = () => this._actions.main.autoEdit(this.options.apiAutoEdit);
+    snippet.forEach(this._buttonElements.autoEdit, (element) => {
+      element.addEventListener('click', this.eventHandler.autoEdit);
+    });
+  }
+
+  _removeAutoEditEvent() {
+    snippet.forEach(this._buttonElements.autoEdit, (element) => {
+      element.removeEventListener('click', this.eventHandler.autoEdit);
+    });
+  }
+
+  /**
    * Add adjust size event.
    * @private
    */
@@ -735,6 +753,7 @@ class Ui {
     this._addDownloadEvent();
     this._addSendEditEvent();
     this._addLoadEditEvent();
+    this._addAutoEditEvent();
     this._addAdjustSizeEvent();
     this._addMenuEvent();
     // this._activateDefaultItem();
@@ -752,6 +771,7 @@ class Ui {
     this._removeDownloadEvent();
     this._removeSendEditEvent();
     this._removeLoadEditEvent();
+    this._removeAutoEditEvent();
     this._removeAdjustSizeEvent();
     this._removeLoadEvent();
     this._removeMainMenuEvent();

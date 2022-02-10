@@ -10,6 +10,7 @@ trainset = dataManager.trainset
 testset = dataManager.testset
 validationset = dataManager.validationset
 pairedset = dataManager.pairedset
+proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
@@ -22,6 +23,8 @@ validation_incorrect_root = dataManager.validation_incorrect_root
 def imageURLToPath(image_url):
     """
     Get the real path of the image specified by its url.
+    When getting proposed image, split should be "proposed", and index
+    should be training set index
     args: 
         imageId:    The url of the image consisting of the dataset split (train/dev/test) 
                     and an index(id).
@@ -42,6 +45,8 @@ def imageURLToPath(image_url):
         filePath = get_annotated(imageIndex)[0]
     elif split == 'validation':
         filePath = validationset.samples[imageIndex][0]
+    elif split == 'proposed':
+        filePath = proposedset.samples[imageIndex][0]
     elif split == 'test':
         filePath = testset.samples[imageIndex][0]
     elif split == 'validation_correct':
@@ -56,8 +61,9 @@ def imageURLToPath(image_url):
         # data split not supported
         raise NotImplemented('Data split not supported')
 
-    filePath = normpath(filePath).replace('\\', '/')
-    datasetFileBuffer[image_url] = filePath
+    if filePath:
+        filePath = normpath(filePath).replace('\\', '/')
+        datasetFileBuffer[image_url] = filePath
 
     return filePath
 

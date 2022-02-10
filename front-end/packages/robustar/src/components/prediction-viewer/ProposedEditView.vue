@@ -2,9 +2,7 @@
   <!-- Two colums of visualizations -->
   <!-- Flash torch visualizations -->
   <div class="d-flex flex-row align-center justify-center">
-    <div v-for="(url, index) in focusImgUrl" :key="index">
-      <img :src="url" style="width: 15vh" />
-    </div>
+    <v-img :src="proposedEditUrl" max-height='30vh' max-width='30vh' />
   </div>
 </template>
 
@@ -12,7 +10,7 @@
 
 export default {
   props: {
-    focusImgUrl: Array,
+    proposedEditUrl: String,
   },
 };
 </script>

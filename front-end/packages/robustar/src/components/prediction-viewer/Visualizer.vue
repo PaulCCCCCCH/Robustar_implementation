@@ -39,7 +39,7 @@
           Proposed annotation
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-img :src="proposedEditUrl" />
+          <ProposedEditView :proposedEditUrl="proposedEditUrl" />
         </v-expansion-panel-content>
       </v-expansion-panel>
 
@@ -51,12 +51,13 @@
 import PredView from '@/components/prediction-viewer/PredView.vue';
 import InfluView from '@/components/prediction-viewer/InfluView.vue';
 import FocusView from '@/components/prediction-viewer/FocusView.vue';
+import ProposedEditView from '@/components/prediction-viewer/ProposedEditView.vue';
 import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
 import { APIGetProposedEdit } from '@/apis/edit';
 import { configs } from '@/configs.js';
 
 export default {
-  components: { PredView, InfluView, FocusView },
+  components: { PredView, InfluView, FocusView, ProposedEditView },
   props: {
     split: {
       type: String,
@@ -75,6 +76,7 @@ export default {
       ],
       focusImgUrl: [],
       influImgUrl: [],
+      proposedEditUrl: "",
       predViewConfig: {
         componentWidth: 300,
         figHeight: 300,
@@ -84,7 +86,6 @@ export default {
         // lineColor: "#abcedf",
         dataRange: [0, 1],
       },
-      proposedEditUrl: "",
       configs: configs,
       panels: [],
     };
@@ -102,9 +103,6 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
-    if (this.split === 'annotated') {
-      this.split = 'train'
-    }
     this.get_visualize_data();
   },
   methods: {
@@ -121,8 +119,8 @@ export default {
           this.proposedEditUrl = "";
           return;
         }
-        const imgUrl = response.data.data;
-        this.proposedEditUrl = `${configs.imagePathServerUrl}/${imgUrl}`;
+        const proposedId= response.data.data;
+        this.proposedEditUrl = `${configs.imageServerUrl}/proposed/${proposedId}`;
       }
       const failed = (err) => {
         console.log(err);
