@@ -4,7 +4,7 @@
       Sorry, image list is empty
     </div>
 
-    <div v-else class="d-flex flex-column align-center pt-8" style="width: 100%">
+    <div v-else class="d-flex flex-column align-center pt-8 px-4">
       <!-- Page header-->
       <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
@@ -49,12 +49,12 @@
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
 
-      <v-divider class="mb-8" style="width: 60%"></v-divider>
+      <v-divider class="mb-8" style="width: 100%"></v-divider>
 
       <div class="d-flex flex-row justify-space-around">
         <!-- Image List -->
         <div style="width: auto">
-          <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
+          <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex flex-wrap">
             <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
               <!-- minus 1 is necessary since Vue counts from 1 -->
               <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->

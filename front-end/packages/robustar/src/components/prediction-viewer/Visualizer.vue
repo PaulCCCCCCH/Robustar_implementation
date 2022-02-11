@@ -1,10 +1,10 @@
 <template>
   <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1" height="100%">
-    <v-btn class="mb-2" icon @click="closeVisualizer">
+    <v-btn class="mb-4" icon @click="closeVisualizer">
       <v-icon>mdi-close</v-icon>
     </v-btn>
 
-    <v-expansion-panels class="panel-container" :multiple="true" v-model="panels">
+    <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
       <!-- Model Prediction -->
       <v-expansion-panel @click="toggle_panel">
         <v-expansion-panel-header expand-icon="mdi-menu-down">
@@ -176,13 +176,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.panel-container {
-  /* position: fixed;
-  top: 50vh;
-  right: 0; */
-  width: auto;
-  /* height: 100%; */
-}
-</style>

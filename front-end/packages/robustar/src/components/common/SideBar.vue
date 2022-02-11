@@ -14,7 +14,7 @@
 
     <v-list nav>
       <!-- first level -->
-      <div v-for="item in items" :key="item.text">
+      <div v-for="item in items" :key="item.text" class="mb-2">
         <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
