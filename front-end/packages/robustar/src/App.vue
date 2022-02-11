@@ -30,6 +30,22 @@
           elevation="4"
         >
         <v-row align="center" justify="center">
+          <v-col cols="12" lg="1" align="center" justify="center">
+            <v-btn color="red" icon><v-icon>mdi-minus-box</v-icon></v-btn>
+          </v-col>
+          <v-col cols="12" lg="2" align="center" justify="center">Training</v-col>
+          <v-col cols="12" lg="6" align="center" justify="center">
+            <v-progress-linear
+              color="primary"
+              height="20"
+              v-bind:value="progress"
+              striped
+            >{{progress}}%</v-progress-linear>
+          </v-col>
+          <v-col cols="12" lg="3" align="center" justify="center">Time Left</v-col>
+
+
+
           <v-col cols="12" lg="3" align="center" justify="center">Training</v-col>
           <v-col cols="12" lg="6" align="center" justify="center">
             <v-row align="center" justify="center">
@@ -82,6 +98,7 @@ export default {
       isTaskspanelHidden: true,
       training: 6,
       nonTraining: 6,
+      progress: 50,
     };
   },
   // created: function() {
