@@ -7,6 +7,8 @@ Brief: A Task Panel Class that Monitor all classes
 from time import time
 from datetime import timedelta
 from threading import Lock
+from utils.train import start_train
+from utils.test import start_test
 
 '''
 TODO: make all thread apis create here
@@ -17,6 +19,7 @@ class TaskType:
     Influence = 2
 
     mapping = ['Training', 'Test', 'Influence']
+    start_funcs = [start_train, start_test]
 
 def with_lock(func):
     def wrapper(*wargs, **kwargs):
@@ -41,8 +44,15 @@ class RTask:
 
     @staticmethod
     @with_lock
-    def create_task(pid, task_type, total):
-        RTask.tasks.append(RTask(pid, task_type, total))
+    def create_task(task_type, *kargs, **kwargs):
+        start_func = TaskType.start_funcs[task_type]
+        thread = start_func(*kargs, **kwargs)
+        if thread is None:
+            return
+        pid = thread.get_ident()
+        task = RTask(pid, task_type)
+        RTask.tasks.append(task)
+        return task
     
     @staticmethod
     @with_lock
@@ -56,7 +66,7 @@ class RTask:
     @with_lock
     def update_task(pid):
         task = RTask.find_task(pid)
-        task.update()
+        task._update()
 
     @staticmethod
     @with_lock
@@ -90,8 +100,14 @@ class RTask:
         except:
             res = 'Unknown'
         return res
-    
+
+    def exit(self):
+        RTask.exit_task(self.pid)
+
     def update(self):
+        RTask.update_task(self.pid)
+    
+    def _update(self):
         self.n += 1
         self.elapsed_time = time()-self.start_time
         rate = self.elapsed_time/self.n
