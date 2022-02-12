@@ -26,13 +26,66 @@ modelWrapper = RServer.getModelWrapper()
 @app.route('/predict/<split>/<image_id>')
 def predict(split, image_id):
     """
-    Get the prediction path of the image specified by its id.
-
-    args: 
-        split:    'train', 'test' or 'dev'
-        image_id: The index of the image within the dataset
-    returns:
-        [attribute, output_array, predict_fig_routes]
+    Gets the prediction path of the image specified by its id
+    ---
+    tags:
+      - predict
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        required: true
+        type: "string"
+      - name: "image_id"
+        in: "path"
+        description: "the index of the image within the dataset"
+        required: true
+        type: "integer"
+    responses:
+      200:
+        description: a list of [attribute, output_array, predict_fig_routes]
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: array
+              example: [
+                [
+                  "n01440764",
+                  "n02102040",
+                  "n02979186",
+                  "n03000684",
+                  "n03028079",
+                  "n03394916",
+                  "n03417042",
+                  "n03425413",
+                  "n03445777",
+                  "n03888257"
+                ],
+                [
+                  0.11704748123884201,
+                  0.05598455294966698,
+                  0.03636372834444046,
+                  0.05954515188932419,
+                  0.13732001185417175,
+                  0.1522897481918335,
+                  0.082752525806427,
+                  0.041457951068878174,
+                  0.2806808054447174,
+                  0.03655797988176346
+                ],
+                [
+                  "/Robustar2/visualize_images/train_0_0.png",
+                  "/Robustar2/visualize_images/train_0_1.png",
+                  "/Robustar2/visualize_images/train_0_2.png",
+                  "/Robustar2/visualize_images/train_0_3.png"
+                ]
+              ]
+            msg:
+              type: string
+              example: Success
     """
 
     # e.g.  train/10, test/300
@@ -99,7 +152,35 @@ def predict(split, image_id):
 @app.route('/influence/<split>/<image_id>')
 def get_influence(split, image_id):
     """
-    Get the influence for an image specified by image_url
+     Gets the influence for an image specified by its id
+    ---
+    tags:
+      - predict
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        required: true
+        type: "string"
+      - name: "image_id"
+        in: "path"
+        description: "the index of the image within the dataset"
+        required: true
+        type: "integer"
+    responses:
+      200:
+        description: path of influence images, or influence not found or calculated
+        schema:
+          properties:
+            code:
+              type: integer
+              example: -1
+            data:
+              type: string
+              example: ""
+            msg:
+              type: string
+              example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
     target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
@@ -111,15 +192,41 @@ def get_influence(split, image_id):
 @app.route('/influence', methods=['POST'])
 def calculate_influence():
     """
-    Calculates the influence for the test set.
-    example request body:
-        {
-            "configs": {
-                "test_sample_num": 2, // number of test samples per class for which we calculate influence 
-                "r_averaging": 10 
-            }
-        }
-
+    Calculates the influence for the test set
+    ---
+    tags:
+      - predict
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "The configuration"
+        required: true
+        schema:
+          properties:
+            configs:
+              type: object
+              example: {
+                test_sample_num: 2,
+                r_averaging: 10
+              }
+    responses:
+      200:
+        description: Influence calculation started
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: {}
+            msg:
+              type: string
+              example: "Influence calculation started!"
     """
     json_data = request.get_json()
     configs = json_data['configs']

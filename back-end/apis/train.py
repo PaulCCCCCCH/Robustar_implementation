@@ -21,6 +21,28 @@ class ThreadPool:
 
 @app.route('/train/stop', methods=['GET'])
 def stop_training():
+    """
+    Stops the training thread
+    ---
+    tags:
+      - train
+    produces:
+      - "application/json"
+    responses:
+      200:
+        description: Training stopped or training cannot be stopped
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: Training stopped!
+            msg:
+              type: string
+              example: Success
+    """
     try:
         ThreadPool.stop()
     except:
@@ -31,8 +53,64 @@ def stop_training():
 @app.route('/train', methods=['POST'])
 def start_training():
     """
-    Takes in a training config. 
-    The server will check the configs before start training.
+    Takes in a training config and start the training thread
+    The server will check the configs before start training
+    ---
+    tags:
+      - train
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "The training config"
+        required: true
+        schema:
+          properties:
+            configs:
+              type: object
+              example: {
+                model: 'resnet-18-32x32',
+                weight: '',
+                train_path: '/Robustar2/dataset/train',
+                test_path: '/Robustar2/dataset/test',
+                class_path: './model/cifar-class.txt',
+                port: '8000',
+                save_dir: '/Robustar2/checkpoints',
+                use_paired_train: 'false',
+                mixture: 'random_pure',
+                paired_data_path: '/Robustar2/dataset/paired',
+                device: 'cuda',
+                auto_save_model: 'yes',
+                batch_size: '128',
+                shuffle: 'yes',
+                learn_rate: 0.1,
+                pgd: 'no PGD',
+                paired_train_reg_coeff: 0.001,
+                image_size: 32,
+                epoch: 20,
+                thread: 8,
+                pretrain: 'no',
+              }
+            info:
+              type: string
+              example: placeholder
+    responses:
+      200:
+        description: Training started or training cannot be started
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: Training started!
+            msg:
+              type: string
+              example: Success
     """
 
     print("Requested to training with the following configuration: ")
