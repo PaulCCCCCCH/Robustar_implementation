@@ -11,7 +11,7 @@ class Launcher(QWidget):
     def __init__(self):
         # Initialize the UI
         super(Launcher, self).__init__()
-        self.ui = QUiLoader().load('launcher.ui')
+        self.ui = QUiLoader().load('launcher_v2.ui')
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
@@ -52,10 +52,10 @@ class Launcher(QWidget):
         self.ui.saveConfigButton.clicked.connect(self.saveConfig)
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
+        self.ui.tabWidget.currentChanged.connect(self.renderContanierList)
 
         # Set the default command to execute in shell
-        self.command = ''
-
+        # self.command = ''
 
     def changeContainerName(self):
         self.configs['containerName'] = self.ui.nameInput.text()
@@ -117,30 +117,13 @@ class Launcher(QWidget):
             print('Save path not found')
 
     def startServer(self):
-        # setupCommand = 'docker pull paulcccccch/robustar:' + self.configs['imageVersion']
-        # self.runShellCommand(setupCommand)
-
-        # if self.runningState == False:
-        #     runCommand = self.getRunCommand()
-        #     runReturnCode = self.runShellCommand(runCommand)
-        #     if runReturnCode == 0:
-        #         self.runningState = True
-        #         self.ui.serverControlButton.setText('Stop Server')
-        #         self.ui.messageBrowser.append('Robustar is available at http://localhost:' + self.configs['websitePort'])
-        #         self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-        #         QApplication.processEvents()
-        # else:
-        #     stopCommand = 'docker stop ' + self.configs['containerName']
-        #     self.runShellCommand(stopCommand)
-        #     self.runningState = False
-        #     self.ui.serverControlButton.setText('Start Server')
 
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
-
 
         try:
             # Get the container with the input name
             self.container = self.client.containers.get(self.configs['containerName'])
+            
             # If the container has exited
             # Restart the container
             if self.container.status == 'exited':
@@ -246,9 +229,6 @@ class Launcher(QWidget):
             time.sleep(5)
             exit(1)
 
-
-
-
     def stopServer(self):
         try:
             self.container = self.client.containers.get(self.configs['containerName'])
@@ -288,67 +268,29 @@ class Launcher(QWidget):
             time.sleep(5)
             exit(1)
 
+    def renderContanierList(self, index):
+        # If the current tab widget is manageTab
+        # List the containers
+        if(index == 1):
+            self.ui.runningListWidget.clear()
+            self.ui.exitedListWidget.clear()
+            self.listContainer()
 
-
-    # Concatenate the command to be executed
-    # def getRunCommand(self):
-    #     runCommand = 'docker run --name ' + self.configs['containerName'] + ' -d ' +\
-    #                    '-p 127.0.0.1:' + self.configs['websitePort'] + ':80 ' +\
-    #                    '-p 127.0.0.1:6848:8000 ' +\
-    #                    '-p 127.0.0.1:6006:6006 ' +\
-    #                    '--mount type=bind,source=' + self.configs['trainPath'] + ',target=/Robustar2/dataset/train ' +\
-    #                    '--mount type=bind,source=' + self.configs['testPath'] + ',target=/Robustar2/dataset/test ' +\
-    #                    '--mount type=bind,source=' + self.configs['influencePath'] + ',target=/Robustar2/influence_images ' +\
-    #                    '--mount type=bind,source=' + self.configs['checkPointPath'] + ',target=/Robustar2/checkpoint_images ' +\
-    #                    '-v ' + self.configs['configFile'] + ':/Robustar2/configs.json ' +\
-    #                    'paulcccccch/robustar:' + self.configs['imageVersion']
-    #
-    #     return runCommand
-
-    # Run a shell command and update UI according to it
-    # def runShellCommand(self, command):
-    #     process = subprocess.Popen([r'C:/Program Files/Git/bin/bash.exe', "-c", command],
-    #                                stdout=subprocess.PIPE,
-    #                                stderr=subprocess.PIPE,
-    #                                universal_newlines=True)
-    #
-    #     while True:
-    #         output = process.stdout.readline()
-    #         error = process.stderr.readline()
-    #         if (len(output) != 0):
-    #             print(output.strip())
-    #             self.ui.messageBrowser.append(output.strip())
-    #             self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-    #             QApplication.processEvents()
-    #         if (len(error) != 0):
-    #             print(error.strip())
-    #             self.ui.messageBrowser.append(error.strip())
-    #             self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-    #             QApplication.processEvents()
-    #
-    #         # Check if the process has finished
-    #         return_code = process.poll()
-    #         if return_code is not None:
-    #             # print('RETURN CODE', return_code)
-    #             # self.ui.messageBrowser.append('RETURN CODE ' + str(return_code))
-    #             # self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-    #             # QApplication.processEvents()
-    #
-    #             # Process has finished, read rest of the output
-    #             for output in process.stdout.readlines():
-    #                 if (len(output) != 0):
-    #                     print(output.strip())
-    #                     self.ui.messageBrowser.append(output.strip())
-    #                     self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-    #                     QApplication.processEvents()
-    #             break
-    #
-    #     self.ui.messageBrowser.append('\n')
-    #     self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-    #     QApplication.processEvents()
-    #
-    #     return return_code
-
+    def listContainer(self):
+        containerList = self.client.containers.list(all=True)
+        for container in containerList:
+            if('paulcccccch/robustar:' in str(container.image)):
+                if(container.status == 'running'):
+                    self.ui.runningListWidget.addItem(container.name)
+                elif(container.status == 'exited'):
+                    self.ui.exitedListWidget.addItem(container.name)
+                else:
+                    print('Unexpected status')
+                    self.ui.messageBrowser.append('The server encountered an unexpected status')
+                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+                    QApplication.processEvents()
+                    time.sleep(5)
+                    exit(1)
 
 app = QApplication([])
 launcher = Launcher()
