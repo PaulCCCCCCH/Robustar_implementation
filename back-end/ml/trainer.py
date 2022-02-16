@@ -2,6 +2,7 @@ import torch
 import time
 from torchattacks import PGD
 import os
+from objects.RTask import RTask, TaskType
 
 
 class Trainer():
@@ -143,6 +144,10 @@ class Trainer():
         optimizer = torch.optim.SGD(self.net.parameters(
         ), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4)
         best = 0
+
+        # init task
+        task = RTask(TaskType.Training, epoch*len(loader))
+
         for epoch in range(epoch):
             print('\nEpoch: %d' % (epoch + 1))
             self.net.train()
@@ -154,10 +159,16 @@ class Trainer():
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
 
+                print(self.stop, flush=True)
+
                 if self.stop:
                     endtime = time.time()
                     print("Time consumption:", endtime-starttime)
                     print("Trainning stopped!")
+                    
+                    # exit
+                    task.exit()
+
                     return 
                     
 
@@ -212,6 +223,10 @@ class Trainer():
                 self.update_gui()
 
                 print('\r'+output_text, flush=True, end='')
+
+                # update task
+                task.update()
+
             # save_net(net)
             print("Epoch Finish!")
             torch.cuda.empty_cache()
@@ -225,3 +240,7 @@ class Trainer():
 
         endtime = time.time()
         print("Time consumption:", endtime-starttime)
+
+
+        # task exit
+        task.exit()

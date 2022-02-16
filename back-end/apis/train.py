@@ -2,6 +2,7 @@ from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
+from objects.RTask import RTask
 
 app = RServer.getServer().getFlaskApp()
 
@@ -17,6 +18,7 @@ class ThreadPool:
     def stop():
         while ThreadPool.threads:
             t = ThreadPool.threads.pop()
+            # RTask.exit_task(t.ident)
             t.stop()
 
 @app.route('/train/stop', methods=['GET'])

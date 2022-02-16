@@ -4,6 +4,8 @@ from objects.RServer import RServer
 from utils.image_utils import imageURLToPath
 from utils.predict import get_image_prediction, convert_predict_to_array
 from os import path as osp
+import os
+from objects.RTask import RTask, TaskType
 
 # app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
@@ -57,6 +59,8 @@ class TestThread(threading.Thread):
         correct_buffer = []
         incorrect_buffer = []
 
+        task = RTask(TaskType.Test, dataset_length)
+
         for img_index in range(dataset_length):
             # stop if it's called
             if self.stop:
@@ -91,6 +95,9 @@ class TestThread(threading.Thread):
                 incorrect_buffer.append(img_index)
                 incorrect_file.write(str(img_index) + '\n')
 
+            # task update
+            task.update()
+
         if split == 'validation':
             dataManager.correctValidationBuffer = correct_buffer
             dataManager.incorrectValidationBuffer = incorrect_buffer
@@ -106,12 +113,15 @@ class TestThread(threading.Thread):
         correct_file.close()
         incorrect_file.close()
 
+        # exit task
+        task.exit()
+
 
 def start_test(split):
     try:
 
         test_thread = TestThread(split)
-        test_thread.run()
+        test_thread.start()
 
     except Exception as e:
         e.with_traceback()

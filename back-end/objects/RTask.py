@@ -7,8 +7,10 @@ Brief: A Task Panel Class that Monitor all classes
 from time import time
 from datetime import timedelta
 from threading import Lock
-from utils.train import start_train
-from utils.test import start_test
+# from utils.train import start_train
+# from utils.test import start_test
+from flask_socketio import emit
+from objects.RServer import RServer
 
 '''
 TODO: make all thread apis create here
@@ -19,7 +21,7 @@ class TaskType:
     Influence = 2
 
     mapping = ['Training', 'Test', 'Influence']
-    start_funcs = [start_train, start_test]
+    # start_funcs = [start_train, start_test]
 
 def with_lock(func):
     def wrapper(*wargs, **kwargs):
@@ -32,56 +34,70 @@ def with_lock(func):
 class RTask:
     tasks = []
     lock = Lock()
+    tid = 0
 
     # This one should not be locked because it's purely a low-level implementation
     # otherwise may have deadlock
     @staticmethod
-    def find_task(pid):
+    # @with_lock
+    def generate_tid():
+        RTask.tid += 1
+        return RTask.tid
+
+    @staticmethod
+    def find_task(tid):
         for task in RTask.tasks:
-            if task.pid == pid:
+            if task.tid == tid:
                 return task
         return None
 
     @staticmethod
-    @with_lock
-    def create_task(task_type, *kargs, **kwargs):
-        start_func = TaskType.start_funcs[task_type]
-        thread = start_func(*kargs, **kwargs)
-        if thread is None:
-            return
-        pid = thread.get_ident()
-        task = RTask(pid, task_type)
+    # @with_lock
+    def create_task(task):
+        # start_func = TaskType.start_funcs[task_type]
+        # thread = start_func(*kargs, **kwargs)
+        # if thread is None:
+        #     return
+        tid = task.tid
+        assert tid not in [t.tid for t in RTask.tasks], "Duplicate tid in task"
         RTask.tasks.append(task)
         return task
     
     @staticmethod
-    @with_lock
-    def exit_task(pid):
-        task = RTask.find_task(pid)
+    # @with_lock
+    def exit_task(tid):
+        task = RTask.find_task(tid)
         if not task:
             raise Exception("Task not found")
         RTask.tasks.remove(task)
     
     @staticmethod
-    @with_lock
-    def update_task(pid):
-        task = RTask.find_task(pid)
+    # @with_lock
+    def update_task(tid):
+        task = RTask.find_task(tid)
         task._update()
+        digest = RTask.get_tasks_digest()
+        socket = RServer.getSocket()
+        socket.emit("digest", {
+            "digest": digest
+        })
+        print()
+        print(digest, flush=True)
 
     @staticmethod
-    @with_lock
+    # @with_lock
     def get_tasks_digest():
         digest = []
         for task in RTask.tasks:
-            digest.append((task.get_readable_label(), task.get_readable_time()))
+            digest.append((task.get_readable_label(), task.get_percentage(), task.get_readable_time()))
         return digest
 
-    def __init__(self, pid, task_type, total):
+    def __init__(self, task_type, total):
         # id
-        self.pid = pid
         self.task_type = task_type
 
         # fields
+        self.tid = RTask.generate_tid()
         self.n = 0
         self.total = total
         self.start_time = time()
@@ -89,9 +105,10 @@ class RTask:
         self.remaining_readable_time = 'Unknown'
         self.elapsed_time = 0
         self.elapsed_readable_time = 'Unknown'
+        RTask.create_task(self)
 
     def start(self):
-        self.__init__(self.pid, self.task_type, self.total)
+        self.__init__(self.task_type, self.total)
 
     def make_time_readable(self, t):
         try:
@@ -102,10 +119,10 @@ class RTask:
         return res
 
     def exit(self):
-        RTask.exit_task(self.pid)
+        RTask.exit_task(self.tid)
 
     def update(self):
-        RTask.update_task(self.pid)
+        RTask.update_task(self.tid)
     
     def _update(self):
         self.n += 1
@@ -116,8 +133,11 @@ class RTask:
         self.elapsed_readable_time = self.make_time_readable(self.elapsed_time)
         self.remaining_readable_time = self.make_time_readable(self.remaining_time)
     
+    def get_percentage(self):
+        return self.n/self.total if self.total else 'Invalid'
+    
     def get_readable_label(self):
-        return f"{TaskType.mapping[self.task_type]}({self.pid})"
+        return f"{TaskType.mapping[self.task_type]}({self.tid})"
     
     def get_readable_time(self):
         return f"{self.n}/{self.total}[{self.elapsed_readable_time}<<{self.remaining_readable_time}]"
