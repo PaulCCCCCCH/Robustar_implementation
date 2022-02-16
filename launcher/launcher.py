@@ -10,10 +10,10 @@ from threading import Thread
 
 class CustomSignals(QObject):
     # Custom signal for printing message in messageBrowser
-    printMessage = Signal(str)
+    printMessageSignal = Signal(str)
 
     # Custom signal for updating running and exited container lists
-    updateList = Signal(str)
+    updateListSignal = Signal(str)
 
 
 class Launcher(QWidget):
@@ -21,6 +21,9 @@ class Launcher(QWidget):
         # Initialize the UI
         super(Launcher, self).__init__()
         self.ui = QUiLoader().load('launcher_v2.ui')
+
+        # Initialize the signal source object
+        self.customSignals = CustomSignals()
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
@@ -47,6 +50,7 @@ class Launcher(QWidget):
         self.loadPath = ''
         self.savePath = ''
 
+
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.changeImageVersion)
@@ -57,12 +61,17 @@ class Launcher(QWidget):
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.chooseInfluencePath)
+
         self.ui.loadConfigButton.clicked.connect(self.loadConfig)
         self.ui.saveConfigButton.clicked.connect(self.saveConfig)
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
+        self.ui.deleteServerButton.clicked.connect(self.deleteServer)
+
         self.ui.tabWidget.currentChanged.connect(self.renderContanierList)
 
+        self.customSignals.printMessageSignal.connect(self.printMessage)
+        self.customSignals.updateListSignal.connect(self.updateList)
 
     def changeContainerName(self):
         self.configs['containerName'] = self.ui.nameInput.text()
@@ -297,20 +306,25 @@ class Launcher(QWidget):
             self.listContainer()
 
     def listContainer(self):
-        containerList = self.client.containers.list(all=True)
-        for container in containerList:
-            if('paulcccccch/robustar:' in str(container.image)):
-                if(container.status == 'running'):
-                    self.ui.runningListWidget.addItem(container.name)
-                elif(container.status == 'exited'):
-                    self.ui.exitedListWidget.addItem(container.name)
-                else:
-                    print('Unexpected status')
-                    self.ui.messageBrowser.append('The server encountered an unexpected status')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
-                    time.sleep(5)
-                    exit(1)
+
+        def listContainerInThread():
+            containerList = self.client.containers.list(all=True)
+            for container in containerList:
+                if ('paulcccccch/robustar:' in str(container.image)):
+                    if (container.status == 'running'):
+                        self.ui.runningListWidget.addItem(container.name)
+                    elif (container.status == 'exited'):
+                        self.ui.exitedListWidget.addItem(container.name)
+                    else:
+                        print('Unexpected status')
+                        self.ui.messageBrowser.append('The server encountered an unexpected status')
+                        self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
+                        QApplication.processEvents()
+                        time.sleep(5)
+                        exit(1)
+
+        listContainerThread = Thread(target=listContainerInThread())
+        listContainerThread.start()
 
 app = QApplication([])
 launcher = Launcher()
