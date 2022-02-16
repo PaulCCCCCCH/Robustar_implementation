@@ -43,30 +43,6 @@
                 >{{Math.round(item[1]*10000)/100}}%</v-progress-linear>
               </v-col>
               <v-col cols="12" lg="4" align="center" justify="center">{{item[2]}}</v-col>
-
-
-
-            <v-col cols="12" lg="3" align="center" justify="center">Training</v-col>
-            <v-col cols="12" lg="6" align="center" justify="center">
-              <v-row align="center" justify="center">
-                <v-col cols="12" v-bind:lg="training" style="padding-left:0; padding-right:0;">
-                  <v-progress-linear
-                    color="primary"
-                    height="4"
-                    indeterminate
-                    buffer-value="100"
-                  ></v-progress-linear>
-                </v-col>
-                <v-col cols="12" v-bind:lg="nonTraining" style="padding-left:0; padding-right:0;">
-                  <v-progress-linear
-                    color="secondary"
-                    height="4"
-                    buffer-value="100"
-                  ></v-progress-linear>
-                </v-col>
-              </v-row>
-            </v-col align="center" justify="center">
-            <v-col cols="12" lg="3">Time left</v-col>
           </v-row>
         
         </v-card>
