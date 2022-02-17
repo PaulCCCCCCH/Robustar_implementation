@@ -282,9 +282,6 @@ class Launcher(QWidget):
         # If the current tab widget is manageTab
         # List the containers
         if(index == 1 and self.firstTimeCheck == True):
-            # self.ui.runningListWidget.clear()
-            # self.ui.exitedListWidget.clear()
-
             self.listContainer()
             self.firstTimeCheck = False
 
