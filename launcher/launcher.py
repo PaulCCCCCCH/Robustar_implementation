@@ -4,16 +4,19 @@ import time
 import docker
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QFileDialog, QWidget
-from PySide2.QtCore import Signal, QObject
+from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QListWidgetItem
+from PySide2.QtCore import Signal, QObject, Qt
 from threading import Thread
 
 class CustomSignals(QObject):
     # Custom signal for printing message in messageBrowser
     printMessageSignal = Signal(str)
 
-    # Custom signal for updating running and exited container lists
-    updateListSignal = Signal(str)
+    # Custom signal for adding items in running or exited container list widget
+    addItemSignal = Signal(QListWidget, str)
+
+    # Custom signal for removing item from running or exited container list widget
+    removeItemSignal = Signal(QListWidget, str)
 
 
 class Launcher(QWidget):
@@ -50,6 +53,8 @@ class Launcher(QWidget):
         self.loadPath = ''
         self.savePath = ''
 
+        self.firstTimeCheck = True
+
 
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
@@ -66,12 +71,13 @@ class Launcher(QWidget):
         self.ui.saveConfigButton.clicked.connect(self.saveConfig)
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
-        self.ui.deleteServerButton.clicked.connect(self.deleteServer)
+        # self.ui.deleteServerButton.clicked.connect(self.deleteServer)
 
         self.ui.tabWidget.currentChanged.connect(self.renderContanierList)
 
         self.customSignals.printMessageSignal.connect(self.printMessage)
-        self.customSignals.updateListSignal.connect(self.updateList)
+        self.customSignals.addItemSignal.connect(self.addItem)
+        self.customSignals.removeItemSignal.connect(self.removeItem)
 
     def changeContainerName(self):
         self.configs['containerName'] = self.ui.nameInput.text()
@@ -143,27 +149,23 @@ class Launcher(QWidget):
 
                 # If the container has exited
                 # Restart the container
+                # Update both runningListWidget and exitedListWidget
                 if self.container.status == 'exited':
                     self.container.restart()
-                    print('The server is now restarted')
-                    self.ui.messageBrowser.append(
-                        'Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
+                    self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
+
                 # If the container is running
                 elif self.container.status == 'running':
-                    print('The server has already been running')
-                    self.ui.messageBrowser.append('The server has already been running')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('The server has already been running')
+
                 # If the container is in other status
                 else:
-                    print('Unexpected status')
-                    self.ui.messageBrowser.append('The server encountered an unexpected status')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                     time.sleep(5)
                     exit(1)
+
             # If the container with the input name has not been created yet
             # Create a new container and run it
             except docker.errors.NotFound:
@@ -201,11 +203,8 @@ class Launcher(QWidget):
                             docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])
                         ]
                     )
-                    print('The server is now started')
-                    self.ui.messageBrowser.append(
-                        'Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
                 # If the version only uses cpu
                 else:
                     self.container = self.client.containers.run(
@@ -236,16 +235,10 @@ class Launcher(QWidget):
                         volumes=[
                             self.configs['configFile'] + ':/Robustar2/configs.json']
                     )
-                    print('The server is now started')
-                    self.ui.messageBrowser.append(
-                        'Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
             except docker.errors.APIError:
-                print('The server returns an error')
-                self.ui.messageBrowser.append('The server encountered an error')
-                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                QApplication.processEvents()
+                self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
                 exit(1)
 
@@ -259,38 +252,26 @@ class Launcher(QWidget):
             try:
                 self.container = self.client.containers.get(self.configs['containerName'])
                 self.container.stop()
+                # If the container has been stopped
+                if self.container.status == 'exited':
+                    self.customSignals.printMessageSignal.emit('The server has already been stopped')
                 # If the container is running
                 # Stop the container
-                if self.container.status == 'exited':
-                    print('The server has already been stopped')
-                    self.ui.messageBrowser.append('The server has already been stopped')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
-                # If the container is running
+                # Update both runningListWidget and exitedListWidget
                 elif self.container.status == 'running':
                     self.container.stop()
-                    print('The server is now stopped')
-                    self.ui.messageBrowser.append('The server is now stopped')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('The server is now stopped')
+                    self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
+                    self.customSignals.removeItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
                 # If the container is in other status
                 else:
-                    print('Unexpected status')
-                    self.ui.messageBrowser.append('The server encountered an unexpected status')
-                    self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                    QApplication.processEvents()
+                    self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                     time.sleep(5)
                     exit(1)
             except docker.errors.NotFound:
-                print('The server has not been created yet')
-                self.ui.messageBrowser.append('The server has not been created yet')
-                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                QApplication.processEvents()
+                self.customSignals.printMessageSignal.emit('The server has not been created yet')
             except docker.errors.APIError:
-                print('The server returns an error')
-                self.ui.messageBrowser.append('The server encountered an error')
-                self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                QApplication.processEvents()
+                self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
                 exit(1)
 
@@ -300,10 +281,12 @@ class Launcher(QWidget):
     def renderContanierList(self, index):
         # If the current tab widget is manageTab
         # List the containers
-        if(index == 1):
-            self.ui.runningListWidget.clear()
-            self.ui.exitedListWidget.clear()
+        if(index == 1 and self.firstTimeCheck == True):
+            # self.ui.runningListWidget.clear()
+            # self.ui.exitedListWidget.clear()
+
             self.listContainer()
+            self.firstTimeCheck = False
 
     def listContainer(self):
 
@@ -312,19 +295,29 @@ class Launcher(QWidget):
             for container in containerList:
                 if ('paulcccccch/robustar:' in str(container.image)):
                     if (container.status == 'running'):
-                        self.ui.runningListWidget.addItem(container.name)
+                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, container.name)
                     elif (container.status == 'exited'):
-                        self.ui.exitedListWidget.addItem(container.name)
+                        self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, container.name)
                     else:
-                        print('Unexpected status')
-                        self.ui.messageBrowser.append('The server encountered an unexpected status')
-                        self.ui.messageBrowser.moveCursor(self.ui.messageBrowser.textCursor().End)
-                        QApplication.processEvents()
+                        self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                         time.sleep(5)
                         exit(1)
 
         listContainerThread = Thread(target=listContainerInThread())
         listContainerThread.start()
+
+    def printMessage(self, message):
+        self.ui.messageBrowser.append(message)
+        self.ui.messageBrowser.ensureCursorVisible()
+
+    def addItem(self, listWidget, name):
+        listWidget.addItem(name)
+
+    def removeItem(self, listWidget, name):
+        items = listWidget.findItems(name, Qt.MatchExactly)
+        item = items[0]
+        row = listWidget.row(item)
+        listWidget.takeItem(row)
 
 app = QApplication([])
 launcher = Launcher()
