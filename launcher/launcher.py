@@ -79,6 +79,11 @@ class Launcher(QWidget):
         self.customSignals.addItemSignal.connect(self.addItem)
         self.customSignals.removeItemSignal.connect(self.removeItem)
 
+        # Set the listWidgets so that only one entry in them can be selected at a time
+        self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget]
+        self.ui.runningListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.runningListWidget, self.listWidgets))
+        self.ui.exitedListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.exitedListWidget, self.listWidgets))
+
     def changeContainerName(self):
         self.configs['containerName'] = self.ui.nameInput.text()
 
@@ -259,7 +264,6 @@ class Launcher(QWidget):
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
 
-
     def stopServer(self):
 
         def stopServerInThread():
@@ -319,7 +323,7 @@ class Launcher(QWidget):
                     self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
                     self.ui.exitedListWidget.selectedItems()) > 0 else []
                 if (len(items) == 0):
-                    self.customSignals.printMessageSignal.emit('Select a container you want to delete first')
+                    self.customSignals.printMessageSignal.emit('Select a container you want to delete  first')
                 else:
                     item = items[0]
                     containerName = item.text()
@@ -381,6 +385,18 @@ class Launcher(QWidget):
         item = items[0]
         row = listWidget.row(item)
         listWidget.takeItem(row)
+
+    def singleSelect(self, listWidget, listWidgets):
+
+        for widget in listWidgets:
+            # Only check the other listWidgets
+            if widget == listWidget:
+                continue
+
+            # If the newly selected item is not in the same listWidget as the previous selected one
+            # Remove the previous one from its listWidget
+            if widget.selectionModel().hasSelection():
+                widget.selectionModel().clearSelection()
 
 app = QApplication([])
 launcher = Launcher()
