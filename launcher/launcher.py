@@ -53,8 +53,8 @@ class Launcher(QWidget):
         self.loadPath = ''
         self.savePath = ''
 
+        # Boolean variable to record the first time check of manageTab
         self.firstTimeCheck = True
-
 
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
@@ -71,7 +71,7 @@ class Launcher(QWidget):
         self.ui.saveConfigButton.clicked.connect(self.saveConfig)
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
-        # self.ui.deleteServerButton.clicked.connect(self.deleteServer)
+        self.ui.deleteServerButton.clicked.connect(self.deleteServer)
 
         self.ui.tabWidget.currentChanged.connect(self.initContainerList)
 
@@ -278,12 +278,35 @@ class Launcher(QWidget):
         stopServerThread = Thread(target=stopServerInThread)
         stopServerThread.start()
 
+    def deleteServer(self):
+        try:
+            self.container = self.client.containers.get(self.configs['containerName'])
+            if(self.container.status == 'exited'):
+                self.container.remove()
+                self.customSignals.printMessageSignal.emit('The server has been removed')
+                self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
+            elif self.container.status == 'running':
+                self.customSignals.printMessageSignal.emit('The server is still running. Stop the server before deletion')
+            # If the container is in other status
+            else:
+                self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
+                time.sleep(5)
+                os._exit(1)
+        except docker.errors.NotFound:
+            self.customSignals.printMessageSignal.emit('The server has not been created yet')
+        except docker.errors.APIError:
+            self.customSignals.printMessageSignal.emit('The server encountered an error')
+            time.sleep(5)
+            os._exit(1)
 
     def initContainerList(self, index):
 
         def initContainerInThread():
+            # Get all containers
             containerList = self.client.containers.list(all=True)
+
             for container in containerList:
+                # Classify the containers using different versions of robustar as their images according to status
                 if ('paulcccccch/robustar:' in str(container.image)):
                     if (container.status == 'running'):
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, container.name)
@@ -294,7 +317,7 @@ class Launcher(QWidget):
                         time.sleep(5)
                         os._exit(1)
 
-        # If the current tab widget is manageTab and it is the first time switching to this tab widget
+        # If the current tab widget is manageTab and it is the first time switching to manageTab
         # Initialize the container lists
         if(index == 1 and self.firstTimeCheck == True):
             listContainerThread = Thread(target=initContainerInThread())
