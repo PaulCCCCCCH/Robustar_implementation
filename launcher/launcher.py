@@ -144,8 +144,22 @@ class Launcher(QWidget):
 
         def startServerInThread():
             try:
+
+                # If it's in createTab
                 # Get the container with the input name
-                self.container = self.client.containers.get(self.configs['containerName'])
+                if (self.ui.tabWidget.currentIndex() == 0):
+                    self.container = self.client.containers.get(self.configs['containerName'])
+                # If it's in manageTab
+                else:
+                    items = self.ui.runningListWidget.selectedItems() if len(
+                        self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
+                        self.ui.exitedListWidget.selectedItems()) > 0 else []
+                    if (len(items) == 0):
+                        self.customSignals.printMessageSignal.emit('Select a container you want to start first')
+                    else:
+                        item = items[0]
+                        containerName = item.text()
+                        self.container = self.client.containers.get(containerName)
 
                 # If the container has exited
                 # Restart the container
@@ -249,9 +263,24 @@ class Launcher(QWidget):
     def stopServer(self):
 
         def stopServerInThread():
+
             try:
-                self.container = self.client.containers.get(self.configs['containerName'])
-                self.container.stop()
+                # If it's in createTab
+                # Get the container with the input name
+                if (self.ui.tabWidget.currentIndex() == 0):
+                    self.container = self.client.containers.get(self.configs['containerName'])
+                # If it's in manageTab
+                else:
+                    items = self.ui.runningListWidget.selectedItems() if len(
+                        self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
+                        self.ui.exitedListWidget.selectedItems()) > 0 else []
+                    if (len(items) == 0):
+                        self.customSignals.printMessageSignal.emit('Select a container you want to stop first')
+                    else:
+                        item = items[0]
+                        containerName = item.text()
+                        self.container = self.client.containers.get(containerName)
+
                 # If the container has been stopped
                 if self.container.status == 'exited':
                     self.customSignals.printMessageSignal.emit('The server has already been stopped')
@@ -280,7 +309,22 @@ class Launcher(QWidget):
 
     def deleteServer(self):
         try:
-            self.container = self.client.containers.get(self.configs['containerName'])
+            # If it's in createTab
+            # Get the container with the input name
+            if (self.ui.tabWidget.currentIndex() == 0):
+                self.container = self.client.containers.get(self.configs['containerName'])
+            # If it's in manageTab
+            else:
+                items = self.ui.runningListWidget.selectedItems() if len(
+                    self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
+                    self.ui.exitedListWidget.selectedItems()) > 0 else []
+                if (len(items) == 0):
+                    self.customSignals.printMessageSignal.emit('Select a container you want to delete first')
+                else:
+                    item = items[0]
+                    containerName = item.text()
+                    self.container = self.client.containers.get(containerName)
+
             if(self.container.status == 'exited'):
                 self.container.remove()
                 self.customSignals.printMessageSignal.emit('The server has been removed')
