@@ -1,6 +1,6 @@
 import json
 import time
-
+import os
 import docker
 
 from PySide2.QtUiTools import QUiLoader
@@ -73,7 +73,7 @@ class Launcher(QWidget):
         self.ui.stopServerButton.clicked.connect(self.stopServer)
         # self.ui.deleteServerButton.clicked.connect(self.deleteServer)
 
-        self.ui.tabWidget.currentChanged.connect(self.renderContanierList)
+        self.ui.tabWidget.currentChanged.connect(self.initContainerList)
 
         self.customSignals.printMessageSignal.connect(self.printMessage)
         self.customSignals.addItemSignal.connect(self.addItem)
@@ -164,7 +164,7 @@ class Launcher(QWidget):
                 else:
                     self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                     time.sleep(5)
-                    exit(1)
+                    os._exit(1)
 
             # If the container with the input name has not been created yet
             # Create a new container and run it
@@ -240,7 +240,7 @@ class Launcher(QWidget):
             except docker.errors.APIError:
                 self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
-                exit(1)
+                os._exit(1)
 
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
@@ -267,27 +267,21 @@ class Launcher(QWidget):
                 else:
                     self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                     time.sleep(5)
-                    exit(1)
+                    os._exit(1)
             except docker.errors.NotFound:
                 self.customSignals.printMessageSignal.emit('The server has not been created yet')
             except docker.errors.APIError:
                 self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
-                exit(1)
+                os._exit(1)
 
         stopServerThread = Thread(target=stopServerInThread)
         stopServerThread.start()
 
-    def renderContanierList(self, index):
-        # If the current tab widget is manageTab
-        # List the containers
-        if(index == 1 and self.firstTimeCheck == True):
-            self.listContainer()
-            self.firstTimeCheck = False
 
-    def listContainer(self):
+    def initContainerList(self, index):
 
-        def listContainerInThread():
+        def initContainerInThread():
             containerList = self.client.containers.list(all=True)
             for container in containerList:
                 if ('paulcccccch/robustar:' in str(container.image)):
@@ -298,10 +292,15 @@ class Launcher(QWidget):
                     else:
                         self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                         time.sleep(5)
-                        exit(1)
+                        os._exit(1)
 
-        listContainerThread = Thread(target=listContainerInThread())
-        listContainerThread.start()
+        # If the current tab widget is manageTab and it is the first time switching to this tab widget
+        # Initialize the container lists
+        if(index == 1 and self.firstTimeCheck == True):
+            listContainerThread = Thread(target=initContainerInThread())
+            listContainerThread.start()
+
+            self.firstTimeCheck = False
 
     def printMessage(self, message):
         self.ui.messageBrowser.append(message)
