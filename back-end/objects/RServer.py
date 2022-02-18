@@ -8,6 +8,7 @@ Modified By: Chonghan Chen (paulcccccch@gmail.com)
 
 from .RDataManager import RDataManager
 from flask import Flask
+from flasgger import Swagger
 import os.path as osp
 
 
@@ -21,6 +22,13 @@ class RServer:
     
         app = Flask(__name__)
         app.after_request(self.afterRequest)
+
+        app.config['SWAGGER'] = {
+            'title': 'Robustar API',
+            'uiversion': 3,
+            'version': 'beta'
+        }
+        swagger = Swagger(app)
 
         self.datasetDir = datasetDir
         self.baseDir = baseDir
@@ -51,6 +59,14 @@ class RServer:
     @staticmethod
     def setDataManager(dataManager):
         RServer.serverInstance.dataManager = dataManager
+
+    @staticmethod
+    def getAutoAnnotator():
+        return RServer.serverInstance.autoAnnotator
+
+    @staticmethod
+    def setAutoAnnotator(autoAnnotator):
+        RServer.serverInstance.autoAnnotator = autoAnnotator
 
     @staticmethod
     def getServerConfigs():

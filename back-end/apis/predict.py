@@ -26,13 +26,66 @@ modelWrapper = RServer.getModelWrapper()
 @app.route('/predict/<split>/<image_id>')
 def predict(split, image_id):
     """
-    Get the prediction path of the image specified by its id.
-
-    args: 
-        split:    'train', 'test' or 'dev'
-        image_id: The index of the image within the dataset
-    returns:
-        [attribute, output_array, predict_fig_routes]
+    Gets the prediction path of the image specified by its id
+    ---
+    tags:
+      - predict
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        required: true
+        type: "string"
+      - name: "image_id"
+        in: "path"
+        description: "the index of the image within the dataset"
+        required: true
+        type: "integer"
+    responses:
+      200:
+        description: a list of [attribute, output_array, predict_fig_routes]
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: array
+              example: [
+                [
+                  "n01440764",
+                  "n02102040",
+                  "n02979186",
+                  "n03000684",
+                  "n03028079",
+                  "n03394916",
+                  "n03417042",
+                  "n03425413",
+                  "n03445777",
+                  "n03888257"
+                ],
+                [
+                  0.11704748123884201,
+                  0.05598455294966698,
+                  0.03636372834444046,
+                  0.05954515188932419,
+                  0.13732001185417175,
+                  0.1522897481918335,
+                  0.082752525806427,
+                  0.041457951068878174,
+                  0.2806808054447174,
+                  0.03655797988176346
+                ],
+                [
+                  "/Robustar2/visualize_images/train_0_0.png",
+                  "/Robustar2/visualize_images/train_0_1.png",
+                  "/Robustar2/visualize_images/train_0_2.png",
+                  "/Robustar2/visualize_images/train_0_3.png"
+                ]
+              ]
+            msg:
+              type: string
+              example: Success
     """
 
     # e.g.  train/10, test/300
@@ -53,7 +106,6 @@ def predict(split, image_id):
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
-        # image_name = imgPath.replace('.', '_').replace('/', '_').replace('\\', '_')
         image_name = imageURL.replace('.', '_').replace('/', '_').replace('\\', '_')
 
         model = modelWrapper.model
@@ -73,7 +125,7 @@ def predict(split, image_id):
         output_object = [output_array, predict_fig_routes]
 
     # get attributes
-    if split == "train":
+    if split in ("train", 'annotated'):
         attribute = dataManager.trainset.classes
     elif split in ("validation", "validation_correct", "validation_incorrect"):
         attribute = dataManager.validationset.classes
@@ -99,7 +151,35 @@ def predict(split, image_id):
 @app.route('/influence/<split>/<image_id>')
 def get_influence(split, image_id):
     """
-    Get the influence for an image specified by image_url
+     Gets the influence for an image specified by its id
+    ---
+    tags:
+      - predict
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        required: true
+        type: "string"
+      - name: "image_id"
+        in: "path"
+        description: "the index of the image within the dataset"
+        required: true
+        type: "integer"
+    responses:
+      200:
+        description: path of influence images, or influence not found or calculated
+        schema:
+          properties:
+            code:
+              type: integer
+              example: -1
+            data:
+              type: string
+              example: ""
+            msg:
+              type: string
+              example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
     target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
@@ -111,15 +191,41 @@ def get_influence(split, image_id):
 @app.route('/influence', methods=['POST'])
 def calculate_influence():
     """
-    Calculates the influence for the test set.
-    example request body:
-        {
-            "configs": {
-                "test_sample_num": 2, // number of test samples per class for which we calculate influence 
-                "r_averaging": 10 
-            }
-        }
-
+    Calculates the influence for the test set
+    ---
+    tags:
+      - predict
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "The configuration"
+        required: true
+        schema:
+          properties:
+            configs:
+              type: object
+              example: {
+                test_sample_num: 2,
+                r_averaging: 10
+              }
+    responses:
+      200:
+        description: Influence calculation started
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: {}
+            msg:
+              type: string
+              example: "Influence calculation started!"
     """
     json_data = request.get_json()
     configs = json_data['configs']
@@ -131,80 +237,3 @@ def calculate_influence():
     )
     calcInfluenceThread.start()
     return RResponse.ok({}, "Influence calculation started!")
-
-
-##########################################################
-###### The following are not yet implemented #############
-##########################################################
-
-# TODO: Reference only! Not Working!
-# 存储模型输入到 model/model_putput***.json
-@app.route('/get-correct-list/<type>')
-def get_correct_list(type):
-    from visualize import getPredict
-    result = {}
-    i = 0
-    while (True):
-        path = imageURLToPath(type + "/" + str(i))
-        if (path == "none"):
-            break
-
-        datasetPath = RServer.getServer().datasetPath
-
-        path = osp.join(datasetPath, 'type', path).replace('\\', '/')
-        print(path)
-        result[i] = getPredict(app.model.net, path, 224)
-        i += 1
-        print("current calculate", i)
-    with open('model/model_output' + type + '.json', 'w') as f:
-        json.dump(result, f)
-    return jsonify(result)
-
-
-# 将编号转化为图片路径
-@app.route('/predictid/<folder>/<imageid>')
-def get_predict_img_from_id(folder, imageid):
-    url = imageURLToPath(folder + '/' + str(imageid))
-    filePath = folder + '/' + url
-    return get_predict_img(filePath)
-
-
-@app.route('/influence-img/<number>')
-def get_random_influence_img(number):
-    import random
-    import math
-    random_num = random.randint(1, 1000)
-    random_num = math.floor(float(number) * 1000)
-    url = imageURLToPath('train' + '/' + str(random_num))
-    # return redirect('/dataset/train/'+url)
-    return '/dataset/train/' + url
-
-
-@app.route('/getinfluence/<img_id>/<helpful_num>/<harmful_num>', methods=['POST', 'GET'])
-def get_influence_dic(img_id, helpful_num, harmful_num):
-    result = {}
-    result['success'] = 1
-    if (not check_influence(img_id)):
-        result['success'] = 0
-        return jsonify(result)
-    helpful_num = int(helpful_num)
-    harmful_num = int(harmful_num)
-
-    helpful_list = get_helpful_list(img_id)
-    harmful_list = get_harmful_list(img_id)
-    influence_list = get_influence_list(img_id)
-
-    helpful_list = helpful_list[:helpful_num]
-    harmful_list = harmful_list[:harmful_num]
-    helpful_influence = []
-    harmful_influence = []
-    for i in helpful_list:
-        helpful_influence.append(influence_list[i])
-    for i in harmful_list:
-        harmful_influence.append(influence_list[i])
-    result['helpful_list'] = helpful_list
-    result['harmful_list'] = harmful_list
-    result['helpful_influence'] = helpful_influence
-    result['harmful_influence'] = harmful_influence
-
-    return jsonify(result)
