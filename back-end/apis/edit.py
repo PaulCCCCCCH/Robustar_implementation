@@ -15,6 +15,43 @@ dataManager = server.getDataManager()
 
 @app.route('/edit/<split>/<image_id>', methods=['POST'])
 def user_edit(split, image_id):
+    """
+    Edits the width and size of the image
+    ---
+    tags:
+      - edit
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split, valid values are 'train' or 'annotated'"
+        required: true
+        type: "string"
+      - name: "image_id"
+        in: "path"
+        description: "ID of the image"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "The edit config"
+        required: true
+        schema:
+          properties:
+            image:
+              type: string
+              example: the base64 encoding of the image
+            image_height:
+              type: integer
+            image_width:
+              type: integer
+    responses:
+      200:
+        description: edit success
+    """
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated']:
         raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
