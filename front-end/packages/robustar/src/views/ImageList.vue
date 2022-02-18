@@ -1,10 +1,8 @@
 <template>
   <div class="d-flex justify-center align-center" style="height: 100%">
-    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text">
-      Sorry, image list is empty
-    </div>
+    <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
-    <div v-else class="d-flex flex-column align-center pt-8 px-4">
+    <div v-if="hasImages" class="d-flex flex-column flex-grow-1 align-center px-4">
       <!-- Page header-->
       <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
@@ -114,9 +112,11 @@
     </div>
 
     <Visualizer
+      v-if="hasImages"
       :is-active="image_id !== ''"
       :image_id="String(image_id)"
       :split="split"
+      @open="fetchImageId"
       @close="image_id = ''"
     />
   </div>
@@ -171,8 +171,14 @@ export default {
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
     },
+    hasImages() {
+      return this.imageMatrix.length > 0;
+    },
   },
   methods: {
+    fetchImageId() {
+      this.image_id = sessionStorage.getItem('image_id') || '';
+    },
     updateSplit() {
       this.split = this.$route.params.split;
       if (this.split === 'validation' || this.split === 'test') {
@@ -224,9 +230,10 @@ export default {
     },
     gotoImage(row, col, url, componentName) {
       this.setCurrentImage(row, col, url);
-      this.$router.push({ 
-        name: componentName, 
-        params: {mode: this.$route.params.split} });
+      this.$router.push({
+        name: componentName,
+        params: { mode: this.$route.params.split },
+      });
     },
     gotoPage() {
       this.inputPage = Number(this.inputPage);

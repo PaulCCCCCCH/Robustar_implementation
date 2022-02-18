@@ -9,6 +9,7 @@
       :is-active="image_id !== ''"
       :image_id="String(image_id)"
       :split="split"
+      @open="loadImageInfo"
       @close="image_id = ''"
     />
   </div>
