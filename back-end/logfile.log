@@ -2705,3 +2705,5 @@ IndexError: list index out of range
 2022-01-21 22:35:58,608: 127.0.0.1 - - [21/Jan/2022 22:35:58] "[36mGET /visualize/Robustar2/visualize_images/train_0_0.png HTTP/1.1[0m" 304 -
 2022-01-21 22:35:58,613: 127.0.0.1 - - [21/Jan/2022 22:35:58] "[36mGET /visualize/Robustar2/visualize_images/train_0_1.png HTTP/1.1[0m" 304 -
 2022-01-21 22:35:58,619: 127.0.0.1 - - [21/Jan/2022 22:35:58] "[36mGET /visualize/Robustar2/visualize_images/train_0_2.png HTTP/1.1[0m" 304 -
+2022-02-11 12:25:15,727: Running on: 10 images per class.
+2022-02-11 12:25:15,727: Starting at img number: 0 per class.

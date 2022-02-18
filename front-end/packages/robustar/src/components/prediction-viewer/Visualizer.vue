@@ -1,49 +1,56 @@
 <template>
-  <div>
-    <v-expansion-panels :multiple="true" v-model="panels">
-      <!-- Model Prediction -->
-      <v-expansion-panel @click="toggle_panel">
-        <v-expansion-panel-header expand-icon="mdi-menu-down">
-          Model Prediction
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <div class="d-flex justify-center align-center">
-            <PredView :dataArr="predDataArr" :config="predViewConfig" />
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+  <div class="d-flex" style="height: 100%; max-width: 40%">
+    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
+      <v-btn class="mb-4" icon @click="closeVisualizer">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
 
-      <!-- View Model Focus -->
-      <v-expansion-panel @change="toggle_panel">
-        <v-expansion-panel-header expand-icon="mdi-menu-down">
-          Model Focus
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <FocusView :focusImgUrl="focusImgUrl" />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+      <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
+        <!-- Model Prediction -->
+        <v-expansion-panel @click="toggle_panel">
+          <v-expansion-panel-header expand-icon="mdi-menu-down">
+            Model Prediction
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="d-flex justify-center align-center">
+              <PredView :dataArr="predDataArr" :config="predViewConfig" />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-      <!-- View Influence -->
-      <v-expansion-panel @change="toggle_panel">
-        <v-expansion-panel-header expand-icon="mdi-menu-down">
-          Influence Images
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <InfluView :influImgUrl="influImgUrl" />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+        <!-- View Model Focus -->
+        <v-expansion-panel @change="toggle_panel">
+          <v-expansion-panel-header expand-icon="mdi-menu-down">
+            Model Focus
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <FocusView :focusImgUrl="focusImgUrl" />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-      <!-- View Proposed Annotation -->
-      <v-expansion-panel @change="toggle_panel">
-        <v-expansion-panel-header expand-icon="mdi-menu-down">
-          Proposed annotation
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <ProposedEditView :proposedEditUrl="proposedEditUrl" />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+        <!-- View Influence -->
+        <v-expansion-panel @change="toggle_panel">
+          <v-expansion-panel-header expand-icon="mdi-menu-down">
+            Influence Images
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <InfluView :influImgUrl="influImgUrl" />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-    </v-expansion-panels>
+        <!-- View Proposed Annotation -->
+        <v-expansion-panel @change="toggle_panel">
+          <v-expansion-panel-header expand-icon="mdi-menu-down">
+            Proposed annotation
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <ProposedEditView :proposedEditUrl="proposedEditUrl" />
+          </v-expansion-panel-content>
+        </v-expansion-panel> </v-expansion-panels
+    ></v-sheet>
+    <v-btn v-else class="float-button" color="secondary" outlined large @click="openVisualizer">
+      <v-icon left>mdi-eye</v-icon>visualizer
+    </v-btn>
   </div>
 </template>
 
@@ -59,6 +66,10 @@ import { configs } from '@/configs.js';
 export default {
   components: { PredView, InfluView, FocusView, ProposedEditView },
   props: {
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
     split: {
       type: String,
       default: () => '',
@@ -76,7 +87,7 @@ export default {
       ],
       focusImgUrl: [],
       influImgUrl: [],
-      proposedEditUrl: "",
+      proposedEditUrl: '',
       predViewConfig: {
         componentWidth: 300,
         figHeight: 300,
@@ -103,6 +114,9 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
+    if (this.split === 'annotated') {
+      this.split = 'train';
+    }
     this.get_visualize_data();
   },
   methods: {
@@ -116,15 +130,15 @@ export default {
     get_proposed_edit(split, image_id) {
       const success = (response) => {
         if (response.data.code == -1) {
-          this.proposedEditUrl = "";
+          this.proposedEditUrl = '';
           return;
         }
-        const proposedId= response.data.data;
+        const proposedId = response.data.data;
         this.proposedEditUrl = `${configs.imageServerUrl}/proposed/${proposedId}`;
-      }
+      };
       const failed = (err) => {
         console.log(err);
-      }
+      };
       APIGetProposedEdit(split, image_id, success, failed);
     },
     view_prediction(split, image_id) {
@@ -188,6 +202,28 @@ export default {
         sessionStorage.setItem('visualizer_panels', JSON.stringify(this.panels));
       }, 0);
     },
+
+    openVisualizer() {
+      this.$emit('open');
+    },
+
+    closeVisualizer() {
+      this.$emit('close');
+    },
   },
 };
 </script>
+
+<style scoped>
+.float-button {
+  position: fixed;
+  right: 10px;
+  top: 50vh;
+  transform: translate(50%, -50%);
+}
+
+.float-button:hover {
+  transform: translate(0, -50%);
+  transition: 0.3s;
+}
+</style>

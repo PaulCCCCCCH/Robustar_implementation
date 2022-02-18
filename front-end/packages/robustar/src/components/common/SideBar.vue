@@ -14,7 +14,7 @@
 
     <v-list nav>
       <!-- first level -->
-      <div v-for="item in items" :key="item.text">
+      <div v-for="item in items" :key="item.text" class="mb-2">
         <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
@@ -79,18 +79,20 @@ export default {
             {
               text: 'Validation Data',
               icon: '',
-              children: [
-                { text: 'Correctly Classified', link: 'image-list/validation_correct' },
-                { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
-              ],
+              link: 'image-list/validation',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/validation_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
+              // ],
             },
             {
               text: 'Test Data',
               icon: '',
-              children: [
-                { text: 'Correctly Classified', link: 'image-list/test_correct' },
-                { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
-              ],
+              link: 'image-list/test',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/test_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
+              // ],
             },
           ],
         },
