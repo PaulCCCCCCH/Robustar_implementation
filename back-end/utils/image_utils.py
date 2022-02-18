@@ -1,5 +1,5 @@
 from os.path import normpath
-
+import shutil
 from objects.RServer import RServer
 
 dataManager = RServer.getServer().dataManager
@@ -19,6 +19,8 @@ test_incorrect_root = dataManager.test_incorrect_root
 validation_correct_root = dataManager.validation_correct_root
 validation_incorrect_root = dataManager.validation_incorrect_root
 
+def imageSplitIdToPath(split, image_id):
+    return imageURLToPath("{}/{}".format(split, image_id))
 
 def imageURLToPath(image_url):
     """
@@ -151,6 +153,13 @@ def getSplitLength(split):
         return len(dataManager.split_dict[split][0])
 
     return len(dataManager.split_dict[split])
+
+
+def copyImage(src_split, src_id, dst_split, dst_id):
+    src_path = imageSplitIdToPath(src_split, src_id)
+    dst_path = imageSplitIdToPath(dst_split, dst_id)
+    print("Copying from {} to {}".format(src_path, dst_path))
+    shutil.copyfile(src_path, dst_path)
 
 
 def get_validation_correct(is_correct, image_index):
