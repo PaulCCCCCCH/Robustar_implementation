@@ -18,6 +18,12 @@ class CustomSignals(QObject):
     # Custom signal for removing item from running or exited container list widget
     removeItemSignal = Signal(QListWidget, str)
 
+    # Custom signal for enabling server control buttons
+    enableControlSignal = Signal()
+
+    # Custom signal for disabling server control buttons
+    disableControlSignal = Signal()
+
 
 class Launcher(QWidget):
     def __init__(self):
@@ -78,6 +84,8 @@ class Launcher(QWidget):
         self.customSignals.printMessageSignal.connect(self.printMessage)
         self.customSignals.addItemSignal.connect(self.addItem)
         self.customSignals.removeItemSignal.connect(self.removeItem)
+        self.customSignals.enableControlSignal.connect(self.enableControl)
+        self.customSignals.disableControlSignal.connect(self.disableControl)
 
         # Set the listWidgets so that only one entry in them can be selected at a time
         self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget]
@@ -149,6 +157,7 @@ class Launcher(QWidget):
 
         def startServerInThread():
             try:
+                self.customSignals.disableControlSignal.emit()
 
                 # If it's in createTab
                 # Get the container with the input name
@@ -172,8 +181,8 @@ class Launcher(QWidget):
                 if self.container.status == 'exited':
                     self.container.restart()
                     self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
-                    self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                    self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
 
                 # If the container is running
                 elif self.container.status == 'running':
@@ -223,7 +232,7 @@ class Launcher(QWidget):
                         ]
                     )
                     self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                 # If the version only uses cpu
                 else:
                     self.container = self.client.containers.run(
@@ -255,11 +264,13 @@ class Launcher(QWidget):
                             self.configs['configFile'] + ':/Robustar2/configs.json']
                     )
                     self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
+                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
             except docker.errors.APIError:
                 self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
                 os._exit(1)
+            finally:
+                self.customSignals.enableControlSignal.emit()
 
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
@@ -269,6 +280,8 @@ class Launcher(QWidget):
         def stopServerInThread():
 
             try:
+                self.customSignals.disableControlSignal.emit()
+
                 # If it's in createTab
                 # Get the container with the input name
                 if (self.ui.tabWidget.currentIndex() == 0):
@@ -294,8 +307,8 @@ class Launcher(QWidget):
                 elif self.container.status == 'running':
                     self.container.stop()
                     self.customSignals.printMessageSignal.emit('The server is now stopped')
-                    self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
-                    self.customSignals.removeItemSignal.emit(self.ui.runningListWidget, self.configs['containerName'])
+                    self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, self.container.name)
+                    self.customSignals.removeItemSignal.emit(self.ui.runningListWidget, self.container.name)
                 # If the container is in other status
                 else:
                     self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
@@ -307,12 +320,16 @@ class Launcher(QWidget):
                 self.customSignals.printMessageSignal.emit('The server encountered an error')
                 time.sleep(5)
                 os._exit(1)
+            finally:
+                self.customSignals.enableControlSignal.emit()
 
         stopServerThread = Thread(target=stopServerInThread)
         stopServerThread.start()
 
     def deleteServer(self):
         try:
+            self.customSignals.disableControlSignal.emit()
+
             # If it's in createTab
             # Get the container with the input name
             if (self.ui.tabWidget.currentIndex() == 0):
@@ -332,7 +349,7 @@ class Launcher(QWidget):
             if(self.container.status == 'exited'):
                 self.container.remove()
                 self.customSignals.printMessageSignal.emit('The server has been removed')
-                self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.configs['containerName'])
+                self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
             elif self.container.status == 'running':
                 self.customSignals.printMessageSignal.emit('The server is still running. Stop the server before deletion')
             # If the container is in other status
@@ -346,6 +363,8 @@ class Launcher(QWidget):
             self.customSignals.printMessageSignal.emit('The server encountered an error')
             time.sleep(5)
             os._exit(1)
+        finally:
+            self.customSignals.enableControlSignal.emit()
 
     def initContainerList(self, index):
 
@@ -386,6 +405,18 @@ class Launcher(QWidget):
         row = listWidget.row(item)
         listWidget.takeItem(row)
 
+    def enableControl(self):
+        self.ui.startServerButton.setEnabled(True)
+        self.ui.stopServerButton.setEnabled(True)
+        self.ui.deleteServerButton.setEnabled(True)
+
+    def disableControl(self):
+        self.ui.startServerButton.setEnabled(False)
+        self.ui.stopServerButton.setEnabled(False)
+        self.ui.deleteServerButton.setEnabled(False)
+
+
+    # Function to ensure only one entry in the two listWidgets can be selected at a time
     def singleSelect(self, listWidget, listWidgets):
 
         for widget in listWidgets:
