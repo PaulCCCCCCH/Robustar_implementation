@@ -1,20 +1,18 @@
+import shutil
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
-from io import BytesIO
-import numpy as np
-from PIL import Image
 import base64
-from utils.image_utils import imageURLToPath, get_train_from_annotated
+from utils.image_utils import get_train_from_annotated, get_annotated_from_train, imageSplitIdToPath, copyImage
+from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
 from utils.path_utils import get_paired_path
-import os.path as osp
 
 server = RServer.getServer()
 app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
 @app.route('/edit/<split>/<image_id>', methods=['POST'])
-def user_edit(split, image_id):
+def api_user_edit(split, image_id):
     """
     Edits the width and size of the image
     ---
@@ -66,31 +64,14 @@ def user_edit(split, image_id):
 
     h = int(json_data['image_height'])
     w = int(json_data['image_width'])
-    with Image.open(BytesIO(decoded)) as img:
-        
-        img_path = imageURLToPath('{}/{}'.format(split, image_id))
 
-        paired_img_path = get_paired_path(img_path, dataManager.train_root, dataManager.paired_root)
-
-        to_save = img.resize((w, h))
-        to_save = to_save.convert('RGB') # image comming from canvas is RGBA
-
-        to_save.save(paired_img_path)
-
-        if int(image_id) in dataManager.annotatedInvBuffer:
-            save_idx = dataManager.annotatedInvBuffer[int(image_id)]
-        else:
-            save_idx = len(dataManager.annotatedBuffer)
-            dataManager.annotatedInvBuffer[int(image_id)] = save_idx
-        dataManager.annotatedBuffer[save_idx] = int(image_id)
-
-        dataManager.dump_annotated_list() # TODO: Change this to SQLite
+    save_edit(split, image_id, decoded, h, w)
 
     return RResponse.ok("Success!")
 
 
 @app.route('/propose/<split>/<image_id>')
-def propose_edit(split, image_id):
+def api_propose_edit(split, image_id):
     """
     Get edited image proposed by auto annotator
 
@@ -116,22 +97,31 @@ def propose_edit(split, image_id):
         split = 'train'
         image_id = get_train_from_annotated(image_id)
 
-    image_url = '{}/{}'.format(split, image_id)
-    proposedAnnotationBuffer = dataManager.proposedAnnotationBuffer
+    proposed_image_id = propose_edit(split, image_id)
 
-    if int(image_id) not in proposedAnnotationBuffer:
-        image_path = imageURLToPath(image_url)
-        pil_image = server.getAutoAnnotator().annotate_single(image_path, dataManager.image_size)
-        # image_name = image_url.replace('.', '_').replace('/', '_').replace('\\', '_')
-        proposed_image_path = get_paired_path(image_path, dataManager.train_root, dataManager.proposed_annotation_root)
-        # proposed_image_path = osp.join(dataManager.proposed_annotation_root, image_name) + '.jpg'
-        pil_image.save(proposed_image_path)
-        proposedAnnotationBuffer.add(int(image_id))
-
-    proposed_image_id = int(image_id)
-        
     return RResponse.ok(proposed_image_id)
 
+
+@app.route('/auto-annotate/<split>', methods=['POST'])
+def api_auto_annotate(split):
+    """
+    """
+
+    if split != 'train':
+        raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+
+
+    json_data = request.get_json()
+    num_to_gen = int(json_data['num_to_gen'])
+    try:
+      start_auto_annotate(split, num_to_gen)
+    except Exception as e:
+      RResponse.fail('auto annotation failed')
+
+    return RResponse.ok('success')
+      
+
+    
 
 if __name__ == '__main__':
     print(RServer)

@@ -95,6 +95,7 @@ export default {
           ],
         },
         { text: 'Test', icon: 'mdi-code-braces', link: 'test' },
+        { text: 'Auto Annotate', icon: 'mdi-auto-fix', link: 'auto-annotate' },
         { text: 'Config', icon: 'mdi-file-table-box', link: 'config' },
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
