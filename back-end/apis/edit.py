@@ -7,6 +7,7 @@ from PIL import Image
 import base64
 from utils.image_utils import imageURLToPath, get_train_from_annotated
 from utils.path_utils import get_paired_path
+import os.path as osp
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -49,6 +50,50 @@ def user_edit(split, image_id):
         dataManager.dump_annotated_list() # TODO: Change this to SQLite
 
     return RResponse.ok("Success!")
+
+
+@app.route('/propose/<split>/<image_id>')
+def propose_edit(split, image_id):
+    """
+    Get edited image proposed by auto annotator
+
+    TODO: This function may be called twice redundantly if front end user
+    clicked on 'auto edit' while 'ProposedEditVue' component is still
+    generating a proposed annotation. This needs to be fixed with some
+    kind of lock.
+
+    args: 
+        split:    'train' or 'annotated'
+        image_id: The index of the image within the dataset
+    returns:
+        proposed image path that can be placed in <img> tag with proper 
+        server url as prefix
+    """
+
+    proposed_image_id = ""
+    if split not in ['annotated', 'train']:
+        print("Cannot propose edit to a wrong split")
+        return RResponse.ok(proposed_image_id)
+
+    if split == 'annotated':
+        split = 'train'
+        image_id = get_train_from_annotated(image_id)
+
+    image_url = '{}/{}'.format(split, image_id)
+    proposedAnnotationBuffer = dataManager.proposedAnnotationBuffer
+
+    if int(image_id) not in proposedAnnotationBuffer:
+        image_path = imageURLToPath(image_url)
+        pil_image = server.getAutoAnnotator().annotate_single(image_path, dataManager.image_size)
+        # image_name = image_url.replace('.', '_').replace('/', '_').replace('\\', '_')
+        proposed_image_path = get_paired_path(image_path, dataManager.train_root, dataManager.proposed_annotation_root)
+        # proposed_image_path = osp.join(dataManager.proposed_annotation_root, image_name) + '.jpg'
+        pil_image.save(proposed_image_path)
+        proposedAnnotationBuffer.add(int(image_id))
+
+    proposed_image_id = int(image_id)
+        
+    return RResponse.ok(proposed_image_id)
 
 
 if __name__ == '__main__':

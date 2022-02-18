@@ -53,7 +53,6 @@ def predict(split, image_id):
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
-        # image_name = imgPath.replace('.', '_').replace('/', '_').replace('\\', '_')
         image_name = imageURL.replace('.', '_').replace('/', '_').replace('\\', '_')
 
         model = modelWrapper.model
@@ -73,7 +72,7 @@ def predict(split, image_id):
         output_object = [output_array, predict_fig_routes]
 
     # get attributes
-    if split == "train":
+    if split in ("train", 'annotated'):
         attribute = dataManager.trainset.classes
     elif split in ("validation", "validation_correct", "validation_incorrect"):
         attribute = dataManager.validationset.classes
@@ -131,80 +130,3 @@ def calculate_influence():
     )
     calcInfluenceThread.start()
     return RResponse.ok({}, "Influence calculation started!")
-
-
-##########################################################
-###### The following are not yet implemented #############
-##########################################################
-
-# TODO: Reference only! Not Working!
-# 存储模型输入到 model/model_putput***.json
-@app.route('/get-correct-list/<type>')
-def get_correct_list(type):
-    from visualize import getPredict
-    result = {}
-    i = 0
-    while (True):
-        path = imageURLToPath(type + "/" + str(i))
-        if (path == "none"):
-            break
-
-        datasetPath = RServer.getServer().datasetPath
-
-        path = osp.join(datasetPath, 'type', path).replace('\\', '/')
-        print(path)
-        result[i] = getPredict(app.model.net, path, 224)
-        i += 1
-        print("current calculate", i)
-    with open('model/model_output' + type + '.json', 'w') as f:
-        json.dump(result, f)
-    return jsonify(result)
-
-
-# 将编号转化为图片路径
-@app.route('/predictid/<folder>/<imageid>')
-def get_predict_img_from_id(folder, imageid):
-    url = imageURLToPath(folder + '/' + str(imageid))
-    filePath = folder + '/' + url
-    return get_predict_img(filePath)
-
-
-@app.route('/influence-img/<number>')
-def get_random_influence_img(number):
-    import random
-    import math
-    random_num = random.randint(1, 1000)
-    random_num = math.floor(float(number) * 1000)
-    url = imageURLToPath('train' + '/' + str(random_num))
-    # return redirect('/dataset/train/'+url)
-    return '/dataset/train/' + url
-
-
-@app.route('/getinfluence/<img_id>/<helpful_num>/<harmful_num>', methods=['POST', 'GET'])
-def get_influence_dic(img_id, helpful_num, harmful_num):
-    result = {}
-    result['success'] = 1
-    if (not check_influence(img_id)):
-        result['success'] = 0
-        return jsonify(result)
-    helpful_num = int(helpful_num)
-    harmful_num = int(harmful_num)
-
-    helpful_list = get_helpful_list(img_id)
-    harmful_list = get_harmful_list(img_id)
-    influence_list = get_influence_list(img_id)
-
-    helpful_list = helpful_list[:helpful_num]
-    harmful_list = harmful_list[:harmful_num]
-    helpful_influence = []
-    harmful_influence = []
-    for i in helpful_list:
-        helpful_influence.append(influence_list[i])
-    for i in harmful_list:
-        harmful_influence.append(influence_list[i])
-    result['helpful_list'] = helpful_list
-    result['harmful_list'] = harmful_list
-    result['helpful_influence'] = helpful_influence
-    result['harmful_influence'] = harmful_influence
-
-    return jsonify(result)

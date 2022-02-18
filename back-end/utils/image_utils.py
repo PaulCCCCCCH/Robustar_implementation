@@ -10,6 +10,7 @@ trainset = dataManager.trainset
 testset = dataManager.testset
 validationset = dataManager.validationset
 pairedset = dataManager.pairedset
+proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
@@ -19,29 +20,33 @@ validation_correct_root = dataManager.validation_correct_root
 validation_incorrect_root = dataManager.validation_incorrect_root
 
 
-def imageURLToPath(image_id):
+def imageURLToPath(image_url):
     """
-    Get the real path of the image specified by its id.
+    Get the real path of the image specified by its url.
+    When getting proposed image, split should be "proposed", and index
+    should be training set index
     args: 
-        imageId:    The id of the image consisting of the dataset split (train/dev/test) 
-                    and an index.
+        imageId:    The url of the image consisting of the dataset split (train/dev/test) 
+                    and an index(id).
                     e.g.  train/10, test/300
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
-    split, indexStr = image_id.split('/')
+    split, indexStr = image_url.split('/')
     imageIndex = int(indexStr)
 
     # If already buffered, just return
-    if image_id in datasetFileBuffer:
-        return datasetFileBuffer[image_id]
+    if image_url in datasetFileBuffer:
+        return datasetFileBuffer[image_url]
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
     elif split == 'annotated':
         filePath = get_annotated(imageIndex)[0]
     elif split == 'validation':
         filePath = validationset.samples[imageIndex][0]
+    elif split == 'proposed':
+        filePath = proposedset.samples[imageIndex][0]
     elif split == 'test':
         filePath = testset.samples[imageIndex][0]
     elif split == 'validation_correct':
@@ -56,8 +61,9 @@ def imageURLToPath(image_id):
         # data split not supported
         raise NotImplemented('Data split not supported')
 
-    filePath = normpath(filePath).replace('\\', '/')
-    datasetFileBuffer[image_id] = filePath
+    if filePath:
+        filePath = normpath(filePath).replace('\\', '/')
+        datasetFileBuffer[image_url] = filePath
 
     return filePath
 

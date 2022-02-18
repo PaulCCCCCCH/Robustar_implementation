@@ -30,7 +30,9 @@ export default {
       sessionStorage.setItem('split', split);
       sessionStorage.setItem('image_id', image_id);
       sessionStorage.setItem('image_url', url);
-      this.$router.push({ name: 'EditImage' });
+      sessionStorage.setItem('save_image_id', split)
+      sessionStorage.setItem('save_image_split', image_id)
+      this.$router.push({ name: 'EditImage', params: {mode: split} });
     },
   },
 };

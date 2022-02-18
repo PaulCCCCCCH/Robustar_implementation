@@ -184,6 +184,9 @@ export default {
         loadEdit: (apiLoadEdit) => {
           apiLoadEdit();
         },
+        autoEdit: (apiAutoEdit) => {
+          apiAutoEdit();
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },

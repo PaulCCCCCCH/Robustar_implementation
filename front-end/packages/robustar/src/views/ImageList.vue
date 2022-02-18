@@ -184,10 +184,14 @@ export default {
       sessionStorage.setItem('split', this.$route.params.split);
       sessionStorage.setItem('image_id', image_id);
       sessionStorage.setItem('image_url', url);
+      sessionStorage.setItem('save_image_id', image_id);
+      sessionStorage.setItem('save_image_split', this.$route.params.split);
     },
     gotoImage(row, col, url, componentName) {
       this.setCurrentImage(row, col, url);
-      this.$router.push({ name: componentName });
+      this.$router.push({ 
+        name: componentName, 
+        params: {mode: this.$route.params.split} });
     },
     gotoPage() {
       this.inputPage = Number(this.inputPage);

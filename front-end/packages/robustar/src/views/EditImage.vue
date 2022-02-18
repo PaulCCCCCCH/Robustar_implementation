@@ -12,7 +12,7 @@
 </template>
 <script>
 import ImageEditor from '@/components/image-editor/ImageEditor';
-import { APISendEdit } from '@/apis/edit';
+import { APISendEdit, APIGetProposedEdit} from '@/apis/edit';
 import { APIGetAnnotated } from '@/apis/images';
 import { getNextImageByIdAndURL, replaceSplitAndId } from '@/utils/image_utils';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
@@ -31,10 +31,12 @@ export default {
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
         apiLoadEdit: this.loadEdit.bind(this),
+        apiAutoEdit: this.autoEdit.bind(this),
       },
-      image_id: '',
+      image_id: '', // corresponding training set id
       image_url: '',
       split: '',
+      edit_id: '', // corresponding paired set id
     };
   },
   mounted() {
@@ -50,7 +52,7 @@ export default {
         this.image_id = sessionStorage.getItem('image_id');
         this.image_url = sessionStorage.getItem('image_url');
         this.split = sessionStorage.getItem('split');
-        if (this.split === 'annotated') {
+        if (this.split === 'annotated' && this.$route.params.mode !== 'annotated') {
           this.split = 'train'
         }
     },
@@ -64,6 +66,8 @@ export default {
         sessionStorage.setItem('image_id', edit_id);
         sessionStorage.setItem('split', 'annotated');
         sessionStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'annotated', edit_id)); 
+        sessionStorage.setItem('save_image_split', 'annotated'); 
+        sessionStorage.setItem('save_image_id', edit_id); 
         this.$refs.editor.initInstance();
         this.$root.finishProcessing();
         this.$root.alert('success', 'Previous annotation loaded');
@@ -72,13 +76,32 @@ export default {
     loadEditFailed(res) {
       console.log(res);
       this.$root.finishProcessing();
-      this.$root.alert('error', 'No');
+      this.$root.alert('error', 'Failed to load previous annotation');
     },
     loadEdit() {
       this.$root.startProcessing(
         'Loading previous annotation. Please wait...'
       );
       APIGetAnnotated(this.image_id, this.loadEditSuccess, this.loadEditFailed)
+    },
+    autoEditSuccess(res) {
+      // TODO: error handling with res
+      const proposed_id = res.data.data
+      sessionStorage.setItem('image_id', this.image_id);
+      sessionStorage.setItem('split', 'proposed');
+      sessionStorage.setItem('image_url', replaceSplitAndId(this.image_url, 'proposed', proposed_id)); 
+      this.$refs.editor.initInstance();
+      this.$root.finishProcessing();
+      this.$root.alert('success', 'Automatic annotation applied.');
+    },
+    autoEditFailed(res) {
+      console.log(re)
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Failed to auto annotate');
+    },
+    autoEdit() {
+      this.$root.startProcessing('Auto-annotating...');
+      APIGetProposedEdit(this.split, this.image_id, this.autoEditSuccess, this.autoEditFailed) 
     },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
@@ -91,6 +114,7 @@ export default {
       this.image_url = `${newUrl}`;
       sessionStorage.setItem('image_id', newId);
       sessionStorage.setItem('image_url', newUrl);
+      sessionStorage.setItem('save_image_id', newId);
       this.$refs.editor.initInstance();
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
@@ -104,10 +128,10 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_id = sessionStorage.getItem('image_id') || '';
+      const image_id = sessionStorage.getItem('save_image_id') || '';
       const height = sessionStorage.getItem('image_height');
       const width = sessionStorage.getItem('image_width');
-      const split = sessionStorage.getItem('split');
+      const split = sessionStorage.getItem('save_image_split');
       APISendEdit(
         split,
         image_id,

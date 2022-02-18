@@ -53,6 +53,14 @@ class RServer:
         RServer.serverInstance.dataManager = dataManager
 
     @staticmethod
+    def getAutoAnnotator():
+        return RServer.serverInstance.autoAnnotator
+
+    @staticmethod
+    def setAutoAnnotator(autoAnnotator):
+        RServer.serverInstance.autoAnnotator = autoAnnotator
+
+    @staticmethod
     def getServerConfigs():
         return RServer.serverInstance.configs
 

@@ -16,19 +16,25 @@ export default ({ locale, makeSvgIcon }) => `
                 </label>
             </div>
             <div class="tui-image-editor-button line">
+                <!-- line drawing not needed
                 <div>
                     ${makeSvgIcon(['normal', 'active'], 'draw-line', true)}
                 </div>
                 <label>
                     ${locale.localize('Straight')}
                 </label>
+                -->
             </div>
         </li>
         <li class="tui-image-editor-partition">
+            <div style="display: none">
             <div></div>
+            </div>
         </li>
         <li>
-            <div class="tie-draw-color" title="${locale.localize('Color')}"></div>
+            <div style="display: none">
+                <div class="tie-draw-color" title="${locale.localize('Color')}"></div>
+            </div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
