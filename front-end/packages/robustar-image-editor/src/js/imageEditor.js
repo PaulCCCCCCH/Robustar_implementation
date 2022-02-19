@@ -181,7 +181,7 @@ class ImageEditor {
 
     /**
      * UI instance
-     * @type {Ui}
+     * @type {UI}
      */
     if (options.includeUI) {
       const UIOption = options.includeUI;

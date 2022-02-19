@@ -10,6 +10,17 @@ server = RServer.getServer()
 app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
+def update_annotated_list(image_id):
+    if int(image_id) in dataManager.annotatedInvBuffer:
+        save_idx = dataManager.annotatedInvBuffer[int(image_id)]
+    else:
+        save_idx = len(dataManager.annotatedBuffer)
+        dataManager.annotatedInvBuffer[int(image_id)] = save_idx
+    dataManager.annotatedBuffer[save_idx] = int(image_id)
+
+    dataManager.dump_annotated_list() # TODO: Change this to SQLite
+
+
 
 def save_edit(split, image_id, image_data, image_height, image_width):
 
@@ -24,14 +35,7 @@ def save_edit(split, image_id, image_data, image_height, image_width):
 
         to_save.save(paired_img_path)
 
-        if int(image_id) in dataManager.annotatedInvBuffer:
-            save_idx = dataManager.annotatedInvBuffer[int(image_id)]
-        else:
-            save_idx = len(dataManager.annotatedBuffer)
-            dataManager.annotatedInvBuffer[int(image_id)] = save_idx
-        dataManager.annotatedBuffer[save_idx] = int(image_id)
-
-        dataManager.dump_annotated_list() # TODO: Change this to SQLite
+        update_annotated_list(image_id)
 
 
 
@@ -65,6 +69,7 @@ def start_auto_annotate(split, num_to_gen):
             paired_img_path = get_paired_path(proposed_image_path, dataManager.proposed_annotation_root, dataManager.paired_root)
             print("Copying from {} to {}".format(proposed_image_path, paired_img_path))
             shutil.copy(proposed_image_path, paired_img_path)
+            update_annotated_list(image_id)
 
     test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
     test_thread.start()
