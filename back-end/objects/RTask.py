@@ -9,11 +9,10 @@ from datetime import timedelta
 from threading import Lock
 # from utils.train import start_train
 # from utils.test import start_test
-from flask_socketio import emit
 from objects.RServer import RServer
 
 '''
-TODO: make all thread apis create here
+make all thread apis create here
 '''
 class TaskType:
     Training = 0
@@ -38,6 +37,25 @@ class RTask:
 
     # This one should not be locked because it's purely a low-level implementation
     # otherwise may have deadlock
+
+    @staticmethod
+    def send_digest():
+        '''
+        This method is supposed to be called within the scope of lock
+        '''
+        digest = RTask.get_tasks_digest()
+        socket = RServer.getSocket()
+        socket.emit("digest", {
+            "digest": digest
+        })
+
+    @staticmethod
+    # @with_lock
+    def exit_tasks_of_type(task_type):
+        buffer = [task for task in RTask.tasks if task.task_type==task_type]
+        for task in buffer:
+            task.exit()
+
     @staticmethod
     # @with_lock
     def generate_tid():
@@ -61,6 +79,7 @@ class RTask:
         tid = task.tid
         assert tid not in [t.tid for t in RTask.tasks], "Duplicate tid in task"
         RTask.tasks.append(task)
+        RTask.send_digest()
         return task
     
     @staticmethod
@@ -68,21 +87,22 @@ class RTask:
     def exit_task(tid):
         task = RTask.find_task(tid)
         if not task:
-            raise Exception("Task not found")
+            print("Task not found")
         RTask.tasks.remove(task)
+        RTask.send_digest()
     
     @staticmethod
     # @with_lock
     def update_task(tid):
         task = RTask.find_task(tid)
-        task._update()
-        digest = RTask.get_tasks_digest()
-        socket = RServer.getSocket()
-        socket.emit("digest", {
-            "digest": digest
-        })
+        if task:
+            res = True
+            task._update()
+        else:
+            res = False
         print()
-        print(digest, flush=True)
+        RTask.send_digest()
+        return res
 
     @staticmethod
     # @with_lock
@@ -122,7 +142,7 @@ class RTask:
         RTask.exit_task(self.tid)
 
     def update(self):
-        RTask.update_task(self.tid)
+        return RTask.update_task(self.tid)
     
     def _update(self):
         self.n += 1

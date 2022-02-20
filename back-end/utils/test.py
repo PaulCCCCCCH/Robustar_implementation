@@ -63,8 +63,6 @@ class TestThread(threading.Thread):
 
         for img_index in range(dataset_length):
             # stop if it's called
-            if self.stop:
-                break
             image_url = split + "/" + str(img_index)
 
             datasetImgPath = imageURLToPath(image_url)
@@ -96,7 +94,12 @@ class TestThread(threading.Thread):
                 incorrect_file.write(str(img_index) + '\n')
 
             # task update
-            task.update()
+            task_update_res = task.update()
+            if not task_update_res:
+                break
+        else:
+            # exit task if normal end of the test iteration
+            task.exit()
 
         if split == 'validation':
             dataManager.correctValidationBuffer = correct_buffer
@@ -112,9 +115,6 @@ class TestThread(threading.Thread):
 
         correct_file.close()
         incorrect_file.close()
-
-        # exit task
-        task.exit()
 
 
 def start_test(split):

@@ -159,17 +159,6 @@ class Trainer():
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
 
-                print(self.stop, flush=True)
-
-                if self.stop:
-                    endtime = time.time()
-                    print("Time consumption:", endtime-starttime)
-                    print("Trainning stopped!")
-                    
-                    # exit
-                    task.exit()
-
-                    return 
                     
 
                 if self.use_paired_train:
@@ -225,7 +214,13 @@ class Trainer():
                 print('\r'+output_text, flush=True, end='')
 
                 # update task
-                task.update()
+                task_update_res = task.update()
+                if not task_update_res:
+                    endtime = time.time()
+                    print("Time consumption:", endtime-starttime)
+                    print("Trainning stopped!")
+
+                    return 
 
             # save_net(net)
             print("Epoch Finish!")

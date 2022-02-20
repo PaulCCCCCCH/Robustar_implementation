@@ -2,7 +2,7 @@ from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
-from objects.RTask import RTask
+from objects.RTask import RTask, TaskType
 
 app = RServer.getServer().getFlaskApp()
 
@@ -24,7 +24,7 @@ class ThreadPool:
 @app.route('/train/stop', methods=['GET'])
 def stop_training():
     try:
-        ThreadPool.stop()
+        RTask.exit_tasks_of_type(TaskType.Training)
     except:
         return RResponse.fail("Failed", -1)
     
