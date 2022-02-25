@@ -19,10 +19,12 @@ const includeUIOptions = {
     theme: whiteTheme,
   },
 };
+
 const editorDefaultOptions = {
   cssMaxWidth: 1000,
   cssMaxHeight: 1000,
 };
+
 export default {
   name: 'ImageEditor',
   props: {

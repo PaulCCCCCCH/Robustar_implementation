@@ -42,18 +42,6 @@ export default {
     };
   },
   methods: {
-    // updatewindow: function (is_mini_side_bar) {
-    //   const page_content = document.getElementById('page-content');
-    //   if (!page_content) {
-    //     return;
-    //   }
-
-    //   if (is_mini_side_bar) {
-    //     page_content.style.width = screen.width - 56 + 'px';
-    //   } else {
-    //     page_content.style.width = screen.width - 256 + 'px';
-    //   }
-    // },
     toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
@@ -69,18 +57,7 @@ export default {
 </script>
 
 <style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-} */
-
-.pages {
-  margin: 0px 0px 0px 40px;
-  height: 100%;
-  float: right;
-}
+/* global css here */
 
 #app,
 .page-content {

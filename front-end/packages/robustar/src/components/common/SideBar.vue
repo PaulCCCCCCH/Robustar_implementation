@@ -108,16 +108,5 @@ export default {
       return this.$route.path.startsWith('/image-list/');
     },
   },
-  methods: {
-    navigateTo(path) {
-      if (this.$route.path != path) {
-        this.$router.push(path);
-      }
-    },
-    changewindow() {
-      this.is_mini_side_bar = !this.is_mini_side_bar;
-      this.$emit('updatewindow', this.is_mini_side_bar);
-    },
-  },
 };
 </script>

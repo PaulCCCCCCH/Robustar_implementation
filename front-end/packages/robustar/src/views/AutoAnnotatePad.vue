@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { APIStartAutoAnnotate } from '@/apis/edit';
+import { APIStartAutoAnnotate } from '@/services/edit';
 export default {
   name: 'AutoAnnotatePad',
   data() {

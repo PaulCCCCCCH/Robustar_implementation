@@ -69,15 +69,7 @@
                   <v-expand-transition>
                     <div
                       v-if="hover"
-                      class="
-                        d-flex
-                        flex-column
-                        transition-fast-in-fast-out
-                        primary
-                        v-card--reveal
-                        text-h5
-                        white--text
-                      "
+                      class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
                       style="height: 100%"
                     >
                       <v-btn
@@ -124,8 +116,8 @@
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength, APIGetClassNames } from '@/apis/images';
+import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/imageUtils';
+import { APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -253,7 +245,7 @@ export default {
       let { imageListRow, imageListCol } = configs;
       let imgNumOfLastLine = 0;
 
-      // last page
+      // handle last page
       if (this.currentPage === this.maxPage) {
         const imgNumOfLastPage = this.splitLength - configs.imagePerPage * this.maxPage;
         imageListRow = Math.floor(imgNumOfLastPage / imageListCol);
@@ -270,7 +262,7 @@ export default {
         this.imageMatrix.push(line);
       }
 
-      // last row of last page
+      // handle last row of last page
       if (imgNumOfLastLine > 0) {
         const lastLine = [];
         for (let col = 0; col < imgNumOfLastLine; col++) {
