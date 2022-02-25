@@ -169,14 +169,14 @@ class Launcher(QWidget):
                     if 'cuda' in image:
                         createCudaContainer()
                         self.customSignals.printMessageSignal.emit(
-                            self.configs['containerName'] + ' is available at http://localhost:' + self.configs['websitePort'])
+                            self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
 
                     # If the version only uses cpu
                     else:
                         createCpuContainer()
                         self.customSignals.printMessageSignal.emit(
-                            self.configs['containerName'] + ' is available at http://localhost:' + self.configs['websitePort'])
+                            self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
 
 
@@ -199,7 +199,7 @@ class Launcher(QWidget):
             if self.container.status == 'exited':
                 self.container.restart()
                 self.customSignals.printMessageSignal.emit(
-                    self.configs['containerName'] + ' is available at http://localhost:' + self.configs['websitePort'])
+                    self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                 self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                 self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
 
@@ -208,13 +208,13 @@ class Launcher(QWidget):
             elif self.container.status == 'created':
                 self.container.start()
                 self.customSignals.printMessageSignal.emit(
-                    self.configs['containerName'] + ' is available at http://localhost:' + self.configs['websitePort'])
+                    self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                 self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                 self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
 
             # If the container is running
             elif self.container.status == 'running':
-                self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has already been running')
+                self.customSignals.printMessageSignal.emit(self.container.name + ' has already been running')
 
             # If the container is in other status
             else:
@@ -300,18 +300,18 @@ class Launcher(QWidget):
 
                 # If the container has been stopped
                 if self.container.status == 'exited':
-                    self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has already been stopped')
+                    self.customSignals.printMessageSignal.emit(self.container.name + ' has already been stopped')
 
                 # If the container has been created but not run
-                if self.container.status == 'created':
-                    self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has not been run yet')
+                elif self.container.status == 'created':
+                    self.customSignals.printMessageSignal.emit(self.container.name + ' has not been run yet')
 
                 # If the container is running
                 # Stop the container
                 # Update both runningListWidget and exitedListWidget
                 elif self.container.status == 'running':
                     self.container.stop()
-                    self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' is now stopped')
+                    self.customSignals.printMessageSignal.emit(self.container.name + ' is now stopped')
                     self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.runningListWidget, self.container.name)
                 # If the container is in other status
@@ -319,7 +319,7 @@ class Launcher(QWidget):
                     self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
 
             except docker.errors.NotFound:
-                self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has not been created yet')
+                self.customSignals.printMessageSignal.emit(self.container.name + ' has not been created yet')
 
             except docker.errors.APIError as apiError:
                 self.customSignals.printMessageSignal.emit(str(apiError))
@@ -337,20 +337,20 @@ class Launcher(QWidget):
 
             if(self.container.status == 'exited' or self.container.status == 'created'):
                 self.container.remove()
-                self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has been removed')
+                self.customSignals.printMessageSignal.emit(self.container.name + ' has been removed')
                 if (self.container.status == 'exited'):
                     self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
                 else:
                     self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
 
             elif self.container.status == 'running':
-                self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' is still running. Stop ' + self.configs['containerName'] + ' before deletion')
+                self.customSignals.printMessageSignal.emit(self.container.name + ' is still running. Stop ' + self.container.name + ' before deletion')
             # If the container is in other status
             else:
                 self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
 
         except docker.errors.NotFound:
-            self.customSignals.printMessageSignal.emit(self.configs['containerName'] + ' has not been created yet')
+            self.customSignals.printMessageSignal.emit(self.container.name + ' has not been created yet')
         except docker.errors.APIError as apiError:
             self.customSignals.printMessageSignal.emit(str(apiError))
         finally:
