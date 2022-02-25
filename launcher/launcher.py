@@ -78,6 +78,7 @@ class Launcher(QWidget):
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
         self.ui.deleteServerButton.clicked.connect(self.deleteServer)
+        self.ui.refreshListWidgetsButton.clicked.connect(self.refreshListWidgets)
 
         self.ui.tabWidget.currentChanged.connect(self.initContainerList)
 
@@ -88,9 +89,10 @@ class Launcher(QWidget):
         self.customSignals.disableControlSignal.connect(self.disableControl)
 
         # Set the listWidgets so that only one entry in them can be selected at a time
-        self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget]
+        self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget, self.ui.createdListWidget]
         self.ui.runningListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.runningListWidget, self.listWidgets))
         self.ui.exitedListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.exitedListWidget, self.listWidgets))
+        self.ui.createdListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.createdListWidget, self.listWidgets))
 
     def changeContainerName(self):
         self.configs['containerName'] = self.ui.nameInput.text()
@@ -149,128 +151,146 @@ class Launcher(QWidget):
             with open(self.savePath, 'w') as f:
                 json.dump(self.configs, f)
         except FileNotFoundError:
-            print('Save path not found')
+            print('The dialog is closed')
 
     def startServer(self):
-
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
 
         def startServerInThread():
             try:
+                # Emit signal to disable the server control buttons
                 self.customSignals.disableControlSignal.emit()
 
-                # If it's in createTab
-                # Get the container with the input name
-                if (self.ui.tabWidget.currentIndex() == 0):
-                    self.container = self.client.containers.get(self.configs['containerName'])
-                # If it's in manageTab
-                else:
-                    items = self.ui.runningListWidget.selectedItems() if len(
-                        self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
-                        self.ui.exitedListWidget.selectedItems()) > 0 else []
-                    if (len(items) == 0):
-                        self.customSignals.printMessageSignal.emit('Select a container you want to start first')
-                    else:
-                        item = items[0]
-                        containerName = item.text()
-                        self.container = self.client.containers.get(containerName)
+                self.getSelectedContainer()
 
-                # If the container has exited
-                # Restart the container
-                # Update both runningListWidget and exitedListWidget
-                if self.container.status == 'exited':
-                    self.container.restart()
-                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
-                    self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
-
-                # If the container is running
-                elif self.container.status == 'running':
-                    self.customSignals.printMessageSignal.emit('The server has already been running')
-
-                # If the container is in other status
-                else:
-                    self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
-                    time.sleep(5)
-                    os._exit(1)
+                startExistingContainer()
 
             # If the container with the input name has not been created yet
             # Create a new container and run it
             except docker.errors.NotFound:
-                # If the version uses cuda
-                # Set the device_requests parm
-                if 'cuda' in image:
-                    self.container = self.client.containers.run(
-                        image,
-                        detach=True,
-                        name=self.configs['containerName'],
-                        ports={
-                            '80/tcp': (
-                                '127.0.0.1', int(self.configs['websitePort'])),
-                            '8000/tcp': ('127.0.0.1', 6848),
-                            '6006/tcp': ('127.0.0.1', 6006),
-                        },
-                        mounts=[
-                            docker.types.Mount(target='/Robustar2/dataset/train',
-                                               source=self.configs['trainPath'],
-                                               type='bind'),
-                            docker.types.Mount(target='/Robustar2/dataset/test',
-                                               source=self.configs['testPath'],
-                                               type='bind'),
-                            docker.types.Mount(target='/Robustar2/influence_images',
-                                               source=self.configs['influencePath'],
-                                               type='bind'),
-                            docker.types.Mount(
-                                target='/Robustar2/checkpoint_images ',
-                                source=self.configs['checkPointPath'],
-                                type='bind'),
-                        ],
-                        volumes=[
-                            self.configs['configFile'] + ':/Robustar2/configs.json'],
-                        device_requests=[
-                            docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])
-                        ]
-                    )
-                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
-                # If the version only uses cpu
-                else:
-                    self.container = self.client.containers.run(
-                        image,
-                        detach=True,
-                        name=self.configs['containerName'],
-                        ports={
-                            '80/tcp': (
-                                '127.0.0.1', int(self.configs['websitePort'])),
-                            '8000/tcp': ('127.0.0.1', 6848),
-                            '6006/tcp': ('127.0.0.1', 6006),
-                        },
-                        mounts=[
-                            docker.types.Mount(target='/Robustar2/dataset/train',
-                                               source=self.configs['trainPath'],
-                                               type='bind'),
-                            docker.types.Mount(target='/Robustar2/dataset/test',
-                                               source=self.configs['testPath'],
-                                               type='bind'),
-                            docker.types.Mount(target='/Robustar2/influence_images',
-                                               source=self.configs['influencePath'],
-                                               type='bind'),
-                            docker.types.Mount(
-                                target='/Robustar2/checkpoint_images ',
-                                source=self.configs['checkPointPath'],
-                                type='bind'),
-                        ],
-                        volumes=[
-                            self.configs['configFile'] + ':/Robustar2/configs.json']
-                    )
-                    self.customSignals.printMessageSignal.emit('Robustar is available at http://localhost:' + self.configs['websitePort'])
-                    self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
-            except docker.errors.APIError:
-                self.customSignals.printMessageSignal.emit('The server encountered an error')
-                time.sleep(5)
-                os._exit(1)
+
+                try:
+                    # If the version uses cuda
+                    if 'cuda' in image:
+                        createCudaContainer()
+                        self.customSignals.printMessageSignal.emit(
+                            'Robustar is available at http://localhost:' + self.configs['websitePort'])
+                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
+                    # If the version only uses cpu
+                    else:
+                        createCpuContainer()
+                        self.customSignals.printMessageSignal.emit(
+                            'Robustar is available at http://localhost:' + self.configs['websitePort'])
+                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
+
+                except docker.errors.APIError as apiError:
+                    # If the exception is raised by the port issues
+                    # Add the new container to the createdListWidget
+                    if('port is already allocated' in str(apiError)):
+                        self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.container.name)
+                    self.customSignals.printMessageSignal.emit(str(apiError))
+
+            except docker.errors.APIError as apiError:
+                self.customSignals.printMessageSignal.emit(str(apiError))
             finally:
                 self.customSignals.enableControlSignal.emit()
+
+        def startExistingContainer():
+            # If the container has exited
+            # Restart the container
+            # Update both runningListWidget and exitedListWidget
+            if self.container.status == 'exited':
+                self.container.restart()
+                self.customSignals.printMessageSignal.emit(
+                    'Robustar is available at http://localhost:' + self.configs['websitePort'])
+                self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
+
+            # If the container has been created
+            # Start the container
+            elif self.container.status == 'created':
+                self.container.start()
+                self.customSignals.printMessageSignal.emit(
+                    'Robustar is available at http://localhost:' + self.configs['websitePort'])
+                self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
+
+            # If the container is running
+            elif self.container.status == 'running':
+                self.customSignals.printMessageSignal.emit('The server has already been running')
+
+            # If the container is in other status
+            else:
+                self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
+                time.sleep(5)
+                os._exit(1)
+
+        def createCpuContainer():
+            self.container = self.client.containers.run(
+                image,
+                detach=True,
+                name=self.configs['containerName'],
+                ports={
+                    '80/tcp': (
+                        '127.0.0.1', int(self.configs['websitePort'])),
+                    '8000/tcp': ('127.0.0.1', 6848),
+                    '6006/tcp': ('127.0.0.1', 6006),
+                },
+                mounts=[
+                    docker.types.Mount(target='/Robustar2/dataset/train',
+                                       source=self.configs['trainPath'],
+                                       type='bind'),
+                    docker.types.Mount(target='/Robustar2/dataset/test',
+                                       source=self.configs['testPath'],
+                                       type='bind'),
+                    docker.types.Mount(target='/Robustar2/influence_images',
+                                       source=self.configs['influencePath'],
+                                       type='bind'),
+                    docker.types.Mount(
+                        target='/Robustar2/checkpoint_images ',
+                        source=self.configs['checkPointPath'],
+                        type='bind'),
+                ],
+                volumes=[
+                    self.configs['configFile'] + ':/Robustar2/configs.json']
+            )
+
+        def createCudaContainer():
+            self.container = self.client.containers.run(
+                image,
+                detach=True,
+                name=self.configs['containerName'],
+                ports={
+                    '80/tcp': (
+                        '127.0.0.1', int(self.configs['websitePort'])),
+                    '8000/tcp': ('127.0.0.1', 6848),
+                    '6006/tcp': ('127.0.0.1', 6006),
+                },
+                mounts=[
+                    docker.types.Mount(target='/Robustar2/dataset/train',
+                                       source=self.configs['trainPath'],
+                                       type='bind'),
+                    docker.types.Mount(target='/Robustar2/dataset/test',
+                                       source=self.configs['testPath'],
+                                       type='bind'),
+                    docker.types.Mount(target='/Robustar2/influence_images',
+                                       source=self.configs['influencePath'],
+                                       type='bind'),
+                    docker.types.Mount(
+                        target='/Robustar2/checkpoint_images ',
+                        source=self.configs['checkPointPath'],
+                        type='bind'),
+                ],
+                volumes=[
+                    self.configs['configFile'] + ':/Robustar2/configs.json'],
+
+                # Set the device_requests parm
+                device_requests=[
+                    docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])
+                ]
+            )
 
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
@@ -282,25 +302,16 @@ class Launcher(QWidget):
             try:
                 self.customSignals.disableControlSignal.emit()
 
-                # If it's in createTab
-                # Get the container with the input name
-                if (self.ui.tabWidget.currentIndex() == 0):
-                    self.container = self.client.containers.get(self.configs['containerName'])
-                # If it's in manageTab
-                else:
-                    items = self.ui.runningListWidget.selectedItems() if len(
-                        self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
-                        self.ui.exitedListWidget.selectedItems()) > 0 else []
-                    if (len(items) == 0):
-                        self.customSignals.printMessageSignal.emit('Select a container you want to stop first')
-                    else:
-                        item = items[0]
-                        containerName = item.text()
-                        self.container = self.client.containers.get(containerName)
+                self.getSelectedContainer()
 
                 # If the container has been stopped
                 if self.container.status == 'exited':
                     self.customSignals.printMessageSignal.emit('The server has already been stopped')
+
+                # If the container has been created but not run
+                if self.container.status == 'created':
+                    self.customSignals.printMessageSignal.emit('The server has not been run yet')
+
                 # If the container is running
                 # Stop the container
                 # Update both runningListWidget and exitedListWidget
@@ -314,12 +325,12 @@ class Launcher(QWidget):
                     self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                     time.sleep(5)
                     os._exit(1)
+
             except docker.errors.NotFound:
                 self.customSignals.printMessageSignal.emit('The server has not been created yet')
-            except docker.errors.APIError:
-                self.customSignals.printMessageSignal.emit('The server encountered an error')
-                time.sleep(5)
-                os._exit(1)
+
+            except docker.errors.APIError as apiError:
+                self.customSignals.printMessageSignal.emit(str(apiError))
             finally:
                 self.customSignals.enableControlSignal.emit()
 
@@ -330,26 +341,16 @@ class Launcher(QWidget):
         try:
             self.customSignals.disableControlSignal.emit()
 
-            # If it's in createTab
-            # Get the container with the input name
-            if (self.ui.tabWidget.currentIndex() == 0):
-                self.container = self.client.containers.get(self.configs['containerName'])
-            # If it's in manageTab
-            else:
-                items = self.ui.runningListWidget.selectedItems() if len(
-                    self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
-                    self.ui.exitedListWidget.selectedItems()) > 0 else []
-                if (len(items) == 0):
-                    self.customSignals.printMessageSignal.emit('Select a container you want to delete  first')
-                else:
-                    item = items[0]
-                    containerName = item.text()
-                    self.container = self.client.containers.get(containerName)
+            self.getSelectedContainer()
 
             if(self.container.status == 'exited'):
                 self.container.remove()
                 self.customSignals.printMessageSignal.emit('The server has been removed')
                 self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
+            elif(self.container.status == 'created'):
+                self.container.remove()
+                self.customSignals.printMessageSignal.emit('The server has been removed')
+                self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
             elif self.container.status == 'running':
                 self.customSignals.printMessageSignal.emit('The server is still running. Stop the server before deletion')
             # If the container is in other status
@@ -359,10 +360,8 @@ class Launcher(QWidget):
                 os._exit(1)
         except docker.errors.NotFound:
             self.customSignals.printMessageSignal.emit('The server has not been created yet')
-        except docker.errors.APIError:
-            self.customSignals.printMessageSignal.emit('The server encountered an error')
-            time.sleep(5)
-            os._exit(1)
+        except docker.errors.APIError as apiError:
+            self.customSignals.printMessageSignal.emit(str(apiError))
         finally:
             self.customSignals.enableControlSignal.emit()
 
@@ -379,6 +378,8 @@ class Launcher(QWidget):
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, container.name)
                     elif (container.status == 'exited'):
                         self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, container.name)
+                    elif (container.status == 'created'):
+                        self.customSignals.addItemSignal.emit(self.ui.createdListWidget, container.name)
                     else:
                         self.customSignals.printMessageSignal.emit('The server encountered an unexpected status')
                         time.sleep(5)
@@ -392,8 +393,15 @@ class Launcher(QWidget):
 
             self.firstTimeCheck = False
 
+    def refreshListWidgets(self):
+        for listWidget in self.listWidgets:
+            listWidget.clear()
+        self.firstTimeCheck = True
+        self.initContainerList(1)
+
     def printMessage(self, message):
-        self.ui.messageBrowser.append(message)
+        currentTime = time.strftime("%H:%M:%S", time.localtime())
+        self.ui.messageBrowser.append(currentTime + ' -- ' + message + '\n')
         self.ui.messageBrowser.ensureCursorVisible()
 
     def addItem(self, listWidget, name):
@@ -416,7 +424,7 @@ class Launcher(QWidget):
         self.ui.deleteServerButton.setEnabled(False)
 
 
-    # Function to ensure only one entry in the two listWidgets can be selected at a time
+    # Function to ensure only one entry in the three listWidgets can be selected at a time
     def singleSelect(self, listWidget, listWidgets):
 
         for widget in listWidgets:
@@ -428,6 +436,29 @@ class Launcher(QWidget):
             # Remove the previous one from its listWidget
             if widget.selectionModel().hasSelection():
                 widget.selectionModel().clearSelection()
+
+    # Function to get the container by its name
+    def getSelectedContainer(self):
+        # If it's in createTab
+        # Get the container with the input name
+        if (self.ui.tabWidget.currentIndex() == 0):
+            self.container = self.client.containers.get(self.configs['containerName'])
+        # If it's in manageTab
+        else:
+            items = self.getItemsFromListWidgets()
+            if (len(items) == 0):
+                self.customSignals.printMessageSignal.emit('Select a container you want to stop first')
+            else:
+                item = items[0]
+                containerName = item.text()
+                self.container = self.client.containers.get(containerName)
+
+    # Function to get the selected item list(actually only one item in the list) from listWidgets
+    def getItemsFromListWidgets(self):
+        return self.ui.runningListWidget.selectedItems() if len(
+            self.ui.runningListWidget.selectedItems()) > 0 else self.ui.exitedListWidget.selectedItems() if len(
+            self.ui.exitedListWidget.selectedItems()) > 0 else self.ui.createdListWidget.selectedItems() if len(
+            self.ui.createdListWidget.selectedItems()) > 0 else []
 
 app = QApplication([])
 launcher = Launcher()

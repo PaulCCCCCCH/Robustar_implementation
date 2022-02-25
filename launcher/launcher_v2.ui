@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../doc/logo_long.png</normaloff>../doc/logo_long.png</iconset>
+    <normaloff>../doc/logo_short.png</normaloff>../doc/logo_short.png</iconset>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -64,6 +64,12 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,10">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>11</number>
+      </property>
       <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
@@ -78,12 +84,18 @@
            <x>-7</x>
            <y>-5</y>
            <width>141</width>
-           <height>311</height>
+           <height>361</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="buttonLayout">
+          <property name="topMargin">
+           <number>27</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="loadButtonLayout">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item>
              <spacer name="horizontalSpacer_9">
               <property name="orientation">
@@ -390,6 +402,12 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3,2">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
@@ -776,6 +794,9 @@
                          <property name="mouseTracking">
                           <bool>true</bool>
                          </property>
+                         <property name="text">
+                          <string>/Robustar2/dataset/train</string>
+                         </property>
                          <property name="readOnly">
                           <bool>false</bool>
                          </property>
@@ -849,6 +870,9 @@
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="text">
+                          <string>/Robustar2/dataset/test</string>
+                         </property>
                         </widget>
                        </item>
                        <item>
@@ -918,6 +942,9 @@
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="text">
+                          <string>/Robustar2/checkpoint_images</string>
                          </property>
                         </widget>
                        </item>
@@ -989,6 +1016,9 @@
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="text">
+                          <string>/Robustar2/influence_images</string>
+                         </property>
                         </widget>
                        </item>
                        <item>
@@ -1058,7 +1088,7 @@
               <x>20</x>
               <y>10</y>
               <width>611</width>
-              <height>311</height>
+              <height>301</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_20">
@@ -1080,23 +1110,57 @@
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="groupBox_2">
-               <property name="title">
-                <string>Exited</string>
-               </property>
-               <widget class="QListWidget" name="exitedListWidget">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>30</y>
-                  <width>281</width>
-                  <height>261</height>
-                 </rect>
-                </property>
-               </widget>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,1">
+               <item>
+                <widget class="QGroupBox" name="groupBox_2">
+                 <property name="title">
+                  <string>Exited</string>
+                 </property>
+                 <widget class="QListWidget" name="exitedListWidget">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>30</y>
+                    <width>281</width>
+                    <height>121</height>
+                   </rect>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_3">
+                 <property name="title">
+                  <string>Created</string>
+                 </property>
+                 <widget class="QListWidget" name="createdListWidget">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>281</width>
+                    <height>111</height>
+                   </rect>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
+           </widget>
+           <widget class="QPushButton" name="refreshListWidgetsButton">
+            <property name="geometry">
+             <rect>
+              <x>550</x>
+              <y>314</y>
+              <width>75</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Refresh</string>
+            </property>
            </widget>
           </widget>
          </widget>
