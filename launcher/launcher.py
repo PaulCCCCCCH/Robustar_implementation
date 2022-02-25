@@ -59,9 +59,6 @@ class Launcher(QWidget):
         self.loadPath = ''
         self.savePath = ''
 
-        # Boolean variable to record the first time check of manageTab
-        self.firstTimeCheck = True
-
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.changeImageVersion)
@@ -78,9 +75,7 @@ class Launcher(QWidget):
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
         self.ui.deleteServerButton.clicked.connect(self.deleteServer)
-        self.ui.refreshListWidgetsButton.clicked.connect(self.refreshListWidgets)
-
-        self.ui.tabWidget.currentChanged.connect(self.initContainerList)
+        self.ui.refreshListWidgetsButton.clicked.connect(self.initContainerList)
 
         self.customSignals.printMessageSignal.connect(self.printMessage)
         self.customSignals.addItemSignal.connect(self.addItem)
@@ -361,9 +356,13 @@ class Launcher(QWidget):
         finally:
             self.customSignals.enableControlSignal.emit()
 
-    def initContainerList(self, index):
+    def initContainerList(self):
 
         def initContainerInThread():
+            # Clear all content in the listWidgets
+            for listWidget in self.listWidgets:
+                listWidget.clear()
+
             # Get all containers
             containerList = self.client.containers.list(all=True)
 
@@ -379,20 +378,9 @@ class Launcher(QWidget):
                     else:
                         self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
 
-        # If the current tab widget is manageTab and it is the first time switching to manageTab
-        # Initialize the container lists
-        if(index == 1 and self.firstTimeCheck == True):
-            listContainerThread = Thread(target=initContainerInThread())
-            listContainerThread.start()
 
-            self.firstTimeCheck = False
-
-    # Function to refresh listWidgets
-    def refreshListWidgets(self):
-        for listWidget in self.listWidgets:
-            listWidget.clear()
-        self.firstTimeCheck = True
-        self.initContainerList(1)
+        listContainerThread = Thread(target=initContainerInThread())
+        listContainerThread.start()
 
     def printMessage(self, message):
         currentTime = time.strftime("%H:%M:%S", time.localtime())
@@ -460,4 +448,5 @@ launcher = Launcher()
 
 launcher.ui.setFixedSize(800, 680)
 launcher.ui.show()
+launcher.initContainerList()
 app.exec_()
