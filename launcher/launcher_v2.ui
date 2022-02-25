@@ -1122,7 +1122,7 @@
                     <x>10</x>
                     <y>30</y>
                     <width>281</width>
-                    <height>121</height>
+                    <height>111</height>
                    </rect>
                   </property>
                  </widget>
@@ -1152,7 +1152,7 @@
            <widget class="QPushButton" name="refreshListWidgetsButton">
             <property name="geometry">
              <rect>
-              <x>550</x>
+              <x>548</x>
               <y>314</y>
               <width>75</width>
               <height>21</height>
