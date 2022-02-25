@@ -393,6 +393,7 @@ class Launcher(QWidget):
 
             self.firstTimeCheck = False
 
+    # Function to refresh listWidgets
     def refreshListWidgets(self):
         for listWidget in self.listWidgets:
             listWidget.clear()
