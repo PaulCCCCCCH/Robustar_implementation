@@ -184,7 +184,10 @@ class Launcher(QWidget):
                     # If the exception is raised by the port issues
                     # Add the new container to the createdListWidget
                     if('port is already allocated' in str(apiError)):
-                        self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.container.name)
+                        # Because of the exception
+                        # launcher.container has not been changed to the created one
+                        # Thus use self.configs['containerName'] instead of self.container.name
+                        self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.configs['containerName'])
                     self.customSignals.printMessageSignal.emit(str(apiError))
 
             except docker.errors.APIError as apiError:
