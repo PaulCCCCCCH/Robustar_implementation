@@ -36,7 +36,7 @@
           </v-row>
           <v-row v-for="(item, index) in digest" align="center" justify="center">
               <v-col cols="12" lg="1" align="center" justify="center">
-                <v-btn color="red" icon><v-icon>mdi-minus-box</v-icon></v-btn>
+                <v-btn color="red" icon @click="stopTask(item[3])"><v-icon>mdi-minus-box</v-icon></v-btn>
               </v-col>
               <v-col cols="12" lg="2" align="center" justify="center">{{item[0]}}</v-col>
               <v-col cols="12" lg="5" align="center" justify="center">
@@ -66,6 +66,7 @@
 import Header from '@/components/common/Header';
 import SideBar from '@/components/common/SideBar';
 import Notification from '@/components/common/Notification';
+import { APIStopTask } from '@/apis/task';
 
 export default {
   name: 'App',
@@ -111,6 +112,17 @@ export default {
     },
     toggleTaskspanel() {
       this.isTaskspanelHidden = !this.isTaskspanelHidden;
+    },
+    stopTaskSuccess(res){
+        console.log(res);
+        alert("Successfully stop task");
+    },
+    stopTaskFailed(res){
+        console.log(res);
+        alert("Failed to stop task");
+    },
+    stopTask(tid){
+        APIStopTask(tid, this.stopTaskSuccess, this.stopTaskFailed);
     }
   },
 };

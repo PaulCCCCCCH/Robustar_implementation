@@ -109,7 +109,7 @@ class RTask:
     def get_tasks_digest():
         digest = []
         for task in RTask.tasks:
-            digest.append((task.get_readable_label(), task.get_percentage(), task.get_readable_time()))
+            digest.append((task.get_readable_label(), task.get_percentage(), task.get_readable_time(), task.tid))
         return digest
 
     def __init__(self, task_type, total):
