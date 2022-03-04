@@ -10,6 +10,11 @@
     <height>680</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Century Gothic</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Robustar Launcher</string>
   </property>
@@ -72,6 +77,11 @@
       </property>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -81,9 +91,9 @@
         <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
-           <x>-7</x>
-           <y>-5</y>
-           <width>141</width>
+           <x>10</x>
+           <y>0</y>
+           <width>124</width>
            <height>361</height>
           </rect>
          </property>
@@ -92,7 +102,7 @@
            <number>27</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="loadButtonLayout">
+           <layout class="QHBoxLayout" name="loadButtonLayout" stretch="0,0,0">
             <property name="topMargin">
              <number>0</number>
             </property>
@@ -119,7 +129,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>86</width>
+                <width>108</width>
                 <height>0</height>
                </size>
               </property>
@@ -131,6 +141,8 @@
               </property>
               <property name="font">
                <font>
+                <family>Century Gothic</family>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -180,7 +192,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>86</width>
+                <width>108</width>
                 <height>0</height>
                </size>
               </property>
@@ -192,6 +204,8 @@
               </property>
               <property name="font">
                <font>
+                <family>Century Gothic</family>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -241,7 +255,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>86</width>
+                <width>108</width>
                 <height>0</height>
                </size>
               </property>
@@ -253,6 +267,8 @@
               </property>
               <property name="font">
                <font>
+                <family>Century Gothic</family>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -305,7 +321,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>86</width>
+                <width>108</width>
                 <height>0</height>
                </size>
               </property>
@@ -317,6 +333,8 @@
               </property>
               <property name="font">
                <font>
+                <family>Century Gothic</family>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -364,6 +382,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>108</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>160</width>
@@ -372,6 +396,8 @@
               </property>
               <property name="font">
                <font>
+                <family>Century Gothic</family>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -410,6 +436,12 @@
         </property>
         <item>
          <widget class="QTabWidget" name="tabWidget">
+          <property name="font">
+           <font>
+            <family>Century Gothic</family>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -435,7 +467,8 @@
                   <widget class="QGroupBox" name="dockerGroupBox">
                    <property name="font">
                     <font>
-                     <pointsize>9</pointsize>
+                     <family>Century Gothic</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="title">
@@ -457,6 +490,7 @@
                         <widget class="QLabel" name="label_8">
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
                            <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
@@ -483,6 +517,7 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
                            <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
@@ -507,6 +542,7 @@
                         <widget class="QLabel" name="label_3">
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
                            <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
@@ -533,6 +569,7 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
                            <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
@@ -564,6 +601,12 @@
                  </item>
                  <item>
                   <widget class="QGroupBox" name="portGroupBox">
+                   <property name="font">
+                    <font>
+                     <family>Century Gothic</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
                    <property name="title">
                     <string>Port</string>
                    </property>
@@ -583,6 +626,8 @@
                         <widget class="QLabel" name="label_7">
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -608,6 +653,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -631,6 +678,8 @@
                         <widget class="QLabel" name="label_11">
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -656,6 +705,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -679,6 +730,8 @@
                         <widget class="QLabel" name="label_12">
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -704,6 +757,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -731,6 +786,12 @@
                 <layout class="QVBoxLayout" name="verticalLayout_4" stretch="4,1">
                  <item>
                   <widget class="QGroupBox" name="pathGroupBox">
+                   <property name="font">
+                    <font>
+                     <family>Century Gothic</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
                    <property name="title">
                     <string>Path</string>
                    </property>
@@ -756,6 +817,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -775,18 +838,20 @@
                          </property>
                          <property name="minimumSize">
                           <size>
-                           <width>111</width>
+                           <width>104</width>
                            <height>0</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
-                           <width>111</width>
+                           <width>104</width>
                            <height>16777215</height>
                           </size>
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -824,6 +889,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -847,6 +914,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -860,12 +929,14 @@
                         <widget class="QLineEdit" name="testPathDisplay">
                          <property name="maximumSize">
                           <size>
-                           <width>111</width>
+                           <width>104</width>
                            <height>16777215</height>
                           </size>
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -897,6 +968,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -920,6 +993,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -933,12 +1008,14 @@
                         <widget class="QLineEdit" name="checkPointPathDisplay">
                          <property name="maximumSize">
                           <size>
-                           <width>111</width>
+                           <width>104</width>
                            <height>16777215</height>
                           </size>
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -970,6 +1047,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -993,6 +1072,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -1012,6 +1093,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -1043,6 +1126,8 @@
                          </property>
                          <property name="font">
                           <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
                            <weight>50</weight>
                            <bold>false</bold>
                           </font>
@@ -1088,31 +1173,19 @@
               <x>20</x>
               <y>10</y>
               <width>611</width>
-              <height>301</height>
+              <height>291</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_20">
              <item>
-              <widget class="QGroupBox" name="groupBox">
-               <property name="title">
-                <string>Running</string>
-               </property>
-               <widget class="QListWidget" name="runningListWidget">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>30</y>
-                  <width>281</width>
-                  <height>261</height>
-                 </rect>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,1">
                <item>
                 <widget class="QGroupBox" name="groupBox_2">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="title">
                   <string>Exited</string>
                  </property>
@@ -1130,6 +1203,11 @@
                </item>
                <item>
                 <widget class="QGroupBox" name="groupBox_3">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="title">
                   <string>Created</string>
                  </property>
@@ -1147,13 +1225,35 @@
                </item>
               </layout>
              </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string>Running</string>
+               </property>
+               <widget class="QListWidget" name="runningListWidget">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>30</y>
+                  <width>281</width>
+                  <height>251</height>
+                 </rect>
+                </property>
+               </widget>
+              </widget>
+             </item>
             </layout>
            </widget>
            <widget class="QPushButton" name="refreshListWidgetsButton">
             <property name="geometry">
              <rect>
               <x>548</x>
-              <y>314</y>
+              <y>306</y>
               <width>75</width>
               <height>21</height>
              </rect>
@@ -1167,6 +1267,11 @@
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_2">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
