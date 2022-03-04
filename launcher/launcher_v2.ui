@@ -1166,7 +1166,41 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextBrowser" name="messageBrowser"/>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Prompts</string>
+           </attribute>
+           <widget class="QTextBrowser" name="promptBrowser">
+            <property name="geometry">
+             <rect>
+              <x>-1</x>
+              <y>-1</y>
+              <width>650</width>
+              <height>224</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <attribute name="title">
+            <string>Details</string>
+           </attribute>
+           <widget class="QTextBrowser" name="detailBrowser">
+            <property name="geometry">
+             <rect>
+              <x>-1</x>
+              <y>-1</y>
+              <width>650</width>
+              <height>224</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+         </widget>
         </item>
        </layout>
       </item>

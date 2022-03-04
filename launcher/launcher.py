@@ -1,16 +1,16 @@
 import json
 import time
-import os
 import docker
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QListWidgetItem
+from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QTextBrowser
 from PySide2.QtCore import Signal, QObject, Qt
 from threading import Thread
 
+# Custom signals
 class CustomSignals(QObject):
-    # Custom signal for printing message in messageBrowser
-    printMessageSignal = Signal(str)
+    # Custom signal for printing message in promptBrowser or detailBrowser
+    printMessageSignal = Signal(QTextBrowser, str)
 
     # Custom signal for adding items in running or exited container list widget
     addItemSignal = Signal(QListWidget, str)
@@ -25,6 +25,7 @@ class CustomSignals(QObject):
     disableControlSignal = Signal()
 
 
+# Robustar launcher GUI
 class Launcher(QWidget):
     def __init__(self):
         # Initialize the UI
@@ -40,8 +41,11 @@ class Launcher(QWidget):
         # Set the default path of the path choosing window
         self.cwd = '/'
 
-        # Set the starting state of the server
-        self.runningState = False
+        # String to temporarily store container name
+        self.tempName = ''
+
+        # Boolean to record if the container is chosen in createTab
+        self.fromCreateTab = True
 
         # Set the default configuration
         self.configs = {
@@ -164,45 +168,90 @@ class Launcher(QWidget):
             # Create a new container and run it
             except docker.errors.NotFound:
 
-                try:
-                    # If the version uses cuda
-                    if 'cuda' in image:
-                        createCudaContainer()
-                        self.customSignals.printMessageSignal.emit(
-                            self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
-                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                if(self.fromCreateTab == True):
+                    try:
+                        # If the version uses cuda
+                        if 'cuda' in image:
+                            createCudaContainer()
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                                       self.container.name + ' is available at http://localhost:' +
+                                                                       self.configs['websitePort'])
+                            self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
 
-                    # If the version only uses cpu
-                    else:
-                        createCpuContainer()
-                        self.customSignals.printMessageSignal.emit(
-                            self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
-                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                        # If the version only uses cpu
+                        else:
+                            createCpuContainer()
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                                       self.container.name + ' is available at http://localhost:' +
+                                                                       self.configs['websitePort'])
+                            self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
+                    except docker.errors.APIError as apiError:
+
+                        # If the exception is raised by the port issues
+                        # Add the new container to the createdListWidget
+                        if ('port is already allocated' in str(apiError)):
+
+                            # Because of the exception
+                            # self.container has not been changed to the created one
+                            # Thus use self.configs['containerName'] instead of self.container.name
+                            self.customSignals.addItemSignal.emit(self.ui.createdListWidget,
+                                                                  self.configs['containerName'])
+
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.configs[
+                                'containerName'] + ' is created but fails to run because port is already allocated. See more in <i>Details</i> page')
+                            self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
+                        else:
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                                       'Encountered an unexpected status. See more in <i>Details</i> page')
+                            self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
+                else:
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                               'Can not find ' + self.tempName + '. Refresh the <i>Manage</i> page to check the latest information')
 
 
-                except docker.errors.APIError as apiError:
-                    # If the exception is raised by the port issues
-                    # Add the new container to the createdListWidget
-                    if('port is already allocated' in str(apiError)):
-                        # Because of the exception
-                        # launcher.container has not been changed to the created one
-                        # Thus use self.configs['containerName'] instead of self.container.name
-                        self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.configs['containerName'])
-                    self.customSignals.printMessageSignal.emit(str(apiError))
 
             except docker.errors.APIError as apiError:
-                self.customSignals.printMessageSignal.emit(str(apiError))
+
+                # If the exception is raised by the port issues
+                # Add the new container to the createdListWidget
+                if ('port is already allocated' in str(apiError)):
+
+                    # Because of the exception
+                    # self.container has not been changed to the created one
+                    # Thus use self.configs['containerName'] instead of self.container.name
+                    self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.configs['containerName'])
+
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.configs[
+                        'containerName'] + ' is created but fails to run because port is already allocated. See more in <i>Details</i> page')
+                    self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
+                else:
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                               'Encountered an unexpected status. See more in <i>Details</i> page')
+                    self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
+
             finally:
                 self.customSignals.enableControlSignal.emit()
 
+
+        # Function to start container that has been created
+        # Could raise docker.errors.APIError
         def startExistingContainer():
+
+            # If user selects a container, start it
+            # Else, do nothing
             if(self.container != None):
+
                 # If the container has exited
                 # Restart the container
                 # Update both runningListWidget and exitedListWidget
                 if self.container.status == 'exited':
                     self.container.restart()
-                    self.customSignals.printMessageSignal.emit(
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
                         self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
@@ -211,18 +260,18 @@ class Launcher(QWidget):
                 # Start the container
                 elif self.container.status == 'created':
                     self.container.start()
-                    self.customSignals.printMessageSignal.emit(
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
                         self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
 
                 # If the container is running
                 elif self.container.status == 'running':
-                    self.customSignals.printMessageSignal.emit(self.container.name + ' has already been running')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has already been running')
 
                 # If the container is in other status
                 else:
-                    self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
 
 
         def createCpuContainer():
@@ -293,6 +342,7 @@ class Launcher(QWidget):
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
 
+
     def stopServer(self):
 
         def stopServerInThread():
@@ -305,34 +355,40 @@ class Launcher(QWidget):
                 if(self.container != None):
                     # If the container has been stopped
                     if self.container.status == 'exited':
-                        self.customSignals.printMessageSignal.emit(self.container.name + ' has already been stopped')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has already been stopped')
 
                     # If the container has been created but not run
                     elif self.container.status == 'created':
-                        self.customSignals.printMessageSignal.emit(self.container.name + ' has not been run yet')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has not been run yet')
 
                     # If the container is running
                     # Stop the container
                     # Update both runningListWidget and exitedListWidget
                     elif self.container.status == 'running':
                         self.container.stop()
-                        self.customSignals.printMessageSignal.emit(self.container.name + ' is now stopped')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' is now stopped')
                         self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, self.container.name)
                         self.customSignals.removeItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
                     # If the container is in other status
                     else:
-                        self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
 
             except docker.errors.NotFound:
-                self.customSignals.printMessageSignal.emit(self.container.name + ' has not been created yet')
+
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                               'Can not find ' + self.tempName + '. Refresh the <i>Manage</i> page to check the latest information')
 
             except docker.errors.APIError as apiError:
-                self.customSignals.printMessageSignal.emit(str(apiError))
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status. See more in <i>Details</i> page')
+                self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
             finally:
                 self.customSignals.enableControlSignal.emit()
 
         stopServerThread = Thread(target=stopServerInThread)
         stopServerThread.start()
+
 
     def deleteServer(self):
         try:
@@ -343,25 +399,34 @@ class Launcher(QWidget):
             if(self.container != None):
                 if (self.container.status == 'exited' or self.container.status == 'created'):
                     self.container.remove()
-                    self.customSignals.printMessageSignal.emit(self.container.name + ' has been removed')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has been removed')
+
                     if (self.container.status == 'exited'):
                         self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
+
                     else:
                         self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
 
                 elif self.container.status == 'running':
-                    self.customSignals.printMessageSignal.emit(
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
                         self.container.name + ' is still running. Stop ' + self.container.name + ' before deletion')
-                    # If the container is in other status
+
+                # If the container is in other status
                 else:
-                    self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
 
         except docker.errors.NotFound:
-            self.customSignals.printMessageSignal.emit(self.container.name + ' has not been created yet')
+
+            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                       'Can not find ' + self.tempName + '. Refresh the <i>Manage</i> page to check the latest information')
+
         except docker.errors.APIError as apiError:
-            self.customSignals.printMessageSignal.emit(str(apiError))
+            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status. See more in <i>Details</i> page')
+            self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
+
         finally:
             self.customSignals.enableControlSignal.emit()
+
 
     def initContainerList(self):
 
@@ -383,16 +448,16 @@ class Launcher(QWidget):
                     elif (container.status == 'created'):
                         self.customSignals.addItemSignal.emit(self.ui.createdListWidget, container.name)
                     else:
-                        self.customSignals.printMessageSignal.emit('Encountered an unexpected status')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
 
 
         listContainerThread = Thread(target=initContainerInThread())
         listContainerThread.start()
 
-    def printMessage(self, message):
+    def printMessage(self, textBrowser, message):
         currentTime = time.strftime("%H:%M:%S", time.localtime())
-        self.ui.messageBrowser.append(currentTime + ' -- ' + message + '\n')
-        self.ui.messageBrowser.ensureCursorVisible()
+        textBrowser.append(currentTime + ' -- ' + message + '\n')
+        textBrowser.ensureCursorVisible()
 
     def addItem(self, listWidget, name):
         listWidget.addItem(name)
@@ -427,22 +492,32 @@ class Launcher(QWidget):
             if widget.selectionModel().hasSelection():
                 widget.selectionModel().clearSelection()
 
+
     # Function to get the container by its name
+    # Could raise docker.errors.NotFound and docker.errors.APIError
     def getSelectedContainer(self):
+
         # If it's in createTab
         # Get the container with the input name
         if (self.ui.tabWidget.currentIndex() == 0):
+            self.fromCreateTab = True
+            self.tempName = self.configs['containerName']
             self.container = self.client.containers.get(self.configs['containerName'])
+
         # If it's in manageTab
+        # Get the selected container
         else:
+            self.fromCreateTab = False
             items = self.getItemsFromListWidgets()
             if (len(items) == 0):
                 self.container = None
-                self.customSignals.printMessageSignal.emit('Select a container you want to stop first')
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Select a container you want to stop first')
             else:
                 item = items[0]
                 containerName = item.text()
+                self.tempName = containerName
                 self.container = self.client.containers.get(containerName)
+
 
     # Function to get the selected item list(actually only one item in the list) from listWidgets
     def getItemsFromListWidgets(self):
