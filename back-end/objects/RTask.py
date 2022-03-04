@@ -70,7 +70,7 @@ class RTask:
         return None
 
     @staticmethod
-    # @with_lock
+    @with_lock
     def create_task(task):
         # start_func = TaskType.start_funcs[task_type]
         # thread = start_func(*kargs, **kwargs)
@@ -83,7 +83,7 @@ class RTask:
         return task
     
     @staticmethod
-    # @with_lock
+    @with_lock
     def exit_task(tid):
         task = RTask.find_task(tid)
         if not task:
@@ -92,7 +92,7 @@ class RTask:
         RTask.send_digest()
     
     @staticmethod
-    # @with_lock
+    @with_lock
     def update_task(tid):
         task = RTask.find_task(tid)
         if task:
