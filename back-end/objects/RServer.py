@@ -22,7 +22,7 @@ class RServer:
     
         app = Flask(__name__)
         app.after_request(self.afterRequest)
-        socket_ = SocketIO(app, cors_allowed_origins='http://localhost:8080')
+        socket_ = SocketIO(app, cors_allowed_origins='*')
 
         self.socket_ = socket_
         self.datasetDir = datasetDir
