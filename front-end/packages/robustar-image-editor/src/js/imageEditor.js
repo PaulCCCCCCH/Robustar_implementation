@@ -209,7 +209,7 @@ class ImageEditor {
      * @type {Graphics}
      * @private
      */
-    this._graphics = new Graphics(this.ui ? this.ui.getEditorArea() : wrapper, {
+    this._graphics = new Graphics(this, this.ui ? this.ui.getEditorArea() : wrapper, {
       cssMaxWidth: options.cssMaxWidth,
       cssMaxHeight: options.cssMaxHeight,
     });

@@ -34,8 +34,8 @@ const ColorFilter = fabric.util.createClass(
       }
       this.color = options.color || '#FFFFFF';
       this.threshold = options.threshold || 45;
-      this.x = options.x || null;
-      this.y = options.y || null;
+      this.x = Math.floor(options.x) || null;
+      this.y = Math.floor(options.y) || null;
     },
 
     /**
@@ -66,6 +66,11 @@ const ColorFilter = fabric.util.createClass(
         }
         data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
       }
+      // for (let m = 0; m < imageData.data.length; m += 4) {
+      //   if (data[m] !== 0) {
+      //     alert(m);
+      //   }
+      // }
       context.putImageData(imageData, 0, 0);
     },
 
@@ -78,6 +83,8 @@ const ColorFilter = fabric.util.createClass(
      */
     _isOutsideThreshold(color1, color2, threshold) {
       const diff = color1 - color2;
+      alert(color1);
+      alert(color2);
 
       return Math.abs(diff) > threshold;
     },
@@ -93,7 +100,7 @@ const ColorFilter = fabric.util.createClass(
       const color = [0, 0, 0, 0];
       const { data, width } = imageData;
       const bytes = 4;
-      const position = (width * y + x) * bytes;
+      const position = (width * Math.floor(y) + Math.floor(x)) * bytes;
 
       color[0] = data[position];
       color[1] = data[position + 1];

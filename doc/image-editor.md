@@ -14,7 +14,7 @@
     1. **Invoker events**. These are editor actions that we can redo/undo (e.g. draw a stroke, zoom in, etc.)
     2. **Graphics events**. These represnet UI changes (e.g. what happens when you click on color picker).
     3. **DOM events**. Monitor keyboard inputs. There is only a `keydown` event in this category.
-  - Mixed in `CustomEvents` (last 3 lines) and uses it's `fire` method to invoke events. See [here](https://github.com/nhn/tui.code-snippet/blob/master/customEvents/customEvents.js)
+  - Have `CustomEvents` (last 3 lines) mixed in and uses it's `fire` method to invoke events. See [here](https://github.com/nhn/tui.code-snippet/blob/master/customEvents/customEvents.js)
 
 - `src/js/ui.js`:
   - Sets UI styles and add DOM elements dynamically. Controls transitions, etc.
@@ -62,3 +62,41 @@
 
 ## `src/js/drawingMode`
 - Triggers for corresponding component for each drawing mode. Defines `start` and `end` actions. To add new drawing mode, just follow the templates.
+
+# Implementation of Drawing Lines
+
+## Binding Drawing Event
+Drawing mode selection:
+- In `action.js`, `_drawAction()` returns actions for three different modes.
+- `_addSubMenuEvent()` in `ui.js` calls `addEvent()` of `ui/draw.js`, passing in an `drawAction` object.
+- `addEvent()` in `ui/draw.js` binds `_changeDrawType()` to mode selection icons.
+- `_changeDrawType()` calls `setDrawMode()` (defined in `action.js`)
+
+Drawing:
+- TODO
+
+## Triggering Event
+TODO
+
+# Implementation of Applying Filters
+
+## Binding Event
+
+- In `action.js`, `_filterAction()` returns `applyFilter(applying, type, options, isSilent)` function.
+- `_addSubMenuEvent()` in `ui.js` calls `addEvent()` of `ui/filter.js`, passing in an `applyFilter()` function.
+- `addEvent()` in `ui/filter.js` binds `changeFilterState()` to checkboxes and `changeFilterStateForRange` to range bars.
+
+## Triggering Event
+- User click on checkbox.
+- `_changeFilterState` in `ui/filter.js` is called.
+- `applyFilter()` (binded by `addEvent` previously) was called.
+- `applyFilter()` in `imageEditor.js` is called.
+- `execute()` or `executeSilent()` in `invoker.js` is called.
+
+
+# Mixin Relations
+- `ImageEditor` has `actions` mixed in.
+- `actions` has `ImageEditor` mixed in.
+- Many components `CustomEvents` mixed in.
+
+
