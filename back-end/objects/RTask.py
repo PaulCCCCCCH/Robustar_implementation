@@ -100,7 +100,6 @@ class RTask:
             task._update()
         else:
             res = False
-        print()
         RTask.send_digest()
         return res
 

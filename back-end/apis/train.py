@@ -6,21 +6,6 @@ from objects.RTask import RTask, TaskType
 
 app = RServer.getServer().getFlaskApp()
 
-
-class ThreadPool:
-    threads = []
-
-    @staticmethod
-    def append(thread):
-        ThreadPool.threads.append(thread)
-
-    @staticmethod
-    def stop():
-        while ThreadPool.threads:
-            t = ThreadPool.threads.pop()
-            # RTask.exit_task(t.ident)
-            t.stop()
-
 @app.route('/train/stop', methods=['GET'])
 def stop_training():
     try:
@@ -58,8 +43,6 @@ def start_training():
     if not train_thread:
         print("Failed")
         return RResponse.fail("Failed", -1)
-
-    ThreadPool.append(train_thread)
 
     # Training started succesfully!
     print("Training started!")

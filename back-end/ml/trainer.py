@@ -23,7 +23,6 @@ class Trainer():
         self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
-        self.stop = False
 
         # Start the tensorboard
 

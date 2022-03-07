@@ -19,7 +19,7 @@ def convert_predict_to_array(output):
     for prob in output[0]:
         result.append(float(prob))
 
-    print(result)
+    # print(result)
     return result
 
 
