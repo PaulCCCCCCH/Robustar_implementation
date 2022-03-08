@@ -4,6 +4,8 @@
  * @reference Color picker example
  *            https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas#a_color_picker
  */
+
+/* eslint-disable*/
 import Component from '@/interface/component';
 import { componentNames } from '@/consts';
 // import { imageDataToColorString } from '@/util';
@@ -24,7 +26,28 @@ class ColorRangeDrawing extends Component {
      * @type {number}
      * @private
      */
-    this._threshold = 10;
+    this._threshold = 0;
+
+    /**
+     * Initial threshold (threshold will be reset to this number on mouse down)
+     * @type {number}
+     * @private 
+     */
+    this._initThreshold = 0;
+
+    /**
+     * Filter Id. Uniquely identifies a color filter drawing.
+     * @type {number}
+     * @private 
+     */
+    this._filterId = 0;
+
+    /**
+     * Maximum _filterId value.
+     * @type {number}
+     * @private 
+     */
+    this._maxFilterId = Number.MAX_SAFE_INTEGER;
 
     /**
      * The positions where mouse-down event happens
@@ -92,60 +115,19 @@ class ColorRangeDrawing extends Component {
    */
   _onFabricMouseDown(fEvent) {
     const canvas = this.getCanvas();
-    const editor = this.getEditor();
-    const filterAction = editor.getActions().filter;
     const { x, y } = canvas.getPointer(fEvent.e);
-    // this._filter = new ColorFilter({
-    //   threshold: this._threshold,
-    //   x,
-    //   y,
-    // });
-    // this._filter.add();
-    // canvas.add(this._filter);
-    // const filter = this.graphics.getComponent(componentNames.FILTER);
-    // filter.add('colorFilter', {
-    //   threshold: this._threshold,
-    //   x,
-    //   y,
-    // });
-    // this.applyFilter('colorFilter', { threshold: this._threshold, x, y }, true);
-    // alert(this.getEditor()._actions);
-    // filterAction.applyFilter(
-    //   true,
-    //   'colorFilter',
-    //   { threshold: this._threshold, x: 10, y: 10 },
-    //   false
-    // );
-    // filterAction.applyFilter(true, 'colorFilter', { threshold: this._threshold, x, y }, false);
-    // filterAction(true, 'colorFilter', { threshold: this._threshold, x, y }, false);
-    // editor.fire(eventNames.INPUT_BOX_EDITING_STARTED);
-    // const canvasEl = this.getCanvasElement();
-    // const context = canvasEl.getContext('2d');
-    // const imageDataArray = context.getImageData(x, y, 1, 1).data;
-    // const colorString = imageDataToColorString(imageDataArray);
-    // filterAction.applyFilter(true, 'removeColor', { color: colorString, distance: 0.2 }, false);
-    // filterAction.applyFilter(true, 'colorFilter', { color: colorString, distance: 0.2 }, false);
-    filterAction.applyFilter(
-      true,
-      'colorFilter',
-      {
-        threshold: this._threshold,
-        x,
-        y,
-      },
-      false
-    );
-
     // Record starting points
     this._mouseDownX = x;
     this._mouseDownY = y;
+    this._threshold = this._initThreshold;
+    this._filterId = (this._filterId + 1) % this._maxFilterId;
+
+    // this._applyFilter(false);
 
     canvas.on({
       'mouse:move': this._listeners.mousemove,
       'mouse:up': this._listeners.mouseup,
     });
-
-    // this.fire(eventNames.ADD_OBJECT, this._createLineEventObjectProperties());
   }
 
   /**
@@ -157,7 +139,8 @@ class ColorRangeDrawing extends Component {
     const canvas = this.getCanvas();
 
     const { x, y } = canvas.getPointer(fEvent.e);
-    this._threshold = this._distanceToRange(this.mouseDownX, this.mouseDownY, x, y);
+    this._threshold = this._distanceToRange(this._mouseDownX, this._mouseDownY, x, y);
+    this._applyFilter(false);
 
     canvas.renderAll();
   }
@@ -168,8 +151,7 @@ class ColorRangeDrawing extends Component {
    */
   _onFabricMouseUp() {
     const canvas = this.getCanvas();
-
-    // this.fire(eventNames.OBJECT_ADDED, this._createLineEventObjectProperties());
+    this._applyFilter(true);
 
     canvas.off({
       'mouse:move': this._listeners.mousemove,
@@ -181,8 +163,26 @@ class ColorRangeDrawing extends Component {
    * Convert the distance of mouse move into color range
    */
   _distanceToRange(mouseDownX, mouseDownY, x, y) {
-    return (mouseDownX - x) ** 2 + (mouseDownY - y) ** 2;
+    return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10 ;
   }
+
+  _applyFilter(isLast) {
+    const editor = this.getEditor();
+    const filterAction = editor.getActions().filter;
+    filterAction.applyFilter(
+      true,
+      'colorFilter',
+      {
+        filterId: this._filterId,
+        threshold: this._threshold,
+        x: this._mouseDownX,
+        y: this._mouseDownY,
+        appending: isLast,
+      },
+      !isLast
+    );
+  }
+
 }
 
 export default ColorRangeDrawing;

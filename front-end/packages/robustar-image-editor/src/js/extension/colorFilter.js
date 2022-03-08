@@ -36,6 +36,7 @@ const ColorFilter = fabric.util.createClass(
       this.threshold = options.threshold || 45;
       this.x = Math.floor(options.x) || null;
       this.y = Math.floor(options.y) || null;
+      this.appending = options.appending || false;
     },
 
     /**
@@ -44,9 +45,7 @@ const ColorFilter = fabric.util.createClass(
      */
     // eslint-disable-next-line complexity
     applyTo(canvas) {
-      const { canvasEl } = canvas;
-      const context = canvasEl.getContext('2d');
-      const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+      const { imageData } = canvas;
       const { data } = imageData;
       const { threshold } = this;
       let filterColor = fabric.Color.sourceFromHex(this.color);
@@ -64,14 +63,8 @@ const ColorFilter = fabric.util.createClass(
         ) {
           continue;
         }
-        data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
+        data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 255;
       }
-      // for (let m = 0; m < imageData.data.length; m += 4) {
-      //   if (data[m] !== 0) {
-      //     alert(m);
-      //   }
-      // }
-      context.putImageData(imageData, 0, 0);
     },
 
     /**
@@ -83,8 +76,6 @@ const ColorFilter = fabric.util.createClass(
      */
     _isOutsideThreshold(color1, color2, threshold) {
       const diff = color1 - color2;
-      alert(color1);
-      alert(color2);
 
       return Math.abs(diff) > threshold;
     },

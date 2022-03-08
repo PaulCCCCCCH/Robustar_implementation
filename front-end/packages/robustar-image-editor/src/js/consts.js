@@ -59,7 +59,7 @@ export const filterType = {
   VINTAGE: 'vintage',
   SEPIA2: 'sepia2',
   REMOVE_COLOR: 'removeColor',
-  COLOR_FILTER: 'colorFilter',
+  COLOR_FILTER: 'removeColor',
   REMOVE_WHITE: 'removeWhite',
   BLEND_COLOR: 'blendColor',
   BLEND: 'blend',
