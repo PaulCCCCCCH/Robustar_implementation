@@ -6,10 +6,18 @@ import router from './router';
 // import './main.css';
 // import 'element-ui/lib/theme-chalk/index.css';
 import vuetify from './plugins/vuetify';
+// import socketio from 'socket.io-client';
+import VueSocketIO from 'vue-socket.io';
+
+// export const SocketInstance = VueSocketIO('http://localhost:8000');
 
 Vue.config.productionTip = false;
 
 // Vue.use(ElementUI);
+Vue.use(new VueSocketIO({
+  debug: true,
+  connection: 'http://localhost:8000',
+}))
 
 new Vue({
   router,

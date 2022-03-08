@@ -13,3 +13,5 @@ from .predict import *
 from .train import *
 from .test import *
 from .config import *
+from .socket import *
+from .task import *

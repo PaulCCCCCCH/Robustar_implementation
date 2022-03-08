@@ -135,7 +135,3 @@ class TrainThread(threading.Thread):
     def run(self):
         call_back, epochs, auto_save = self.args
         self.trainer.start_train(call_back, epochs, auto_save)
-    
-    def stop(self):
-        print("Setting trainer stop flag...")
-        self.trainer.stop = True

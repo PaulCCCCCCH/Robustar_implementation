@@ -5,6 +5,8 @@ from utils.image_utils import imageURLToPath, imageSplitIdToPath
 from utils.path_utils import get_paired_path
 import shutil
 import threading
+from objects.RTask import RTask, TaskType
+import time
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -63,6 +65,9 @@ def propose_edit(split, image_id):
 
 def start_auto_annotate(split, num_to_gen):
     def auto_annotate_thread(split, num_to_gen):
+        task = RTask(TaskType.AutoAnnotate, num_to_gen)
+        starttime = time.time()
+
         for image_id in range(num_to_gen):
             proposed_image_id = propose_edit(split, image_id)
             proposed_image_path = imageSplitIdToPath('proposed', proposed_image_id)
@@ -70,6 +75,13 @@ def start_auto_annotate(split, num_to_gen):
             print("Copying from {} to {}".format(proposed_image_path, paired_img_path))
             shutil.copy(proposed_image_path, paired_img_path)
             update_annotated_list(image_id)
+            task_update_res = task.update()
+            if not task_update_res:
+                endtime = time.time()
+                print("Time consumption:", endtime-starttime)
+                print("Trainning stopped!")
+                return 
+
 
     test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
     test_thread.start()

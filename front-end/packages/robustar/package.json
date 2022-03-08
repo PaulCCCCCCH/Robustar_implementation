@@ -30,7 +30,8 @@
     "sass": "~1.32.0",
     "vue-cli-plugin-vuetify": "~2.4.3",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.7.0"
+    "vuetify-loader": "^1.7.0",
+    "vue-socket.io": "^3.0.10"
   },
   "eslintConfig": {
     "root": true,
