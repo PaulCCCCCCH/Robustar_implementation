@@ -37,6 +37,7 @@ const ColorFilter = fabric.util.createClass(
       this.x = Math.floor(options.x) || null;
       this.y = Math.floor(options.y) || null;
       this.appending = options.appending || false;
+      this.filterId = options._filterId;
     },
 
     /**
@@ -48,12 +49,8 @@ const ColorFilter = fabric.util.createClass(
       const { imageData } = canvas;
       const { data } = imageData;
       const { threshold } = this;
-      let filterColor = fabric.Color.sourceFromHex(this.color);
       let i, len;
-
-      if (this.x && this.y) {
-        filterColor = this._getColor(imageData, this.x, this.y);
-      }
+      const filterColor = this.color;
 
       for (i = 0, len = data.length; i < len; i += 4) {
         if (
@@ -78,27 +75,6 @@ const ColorFilter = fabric.util.createClass(
       const diff = color1 - color2;
 
       return Math.abs(diff) > threshold;
-    },
-
-    /**
-     * Get color at (x, y)
-     * @param {Object} imageData of canvas
-     * @param {Number} x left position
-     * @param {Number} y top position
-     * @returns {Array} color array
-     */
-    _getColor(imageData, x, y) {
-      const color = [0, 0, 0, 0];
-      const { data, width } = imageData;
-      const bytes = 4;
-      const position = (width * Math.floor(y) + Math.floor(x)) * bytes;
-
-      color[0] = data[position];
-      color[1] = data[position + 1];
-      color[2] = data[position + 2];
-      color[3] = data[position + 3];
-
-      return color;
     },
   }
 );

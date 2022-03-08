@@ -29,6 +29,13 @@ class ColorRangeDrawing extends Component {
     this._threshold = 0;
 
     /**
+     * Current color
+     * @type {String}
+     * @private
+     */
+    this._color = 0;
+
+    /**
      * Initial threshold (threshold will be reset to this number on mouse down)
      * @type {number}
      * @private 
@@ -116,6 +123,8 @@ class ColorRangeDrawing extends Component {
   _onFabricMouseDown(fEvent) {
     const canvas = this.getCanvas();
     const { x, y } = canvas.getPointer(fEvent.e);
+    this._color = this._getPointerColor(canvas, x, y);
+
     // Record starting points
     this._mouseDownX = x;
     this._mouseDownY = y;
@@ -166,9 +175,26 @@ class ColorRangeDrawing extends Component {
     return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10 ;
   }
 
+  _getPointerColor(canvas, x, y) {
+    const context = canvas.getContext('2d');
+    const { width, height } = canvas;
+    const data = context.getImageData(0, 0, width, height).data;
+    const bytes = 4;
+    const color = [0, 0, 0, 0];
+
+    const position = (width * Math.floor(y) + Math.floor(x)) * bytes;
+    color[0] = data[position];
+    color[1] = data[position + 1];
+    color[2] = data[position + 2];
+    color[3] = data[position + 3];
+
+    return color;
+  }
+
   _applyFilter(isLast) {
     const editor = this.getEditor();
     const filterAction = editor.getActions().filter;
+
     filterAction.applyFilter(
       true,
       'colorFilter',
@@ -178,6 +204,7 @@ class ColorRangeDrawing extends Component {
         x: this._mouseDownX,
         y: this._mouseDownY,
         appending: isLast,
+        color: this._color,
       },
       !isLast
     );
