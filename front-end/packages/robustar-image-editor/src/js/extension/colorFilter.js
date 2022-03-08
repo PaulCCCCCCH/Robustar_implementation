@@ -34,8 +34,10 @@ const ColorFilter = fabric.util.createClass(
       }
       this.color = options.color || '#FFFFFF';
       this.threshold = options.threshold || 45;
-      this.x = options.x || null;
-      this.y = options.y || null;
+      this.x = Math.floor(options.x) || null;
+      this.y = Math.floor(options.y) || null;
+      this.appending = options.appending || false;
+      this.filterId = options._filterId;
     },
 
     /**
@@ -44,17 +46,11 @@ const ColorFilter = fabric.util.createClass(
      */
     // eslint-disable-next-line complexity
     applyTo(canvas) {
-      const { canvasEl } = canvas;
-      const context = canvasEl.getContext('2d');
-      const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+      const { imageData } = canvas;
       const { data } = imageData;
       const { threshold } = this;
-      let filterColor = fabric.Color.sourceFromHex(this.color);
       let i, len;
-
-      if (this.x && this.y) {
-        filterColor = this._getColor(imageData, this.x, this.y);
-      }
+      const filterColor = this.color;
 
       for (i = 0, len = data.length; i < len; i += 4) {
         if (
@@ -64,9 +60,8 @@ const ColorFilter = fabric.util.createClass(
         ) {
           continue;
         }
-        data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
+        data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 255;
       }
-      context.putImageData(imageData, 0, 0);
     },
 
     /**
@@ -80,27 +75,6 @@ const ColorFilter = fabric.util.createClass(
       const diff = color1 - color2;
 
       return Math.abs(diff) > threshold;
-    },
-
-    /**
-     * Get color at (x, y)
-     * @param {Object} imageData of canvas
-     * @param {Number} x left position
-     * @param {Number} y top position
-     * @returns {Array} color array
-     */
-    _getColor(imageData, x, y) {
-      const color = [0, 0, 0, 0];
-      const { data, width } = imageData;
-      const bytes = 4;
-      const position = (width * y + x) * bytes;
-
-      color[0] = data[position];
-      color[1] = data[position + 1];
-      color[2] = data[position + 2];
-      color[3] = data[position + 3];
-
-      return color;
     },
   }
 );
