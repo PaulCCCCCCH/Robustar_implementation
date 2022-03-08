@@ -1,19 +1,24 @@
 <template>
-  <div style="height: 100%">
-    <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
+  <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
       adjust
     </v-btn> -->
-    <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
-    <div class='d-flex flex-row justify-space-between' style="width: 100%; height: 100%">
-      <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
-      <Visualizer :image_id="image_id" :split="split"/>
-    </div>
+  <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
+  <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
+    <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
+    <Visualizer
+      :is-active="image_id !== ''"
+      :image_id="String(image_id)"
+      :split="split"
+      @open="loadImageInfo"
+      @close="image_id = ''"
+    />
   </div>
 </template>
 <script>
 import ImageEditor from '@/components/image-editor/ImageEditor';
-import { APISendEdit } from '@/apis/edit';
-import { getNextImageByIdAndURL } from '@/utils/image_utils';
+import { APISendEdit, APIGetProposedEdit } from '@/apis/edit';
+import { APIGetAnnotated } from '@/apis/images';
+import { getNextImageByIdAndURL, replaceSplitAndId } from '@/utils/image_utils';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -29,14 +34,17 @@ export default {
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
+        apiLoadEdit: this.loadEdit.bind(this),
+        apiAutoEdit: this.autoEdit.bind(this),
       },
-      image_id: "",
-      image_url: "",
-      split: ""
+      image_id: '', // corresponding training set id
+      image_url: '',
+      split: '',
+      edit_id: '', // corresponding paired set id
     };
   },
   mounted() {
-    this.loadImageInfo()
+    this.loadImageInfo();
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -45,9 +53,63 @@ export default {
   },
   methods: {
     loadImageInfo() {
-        this.image_id = localStorage.getItem('image_id');
-        this.image_url = localStorage.getItem('image_url');
-        this.split = localStorage.getItem('split');
+      this.image_id = sessionStorage.getItem('image_id');
+      this.image_url = sessionStorage.getItem('image_url');
+      this.split = sessionStorage.getItem('split');
+      if (this.split === 'annotated' && this.$route.params.mode !== 'annotated') {
+        this.split = 'train';
+      }
+    },
+    loadEditSuccess(res) {
+      const edit_id = res.data.data;
+      console.log(edit_id);
+      if (edit_id === -1) {
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'No previous annotation found');
+      } else {
+        sessionStorage.setItem('image_id', edit_id);
+        sessionStorage.setItem('split', 'annotated');
+        sessionStorage.setItem(
+          'image_url',
+          replaceSplitAndId(this.image_url, 'annotated', edit_id)
+        );
+        sessionStorage.setItem('save_image_split', 'annotated');
+        sessionStorage.setItem('save_image_id', edit_id);
+        this.$refs.editor.initInstance();
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Previous annotation loaded');
+      }
+    },
+    loadEditFailed(res) {
+      console.log(res);
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Failed to load previous annotation');
+    },
+    loadEdit() {
+      this.$root.startProcessing('Loading previous annotation. Please wait...');
+      APIGetAnnotated(this.image_id, this.loadEditSuccess, this.loadEditFailed);
+    },
+    autoEditSuccess(res) {
+      // TODO: error handling with res
+      const proposed_id = res.data.data;
+      sessionStorage.setItem('image_id', this.image_id);
+      sessionStorage.setItem('split', 'proposed');
+      sessionStorage.setItem(
+        'image_url',
+        replaceSplitAndId(this.image_url, 'proposed', proposed_id)
+      );
+      this.$refs.editor.initInstance();
+      this.$root.finishProcessing();
+      this.$root.alert('success', 'Automatic annotation applied.');
+    },
+    autoEditFailed(res) {
+      console.log(re);
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Failed to auto annotate');
+    },
+    autoEdit() {
+      this.$root.startProcessing('Auto-annotating...');
+      APIGetProposedEdit(this.split, this.image_id, this.autoEditSuccess, this.autoEditFailed);
     },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
@@ -56,8 +118,11 @@ export default {
       // TODO: Edit success and jump to the next image or back to the image list
       console.log(res);
       const [newId, newUrl] = getNextImageByIdAndURL(this.image_id, this.image_url);
-      localStorage.setItem('image_id', newId);
-      localStorage.setItem('image_url', newUrl);
+      this.image_id = `${newId}`;
+      this.image_url = `${newUrl}`;
+      sessionStorage.setItem('image_id', newId);
+      sessionStorage.setItem('image_url', newUrl);
+      sessionStorage.setItem('save_image_id', newId);
       this.$refs.editor.initInstance();
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
@@ -71,11 +136,12 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_id = localStorage.getItem('image_id') || '';
-      const height = localStorage.getItem('image_height');
-      const width = localStorage.getItem('image_width');
+      const image_id = sessionStorage.getItem('save_image_id') || '';
+      const height = sessionStorage.getItem('image_height');
+      const width = sessionStorage.getItem('image_width');
+      const split = sessionStorage.getItem('save_image_split');
       APISendEdit(
-        'train',
+        split,
         image_id,
         height,
         width,

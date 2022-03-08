@@ -9,6 +9,40 @@ app = RServer.getServer().getFlaskApp()
 
 @app.route('/test', methods=['POST'])
 def start_testing():
+    """
+    Starts the test thread
+    ---
+    tags:
+      - test
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "The split to test, valid values: 'test' or 'validation'"
+        required: true
+        schema:
+          properties:
+            split:
+              type: string
+              example: test
+    responses:
+      200:
+        description: Test started or test cannot be started
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: Test started!
+            msg:
+              type: string
+              example: Success
+    """
     # Try to start training thread
     print("DEBUG: Testing request received! ...")
 

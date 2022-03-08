@@ -5,9 +5,10 @@ import ImageList from '../views/ImageList.vue';
 import TrainPad from '../views/TrainPad.vue';
 import InfluencePad from '../views/InfluencePad.vue';
 import EditImage from '@/views/EditImage';
+import AutoAnnotatePad from '@/views/AutoAnnotatePad';
 import Prediction from '@/views/Prediction.vue';
 import TestPad from '@/views/TestPad';
-import Config from '@/views/Config'
+import Config from '@/views/Config';
 
 Vue.use(VueRouter);
 
@@ -36,7 +37,7 @@ const routes = [
     component: TrainPad,
   },
   {
-    path: '/edit',
+    path: '/edit/:mode',
     name: 'EditImage',
     component: EditImage,
     props: true,
@@ -59,7 +60,12 @@ const routes = [
   {
     path: '/config',
     name: 'Config',
-    component: Config
+    component: Config,
+  },
+  {
+    path: '/auto-annotate',
+    name: 'AutoAnnotatePad',
+    component: AutoAnnotatePad,
   },
 ];
 

@@ -1,10 +1,3 @@
-'''
-Author: Chonghan Chen (paulcccccch@gmail.com)
------
-Last Modified: Tuesday, 7th December 2021 10:45:14 pm
-Modified By: Chonghan Chen (paulcccccch@gmail.com)
------
-'''
 from genericpath import exists
 import pickle
 import torchvision
@@ -19,6 +12,8 @@ import torchvision.transforms.functional as transF
 
 # The data interface
 class RDataManager:
+
+    SUPP_IMG_EXT = ['jpg', 'jpeg', 'png']
 
     def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
                  image_padding='short_side', class2label_mapping=None):
@@ -38,6 +33,7 @@ class RDataManager:
         self.validation_root = osp.join(datasetDir, 'validation').replace('\\', '/')
         self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
         self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
+        self.proposed_annotation_root = osp.join(baseDir, 'proposed_annotation').replace('\\', '/')
         self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
         self.class2label = class2label_mapping
 
@@ -45,6 +41,7 @@ class RDataManager:
         self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
         self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
         self.validation_incorrect_root = osp.join(datasetDir, 'validation_incorrect.txt').replace('\\', '/')
+        self.annotated_root = osp.join(datasetDir, 'annotated.txt').replace('\\', '/')
 
         # Build transforms
         # TODO: Use different transforms according to image_padding variable
@@ -87,11 +84,25 @@ class RDataManager:
         self.incorrectValidationBuffer = []
         self.correctTestBuffer = []
         self.incorrectTestBuffer = []
+        self.annotatedBuffer= {} # saves (annotated image idx : train image idx)
+        self.annotatedInvBuffer= {} 
+        self.proposedAnnotationBuffer = set() # saves (train image id)
 
         self.get_classify_validation_list()
         self.get_classify_test_list()
+        self.get_annotated_list()
+
+        self.proposedset = torchvision.datasets.ImageFolder(self.proposed_annotation_root, transform=self.transforms) 
+        ## TODO: Commented this line out for now, because if the user changed the training set, 
+        ## The cache will be wrong, and the user has to manually delete the annotated folder, which
+        ## is not nice. Add this back when we have the option to quickly clean all cache folders.
+        # self.get_proposed_list()
 
         self.reload_influence_dict()
+        self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
+        # self.pairedloader = torch.utils.data.DataLoader(
+            # self.pairedloader, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+
         self.split_dict = {
             'train': self.trainset.samples,
             'validation': self.validationset.samples,
@@ -99,8 +110,11 @@ class RDataManager:
             'validation_correct': self.correctValidationBuffer,
             'validation_incorrect': self.incorrectValidationBuffer,
             'test_correct': self.correctTestBuffer,
-            'test_incorrect': self.incorrectTestBuffer
+            'test_incorrect': self.incorrectTestBuffer,
+            'annotated': (self.annotatedBuffer, self.annotatedInvBuffer),
+            'proposed': self.proposedAnnotationBuffer
         }
+
 
     
     def readify_classes(self, datasets):
@@ -132,30 +146,35 @@ class RDataManager:
     def _init_folders(self):
         if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
             self._init_paired_folder()
-        self._init_visualize_root()
-
-    def _init_influence_root(self):
-        os.makedirs(self.influence_root, exist_ok=True)
-
-    def _init_visualize_root(self):
-        os.makedirs(self.visualize_root, exist_ok=True)
-
+        if not osp.exists(self.proposed_annotation_root) or not os.listdir(self.proposed_annotation_root):
+            self._init_proposed_folder()
+        for root in [self.visualize_root, self.influence_root, self.proposed_annotation_root]:
+            os.makedirs(root, exist_ok=True)
+            
     def _init_paired_folder(self):
         # Initializes paired folder. Ignores files that already exists
-        if not osp.exists(self.paired_root):
-            os.mkdir(self.paired_root)
+        self._init_mirror_dir(self.train_root, self.trainset, self.paired_root)
 
-        for img_path, label in self.trainset.samples:
-            paired_img_path = get_paired_path(img_path, self.train_root, self.paired_root)
+    def _init_proposed_folder(self):
+        # Initializes paired folder. Ignores files that already exists
+        self._init_mirror_dir(self.train_root, self.trainset, self.proposed_annotation_root)
 
-            if osp.exists(paired_img_path):  # Ignore existing images
+    def _init_mirror_dir(self, src_root, dataset, dst_root):
+        if not osp.exists(dst_root):
+            os.mkdir(dst_root)
+
+        for img_path, label in dataset.samples:
+            mirrored_img_path = get_paired_path(img_path, src_root, dst_root)
+
+            if osp.exists(mirrored_img_path):  # Ignore existing images
                 continue
 
-            folder_path, _ = split_path(paired_img_path)
+            folder_path, _ = split_path(mirrored_img_path)
             os.makedirs(folder_path, exist_ok=True)
 
-            with open(paired_img_path, 'wb') as f:
+            with open(mirrored_img_path, 'wb') as f:
                 pickle.dump(None, f)
+
 
     def get_classify_validation_list(self):
         if not osp.exists(self.validation_correct_root):
@@ -174,6 +193,7 @@ class RDataManager:
                 for line in f:
                     self.incorrectValidationBuffer.append(int(line))
 
+
     def get_classify_test_list(self):
         if not osp.exists(self.test_correct_root):
             f = open(self.test_correct_root, 'w')
@@ -190,6 +210,32 @@ class RDataManager:
             with open(self.test_incorrect_root, 'r') as f:
                 for line in f:
                     self.incorrectTestBuffer.append(int(line))
+
+    def get_annotated_list(self):
+        if not osp.exists(self.annotated_root):
+            f = open(self.annotated_root, 'w')
+            f.close()
+        else:
+            with open(self.annotated_root, 'r') as f:
+                for idx, line in enumerate(f):
+                    self.annotatedBuffer[idx] = (int(line))
+                    self.annotatedInvBuffer[int(line)] = idx
+
+    def dump_annotated_list(self):
+        if self.annotatedBuffer:
+            with open(self.annotated_root, 'w') as f:
+                for _, img_idx in self.annotatedBuffer.items():
+                    f.write(str(img_idx) + '\n')
+
+    def get_proposed_list(self):
+        # for filename in os.listdir(self.proposed_annotation_root): 
+        # TODO: needs to be changed
+        # proposedAnnotationBuffer stores (image_url, image_path) pairs
+        for idx, (filename, _) in enumerate(self.proposedset.imgs):
+            if any([ext in filename for ext in self.SUPP_IMG_EXT]):
+                prefix = filename[:filename.find('.')]
+                split, image_id = prefix.split('_')
+                self.proposedAnnotationBuffer['{}/{}'.format(split, image_id)] = idx
 
     def _pull_item(self, index, buffer):
         if index >= len(buffer):

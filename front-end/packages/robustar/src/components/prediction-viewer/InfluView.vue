@@ -1,19 +1,19 @@
 <template>
-    <!-- Influence functions (if calculated) -->
-    <div class="d-flex flex-column align-center">
-      <div v-if="influImgUrl.length === 0">
-          <p>Influence not calculated.</p>
-          <p>To calculate influence</p>
-          <p>please go to Influence page from the side bar</p>
-      </div>
-      <div v-else>
-        <div v-for="(url, index) in influImgUrl" :key="index">
-          <button @click="() => gotoImage(url)">
-            <img :src="url" style="width: 15vh" />
-          </button>
-        </div>
+  <!-- Influence functions (if calculated) -->
+  <div class="d-flex flex-column align-center">
+    <div v-if="influImgUrl.length === 0">
+      <p>Influence not calculated.</p>
+      <p>To calculate influence</p>
+      <p>please go to Influence page from the side bar</p>
+    </div>
+    <div v-else>
+      <div v-for="(url, index) in influImgUrl" :key="index">
+        <button @click="() => gotoImage(url)">
+          <img :src="url" style="width: 15vh" />
+        </button>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -27,10 +27,12 @@ export default {
     gotoImage(url) {
       console.log(url);
       const [image_id, split] = getImageUrlFromFullUrl(url);
-      localStorage.setItem('split', split);
-      localStorage.setItem('image_id', image_id);
-      localStorage.setItem('image_url', url);
-      this.$router.push({ name: 'EditImage' });
+      sessionStorage.setItem('split', split);
+      sessionStorage.setItem('image_id', image_id);
+      sessionStorage.setItem('image_url', url);
+      sessionStorage.setItem('save_image_id', split)
+      sessionStorage.setItem('save_image_split', image_id)
+      this.$router.push({ name: 'EditImage', params: {mode: split} });
     },
   },
 };

@@ -30,25 +30,25 @@ new Vue({
       success: false,
       successMsg: 'Succeeded',
       error: false,
-      errorMsg: 'Failed'
-    }
+      errorMsg: 'Failed',
+    };
   },
   methods: {
     alert(type, message) {
       if (type === 'success') {
-        this.successMsg = message || 'Succeeded'
-        this.success = true
+        this.successMsg = message || 'Succeeded';
+        this.success = true;
       } else {
-        this.errorMsg = message || 'Failed'
-        this.error = true
+        this.errorMsg = message || 'Failed';
+        this.error = true;
       }
     },
     startProcessing(message) {
-      this.processingMsg = message || 'Processing ...'
-      this.processing = true
+      this.processingMsg = message || 'Processing ...';
+      this.processing = true;
     },
     finishProcessing() {
-      this.processing = false
-    }
+      this.processing = false;
+    },
   },
 }).$mount('#app');

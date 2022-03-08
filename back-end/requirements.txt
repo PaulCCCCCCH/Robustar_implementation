@@ -13,6 +13,7 @@ webunit==1.3.10
 Werkzeug==2.0.1
 tensorboard==2.6.0
 scipy==1.7.1
+flasgger==0.9.5
 # subject to change
 Flask-SocketIO==4.3.1
 python-engineio==3.13.2

@@ -18,8 +18,9 @@ class TaskType:
     Training = 0
     Test = 1
     Influence = 2
+    AutoAnnotate = 3
 
-    mapping = ['Training', 'Test', 'Influence']
+    mapping = ['Training', 'Test', 'Influence', 'AutoAnnotate']
     # start_funcs = [start_train, start_test]
 
 def with_lock(func):

@@ -38,6 +38,16 @@ export default ({
                 style="${loadButtonStyle}">
                     ${locale.localize('Adjust Size')}
                 </button>
+                <button class="tui-image-editor-load-edit-btn"
+                ${replaceDownload ? '' : 'hidden'} 
+                style="${loadButtonStyle}">
+                    ${locale.localize('Load Edit')}
+                </button>
+                <button class="tui-image-editor-auto-edit-btn"
+                ${replaceDownload ? '' : 'hidden'} 
+                style="${loadButtonStyle}">
+                    ${locale.localize('Auto Edit')}
+                </button>
             </div>
         </div>
         <div class="tui-image-editor-main">

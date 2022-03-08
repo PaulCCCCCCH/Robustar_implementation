@@ -17,4 +17,12 @@ const APISendEdit = (split, image_id, image_height, image_width, image_base64, s
   common.postRequest(data, `/edit/${split}/${image_id}`, success, failed);
 };
 
-export { APISendEdit };
+const APIGetProposedEdit = (split, image_id, success, failed) => {
+  common.getRequest(`/propose/${split}/${image_id}`, success, failed);
+}
+
+const APIStartAutoAnnotate = (split, data, success, failed) => {
+  common.postRequest(data, `/auto-annotate/${split}`, success, failed);
+}
+
+export { APISendEdit, APIGetProposedEdit, APIStartAutoAnnotate };

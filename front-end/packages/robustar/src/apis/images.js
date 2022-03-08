@@ -14,9 +14,19 @@ const APIGetSplitLength = (split, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
- const APIGetClassNames = (split, success, failed) => {
+const APIGetClassNames = (split, success, failed) => {
   common.getRequest(`/image/class/${split}`, success, failed);
 };
+
+/**
+ * @param {string} image_id
+ * @param {function} success success callback function
+ * @param {function} fail fail callback function
+ */
+ const APIGetAnnotated = (image_id, success, failed) => {
+  common.getRequest(`/image/get-annotated/${image_id}`, success, failed);
+};
+
 
 
 /**
@@ -39,4 +49,4 @@ const APIGetImage = (dataset, imageId, success, failed) => {
   common.getRequest(`/${dataset}/${imageId}`, success, failed);
 };
 
-export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames };
+export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames, APIGetAnnotated };

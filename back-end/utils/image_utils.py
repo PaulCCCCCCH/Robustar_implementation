@@ -1,5 +1,5 @@
 from os.path import normpath
-
+import shutil
 from objects.RServer import RServer
 
 dataManager = RServer.getServer().dataManager
@@ -9,6 +9,8 @@ datasetDir = dataManager.data_root
 trainset = dataManager.trainset
 testset = dataManager.testset
 validationset = dataManager.validationset
+pairedset = dataManager.pairedset
+proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
@@ -17,29 +19,36 @@ test_incorrect_root = dataManager.test_incorrect_root
 validation_correct_root = dataManager.validation_correct_root
 validation_incorrect_root = dataManager.validation_incorrect_root
 
+def imageSplitIdToPath(split, image_id):
+    return imageURLToPath("{}/{}".format(split, image_id))
 
-def imageURLToPath(image_id):
+def imageURLToPath(image_url):
     """
-    Get the real path of the image specified by its id.
+    Get the real path of the image specified by its url.
+    When getting proposed image, split should be "proposed", and index
+    should be training set index
     args: 
-        imageId:    The id of the image consisting of the dataset split (train/dev/test) 
-                    and an index.
+        imageId:    The url of the image consisting of the dataset split (train/dev/test) 
+                    and an index(id).
                     e.g.  train/10, test/300
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
-    split, indexStr = image_id.split('/')
+    split, indexStr = image_url.split('/')
     imageIndex = int(indexStr)
 
     # If already buffered, just return
-    if image_id in datasetFileBuffer:
-        return datasetFileBuffer[image_id]
-
+    if image_url in datasetFileBuffer:
+        return datasetFileBuffer[image_url]
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
+    elif split == 'annotated':
+        filePath = get_annotated(imageIndex)[0]
     elif split == 'validation':
         filePath = validationset.samples[imageIndex][0]
+    elif split == 'proposed':
+        filePath = proposedset.samples[imageIndex][0]
     elif split == 'test':
         filePath = testset.samples[imageIndex][0]
     elif split == 'validation_correct':
@@ -54,14 +63,15 @@ def imageURLToPath(image_id):
         # data split not supported
         raise NotImplemented('Data split not supported')
 
-    filePath = normpath(filePath).replace('\\', '/')
-    datasetFileBuffer[image_id] = filePath
+    if filePath:
+        filePath = normpath(filePath).replace('\\', '/')
+        datasetFileBuffer[image_url] = filePath
 
     return filePath
 
 
 def getClassStart(split):
-    if split == 'train':
+    if split == 'train' or split == 'annotated':
         dataset_ls = trainset.samples
         dataset_len = len(dataset_ls)
         class_ls = trainset.classes
@@ -139,8 +149,17 @@ def getSplitLength(split):
 
     if split not in dataManager.split_dict:
         raise NotImplemented('Data split not supported')
+    if split == 'annotated':
+        return len(dataManager.split_dict[split][0])
 
     return len(dataManager.split_dict[split])
+
+
+def copyImage(src_split, src_id, dst_split, dst_id):
+    src_path = imageSplitIdToPath(src_split, src_id)
+    dst_path = imageSplitIdToPath(dst_split, dst_id)
+    print("Copying from {} to {}".format(src_path, dst_path))
+    shutil.copyfile(src_path, dst_path)
 
 
 def get_validation_correct(is_correct, image_index):
@@ -165,3 +184,15 @@ def get_test_correct(is_correct, image_index):
         img_num = incorrectTestBuffer[image_index]
 
     return testset.samples[img_num]
+
+def get_annotated_from_train(train_image_index):
+    if int(train_image_index) in dataManager.annotatedInvBuffer:
+        return dataManager.annotatedInvBuffer[int(train_image_index)]
+    return None
+
+def get_train_from_annotated(annotated_image_index):
+    return dataManager.annotatedBuffer[int(annotated_image_index)]
+
+def get_annotated(image_index):
+    img_num = dataManager.annotatedBuffer[int(image_index)]
+    return pairedset.samples[img_num]
