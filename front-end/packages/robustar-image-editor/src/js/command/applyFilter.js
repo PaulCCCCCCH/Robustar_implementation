@@ -61,7 +61,6 @@ const command = {
     if (!this.isRedo) {
       const prevfilterOption = filterComp.getOptions(type);
       const undoData = makeUndoData(type, prevfilterOption, options);
-
       cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
     }
 
@@ -85,9 +84,9 @@ const command = {
     }
 
     // options changed case
-    if (this.undoData.options) {
-      return filterComp.add(type, this.undoData.options);
-    }
+    // if (this.undoData.options) {
+    //   return filterComp.add(type, this.undoData.options);
+    // }
 
     // filter added case
     return filterComp.remove(type);

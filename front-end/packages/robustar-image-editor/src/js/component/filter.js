@@ -41,7 +41,7 @@ class Filter extends Component {
       const sourceImg = this._getSourceImage();
       const canvas = this.getCanvas();
       let imgFilter = this._getFilter(sourceImg, type);
-      if (!imgFilter) {
+      if (!imgFilter || options.appending) {
         imgFilter = this._createFilter(sourceImg, type, options);
       }
 
@@ -193,7 +193,7 @@ class Filter extends Component {
       const { length } = sourceImg.filters;
       let item, i;
 
-      for (i = 0; i < length; i += 1) {
+      for (i = length - 1; i >= 0; i -= 1) {
         item = sourceImg.filters[i];
         if (item.type === fabricType) {
           imgFilter = item;
@@ -213,7 +213,17 @@ class Filter extends Component {
    */
   _removeFilter(sourceImg, type) {
     const fabricType = this._getFabricFilterType(type);
-    sourceImg.filters = filter(sourceImg.filters, (value) => value.type !== fabricType);
+    let filterId = -1;
+    let imgFilter;
+    for (let i = sourceImg.filters.length - 1; i >= 0; i -= 1) {
+      imgFilter = sourceImg.filters[i];
+      if (imgFilter.type === fabricType) {
+        filterId = imgFilter.options.filterId;
+        break;
+      }
+    }
+    // sourceImg.filters = filter(sourceImg.filters, (value) => value.type !== fabricType);
+    sourceImg.filters = filter(sourceImg.filters, (value) => value.options.filterId !== filterId);
   }
 
   /**

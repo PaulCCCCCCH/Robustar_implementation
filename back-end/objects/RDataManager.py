@@ -173,7 +173,7 @@ class RDataManager:
             os.makedirs(folder_path, exist_ok=True)
 
             with open(mirrored_img_path, 'wb') as f:
-                pickle.dump(None, f)
+                pass
 
 
     def get_classify_validation_list(self):
