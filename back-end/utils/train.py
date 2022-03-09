@@ -62,7 +62,9 @@ def initialize_model():
     pre_trained = server_configs['pre_trained']
     num_classes = server_configs['num_classes']
 
-    return RModelWrapper(model_arch, weight_to_load, device, pre_trained, num_classes)
+    net_path = os.path.join(RServer.getServer().ckptDir, weight_to_load).replace('\\', '/')
+
+    return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
 
 
 def update_info(status_dict):

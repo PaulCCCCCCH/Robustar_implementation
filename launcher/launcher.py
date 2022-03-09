@@ -1,11 +1,17 @@
 import json
 import time
 import docker
+import os
 
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QTextBrowser
 from PySide2.QtCore import Signal, QObject, Qt
 from threading import Thread
+
+# Change path input by the user to system path
+def getSystemPath(userPath: str):
+    return str(os.path.normpath(userPath))
+
 
 # Custom signals
 class CustomSignals(QObject):
@@ -54,10 +60,10 @@ class Launcher(QWidget):
                         'websitePort': '8000',
                         'backendPort': '6848',
                         'tensorboardPort': '6006',
-                        'trainPath': '/Robustar2/dataset/train',
-                        'testPath': '/Robustar2/dataset/test',
-                        'checkPointPath': '/Robustar2/checkpoint_images',
-                        'influencePath': '/Robustar2/influence_images',
+                        'trainPath': '',
+                        'testPath': '',
+                        'checkPointPath': '',
+                        'influencePath': '',
                         'configFile': 'configs.json'
                         }
         self.loadPath = ''
@@ -109,20 +115,28 @@ class Launcher(QWidget):
         self.configs['tensorboardPort'] = self.ui.tensorboardPortInput.text()
 
     def chooseTrainPath(self):
-        self.configs['trainPath'] = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
-        self.ui.trainPathDisplay.setText(self.configs['trainPath'])
+        userPath = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
+        if userPath:
+            self.configs['trainPath'] = userPath
+            self.ui.trainPathDisplay.setText(userPath)
 
     def chooseTestPath(self):
-        self.configs['testPath'] = QFileDialog.getExistingDirectory(self, "Choose Test Set Path", self.cwd)
-        self.ui.testPathDisplay.setText(self.configs['testPath'])
+        userPath = QFileDialog.getExistingDirectory(self, "Choose Test Set Path", self.cwd)
+        if userPath:
+            self.configs['testPath'] = userPath
+            self.ui.testPathDisplay.setText(userPath)
 
     def chooseCheckPointPath(self):
-        self.configs['checkPointPath'] = QFileDialog.getExistingDirectory(self, "Choose Check Points Path", self.cwd)
-        self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
+        userPath = QFileDialog.getExistingDirectory(self, "Choose Checkpoints Path", self.cwd)
+        if userPath:
+            self.configs['checkPointPath'] = userPath
+            self.ui.checkPointPathDisplay.setText(userPath)
 
     def chooseInfluencePath(self):
-        self.configs['influencePath'] = QFileDialog.getExistingDirectory(self, "Choose Influence Result Path", self.cwd)
-        self.ui.influencePathDisplay.setText(self.configs['influencePath'])
+        userPath = QFileDialog.getExistingDirectory(self, "Choose Influence Result Path", self.cwd)
+        if userPath:
+            self.configs['influencePath'] = userPath
+            self.ui.influencePathDisplay.setText(userPath)
 
     def loadConfig(self):
         self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
@@ -204,7 +218,7 @@ class Launcher(QWidget):
 
                         else:
                             self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                                       'Encountered an unexpected status. See more in <i>Details</i> page')
+                                                                       'Unexpected error encountered. See more in <i>Details</i> page')
                             self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
                 else:
@@ -224,7 +238,7 @@ class Launcher(QWidget):
 
                 else:
                     self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                               'Encountered an unexpected status. See more in <i>Details</i> page')
+                                                               'Unexpected error encountered. See more in <i>Details</i> page')
                     self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
 
@@ -261,12 +275,11 @@ class Launcher(QWidget):
 
                 # If the container is running
                 elif self.container.status == 'running':
-                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has already been running')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' is running')
 
                 # If the container is in other status
                 else:
-                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
-
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
         def createCpuContainer():
             self.container = self.client.containers.run(
@@ -281,21 +294,21 @@ class Launcher(QWidget):
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',
-                                       source=self.configs['trainPath'],
+                                       source=getSystemPath(self.configs['trainPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/dataset/test',
-                                       source=self.configs['testPath'],
+                                       source=getSystemPath(self.configs['testPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
-                                       source=self.configs['influencePath'],
+                                       source=getSystemPath(self.configs['influencePath']),
                                        type='bind'),
                     docker.types.Mount(
-                        target='/Robustar2/checkpoint_images ',
-                        source=self.configs['checkPointPath'],
+                        target='/Robustar2/checkpoints',
+                        source=getSystemPath(self.configs['checkPointPath']),
                         type='bind'),
                 ],
                 volumes=[
-                    self.configs['configFile'] + ':/Robustar2/configs.json']
+                    getSystemPath(self.configs['configFile']) + ':/Robustar2/configs.json']
             )
 
         def createCudaContainer():
@@ -311,17 +324,17 @@ class Launcher(QWidget):
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',
-                                       source=self.configs['trainPath'],
+                                       source=getSystemPath(self.configs['trainPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/dataset/test',
-                                       source=self.configs['testPath'],
+                                       source=getSystemPath(self.configs['testPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
-                                       source=self.configs['influencePath'],
+                                       source=getSystemPath(self.configs['influencePath']),
                                        type='bind'),
                     docker.types.Mount(
-                        target='/Robustar2/checkpoint_images ',
-                        source=self.configs['checkPointPath'],
+                        target='/Robustar2/checkpoints',
+                        source=getSystemPath(self.configs['checkPointPath']),
                         type='bind'),
                 ],
                 volumes=[
@@ -349,11 +362,11 @@ class Launcher(QWidget):
                 if(self.container != None):
                     # If the container has been stopped
                     if self.container.status == 'exited':
-                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has already been stopped')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has already stopped')
 
                     # If the container has been created but not run
                     elif self.container.status == 'created':
-                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has not been run yet')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' is not running')
 
                     # If the container is running
                     # Stop the container
@@ -366,15 +379,15 @@ class Launcher(QWidget):
 
                     # If the container is in other status
                     else:
-                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
             except docker.errors.NotFound:
 
                 self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                               'Can not find ' + self.tempName + '. Refresh the <i>Manage</i> page to check the latest information')
+                                                               'Can not find ' + self.tempName + '. Refresh <i>Manage</i> page to check the latest information')
 
             except docker.errors.APIError as apiError:
-                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status. See more in <i>Details</i> page')
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Unexpected error encountered. See more in <i>Details</i> page')
                 self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
             finally:
@@ -393,7 +406,7 @@ class Launcher(QWidget):
             if(self.container != None):
                 if (self.container.status == 'exited' or self.container.status == 'created'):
                     self.container.remove()
-                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' has been removed')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.container.name + ' removed')
 
                     if (self.container.status == 'exited'):
                         self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
@@ -407,15 +420,15 @@ class Launcher(QWidget):
 
                 # If the container is in other status
                 else:
-                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
         except docker.errors.NotFound:
 
             self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                       'Can not find ' + self.tempName + '. Refresh the <i>Manage</i> page to check the latest information')
+                                                       'Can not find ' + self.tempName + '. Refresh <i>Manage</i> page to check the latest information')
 
         except docker.errors.APIError as apiError:
-            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status. See more in <i>Details</i> page')
+            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Unexpected error encountered. See more in <i>Details</i> page')
             self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
         finally:
@@ -442,7 +455,7 @@ class Launcher(QWidget):
                     elif (container.status == 'created'):
                         self.customSignals.addItemSignal.emit(self.ui.createdListWidget, container.name)
                     else:
-                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Encountered an unexpected status')
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
 
         listContainerThread = Thread(target=initContainerInThread())
@@ -505,7 +518,7 @@ class Launcher(QWidget):
             items = self.getItemsFromListWidgets()
             if (len(items) == 0):
                 self.container = None
-                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Select a container you want to stop first')
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Please select a container you want to stop')
             else:
                 item = items[0]
                 containerName = item.text()

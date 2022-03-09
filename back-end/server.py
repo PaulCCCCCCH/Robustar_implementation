@@ -180,11 +180,12 @@ if __name__ == "__main__":
     """
     baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
     datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
+    ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
-    server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir)
+    server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
         baseDir, datasetDir, 
         batch_size=configs['batch_size'], 
