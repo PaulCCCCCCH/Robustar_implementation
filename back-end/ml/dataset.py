@@ -1,24 +1,27 @@
-import torchvision.transforms as transforms
-import torchvision.datasets as dset
-import torch
-from torch.utils.data import Dataset
-import os
 import numpy as np
+import torch
+import torchvision.datasets as dset
+import torchvision.transforms as transforms
+from PIL import Image
+from torch.utils.data import Dataset
+
+from objects.RModelWrapper import RModelWrapper
 
 # Chonghan FIXME: There seems to be a bug with my environment. Added this for now.
 # https://github.com/explosion/spaCy/issues/7664
 import os
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
+
 ###########################################
 
 
 class DataSet(Dataset):
 
-    def __init__(self,data_folder,image_size, transforms, classes_path=None):
-
-        self.data_folder=data_folder
-        self.image_size=image_size
-        self.dataset=dset.ImageFolder(root=data_folder,  transform=transforms)
+    def __init__(self, data_folder, image_size, transforms, classes_path=None):
+        self.data_folder = data_folder
+        self.image_size = image_size
+        self.dataset = dset.ImageFolder(root=data_folder, transform=transforms)
 
     def __len__(self):
         return len(self.dataset)
@@ -47,46 +50,44 @@ class PairedDataset(DataSet):
         return self.dataset[idx], paired_data
 
     def __get_paired_data(self, idx):
-        user_edit_arr, _ = self.paired_dataset[idx] # p: (data, label).
-        if user_edit_arr is None: # this image has no paired data, just return the original image
+        paired_image, _ = self.paired_dataset[idx]  # p: (data, label).
+        if paired_image is None:  # this image has no paired data, just return the original image
             return self.dataset[idx]
 
-        return self.get_aug_image(self.dataset[idx][0], user_edit_arr), self.dataset[idx][1]
+        return self.__get_aug_image(self.dataset[idx][0], paired_image), self.dataset[idx][1]
 
-
-    def get_aug_image(self, image, user_edit):
+    def __get_aug_image(self, image, paired_image):
         """
         Args:
-            image: the original image tensor of shape (3, size, size)
-            user_edit: numpy array or pytorch tensor of shape (size, size)
-            mode: how to augment the data
+            image: the original image tensor of shape (size, size, 3)
+            paired_image: the paired image tensor (size, size, 3)
         Returns:
-            a new image of shape (3, 28, 28), with background filled according to `mode`
+            a new image of shape (size, size, 3), with background filled according to `mode`
         """
-        if type(user_edit) != torch.tensor:
-            user_edit = torch.tensor(user_edit)
 
-        user_edit = torch.stack([user_edit, user_edit, user_edit]) # Expand to RGB repr of shape (3, size, size)
+        # FIXME: not completed
+        # user_edit =
 
-        new_image = image.clone() # clone the image to avoid pollution
-        new_image[user_edit == 1] = 0 # the area marked by the user is the background and should be cleared
-
-        if self.mode == 'mixture':
-            mode_idx = np.random.randint(len(self.MIXTURE_METHODS))
-            mode = self.mixture_methods[mode_idx]
-        else:
-            mode = self.mode
-
-        bg_data = get_aug_background(user_edit, mode)  # (N, 1, 28, 28, 3)
-        new_image = new_image + bg_data
-
-        return new_image
+        # new_image = image.clone()  # clone the image to avoid pollution
+        # new_image[user_edit == 1] = 0  # the area marked by the user is the background and should be cleared
+        #
+        # if self.mode == 'mixture':
+        #     mode_idx = np.random.randint(len(self.MIXTURE_METHODS))
+        #     mode = self.mixture_methods[mode_idx]
+        # else:
+        #     mode = self.mode
+        #
+        # bg_data = get_aug_background(user_edit, mode)  # (N, 1, 28, 28, 3)
+        # new_image = new_image + bg_data
+        #
+        # return new_image
 
 
 def paired_loader(path):
     if os.path.getsize(path):
-        arr = np.load(path, allow_pickle=True)
-        return arr
+        # print(os.path.getsize(path))
+        img = Image.open(path)
+        return img
     return None
 
 
@@ -144,56 +145,3 @@ def get_aug_background(bg_data, mode):
         raise NotImplementedError
 
     return bg_data
-
-# Test
-if __name__ == '__main__':
-
-    dsroot = "./dataset/ten"
-    LOAD_PAIRED = True
-
-    if LOAD_PAIRED:
-        x = PairedDataset("{}/train".format(dsroot), "{}/paired".format(dsroot), 224, None, 'random_pure')
-        print("First image info: {}".format(x.paired_dataset.imgs[0]))
-    else:
-        x = DataSet("{}/train".format(dsroot), 224)
-        print("First image info: {}".format(x.dataset.imgs[0]))
-
-
-    # print(x.paired_dataset)
-    # print(x.paired_dataset[0])
-    """
-    for i in range(50000):
-        if x.paired_dataset[i][0] is not None:
-            print('hey')
-    """
-    import matplotlib.pyplot as plt
-
-    transform = transforms.Compose([
-    transforms.ToTensor(),
-    # transforms.Normalize(mean=(0.5, 0.5, 0.5),
-    #                      std=(0.5, 0.5, 0.5))
-    ])
-
-    data_loader = torch.utils.data.DataLoader(x, batch_size=1, shuffle=False, num_workers=1)
-
-    count = 2
-    for idx, data in enumerate(data_loader):
-        if idx == count:
-            if LOAD_PAIRED:
-                img = data[0][0].squeeze(0).permute(1,2,0).numpy()
-                paired = data[1][0].squeeze(0).permute(1,2,0).numpy()
-                label = data[0][1].squeeze(0)
-                img = paired
-            else:
-                img = data[0].squeeze(0).permute(1,2,0).numpy()
-                label = data[1].squeeze(0)
-
-
-            img = transform(img)
-            img = np.swapaxes(img, 0, 1)
-            img = np.swapaxes(img, 1, 2)
-            # print(img)
-            plt.imshow(img.numpy())
-            plt.show()
-            break
-

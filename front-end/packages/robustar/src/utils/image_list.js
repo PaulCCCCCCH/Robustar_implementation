@@ -9,12 +9,8 @@ const imagePageIdx2Id = (page_idx, index) => {
   return page_idx * configs.imagePerPage + index;
 };
 
-const imageCoord2Idx = (row, col) => {
-  return row * configs.imageListCol + col;
-};
-
 const getPageNumber = (imageIdx) => {
   return Math.floor(imageIdx / configs.imagePerPage);
 };
 
-export { imagePageIdx2Id, imageCoord2Idx, getPageNumber };
+export { imagePageIdx2Id, getPageNumber };

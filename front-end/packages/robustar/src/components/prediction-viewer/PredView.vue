@@ -118,9 +118,9 @@ export default {
         // width of the figure
         figWidth: 300,
         // line color of positive numbers
-        posColor: '#f22323',
+        posColor: 'rgba(25,118,210,0.9)',
         // line color of negative numbers
-        negColor: '#00a000',
+        negColor: 'rgba(25,118,210,0.9)',
         // bottom line color
         lineColor: '#262626',
         // the maximan border and the minimun border

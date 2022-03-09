@@ -166,14 +166,14 @@ class RDataManager:
         for img_path, label in dataset.samples:
             mirrored_img_path = get_paired_path(img_path, src_root, dst_root)
 
-            if osp.exists(mirrored_img_path):  # Ignore existing images
+            if osp.exists(mirrored_img_path): # Ignore existing images
                 continue
 
             folder_path, _ = split_path(mirrored_img_path)
             os.makedirs(folder_path, exist_ok=True)
 
             with open(mirrored_img_path, 'wb') as f:
-                pickle.dump(None, f)
+                pass
 
 
     def get_classify_validation_list(self):
