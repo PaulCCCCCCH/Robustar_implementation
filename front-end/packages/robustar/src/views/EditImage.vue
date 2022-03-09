@@ -1,8 +1,4 @@
 <template>
-  <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
-      adjust
-    </v-btn> -->
-  <!-- <div style="position: absolute; top: 50px; width: 100%"> -->
   <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
     <Visualizer
@@ -16,9 +12,9 @@
 </template>
 <script>
 import ImageEditor from '@/components/image-editor/ImageEditor';
-import { APISendEdit, APIGetProposedEdit } from '@/apis/edit';
-import { APIGetAnnotated } from '@/apis/images';
-import { getNextImageByIdAndURL, replaceSplitAndId } from '@/utils/image_utils';
+import { APISendEdit, APIGetProposedEdit } from '@/services/edit';
+import { APIGetAnnotated } from '@/services/images';
+import { getNextImageByIdAndURL, replaceSplitAndId } from '@/utils/imageUtils';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -62,7 +58,6 @@ export default {
     },
     loadEditSuccess(res) {
       const edit_id = res.data.data;
-      console.log(edit_id);
       if (edit_id === -1) {
         this.$root.finishProcessing();
         this.$root.alert('error', 'No previous annotation found');
@@ -81,7 +76,6 @@ export default {
       }
     },
     loadEditFailed(res) {
-      console.log(res);
       this.$root.finishProcessing();
       this.$root.alert('error', 'Failed to load previous annotation');
     },
@@ -103,7 +97,6 @@ export default {
       this.$root.alert('success', 'Automatic annotation applied.');
     },
     autoEditFailed(res) {
-      console.log(re);
       this.$root.finishProcessing();
       this.$root.alert('error', 'Failed to auto annotate');
     },

@@ -1,12 +1,12 @@
-import * as common from './common';
+import { getRequest } from './common';
 
 /**
  * @param {string} split
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-const APIGetSplitLength = (split, success, failed) => {
-  common.getRequest(`/image/${split}`, success, failed);
+export const APIGetSplitLength = (split, success, failed) => {
+  getRequest(`/image/${split}`, success, failed);
 };
 
 /**
@@ -14,8 +14,8 @@ const APIGetSplitLength = (split, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-const APIGetClassNames = (split, success, failed) => {
-  common.getRequest(`/image/class/${split}`, success, failed);
+export const APIGetClassNames = (split, success, failed) => {
+  getRequest(`/image/class/${split}`, success, failed);
 };
 
 /**
@@ -23,11 +23,9 @@ const APIGetClassNames = (split, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
- const APIGetAnnotated = (image_id, success, failed) => {
-  common.getRequest(`/image/get-annotated/${image_id}`, success, failed);
+export const APIGetAnnotated = (image_id, success, failed) => {
+  getRequest(`/image/get-annotated/${image_id}`, success, failed);
 };
-
-
 
 /**
  * FIXME: Just an example. Not currently used.
@@ -36,8 +34,8 @@ const APIGetClassNames = (split, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
-  common.getRequest(`/${dataset}/${startFrom}`, success, failed);
+export const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
+  getRequest(`/${dataset}/${startFrom}`, success, failed);
 };
 
 /**
@@ -45,8 +43,6 @@ const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
  * @param {string} dataset either 'train' or 'test'
  * @param {int} imageId the id of the image to retrieve
  */
-const APIGetImage = (dataset, imageId, success, failed) => {
-  common.getRequest(`/${dataset}/${imageId}`, success, failed);
+export const APIGetImage = (dataset, imageId, success, failed) => {
+  getRequest(`/${dataset}/${imageId}`, success, failed);
 };
-
-export { APIGetImagesInPage, APIGetImage, APIGetSplitLength, APIGetClassNames, APIGetAnnotated };

@@ -2,22 +2,9 @@ from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
+from objects.RTask import RTask, TaskType
 
 app = RServer.getServer().getFlaskApp()
-
-
-class ThreadPool:
-    threads = []
-
-    @staticmethod
-    def append(thread):
-        ThreadPool.threads.append(thread)
-
-    @staticmethod
-    def stop():
-        while ThreadPool.threads:
-            t = ThreadPool.threads.pop()
-            t.stop()
 
 @app.route('/train/stop', methods=['GET'])
 def stop_training():
@@ -44,7 +31,7 @@ def stop_training():
               example: Success
     """
     try:
-        ThreadPool.stop()
+        RTask.exit_tasks_of_type(TaskType.Training)
     except:
         return RResponse.fail("Failed", -1)
     
@@ -134,8 +121,6 @@ def start_training():
     if not train_thread:
         print("Failed")
         return RResponse.fail("Failed", -1)
-
-    ThreadPool.append(train_thread)
 
     # Training started succesfully!
     print("Training started!")

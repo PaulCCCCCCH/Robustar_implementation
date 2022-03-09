@@ -58,7 +58,8 @@
                   <v-progress-circular
                     indeterminate
                     color="primary lighten-3"
-                  ></v-progress-circular>
+                    >
+                  </v-progress-circular>
                 </v-row>
               </template>
               <v-expand-transition>
@@ -117,8 +118,8 @@
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength, APIGetClassNames } from '@/apis/images';
+import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
+import { APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -244,7 +245,7 @@ export default {
       this.imageList = [];
       let imgNum = configs.imagePerPage;
 
-      // last page
+      // handle last page
       if (this.currentPage === this.maxPage) {
         imgNum = this.splitLength - configs.imagePerPage * this.maxPage;
       }

@@ -101,6 +101,14 @@
             clearable
             messages="The constant weight for the loss term calculated with paired training data. Increasing the value will result in a stronger regularization effect."
           ></v-text-field>
+          <v-checkbox
+            v-model="configs.user_edit_buffering"
+            label="Store annotation data in RAM when training"
+            messages="This speeds up training but may increase RAM usage"
+            true-value="yes"
+            false-value="no"
+            :ripple="false"
+          ></v-checkbox>
         </div>
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
@@ -119,7 +127,7 @@
 </template>
 
 <script>
-import { APIStartTrain, APIStopTrain } from '@/apis/train';
+import { APIStartTrain, APIStopTrain } from '@/services/train';
 export default {
   name: 'TrainPad',
   data() {
@@ -154,8 +162,9 @@ export default {
         class_path: './model/cifar-class.txt',
         port: '8000',
         save_dir: '/Robustar2/checkpoints',
-        use_paired_train: 'false',
+        use_paired_train: 'no',
         mixture: 'random_pure',
+        user_edit_buffering: 'no',
 
         // Selection for the following not implemented
         paired_data_path: '/Robustar2/dataset/paired',

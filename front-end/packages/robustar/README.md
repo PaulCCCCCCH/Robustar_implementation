@@ -11,7 +11,7 @@ Developed with `Vue2`
 - `src/components`: Defines reusable components. Components are further divided into sub-folders for clarity.
 - `src/assets`: Stores different resource files, e.g. icons and images.
 - `src/utils`: Contains reusable utility functions written in pure javascript, e.g. a function that converts image id to image path.
-- `src/apis`: Each file here contains a group of api calls to the backend, e.g. calls to start/pause/stop/inspect training grouped in `src/apis/train.js`.
+- `src/services`: Each file here contains a group of api calls to the backend, e.g. calls to start/pause/stop/inspect training grouped in `src/services/train.js`.
 
 ### Key Files
 

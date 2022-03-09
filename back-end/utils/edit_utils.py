@@ -5,6 +5,8 @@ from utils.image_utils import imageURLToPath, imageSplitIdToPath
 from utils.path_utils import get_paired_path
 import shutil
 import threading
+from objects.RTask import RTask, TaskType
+import time
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -23,6 +25,10 @@ def update_annotated_list(image_id):
 
 
 def save_edit(split, image_id, image_data, image_height, image_width):
+    """
+    Save edited image as png in paired data folder.
+    The file name will still end with `JPEG` extension.
+    """
 
     with Image.open(BytesIO(image_data)) as img:
     
@@ -31,9 +37,9 @@ def save_edit(split, image_id, image_data, image_height, image_width):
         paired_img_path = get_paired_path(img_path, dataManager.train_root, dataManager.paired_root)
 
         to_save = img.resize((image_width, image_height))
-        to_save = to_save.convert('RGB') # image comming from canvas is RGBA
+        # to_save = to_save.convert('RGB') # image comming from canvas is RGBA
 
-        to_save.save(paired_img_path)
+        to_save.save(paired_img_path, format='png')
 
         update_annotated_list(image_id)
 
@@ -54,7 +60,7 @@ def propose_edit(split, image_id):
         # image_name = image_url.replace('.', '_').replace('/', '_').replace('\\', '_')
         proposed_image_path = get_paired_path(image_path, dataManager.train_root, dataManager.proposed_annotation_root)
         # proposed_image_path = osp.join(dataManager.proposed_annotation_root, image_name) + '.jpg'
-        pil_image.save(proposed_image_path)
+        pil_image.save(proposed_image_path, format='png')
         proposedAnnotationBuffer.add(int(image_id))
 
     proposed_image_id = int(image_id)
@@ -63,6 +69,9 @@ def propose_edit(split, image_id):
 
 def start_auto_annotate(split, num_to_gen):
     def auto_annotate_thread(split, num_to_gen):
+        task = RTask(TaskType.AutoAnnotate, num_to_gen)
+        starttime = time.time()
+
         for image_id in range(num_to_gen):
             proposed_image_id = propose_edit(split, image_id)
             proposed_image_path = imageSplitIdToPath('proposed', proposed_image_id)
@@ -70,6 +79,13 @@ def start_auto_annotate(split, num_to_gen):
             print("Copying from {} to {}".format(proposed_image_path, paired_img_path))
             shutil.copy(proposed_image_path, paired_img_path)
             update_annotated_list(image_id)
+            task_update_res = task.update()
+            if not task_update_res:
+                endtime = time.time()
+                print("Time consumption:", endtime-starttime)
+                print("Trainning stopped!")
+                return 
+
 
     test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
     test_thread.start()
