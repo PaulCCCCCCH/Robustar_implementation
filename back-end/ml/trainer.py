@@ -158,8 +158,6 @@ class Trainer():
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
 
-                    
-
                 if self.use_paired_train:
                     inputs, labels = data[0]
                     paired_inputs, _ = data[1]
