@@ -1,15 +1,22 @@
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 import torch
+import torchvision.datasets as dset
+import torchvision.transforms as transforms
+from PIL import Image
 from torch.utils.data import Dataset
 import os
 import numpy as np
 from PIL import Image
 
+from objects.RModelWrapper import RModelWrapper
+
 # Chonghan FIXME: There seems to be a bug with my environment. Added this for now.
 # https://github.com/explosion/spaCy/issues/7664
 import os
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
+
 ###########################################
 
 
@@ -43,7 +50,10 @@ class ImageFolderNoTransform(ImageFolder):
 
 class DataSet(Dataset):
 
-    def __init__(self,data_folder,image_size, transforms, classes_path=None):
+    def __init__(self, data_folder, image_size, transforms, classes_path=None):
+        self.data_folder = data_folder
+        self.image_size = image_size
+        self.dataset = dset.ImageFolder(root=data_folder, transform=transforms)
 
         self.data_folder=data_folder
         self.image_size=image_size

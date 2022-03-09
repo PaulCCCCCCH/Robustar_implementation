@@ -96,9 +96,7 @@ def start_train(configs):
         logdir = os.path.join('runs', 'run_{}'.format(date))
         writer = SummaryWriter(logdir)
         trainer.writer = writer
-
-        writer.add_scalar(
-            'train accuracy', 0, 0)
+        writer.add_scalar('train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
         # import threading
