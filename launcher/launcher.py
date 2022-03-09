@@ -219,13 +219,7 @@ class Launcher(QWidget):
                 # Add the new container to the createdListWidget
                 if ('port is already allocated' in str(apiError)):
 
-                    # Because of the exception
-                    # self.container has not been changed to the created one
-                    # Thus use self.configs['containerName'] instead of self.container.name
-                    self.customSignals.addItemSignal.emit(self.ui.createdListWidget, self.configs['containerName'])
-
-                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.configs[
-                        'containerName'] + ' is created but fails to run because port is already allocated. See more in <i>Details</i> page')
+                    self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.tempName + ' fails to run because port is already allocated. See more in <i>Details</i> page')
                     self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
                 else:
