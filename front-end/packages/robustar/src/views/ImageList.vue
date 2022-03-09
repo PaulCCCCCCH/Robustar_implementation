@@ -50,7 +50,7 @@
       <v-divider class="mb-8" style="width: 100%"></v-divider>
 
       <div class="d-flex flex-row flex-wrap justify-start" style="flex">
-        <div v-for="(url, idx) in imageList" :key="idx" class="mb-8 mr-8 row-item">
+        <div v-for="(url, idx) in imageList" :key="url" class="mb-8 mr-8 row-item">
           <v-hover v-slot="{ hover }">
             <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
               <template v-slot:placeholder>
