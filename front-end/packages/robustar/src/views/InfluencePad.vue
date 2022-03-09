@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { APICalculateInfluence } from '@/apis/predict';
+import { APICalculateInfluence } from '@/services/predict';
 export default {
   name: 'InfluencePad',
   data() {

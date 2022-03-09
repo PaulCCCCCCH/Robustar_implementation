@@ -59,8 +59,8 @@ import PredView from '@/components/prediction-viewer/PredView.vue';
 import InfluView from '@/components/prediction-viewer/InfluView.vue';
 import FocusView from '@/components/prediction-viewer/FocusView.vue';
 import ProposedEditView from '@/components/prediction-viewer/ProposedEditView.vue';
-import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
-import { APIGetProposedEdit } from '@/apis/edit';
+import { APIPredict, APIGetInfluenceImages } from '@/services/predict';
+import { APIGetProposedEdit } from '@/services/edit';
 import { configs } from '@/configs.js';
 
 export default {

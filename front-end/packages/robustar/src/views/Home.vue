@@ -4,8 +4,8 @@
       <br />
       <h1>Start your exploration!</h1>
       <br /><br />
-      <div class="d-flex flex-wrap justify-space-around" >
-        <div class="featureItem" v-for="(item, i) in items" :key="i" >
+      <div class="d-flex flex-wrap justify-space-around">
+        <div class="feature-item" v-for="(item, i) in items" :key="i">
           <v-list-item :to="{ path: '/' + item.link }" class="d-flex align-start">
             <div>
               <v-list-item-icon>
@@ -25,20 +25,6 @@
     </div>
   </div>
 </template>
-<style>
-.featureItem {
-  height: auto;
-  width: 45%; 
-  padding: 20px 30px;
-  margin: 5px;
-  border-radius: 10px;
-  background-color: #fff;
-  text-align: left;
-}
-.container {
-  text-align: center;
-}
-</style>
 
 <script>
 // @ is an alias to /src
@@ -85,3 +71,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.feature-item {
+  height: auto;
+  width: 45%;
+  padding: 20px 30px;
+  margin: 5px;
+  border-radius: 10px;
+  background-color: #fff;
+  text-align: left;
+}
+.container {
+  text-align: center;
+}
+</style>

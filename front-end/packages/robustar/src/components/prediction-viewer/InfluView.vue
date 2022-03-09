@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { getImageUrlFromFullUrl } from '@/utils/image_utils';
+import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 export default {
   props: {
@@ -25,14 +25,13 @@ export default {
   },
   methods: {
     gotoImage(url) {
-      console.log(url);
       const [image_id, split] = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', split);
       sessionStorage.setItem('image_id', image_id);
       sessionStorage.setItem('image_url', url);
-      sessionStorage.setItem('save_image_id', split)
-      sessionStorage.setItem('save_image_split', image_id)
-      this.$router.push({ name: 'EditImage', params: {mode: split} });
+      sessionStorage.setItem('save_image_id', split);
+      sessionStorage.setItem('save_image_split', image_id);
+      this.$router.push({ name: 'EditImage', params: { mode: split } });
     },
   },
 };

@@ -12,7 +12,7 @@
           <p style="color: gray;">No task is running now.</p>
         </v-col>
       </v-row>
-      <v-row v-for="(item, index) in digest" align="center" justify="center" :key="item[0]">
+      <v-row v-for="item in digest" align="center" justify="center" :key="item[0]">
         <v-col cols="12" lg="1" align="center" justify="center">
           <v-btn color="red" icon @click="stopTask(item[3])"><v-icon>mdi-minus-box</v-icon></v-btn>
         </v-col>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { APIStopTask } from '@/apis/task';
+import { APIStopTask } from '@/services/task';
 
 export default {
   name: 'TaskPanel',

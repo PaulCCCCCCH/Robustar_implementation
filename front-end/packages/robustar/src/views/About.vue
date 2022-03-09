@@ -45,7 +45,7 @@
 
 <script>
 import PredView from '@/components/prediction-viewer/PredView.vue';
-import { APIPredict, APIGetInfluenceImages } from '@/apis/predict';
+import { APIPredict, APIGetInfluenceImages } from '@/services/predict';
 import { configs } from '@/configs.js';
 
 export default {

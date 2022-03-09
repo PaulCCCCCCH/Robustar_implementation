@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { APIGetConfig } from '@/apis/config';
+import { APIGetConfig } from '@/services/config';
 export default {
   name: 'Config',
   data() {

@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { APIStartTrain, APIStopTrain } from '@/apis/train';
+import { APIStartTrain, APIStopTrain } from '@/services/train';
 export default {
   name: 'TrainPad',
   data() {

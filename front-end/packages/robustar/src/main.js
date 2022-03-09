@@ -1,10 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-// import ElementUI from 'element-ui';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import './main.css';
-// import 'element-ui/lib/theme-chalk/index.css';
 import vuetify from './plugins/vuetify';
 // import socketio from 'socket.io-client';
 import VueSocketIO from 'vue-socket.io';
@@ -15,7 +11,7 @@ Vue.config.productionTip = false;
 
 // Vue.use(ElementUI);
 Vue.use(new VueSocketIO({
-  debug: true,
+  debug: false,
   connection: 'http://localhost:8000',
 }))
 
@@ -25,6 +21,7 @@ new Vue({
   render: (h) => h(App),
   data() {
     return {
+      // global overlay and snackbar
       processing: false,
       processingMsg: 'Processing ...',
       success: false,
@@ -34,6 +31,11 @@ new Vue({
     };
   },
   methods: {
+    /**
+     * control global snackbar notification
+     * @param {string} type type of notification
+     * @param {string} message
+     */
     alert(type, message) {
       if (type === 'success') {
         this.successMsg = message || 'Succeeded';
@@ -43,6 +45,10 @@ new Vue({
         this.error = true;
       }
     },
+    /**
+     * toggle overlay to indicate processing state
+     * @param {string} message
+     */
     startProcessing(message) {
       this.processingMsg = message || 'Processing ...';
       this.processing = true;
