@@ -26,6 +26,7 @@ def ml_initialize(configs):
     classes_path = configs['class_path']
     trainset = configs['train_path']
     testset = configs['test_path']
+    user_edit_buffering = configs['user_edit_buffering']
     device = RServer.getServerConfigs()['device']
 
     dataManager = RServer.getDataManager()
@@ -33,7 +34,8 @@ def ml_initialize(configs):
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset, paired_data_path, image_size, transforms, classes_path, paired_train_mixture)
+            trainset, paired_data_path, image_size, transforms, 
+            classes_path, paired_train_mixture, user_edit_buffering)
     else:
         train_set = DataSet(trainset, image_size, transforms, classes_path)
 

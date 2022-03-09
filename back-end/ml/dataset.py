@@ -1,9 +1,10 @@
 import torchvision.transforms as transforms
-import torchvision.datasets as dset
+from torchvision.datasets import ImageFolder
 import torch
 from torch.utils.data import Dataset
 import os
 import numpy as np
+from PIL import Image
 
 # Chonghan FIXME: There seems to be a bug with my environment. Added this for now.
 # https://github.com/explosion/spaCy/issues/7664
@@ -12,64 +13,113 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 ###########################################
 
 
+
+class ImageFolderNoTransform(ImageFolder):
+    """
+    An ImageFolder object that does not apply transforms
+    Reference:
+    https://github.com/pytorch/vision/blob/4ec38d496db69833eb0a6f144ebbd6f751cd3912/torchvision/datasets/folder.py#L129
+
+    This is necessary because transforms have to be applied after the creation of 
+    augmented data.
+    """
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+        Returns:
+            tuple: (sample, target) where target is class_index of the target class.
+        """
+        path, target = self.samples[index]
+        sample = self.loader(path)
+        # if self.transform is not None:
+        #     sample = self.transform(sample)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return sample, target
+
+
 class DataSet(Dataset):
 
     def __init__(self,data_folder,image_size, transforms, classes_path=None):
 
         self.data_folder=data_folder
         self.image_size=image_size
-        self.dataset=dset.ImageFolder(root=data_folder,  transform=transforms)
+        self.dataset=ImageFolderNoTransform(root=data_folder)
+        self.transforms = transforms
 
     def __len__(self):
         return len(self.dataset)
 
     def __getitem__(self, idx):
-        return self.dataset[idx]
+        return self.transforms(self.dataset[idx])
 
 
 class PairedDataset(DataSet):
+    """
+    Require paired data to be in png format.
+    """
+
     mixture_methods = ['pure_black', 'noise', 'noise_weak', 'noise_minor', 'random_pure', 'hstrips', 'vstrips']
 
-    def __init__(self, data_folder, paired_data_folder, image_size, transforms, classes_path, mode):
+    def __init__(self, data_folder, paired_data_folder, image_size, transforms, classes_path, mode, user_edit_buffering=False):
         super(PairedDataset, self).__init__(data_folder, image_size, transforms, classes_path)
-        print("********************")
-        print(paired_data_folder)
-        print("********************")
+
+        loader = self.paired_loader_with_buffer if user_edit_buffering else self.paired_loader
+        self.user_edit_dataset = ImageFolderNoTransform(root=paired_data_folder, loader=loader)
         self.paired_data_folder = paired_data_folder
-        self.paired_dataset = dset.ImageFolder(root=paired_data_folder, loader=paired_loader, transform=transforms)
         self.mode = mode
+        self.user_edit_buffer = {}
 
     def __len__(self):
         return len(self.dataset)
 
     def __getitem__(self, idx):
-        paired_data = self.__get_paired_data(idx)
-        return self.dataset[idx], paired_data
+        img, label = self.dataset[idx]
+        aug_img, _ = self.__get_paired_data(idx)
+        return (self.transforms(img), label), (self.transforms(aug_img), label)
 
     def __get_paired_data(self, idx):
-        user_edit_arr, _ = self.paired_dataset[idx] # p: (data, label).
+        data, label = self.dataset[idx]
+
+        user_edit_arr, _ = self.user_edit_dataset[idx] # p: (data, label).
         if user_edit_arr is None: # this image has no paired data, just return the original image
-            return self.dataset[idx]
+            return data, label
+        aug_img = self.__get_aug_image(self.dataset[idx][0], user_edit_arr)
+        return aug_img, label
 
-        return self.get_aug_image(self.dataset[idx][0], user_edit_arr), self.dataset[idx][1]
+    def paired_loader(self, path):
+        if os.path.getsize(path) == 0:
+            return None
 
+        img = Image.open(path)
+        imgarr = np.array(img)
+        user_edit = 1 * np.equal(imgarr, [255, 255, 255, 255]).all(axis=2)
+        return torch.tensor(user_edit)
 
-    def get_aug_image(self, image, user_edit):
+    def paired_loader_with_buffer(self, path):
+        if path in self.user_edit_buffer: # Return if already buffered
+            return self.user_edit_buffer[path]
+
+        user_edit = self.paired_loader(path) # Find user edit region
+        self.user_edit_buffer[path] = user_edit
+        return user_edit
+
+    def __get_aug_image(self, image, user_edit):
         """
         Args:
-            image: the original image tensor of shape (3, size, size)
-            user_edit: numpy array or pytorch tensor of shape (size, size)
+            image: PIL.Image of original training dataset
+            user_edit: numpy array of shape (size, size)
             mode: how to augment the data
         Returns:
-            a new image of shape (3, 28, 28), with background filled according to `mode`
+            a new PIL.Image with background filled according to `mode`
         """
-        if type(user_edit) != torch.tensor:
-            user_edit = torch.tensor(user_edit)
+        user_edit = np.stack([user_edit, user_edit, user_edit], axis=2) # Expand to RGB repr of shape (size, size, 3)
 
-        user_edit = torch.stack([user_edit, user_edit, user_edit]) # Expand to RGB repr of shape (3, size, size)
-
-        new_image = image.clone() # clone the image to avoid pollution
-        new_image[user_edit == 1] = 0 # the area marked by the user is the background and should be cleared
+        imgarr = np.array(image) # (size, size, 3)
+        imgarr[user_edit == 1] = 0 # the area marked by the user is the background and should be cleared
 
         if self.mode == 'mixture':
             mode_idx = np.random.randint(len(self.MIXTURE_METHODS))
@@ -77,23 +127,16 @@ class PairedDataset(DataSet):
         else:
             mode = self.mode
 
-        bg_data = get_aug_background(user_edit, mode)  # (N, 1, 28, 28, 3)
-        new_image = new_image + bg_data
+        bg_data = get_aug_background(user_edit, mode)  # (size, size, 3)
+        imgarr = imgarr + bg_data
 
-        return new_image
-
-
-def paired_loader(path):
-    if os.path.getsize(path):
-        arr = np.load(path, allow_pickle=True)
-        return arr
-    return None
+        return Image.fromarray(imgarr)
 
 
 def get_aug_background(bg_data, mode):
     """
     Args:
-        bg_data: user-edit pytorch tensor of shape (3, size, size)
+        bg_data: user-edit pytorch tensor of shape (size, size, 3)
         mode: how to augment the data
     Returns:
         the augmented background
@@ -102,27 +145,34 @@ def get_aug_background(bg_data, mode):
     img_size = list(bg_data.shape)
 
     if mode == 'pure_black':
-        bg_data = torch.zeros(size=img_size)
+        bg_data = np.zeros(shape=img_size)
 
     elif mode == 'noise':
-        bg_data = torch.rand(size=img_size) * bg_data
-        # bg_data = bg_data.to(torch.uint8)
+        bg_data = np.random.randint(0, 256, img_size) * bg_data
 
     elif mode == 'noise_weak':
-        bg_data = (0.5 * (torch.rand(size=img_size)) + 0.25) * bg_data
-        # bg_data = bg_data.to(torch.uint8)
+        bg_data = np.random.randint(64, 192, img_size) * bg_data
 
     elif mode == 'noise_minor':
-        bg_data = (0.1 * (torch.rand(size=img_size)) + 0.45) * bg_data
-        # bg_data = bg_data.to(torch.uint8)
+        bg_data = np.random.randint(96, 160, img_size) * bg_data
 
     elif mode == 'random_pure':
-        colour_map = torch.rand(size=(3, 1, 1))
-        bg_data = bg_data * colour_map  # (3, 28, 28)
+        colour_map = np.random.randint(0, 256, size=(1, 1, 3))
+        bg_data = bg_data * colour_map  # (size, size, 3)
 
     elif mode == 'hstrips':
-        colour_map = torch.rand(size=(3, 1, 1))
-        strips = torch.zeros_like(bg_data)  # (3, size, size)
+        colour_map = np.random.randint(0, 256, size=(1, 1, 3))
+        strips = np.zeros_like(bg_data)  # (size, size, 3)
+
+        indices = np.arange(bg_data.shape[0])
+        indices = np.where(indices % 5 < 2)
+        strips[indices, :, :] = 1
+        bg_data = strips * bg_data  # element-wise product, shape unchanged
+        bg_data = bg_data * colour_map
+
+    elif mode == 'vstrips':
+        colour_map = np.random.randint(0, 256, size=(1, 1, 3))
+        strips = np.zeros_like(bg_data)  # (size, size, 3)
 
         indices = np.arange(bg_data.shape[1])
         indices = np.where(indices % 5 < 2)
@@ -130,55 +180,42 @@ def get_aug_background(bg_data, mode):
         bg_data = strips * bg_data  # element-wise product, shape unchanged
         bg_data = bg_data * colour_map
 
-    elif mode == 'vstrips':
-        colour_map = torch.rand(size=(3, 1, 1))
-        strips = torch.zeros_like(bg_data)  # (3, size, size)
-
-        indices = np.arange(bg_data.shape[2])
-        indices = np.where(indices % 5 < 2)
-        strips[:, :, indices] = 1
-        bg_data = strips * bg_data  # element-wise product, shape unchanged
-        bg_data = bg_data * colour_map
-
     else:
         raise NotImplementedError
 
-    return bg_data
+    return bg_data.astype(np.uint8)
 
 # Test
 if __name__ == '__main__':
-
-    dsroot = "./dataset/ten"
-    LOAD_PAIRED = True
-
-    if LOAD_PAIRED:
-        x = PairedDataset("{}/train".format(dsroot), "{}/paired".format(dsroot), 224, None, 'random_pure')
-        print("First image info: {}".format(x.paired_dataset.imgs[0]))
-    else:
-        x = DataSet("{}/train".format(dsroot), 224)
-        print("First image info: {}".format(x.dataset.imgs[0]))
-
-
-    # print(x.paired_dataset)
-    # print(x.paired_dataset[0])
-    """
-    for i in range(50000):
-        if x.paired_dataset[i][0] is not None:
-            print('hey')
-    """
     import matplotlib.pyplot as plt
-
     transform = transforms.Compose([
     transforms.ToTensor(),
     # transforms.Normalize(mean=(0.5, 0.5, 0.5),
     #                      std=(0.5, 0.5, 0.5))
     ])
 
+    dsroot = "/Robustar2/dataset"
+    LOAD_PAIRED = True
+
+    if LOAD_PAIRED:
+        x = PairedDataset("{}/train".format(dsroot), "{}/paired".format(dsroot), 224, transform, None, 'vstrips', False)
+        # print("First image info: {}".format(x.user_edit_dataset.imgs[0]))
+    else:
+        x = DataSet("{}/train".format(dsroot), 224, transforms=transform)
+        # print("First image info: {}".format(x.dataset.imgs[0]))
+
+
+    # print(x.user_edit_dataset)
+    # print(x.user_edit_dataset[0])
+    # for i in range(50000):
+    #     if x.user_edit_dataset[i][0] is not None:
+    #         print('hey')
+
     data_loader = torch.utils.data.DataLoader(x, batch_size=1, shuffle=False, num_workers=1)
 
-    count = 2
+    count = [0, 1]
     for idx, data in enumerate(data_loader):
-        if idx == count:
+        if idx in count:
             if LOAD_PAIRED:
                 img = data[0][0].squeeze(0).permute(1,2,0).numpy()
                 paired = data[1][0].squeeze(0).permute(1,2,0).numpy()
@@ -192,8 +229,7 @@ if __name__ == '__main__':
             img = transform(img)
             img = np.swapaxes(img, 0, 1)
             img = np.swapaxes(img, 1, 2)
-            # print(img)
             plt.imshow(img.numpy())
             plt.show()
+        else:
             break
-
