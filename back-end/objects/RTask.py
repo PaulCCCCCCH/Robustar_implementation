@@ -14,14 +14,16 @@ from objects.RServer import RServer
 '''
 make all thread apis create here
 '''
+
+
 class TaskType:
     Training = 0
     Test = 1
     Influence = 2
-    AutoAnnotate = 3
 
-    mapping = ['Training', 'Test', 'Influence', 'AutoAnnotate']
+    mapping = ['Training', 'Test', 'Influence']
     # start_funcs = [start_train, start_test]
+
 
 def with_lock(func):
     def wrapper(*wargs, **kwargs):
@@ -29,7 +31,9 @@ def with_lock(func):
         res = func(*wargs, **kwargs)
         RTask.lock.release()
         return res
+
     return wrapper
+
 
 class RTask:
     tasks = []
@@ -53,7 +57,7 @@ class RTask:
     @staticmethod
     # @with_lock
     def exit_tasks_of_type(task_type):
-        buffer = [task for task in RTask.tasks if task.task_type==task_type]
+        buffer = [task for task in RTask.tasks if task.task_type == task_type]
         for task in buffer:
             task.exit()
 
@@ -82,7 +86,7 @@ class RTask:
         RTask.tasks.append(task)
         RTask.send_digest()
         return task
-    
+
     @staticmethod
     @with_lock
     def exit_task(tid):
@@ -91,7 +95,7 @@ class RTask:
             print("Task not found")
         RTask.tasks.remove(task)
         RTask.send_digest()
-    
+
     @staticmethod
     @with_lock
     def update_task(tid):
@@ -109,7 +113,8 @@ class RTask:
     def get_tasks_digest():
         digest = []
         for task in RTask.tasks:
-            digest.append((task.get_readable_label(), task.get_percentage(), task.get_readable_time(), task.tid))
+            digest.append((task.get_readable_label(), task.get_percentage(), task.get_finished_task(),
+                           task.get_readable_time(), task.tid))
         return digest
 
     def __init__(self, task_type, total):
@@ -132,7 +137,7 @@ class RTask:
 
     def make_time_readable(self, t):
         try:
-            assert t>=0
+            assert t >= 0
             res = str(timedelta(seconds=int(t)))
         except:
             res = 'Unknown'
@@ -143,22 +148,27 @@ class RTask:
 
     def update(self):
         return RTask.update_task(self.tid)
-    
+
     def _update(self):
         self.n += 1
-        self.elapsed_time = time()-self.start_time
-        rate = self.elapsed_time/self.n
-        self.remaining_time = (self.total-self.n)*rate
+        self.elapsed_time = time() - self.start_time
+        rate = self.elapsed_time / self.n
+        self.remaining_time = (self.total - self.n) * rate
 
         self.elapsed_readable_time = self.make_time_readable(self.elapsed_time)
         self.remaining_readable_time = self.make_time_readable(self.remaining_time)
-    
+
     def get_percentage(self):
-        return self.n/self.total if self.total else 'Invalid'
-    
+        return self.n / self.total if self.total else 'Invalid'
+
     def get_readable_label(self):
         return f"{TaskType.mapping[self.task_type]}({self.tid})"
-    
-    def get_readable_time(self):
-        return f"{self.n}/{self.total}[{self.elapsed_readable_time}<<{self.remaining_readable_time}]"
 
+    # def get_readable_time(self):
+    #     return f"{self.n}/{self.total}[{self.elapsed_readable_time}<<{self.remaining_readable_time}]"
+
+    def get_finished_task(self):
+        return f"{self.n}/{self.total}"
+
+    def get_readable_time(self):
+        return f"{self.elapsed_readable_time}/{self.remaining_readable_time}"
