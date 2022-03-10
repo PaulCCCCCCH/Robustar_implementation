@@ -545,7 +545,7 @@ class Launcher(QWidget):
 app = QApplication([])
 launcher = Launcher()
 
-launcher.ui.setFixedSize(800, 680)
+launcher.ui.setFixedSize(1000, 850)
 launcher.ui.show()
 launcher.initContainerList()
 app.exec_()
