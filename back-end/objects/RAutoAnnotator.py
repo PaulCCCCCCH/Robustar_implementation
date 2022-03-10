@@ -23,7 +23,7 @@ class RAutoAnnotator:
         """
         return self.model.process_image(imagePath)
 
-    def annotate_batch(self, images: list[str], savedir: str):
+    def annotate_batch(self, images: list, savedir: str):
         # TODO
         pass
 

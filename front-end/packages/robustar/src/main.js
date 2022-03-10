@@ -2,17 +2,15 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
-// import socketio from 'socket.io-client';
 import VueSocketIO from 'vue-socket.io';
-
-// export const SocketInstance = VueSocketIO('http://localhost:8000');
+import { configs } from '@/configs.js';
 
 Vue.config.productionTip = false;
 
 // Vue.use(ElementUI);
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: 'http://localhost:8000',
+  connection: configs.serverUrl,
 }))
 
 new Vue({
