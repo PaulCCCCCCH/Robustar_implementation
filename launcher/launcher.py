@@ -64,7 +64,7 @@ class Launcher(QWidget):
                         'testPath': '',
                         'checkPointPath': '',
                         'influencePath': '',
-                        'configFile': 'configs.json'
+                        'configFile': ''
                         }
         self.loadPath = ''
         self.savePath = ''
@@ -79,9 +79,10 @@ class Launcher(QWidget):
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.chooseInfluencePath)
+        self.ui.configFileButton.clicked.connect(self.chooseConfigFile)
 
-        self.ui.loadConfigButton.clicked.connect(self.loadConfig)
-        self.ui.saveConfigButton.clicked.connect(self.saveConfig)
+        self.ui.loadProfileButton.clicked.connect(self.loadProfile)
+        self.ui.saveProfileButton.clicked.connect(self.saveProfile)
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
         self.ui.deleteServerButton.clicked.connect(self.deleteServer)
@@ -138,7 +139,13 @@ class Launcher(QWidget):
             self.configs['influencePath'] = userPath
             self.ui.influencePathDisplay.setText(userPath)
 
-    def loadConfig(self):
+    def chooseConfigFile(self):
+        userPath, _ = QFileDialog.getOpenFileName(self, "Choose Config File", self.cwd, "JSON Files (*.json);;All Files (*)")
+        if userPath:
+            self.configs['configFile'] = userPath
+            self.ui.configFileDisplay.setText(userPath)
+
+    def loadProfile(self):
         self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.loadPath, 'r') as f:
@@ -154,11 +161,13 @@ class Launcher(QWidget):
                 self.ui.testPathDisplay.setText(self.configs['testPath'])
                 self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
                 self.ui.influencePathDisplay.setText(self.configs['influencePath'])
+                self.ui.configFileDisplay.setText(self.configs['configFile'])
+
 
         except FileNotFoundError:
             print('Load path not found')
 
-    def saveConfig(self):
+    def saveProfile(self):
         self.savePath, _ = QFileDialog.getOpenFileName(self, "Save Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.savePath, 'w') as f:

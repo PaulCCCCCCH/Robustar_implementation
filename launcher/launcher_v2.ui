@@ -120,7 +120,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="loadConfigButton">
+             <widget class="QPushButton" name="loadProfileButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Load Configs</string>
+               <string>Load Profile</string>
               </property>
              </widget>
             </item>
@@ -183,7 +183,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="saveConfigButton">
+             <widget class="QPushButton" name="saveProfileButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -211,7 +211,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Save Configs</string>
+               <string>Save Profile</string>
               </property>
              </widget>
             </item>
@@ -479,7 +479,7 @@
                      <rect>
                       <x>10</x>
                       <y>20</y>
-                      <width>281</width>
+                      <width>286</width>
                       <height>91</height>
                      </rect>
                     </property>
@@ -860,7 +860,7 @@
                           <bool>true</bool>
                          </property>
                          <property name="text">
-                          <string>/Robustar2/dataset/train</string>
+                          <string/>
                          </property>
                          <property name="readOnly">
                           <bool>false</bool>
@@ -942,7 +942,7 @@
                           </font>
                          </property>
                          <property name="text">
-                          <string>/Robustar2/dataset/test</string>
+                          <string/>
                          </property>
                         </widget>
                        </item>
@@ -1021,7 +1021,7 @@
                           </font>
                          </property>
                          <property name="text">
-                          <string>/Robustar2/checkpoint_images</string>
+                          <string/>
                          </property>
                         </widget>
                        </item>
@@ -1100,12 +1100,109 @@
                           </font>
                          </property>
                          <property name="text">
-                          <string>/Robustar2/influence_images</string>
+                          <string/>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QPushButton" name="influencePathButton">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>28</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>28</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
+                           <weight>50</weight>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0,0,0">
+                       <item>
+                        <widget class="QLabel" name="label_9">
+                         <property name="maximumSize">
+                          <size>
+                           <width>140</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Century Gothic</family>
+                           <pointsize>10</pointsize>
+                           <weight>50</weight>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Config File Path</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="configFileDisplay">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>104</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>104</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Century Gothic</family>
+                           <pointsize>9</pointsize>
+                           <weight>50</weight>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="mouseTracking">
+                          <bool>true</bool>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="readOnly">
+                          <bool>false</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="configFileButton">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                            <horstretch>0</horstretch>
