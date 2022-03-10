@@ -215,7 +215,7 @@ class Trainer():
                 if not task_update_res:
                     endtime = time.time()
                     print("Time consumption:", endtime-starttime)
-                    print("Trainning stopped!")
+                    print("Training stopped!")
 
                     return 
 

@@ -83,7 +83,7 @@ def start_auto_annotate(split, num_to_gen):
             if not task_update_res:
                 endtime = time.time()
                 print("Time consumption:", endtime-starttime)
-                print("Trainning stopped!")
+                print("Auto annotate stopped!")
                 return 
 
 
