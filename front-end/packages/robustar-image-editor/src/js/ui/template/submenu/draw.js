@@ -28,7 +28,7 @@ export default ({ locale, makeSvgIcon }) => `
             -->
             <div class="tui-image-editor-button color-range">
                 <div>
-                    ${makeSvgIcon(['normal', 'active'], 'mask', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'draw-color-range', true)}
                 </div>
                 <label>
                     ${locale.localize('Color Range')}
