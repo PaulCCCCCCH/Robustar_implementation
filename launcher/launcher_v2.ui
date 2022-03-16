@@ -644,19 +644,19 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="currentText">
-                          <string>cuda11.1-0.0.1-beta</string>
+                          <string>cuda11.1-0.1.0-beta</string>
                          </property>
                          <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
                          <item>
                           <property name="text">
-                           <string>cuda11.1-0.0.1-beta</string>
+                           <string>cuda11.1-0.1.0-beta</string>
                           </property>
                          </item>
                          <item>
                           <property name="text">
-                           <string>cpu-0.0.1-beta</string>
+                           <string>cpu-0.1.0-beta</string>
                           </property>
                          </item>
                         </widget>
@@ -1096,7 +1096,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Check Point Path</string>
+                          <string>Checkpoint Path</string>
                          </property>
                         </widget>
                        </item>

@@ -56,7 +56,7 @@ class Launcher(QWidget):
         # Set the default configuration
         self.configs = {
                         'containerName': 'robustar',
-                        'imageVersion': 'cuda11.1-0.0.1-beta',
+                        'imageVersion': 'cuda11.1-0.1.0-beta',
                         'websitePort': '8000',
                         'backendPort': '6848',
                         'tensorboardPort': '6006',
@@ -175,8 +175,21 @@ class Launcher(QWidget):
         except FileNotFoundError:
             print('The dialog is closed')
 
+
+    def getMissingConfig(self):
+        for configName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath', 'configFile']:
+            if not self.configs[configName].strip():
+                return configName
+        return ""
+
+
     def startServer(self):
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
+
+        missingConfig = self.getMissingConfig()
+        if missingConfig:
+            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Please provide {}".format(missingConfig))
+            return
 
         def startServerInThread():
             try:
@@ -196,18 +209,16 @@ class Launcher(QWidget):
                         # If the version uses cuda
                         if 'cuda' in image:
                             createCudaContainer()
-                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                                       self.container.name + ' is available at http://localhost:' +
-                                                                       self.configs['websitePort'])
-                            self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
-
                         # If the version only uses cpu
                         else:
                             createCpuContainer()
-                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                                       self.container.name + ' is available at http://localhost:' +
-                                                                       self.configs['websitePort'])
-                            self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Running " + self.configs['imageVersion'])
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
+                                                                    self.container.name + ' is available at http://localhost:' +
+                                                                    self.configs['websitePort'])
+                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
 
                     except docker.errors.APIError as apiError:
 
