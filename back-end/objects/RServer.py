@@ -11,7 +11,7 @@ class RServer:
     serverInstance = None
 
     # Use createServer method instead!
-    def __init__(self, configs, baseDir, datasetDir):
+    def __init__(self, configs, baseDir, datasetDir, ckptDir):
     
         app = Flask(__name__)
         app.after_request(self.afterRequest)
@@ -28,14 +28,15 @@ class RServer:
         self.datasetDir = datasetDir
         self.baseDir = baseDir
         self.datasetPath = datasetDir
+        self.ckptDir = ckptDir
         self.app = app
         self.configs = configs
         self.modelWrapper = None
 
     @staticmethod
-    def createServer(configs: dict, baseDir: str, datasetDir: str):
+    def createServer(configs: dict, baseDir: str, datasetDir: str, ckptDir: str):
         if RServer.serverInstance is None:
-            RServer.serverInstance = RServer(configs, baseDir, datasetDir)
+            RServer.serverInstance = RServer(configs, baseDir, datasetDir, ckptDir)
         else:
             assert configs == RServer.serverInstance.configs, \
             'Attempting to recreate an existing server with different configs'
