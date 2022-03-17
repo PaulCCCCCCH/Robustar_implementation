@@ -62,6 +62,7 @@ class Launcher(QWidget):
                         'tensorboardPort': '6006',
                         'trainPath': '',
                         'testPath': '',
+                        'devPath': '',
                         'checkPointPath': '',
                         'influencePath': '',
                         'configFile': ''
@@ -77,6 +78,7 @@ class Launcher(QWidget):
         self.ui.tensorboardPortInput.textEdited.connect(self.changeTensorboardPort)
         self.ui.trainPathButton.clicked.connect(self.chooseTrainPath)
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
+        self.ui.devPathButton.clicked.connect(self.chooseDevPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.chooseInfluencePath)
         self.ui.configFileButton.clicked.connect(self.chooseConfigFile)
@@ -127,6 +129,12 @@ class Launcher(QWidget):
             self.configs['testPath'] = userPath
             self.ui.testPathDisplay.setText(userPath)
 
+    def chooseDevPath(self):
+        userPath = QFileDialog.getExistingDirectory(self, "Choose Dev Set Path", self.cwd)
+        if userPath:
+            self.configs['devPath'] = userPath
+            self.ui.devPathDisplay.setText(userPath)
+
     def chooseCheckPointPath(self):
         userPath = QFileDialog.getExistingDirectory(self, "Choose Checkpoints Path", self.cwd)
         if userPath:
@@ -159,6 +167,7 @@ class Launcher(QWidget):
                 self.ui.tensorboardPortInput.setText(self.configs['tensorboardPort'])
                 self.ui.trainPathDisplay.setText(self.configs['trainPath'])
                 self.ui.testPathDisplay.setText(self.configs['testPath'])
+                self.ui.devPathDisplay.setText(self.configs['devPath'])
                 self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
                 self.ui.influencePathDisplay.setText(self.configs['influencePath'])
                 self.ui.configFileDisplay.setText(self.configs['configFile'])
@@ -177,7 +186,7 @@ class Launcher(QWidget):
 
 
     def getMissingConfig(self):
-        for configName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath', 'configFile']:
+        for configName in ['trainPath', 'testPath', 'devPath', 'influencePath', 'checkPointPath', 'configFile']:
             if not self.configs[configName].strip():
                 return configName
         return ""
@@ -186,10 +195,16 @@ class Launcher(QWidget):
     def startServer(self):
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
 
-        missingConfig = self.getMissingConfig()
-        if missingConfig:
-            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Please provide {}".format(missingConfig))
-            return
+        # If it's in createTab, check for missing config
+        if (self.ui.tabWidget.currentIndex() == 0):
+            missConfigDict = {'trainPath': 'train set path', 'testPath': 'test set path', 'devPath': 'dev set path',
+             'influencePath': 'influence result path', 'checkPointPath': 'check point path',
+             'configFile': 'config file path'}
+
+            missingConfig = self.getMissingConfig()
+            if missingConfig:
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Please provide {}".format(missConfigDict[missingConfig]))
+                return
 
         def startServerInThread():
             try:
@@ -319,6 +334,9 @@ class Launcher(QWidget):
                     docker.types.Mount(target='/Robustar2/dataset/test',
                                        source=getSystemPath(self.configs['testPath']),
                                        type='bind'),
+                    docker.types.Mount(target='/Robustar2/dataset/validation',
+                                       source=getSystemPath(self.configs['devPath']),
+                                       type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
                                        source=getSystemPath(self.configs['influencePath']),
                                        type='bind'),
@@ -348,6 +366,9 @@ class Launcher(QWidget):
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/dataset/test',
                                        source=getSystemPath(self.configs['testPath']),
+                                       type='bind'),
+                    docker.types.Mount(target='/Robustar2/dataset/validation',
+                                       source=getSystemPath(self.configs['devPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
                                        source=getSystemPath(self.configs['influencePath']),
