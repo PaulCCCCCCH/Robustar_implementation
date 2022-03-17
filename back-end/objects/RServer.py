@@ -1,14 +1,8 @@
-'''
-Author: Chonghan Chen (paulcccccch@gmail.com)
------
-Last Modified: Thursday, 18th November 2021 12:18:49 am
-Modified By: Chonghan Chen (paulcccccch@gmail.com)
------
-'''
-
 from .RDataManager import RDataManager
 from flask import Flask
+from flasgger import Swagger
 import os.path as osp
+from flask_socketio import SocketIO
 
 
 # Wrapper for flask server instance
@@ -21,6 +15,15 @@ class RServer:
     
         app = Flask(__name__)
         app.after_request(self.afterRequest)
+        socket_ = SocketIO(app, cors_allowed_origins='*')
+        self.socket_ = socket_
+        
+        app.config['SWAGGER'] = {
+            'title': 'Robustar API',
+            'uiversion': 3,
+            'version': 'beta'
+        }
+        swagger = Swagger(app)
 
         self.datasetDir = datasetDir
         self.baseDir = baseDir
@@ -54,6 +57,14 @@ class RServer:
         RServer.serverInstance.dataManager = dataManager
 
     @staticmethod
+    def getAutoAnnotator():
+        return RServer.serverInstance.autoAnnotator
+
+    @staticmethod
+    def setAutoAnnotator(autoAnnotator):
+        RServer.serverInstance.autoAnnotator = autoAnnotator
+
+    @staticmethod
     def getServerConfigs():
         return RServer.serverInstance.configs
 
@@ -64,6 +75,10 @@ class RServer:
     @staticmethod
     def setModel(modelWrapper):
         RServer.serverInstance.modelWrapper = modelWrapper
+
+    @staticmethod
+    def getSocket():
+        return RServer.getServer().socket_
         
     
     def afterRequest(self, resp):
@@ -78,4 +93,5 @@ class RServer:
         self.port = port
         self.host = host
         self.debug = debug
-        self.app.run(port=port, host=host, debug=debug)
+        # self.app.run(port=port, host=host, debug=debug)
+        self.socket_.run(self.app, port=port, host=host, debug=debug)

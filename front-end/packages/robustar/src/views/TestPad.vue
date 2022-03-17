@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { APIStartTest } from '@/apis/test';
+import { APIStartTest } from '@/services/test';
 export default {
   name: 'TestPad',
   data() {

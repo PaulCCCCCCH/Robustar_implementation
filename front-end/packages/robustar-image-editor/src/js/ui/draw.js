@@ -119,7 +119,7 @@ class Draw extends Submenu {
     this.actions.stopDrawingMode();
     this.actions.changeSelectableAll(true);
     this._els.lineSelectButton.classList.remove('free');
-    this._els.lineSelectButton.classList.remove('line');
+    this._els.lineSelectButton.classList.remove('color-range');
   }
 
   /**
@@ -139,7 +139,7 @@ class Draw extends Submenu {
   _changeDrawType(event) {
     const button = event.target.closest('.tui-image-editor-button');
     if (button) {
-      const lineType = this.getButtonType(button, ['free', 'line']);
+      const lineType = this.getButtonType(button, ['free', 'color-range']);
       this.actions.discardSelection();
 
       if (this.type === lineType) {

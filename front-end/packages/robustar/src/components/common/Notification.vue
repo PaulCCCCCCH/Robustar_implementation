@@ -44,14 +44,7 @@
 </template>
 
 <script>
-export default {
-  mounted() {
-    // setInterval(() => {
-    //   console.log(this.$processing);
-    // }, 300);
-  },
-};
+export default {};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

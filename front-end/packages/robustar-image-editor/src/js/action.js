@@ -181,6 +181,12 @@ export default {
             height: 500,
           });
         },
+        loadEdit: (apiLoadEdit) => {
+          apiLoadEdit();
+        },
+        autoEdit: (apiAutoEdit) => {
+          apiAutoEdit();
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },
@@ -265,8 +271,11 @@ export default {
           this.stopDrawingMode();
           if (type === 'free') {
             this.startDrawingMode('FREE_DRAWING', settings);
-          } else {
+          } else if (type === 'line') {
             this.startDrawingMode('LINE_DRAWING', settings);
+          } else if (type === 'color-range') {
+            // type === 'color-range'
+            this.startDrawingMode('COLOR_RANGE_DRAWING', settings);
           }
         },
         setColor: (color) => {

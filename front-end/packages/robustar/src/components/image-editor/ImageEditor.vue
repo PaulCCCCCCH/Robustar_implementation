@@ -1,5 +1,5 @@
 <template>
-  <div ref="tuiImageEditor" style="width: 100%; height: 200%">
+  <div ref="tuiImageEditor" style="width: 100%; height: 100%">
     <canvas></canvas>
   </div>
 </template>
@@ -19,10 +19,12 @@ const includeUIOptions = {
     theme: whiteTheme,
   },
 };
+
 const editorDefaultOptions = {
   cssMaxWidth: 1000,
   cssMaxHeight: 1000,
 };
+
 export default {
   name: 'ImageEditor',
   props: {
@@ -54,8 +56,8 @@ export default {
         options = Object.assign(includeUIOptions, this.options);
       }
       options.includeUI.loadImage = {
-        path: localStorage.getItem('image_url'),
-        name: localStorage.getItem('image_id'),
+        path: sessionStorage.getItem('image_url'),
+        name: sessionStorage.getItem('image_id'),
       };
       this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
       this.addEventListener();

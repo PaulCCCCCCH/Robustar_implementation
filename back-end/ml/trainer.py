@@ -2,6 +2,7 @@ import torch
 import time
 from torchattacks import PGD
 import os
+from objects.RTask import RTask, TaskType
 
 
 class Trainer():
@@ -22,7 +23,6 @@ class Trainer():
         self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
-        self.stop = False
 
         # Start the tensorboard
 
@@ -143,6 +143,10 @@ class Trainer():
         optimizer = torch.optim.SGD(self.net.parameters(
         ), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4)
         best = 0
+
+        # init task
+        task = RTask(TaskType.Training, epoch*len(loader))
+
         for epoch in range(epoch):
             print('\nEpoch: %d' % (epoch + 1))
             self.net.train()
@@ -153,13 +157,6 @@ class Trainer():
             # storeLoader(loader)
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
-
-                if self.stop:
-                    endtime = time.time()
-                    print("Time consumption:", endtime-starttime)
-                    print("Trainning stopped!")
-                    return 
-                    
 
                 if self.use_paired_train:
                     inputs, labels = data[0]
@@ -212,6 +209,16 @@ class Trainer():
                 self.update_gui()
 
                 print('\r'+output_text, flush=True, end='')
+
+                # update task
+                task_update_res = task.update()
+                if not task_update_res:
+                    endtime = time.time()
+                    print("Time consumption:", endtime-starttime)
+                    print("Training stopped!")
+
+                    return 
+
             # save_net(net)
             print("Epoch Finish!")
             torch.cuda.empty_cache()
@@ -225,3 +232,7 @@ class Trainer():
 
         endtime = time.time()
         print("Time consumption:", endtime-starttime)
+
+
+        # task exit
+        task.exit()

@@ -26,16 +26,16 @@ const whiteTheme = {
   'downloadButton.fontSize': '12px',
 
   // main icons
-  'menu.normalIcon.color': '#8a8a8a',
+  'menu.normalIcon.color': '#000000',
   'menu.activeIcon.color': '#555555',
-  'menu.disabledIcon.color': '#434343',
+  'menu.disabledIcon.color': '#eeeeee',
   'menu.hoverIcon.color': '#e9e9e9',
   'menu.iconSize.width': '24px',
   'menu.iconSize.height': '24px',
 
   // submenu icons
-  'submenu.normalIcon.color': '#8a8a8a',
-  'submenu.activeIcon.color': '#555555',
+  'submenu.normalIcon.color': '#858585',
+  'submenu.activeIcon.color': '#000000',
   'submenu.iconSize.width': '32px',
   'submenu.iconSize.height': '32px',
 
