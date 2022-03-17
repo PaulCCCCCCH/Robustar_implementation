@@ -158,7 +158,7 @@ class Launcher(QWidget):
         try:
             with open(self.loadPath, 'r') as f:
                 self.configs = json.load(f)
-
+                print(self.configs['imageVersion'])
                 # Update the UI according to the loaded file
                 self.ui.nameInput.setText(self.configs['containerName'])
                 self.ui.versionComboBox.setCurrentText(self.configs['imageVersion'])
@@ -177,7 +177,7 @@ class Launcher(QWidget):
             print('Load path not found')
 
     def saveProfile(self):
-        self.savePath, _ = QFileDialog.getOpenFileName(self, "Save Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.savePath, _ = QFileDialog.getSaveFileName(self, "Save Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.savePath, 'w') as f:
                 json.dump(self.configs, f)
