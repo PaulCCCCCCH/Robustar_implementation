@@ -29,16 +29,6 @@
           outlined
           clearable
         ></v-text-field>
-        <!-- Select device -->
-        <v-select
-          v-model="configs.device"
-          :items="[
-            { text: 'cpu', value: 'cpu' },
-            { text: 'cuda', value: 'cuda' },
-          ]"
-          label="Select training device"
-          outlined
-        ></v-select>
         <!-- Set num of dataloader workers -->
         <v-text-field
           v-model="configs.thread"

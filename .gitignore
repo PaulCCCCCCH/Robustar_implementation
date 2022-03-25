@@ -3,6 +3,7 @@
 **/.idea
 **/node_modules
 **/dist
+**/build
 
 
 # local env files
