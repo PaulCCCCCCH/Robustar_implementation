@@ -41,6 +41,7 @@
         <div class="text-h5 mb-4">Hyperparameters</div>
         <!-- Set learning rate -->
         <v-text-field
+          v-model="configs.learn_rate"
           value="0.1"
           label="Learning rate"
           outlined
@@ -48,11 +49,10 @@
           type="number"
         ></v-text-field>
         <!-- Set Epoch -->
-        <v-text-field value="10" label="Epoch" outlined clearable type="number"></v-text-field>
-        <!-- Set Image size -->
-        <v-text-field value="32" label="Image size" outlined clearable type="number"></v-text-field>
+        <v-text-field value="10" v-model="configs.epoch" label="Epoch" outlined clearable type="number"></v-text-field>
         <!-- Set Batch size -->
         <v-text-field
+          v-model="configs.batch_size"
           value="128"
           label="Batch size"
           outlined
@@ -85,7 +85,8 @@
             outlined
           ></v-select>
           <v-text-field
-            value="1e-4"
+            v-model="configs.paired_train_reg_coeff"
+            value="1e-3"
             label="Paired training strength"
             outlined
             clearable
@@ -176,7 +177,7 @@ export default {
     trainingSuccess(res) {
       console.log(res);
       this.$root.finishProcessing();
-      this.$root.alert('success', 'Training succeeded');
+      this.$root.alert('success', 'Training started successfully');
       window.open('http://localhost:6006');
     },
     trainingFailed(res) {
@@ -185,7 +186,7 @@ export default {
       this.$root.alert('error', 'Training failed');
     },
     startTraining() {
-      this.$root.startProcessing('The training is going on. Please wait...');
+      this.$root.startProcessing('The training is starting. Please wait...');
       APIStartTrain(
         {
           configs: this.configs,

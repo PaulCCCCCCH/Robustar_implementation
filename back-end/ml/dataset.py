@@ -53,18 +53,15 @@ class DataSet(Dataset):
     def __init__(self, data_folder, image_size, transforms, classes_path=None):
         self.data_folder = data_folder
         self.image_size = image_size
-        self.dataset = dset.ImageFolder(root=data_folder, transform=transforms)
-
-        self.data_folder=data_folder
-        self.image_size=image_size
-        self.dataset=ImageFolderNoTransform(root=data_folder)
+        self.dataset = ImageFolderNoTransform(root=data_folder)
         self.transforms = transforms
 
     def __len__(self):
         return len(self.dataset)
 
     def __getitem__(self, idx):
-        return self.transforms(self.dataset[idx])
+        img, label = self.dataset[idx]
+        return self.transforms(img), label
 
 
 class PairedDataset(DataSet):

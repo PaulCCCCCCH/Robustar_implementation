@@ -19,6 +19,8 @@ pnpm-debug.log*
 back-end/runs
 back-end/influence_list
 
+launcher/build/*
+
 # Editor directories and files
 .idea
 .vscode
