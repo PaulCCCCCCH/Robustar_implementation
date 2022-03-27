@@ -5,6 +5,7 @@ from utils.generate import generate_paired_data
 app = RServer.getServer().getFlaskApp()
 
 
+# Not used by current version
 @app.route('/generate', methods=['POST'])
 def generate():
     print("Requested to generate paired dataset")

@@ -24,25 +24,74 @@ You need to pass a config file (default `./configs.json`) to `robustar.sh`. It i
 - **pre_trained**: Do we load pre-trained weights? If set to false, `weight_to_load` will be ignored and Robustar will train a model from scratch. Note that the image predictions and focus will be non-sensical in this case.
 
 
-
 ## Build Docker Image
-In front-end directory, run ` lerna run build `.   
+First, pre-process the scripts with
+```
+dos2unix ./scripts/install_pytorch.sh
+dos2unix ./scripts/start.sh
+```
 
-Then, return back to root directory and run
+---
+
+In `front-end` directory, run ` lerna run build `.   
+
+---
+Then, return back to root directory and run (be aware of the `.` at the end).
 ```
 docker build --build-arg VCUDA=<cuda version> .
 ```
 where `<cuda version>` is chosen from `cpu`, `9.2`, `10.2`, `11.1` and `11.3`.
 
+---
 Adjust the tag of the docker image with
 ```
 docker tag <image_id> <user_id>/<repo>:<version>
 ```
+For example
+```
+docker tag 79c0ee730d9d paulcccccch/robustar:cuda11.3-0.1.0-beta
+```
 
+---
 Finally, push onto DockerHub with:
 ```
 docker push <user_id>/<repo>:<version>
 ```
+For example
+```
+docker push paulcccccch/robustar:cuda11.3-0.1.0-beta
+```
+
+## Build Base Docker Image
+In `docker-base` directory, run 
+
+```
+docker build .
+``` 
+
+---
+
+Then adjust the tag with
+```
+docker tag <image_id> <user_id>/<repo>:<version>
+```
+For example, 
+```
+docker tag 79c0ee730d9d paulcccccch/robustar:base-0.1.0
+```
+
+----
+
+Then push it with 
+```
+docker push <user_id>/<repo>:<version>
+```
+For example, 
+```
+docker push paulcccccch/robustar:base-0.1.0
+```
+
+
 
 ## Dev setup 
 

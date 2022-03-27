@@ -3,6 +3,7 @@
 **/.idea
 **/node_modules
 **/dist
+**/build
 
 
 # local env files
@@ -17,6 +18,8 @@ pnpm-debug.log*
 
 back-end/runs
 back-end/influence_list
+
+launcher/build/*
 
 # Editor directories and files
 .idea

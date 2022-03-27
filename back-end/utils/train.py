@@ -26,6 +26,7 @@ def ml_initialize(configs):
     classes_path = configs['class_path']
     trainset = configs['train_path']
     testset = configs['test_path']
+    user_edit_buffering = configs['user_edit_buffering']
     device = RServer.getServerConfigs()['device']
 
     dataManager = RServer.getDataManager()
@@ -33,7 +34,8 @@ def ml_initialize(configs):
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset, paired_data_path, image_size, transforms, classes_path, paired_train_mixture)
+            trainset, paired_data_path, image_size, transforms, 
+            classes_path, paired_train_mixture, user_edit_buffering)
     else:
         train_set = DataSet(trainset, image_size, transforms, classes_path)
 
@@ -62,7 +64,9 @@ def initialize_model():
     pre_trained = server_configs['pre_trained']
     num_classes = server_configs['num_classes']
 
-    return RModelWrapper(model_arch, weight_to_load, device, pre_trained, num_classes)
+    net_path = os.path.join(RServer.getServer().ckptDir, weight_to_load).replace('\\', '/')
+
+    return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
 
 
 def update_info(status_dict):
@@ -94,9 +98,7 @@ def start_train(configs):
         logdir = os.path.join('runs', 'run_{}'.format(date))
         writer = SummaryWriter(logdir)
         trainer.writer = writer
-
-        writer.add_scalar(
-            'train accuracy', 0, 0)
+        writer.add_scalar('train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
         # import threading
@@ -135,7 +137,3 @@ class TrainThread(threading.Thread):
     def run(self):
         call_back, epochs, auto_save = self.args
         self.trainer.start_train(call_back, epochs, auto_save)
-    
-    def stop(self):
-        print("Setting trainer stop flag...")
-        self.trainer.stop = True

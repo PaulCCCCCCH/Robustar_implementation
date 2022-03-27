@@ -19,7 +19,7 @@ def convert_predict_to_array(output):
     for prob in output[0]:
         result.append(float(prob))
 
-    print(result)
+    # print(result)
     return result
 
 
@@ -120,6 +120,7 @@ class CalcInfluenceThread(threading.Thread):
         self.dataManager = dataManager
         self.test_sample_num= test_sample_num
         self.r_averaging = r_averaging
+        self.stop = True
 
     def run(self):
         calculate_influence(self.modelWrapper, self.dataManager, self.test_sample_num, self.r_averaging)

@@ -1,13 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
-import ImageList from '../views/ImageList.vue';
-import TrainPad from '../views/TrainPad.vue';
-import InfluencePad from '../views/InfluencePad.vue';
-import EditImage from '@/views/EditImage';
-import Prediction from '@/views/Prediction.vue';
-import TestPad from '@/views/TestPad';
-import Config from '@/views/Config'
 
 Vue.use(VueRouter);
 
@@ -23,43 +16,48 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
   },
   {
     path: '/image-list/:split',
     name: 'ImageList',
-    component: ImageList,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/ImageList.vue'),
   },
   {
     path: '/train-pad',
     name: 'TrainPad',
-    component: TrainPad,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/TrainPad.vue'),
   },
   {
-    path: '/edit',
+    path: '/edit/:mode',
     name: 'EditImage',
-    component: EditImage,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/EditImage.vue'),
     props: true,
   },
   {
     path: '/test',
     name: 'TestPad',
-    component: TestPad,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/TestPad.vue'),
   },
   {
     path: '/influence-pad',
     name: 'InfluencePad',
-    component: InfluencePad,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/InfluencePad.vue'),
   },
   {
     path: '/predict',
     name: 'Prediction',
-    component: Prediction,
+    component: () => import(/* webpackChunkName: "about" */ '@/views/Prediction.vue'),
   },
   {
     path: '/config',
     name: 'Config',
-    component: Config
+    component: () => import(/* webpackChunkName: "about" */ '@/views/Config.vue'),
+  },
+  {
+    path: '/auto-annotate',
+    name: 'AutoAnnotatePad',
+    component: () => import(/* webpackChunkName: "about" */ '@/views/AutoAnnotatePad.vue'),
   },
 ];
 

@@ -9,6 +9,7 @@ import Cropper from '@/component/cropper';
 import Flip from '@/component/flip';
 import Rotation from '@/component/rotation';
 import FreeDrawing from '@/component/freeDrawing';
+import ColorRangeDrawing from '@/component/colorRangeDrawing';
 import Line from '@/component/line';
 import Text from '@/component/text';
 import Icon from '@/component/icon';
@@ -18,6 +19,7 @@ import Zoom from '@/component/zoom';
 import CropperDrawingMode from '@/drawingMode/cropper';
 import FreeDrawingMode from '@/drawingMode/freeDrawing';
 import LineDrawingMode from '@/drawingMode/lineDrawing';
+import ColorRangeDrawingMode from '@/drawingMode/colorRangeDrawing';
 import ShapeDrawingMode from '@/drawingMode/shape';
 import TextDrawingMode from '@/drawingMode/text';
 import IconDrawingMode from '@/drawingMode/icon';
@@ -60,7 +62,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-  constructor(element, { cssMaxWidth, cssMaxHeight } = {}) {
+  constructor(editor, element, { cssMaxWidth, cssMaxHeight } = {}) {
     /**
      * Fabric image instance
      * @type {fabric.Image}
@@ -111,6 +113,13 @@ class Graphics {
      * @private
      */
     this._canvas = null;
+
+    /**
+     * ImageEditor instance
+     * @type {ImageEditor}
+     * @private
+     */
+    this._editor = editor;
 
     /**
      * Drawing mode
@@ -571,8 +580,8 @@ class Graphics {
     this.imageName = name;
     this.canvasImage = canvasImage;
     const { width, height } = this.getCanvasSize();
-    localStorage.setItem('image_width', width);
-    localStorage.setItem('image_height', height);
+    sessionStorage.setItem('image_width', width);
+    sessionStorage.setItem('image_height', height);
   }
 
   /**
@@ -664,6 +673,14 @@ class Graphics {
    */
   getCanvas() {
     return this._canvas;
+  }
+
+  /**
+   * Get ImageEditor instance
+   * @returns {ImageEditor}
+   */
+  getEditor() {
+    return this._editor;
   }
 
   /**
@@ -1001,6 +1018,7 @@ class Graphics {
     this._register(this._drawingModeMap, new CropperDrawingMode());
     this._register(this._drawingModeMap, new FreeDrawingMode());
     this._register(this._drawingModeMap, new LineDrawingMode());
+    this._register(this._drawingModeMap, new ColorRangeDrawingMode());
     this._register(this._drawingModeMap, new ShapeDrawingMode());
     this._register(this._drawingModeMap, new TextDrawingMode());
     this._register(this._drawingModeMap, new IconDrawingMode());
@@ -1018,6 +1036,7 @@ class Graphics {
     this._register(this._componentMap, new Flip(this));
     this._register(this._componentMap, new Rotation(this));
     this._register(this._componentMap, new FreeDrawing(this));
+    this._register(this._componentMap, new ColorRangeDrawing(this));
     this._register(this._componentMap, new Line(this));
     this._register(this._componentMap, new Text(this));
     this._register(this._componentMap, new Icon(this));

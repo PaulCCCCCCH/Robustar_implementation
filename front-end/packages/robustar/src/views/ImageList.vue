@@ -1,39 +1,56 @@
 <template>
-  <div class="d-flex flex-column align-center" style="width: 100%">
-    <!-- Page header-->
-    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div>
+  <div class="d-flex justify-center align-center" style="height: 100%">
+    <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
-    <!-- Image list controller -->
-    <div class="d-flex justify-space-between px-16 py-8" style="width: 80%">
-      <!-- Previous page button -->
-      <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
-        Prev Page
-      </v-btn>
+    <div v-if="hasImages" class="d-flex flex-column flex-grow-1 align-center px-4">
+      <!-- Page header-->
+      <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
-      <!-- Refresh page button & page number -->
-      <div class="d-flex" style="width: 30%">
-        <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
-        <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+      <div
+        v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
+        class="d-flex mb-4"
+        style="width: 200px"
+      >
+        <v-select :items="classification" v-model="split" dense @change="resetImageList"></v-select>
       </div>
 
-      <!-- Next page button -->
-      <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
-        Next Page
-      </v-btn>
+      <!-- Page navigator -->
+      <div class="d-flex justify-center mb-4">
+        <!-- Previous page button -->
+        <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
+          Prev Page
+        </v-btn>
+
+        <!-- Refresh page button & page number -->
+        <div class="d-flex mx-8">
+          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
+          <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+        </div>
+
+        <!-- Next page button -->
+        <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
+          Next Page
+        </v-btn>
+      </div>
+
       <!-- Class filter -->
-      <div class="d-flex" style="width: 30%">
-        <v-btn class="mr-4" v-if="selectedClass != 0" depressed color="primary" @click="gotoClass"> Goto Class </v-btn>
-        <v-btn class="mr-4" v-else depressed disabled color="primary" @click="gotoClass"> Goto Class </v-btn>
+      <div class="d-flex mb-4" style="width: 300px">
+        <v-btn
+          :disabled="selectedClass === 0"
+          class="mr-4"
+          depressed
+          color="primary"
+          @click="gotoClass"
+        >
+          Goto Class
+        </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
-    </div>
 
-    <!-- Image List -->
-    <div style="width: auto">
-      <div v-for="(imgline, row) in imageMatrix" :key="imgline[0]" class="d-flex">
-        <div v-for="(url, col) in imgline" :key="url" class="mb-8 mr-8 row-item">
-          <!-- minus 1 is necessary since Vue counts from 1 -->
-          <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
+      <v-divider class="mb-8" style="width: 100%"></v-divider>
+
+      <div class="d-flex flex-row flex-wrap justify-start" style="flex">
+        <div v-for="(url, idx) in imageList" :key="url" class="mb-8 mr-8 row-item">
           <v-hover v-slot="{ hover }">
             <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
               <template v-slot:placeholder>
@@ -41,7 +58,8 @@
                   <v-progress-circular
                     indeterminate
                     color="primary lighten-3"
-                  ></v-progress-circular>
+                    >
+                  </v-progress-circular>
                 </v-row>
               </template>
               <v-expand-transition>
@@ -64,7 +82,7 @@
                     large
                     color="white"
                     width="150px"
-                    @click="gotoImage(row, col, url, 'EditImage')"
+                    @click="gotoImage(idx, url, 'EditImage')"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     Annotate
@@ -74,7 +92,7 @@
                     large
                     color="white"
                     width="150px"
-                    @click="gotoImage(row, col, url, 'Prediction')"
+                    @click="setCurrentImage(idx, url)"
                   >
                     <v-icon left>mdi-cogs</v-icon>
                     Predict
@@ -87,82 +105,128 @@
       </div>
     </div>
 
-    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
-      Sorry, image list is empty
-    </div>
+    <Visualizer
+      v-if="hasImages"
+      :is-active="image_id !== ''"
+      :image_id="String(image_id)"
+      :split="split"
+      @open="fetchImageId"
+      @close="image_id = ''"
+    />
   </div>
 </template>
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength, APIGetClassNames } from '@/apis/images'
+import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
+import { APIGetSplitLength, APIGetClassNames } from '@/services/images';
+import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
   name: 'ImageList',
-  components: {},
+  components: {
+    Visualizer,
+  },
   data() {
     return {
       currentPage: 0,
       inputPage: 0,
       maxPage: 0,
-      imageMatrix: [],
+      imageList: [],
       configs: configs,
       splitLength: 1000,
       classNames: [],
       classStartIdx: {},
-      selectedClass: 0
+      selectedClass: 0,
+      split: 'test_correct',
+      image_id: '',
+      image_url: '',
     };
   },
   mounted() {
-    this.getMaxPage();
-    this.getClassNames();
-    this.loadImages();
+    this.updateSplit();
+    this.initImageList();
   },
   watch: {
     $route() {
-      this.currentPage = 0;
-      this.classNames = [];
-      this.classStartIdx = {};
-      this.selectedClass = 0;
-      this.getMaxPage();
-      this.getClassNames();
-      this.loadImages();
+      this.updateSplit();
+      this.initImageList();
     },
     currentPage() {
+      sessionStorage.setItem(this.split, this.currentPage);
       this.inputPage = this.currentPage;
       this.loadImages();
     },
   },
+  computed: {
+    classification() {
+      return [
+        { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
+        { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
+      ];
+    },
+    hasImages() {
+      return this.imageList.length > 0;
+    },
+  },
   methods: {
-    getMaxPage() {
+    fetchImageId() {
+      this.image_id = sessionStorage.getItem('image_id') || '';
+    },
+    updateSplit() {
+      this.split = this.$route.params.split;
+      if (this.split === 'validation' || this.split === 'test') {
+        this.split += '_correct';
+      }
+    },
+    initImageList() {
+      this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
       APIGetSplitLength(
-        this.$route.params.split,
+        this.split,
         (res) => {
           this.splitLength = res.data.data;
           this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0));
           console.log(res.data.data);
+          this.getClassNames();
         },
         (err) => console.log(err)
       );
     },
+    resetImageList() {
+      this.currentPage = 0;
+      this.classNames = [];
+      this.classStartIdx = {};
+      this.selectedClass = 0;
+      this.initImageList();
+    },
     getClassNames() {
-      APIGetClassNames(this.$route.params.split,
+      APIGetClassNames(
+        this.split,
         (res) => {
           console.log(res.data.data);
           this.classStartIdx = res.data.data;
           this.classNames = Object.keys(this.classStartIdx);
+          this.loadImages();
         },
         (err) => console.log(err)
-      )
+      );
     },
-    gotoImage(row, col, url, componentName) {
-      const idx = imageCoord2Idx(row, col);
+    setCurrentImage(idx, url) {
       const image_id = imagePageIdx2Id(this.currentPage, idx);
-      localStorage.setItem('split', this.$route.params.split);
-      localStorage.setItem('image_id', image_id);
-      localStorage.setItem('image_url', url);
-      this.$router.push({ name: componentName });
+      this.image_id = image_id;
+      this.image_url = url;
+      sessionStorage.setItem('split', this.split);
+      sessionStorage.setItem('image_id', image_id);
+      sessionStorage.setItem('image_url', url);
+      sessionStorage.setItem('save_image_id', image_id);
+      sessionStorage.setItem('save_image_split', this.$route.params.split);
+    },
+    gotoImage(idx, url, componentName) {
+      this.setCurrentImage(idx, url);
+      this.$router.push({
+        name: componentName,
+        params: { mode: this.$route.params.split },
+      });
     },
     gotoPage() {
       this.inputPage = Number(this.inputPage);
@@ -174,41 +238,25 @@ export default {
     },
     gotoClass() {
       let startIdx = this.classStartIdx[this.selectedClass];
-      this.currentPage = Math.floor(startIdx / configs.imageListRow / configs.imageListCol);
+      this.currentPage = Math.floor(startIdx / configs.imagePerPage);
       this.loadImages();
     },
     loadImages() {
-      this.imageMatrix = [];
-      let { imageListRow, imageListCol } = configs;
-      let imgNumOfLastLine = 0;
+      this.imageList = [];
+      let imgNum = configs.imagePerPage;
 
-      // last page
-      if (this.currentPage === this.maxPage && this.maxPage > 0) {
-        const imgNumOfLastPage = this.splitLength - configs.imagePerPage * this.maxPage;
-        imageListRow = Math.floor(imgNumOfLastPage / imageListCol);
-        imgNumOfLastLine = imgNumOfLastPage % imageListCol;
+      // handle last page
+      if (this.currentPage === this.maxPage) {
+        imgNum = this.splitLength - configs.imagePerPage * this.maxPage;
       }
 
-      for (let row = 0; row < imageListRow; row++) {
-        const line = [];
-        for (let col = 0; col < imageListCol; col++) {
-          const idx = imageCoord2Idx(row, col);
+      for (let idx = 0; idx < imgNum; idx++) {
+          // console.log(idx)
           const imgid = imagePageIdx2Id(this.currentPage, idx);
-          line.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
+          // console.log(imgid)
+          // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
+          this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
         }
-        this.imageMatrix.push(line);
-      }
-
-      // last row of last page
-      if (imgNumOfLastLine > 0) {
-        const lastLine = [];
-        for (let col = 0; col < imgNumOfLastLine; col++) {
-          const idx = imageCoord2Idx(imageListRow, col);
-          const imgid = imagePageIdx2Id(this.currentPage, idx);
-          lastLine.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
-        }
-        this.imageMatrix.push(lastLine);
-      }
     },
   },
 };

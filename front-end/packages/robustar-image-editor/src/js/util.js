@@ -278,6 +278,17 @@ export function setCustomProperty(targetObject, props) {
 }
 
 /**
+ * @param {Array} imageDataArray - RGBA values (an array of four numbers from 0 to 255)
+ * returns a string that looks like "rgba(123, 124, 223, 224)"
+ */
+export function imageDataToColorString(imageDataArray) {
+  const [r, g, b, a] = imageDataArray;
+  const aRatio = a / 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${aRatio})`;
+}
+
+/**
  * Get custom property
  * @param {fabric.Object} fObject - fabric object
  * @param {Array|string} propNames - prop name array

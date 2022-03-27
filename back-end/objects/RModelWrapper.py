@@ -14,8 +14,11 @@ class RModelWrapper:
         self.device = device  # We keep device as string to allow for easy comparison
         self.init_model(network_type, pretrained, num_classes)
         self.modelwork_type = network_type
-        if net_path != "":
+        if os.path.exists(net_path):
+            print('Loading previous checkpoint at {}'.format(net_path))
             self.load_net(net_path)
+        else:
+            print('Checkpoint file not found: {}'.format(net_path))
         if 'cuda' in device:
             self.apply_cuda()
 
