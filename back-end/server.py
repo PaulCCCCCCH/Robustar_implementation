@@ -11,6 +11,7 @@ from utils.train import initialize_model
 
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
 
+
 def precheck():
     def check_num_classes_consistency():
         configs = RServer.getServerConfigs()
@@ -22,23 +23,24 @@ def precheck():
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []
-        if len(trainset.classes)!=classes_num:
+        if len(trainset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Training Set", len(trainset.classes))
             )
-        if len(testset.classes)!=classes_num:
+        if len(testset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Test Set", len(trainset.classes))
             )
-        if len(validationset.classes)!=classes_num:
+        if len(validationset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Validation Set", len(trainset.classes))
             )
-        assert len(errors)==0, "\n".join(errors)
+        assert len(errors) == 0, "\n".join(errors)
+
     check_num_classes_consistency()
 
-if __name__ == "__main__":
 
+def start_server():
     baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
     datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
     ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
@@ -59,13 +61,13 @@ if __name__ == "__main__":
     else:
         print('Class to label file not found!')
 
-    # Create server 
+    # Create server
 
     # Set data manager
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
-        baseDir, datasetDir, 
-        batch_size=configs['batch_size'], 
+        baseDir, datasetDir,
+        batch_size=configs['batch_size'],
         shuffle=configs['shuffle'],
         num_workers=configs['num_workers'],
         image_size=configs['image_size'],
@@ -82,17 +84,21 @@ if __name__ == "__main__":
     # TODO: model_name and checkpoint hard-coded for now
     checkpoint_name = "u2net.pth"
     annotator = RAutoAnnotator(
-        configs['device'], 
-        checkpoint=osp.join(baseDir, checkpoint_name), 
+        configs['device'],
+        checkpoint=osp.join(baseDir, checkpoint_name),
         model_name="u2net"
-    ) 
+    )
     RServer.setAutoAnnotator(annotator)
 
     # register all api routes
-    import apis 
+    import apis
 
     # Check file state consistency
     precheck()
 
     # Start server
     server.run(port='8000', host='0.0.0.0', debug=False)
+
+
+if __name__ == "__main__":
+    start_server()
