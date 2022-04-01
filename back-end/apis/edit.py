@@ -11,6 +11,7 @@ server = RServer.getServer()
 app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
+
 @app.route('/edit/<split>/<image_id>', methods=['POST'])
 def api_user_edit(split, image_id):
     """
@@ -52,7 +53,11 @@ def api_user_edit(split, image_id):
     """
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated']:
-        raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        return RResponse.fail(
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
+        # raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated`
+        # splits!'.format(split))
 
     if split == 'annotated':
         image_id = get_train_from_annotated(image_id)
@@ -90,8 +95,9 @@ def api_propose_edit(split, image_id):
 
     proposed_image_id = ""
     if split not in ['annotated', 'train']:
-        print("Cannot propose edit to a wrong split")
-        return RResponse.ok(proposed_image_id)
+        return RResponse.fail("Cannot propose edit to a wrong split")
+        # print("Cannot propose edit to a wrong split")
+        # return RResponse.ok(proposed_image_id)
 
     if split == 'annotated':
         split = 'train'
@@ -108,20 +114,19 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
-
+        raise NotImplemented(
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
 
     json_data = request.get_json()
     num_to_gen = int(json_data['num_to_gen'])
     try:
-      start_auto_annotate(split, num_to_gen)
+        start_auto_annotate(split, num_to_gen)
     except Exception as e:
-      RResponse.fail('auto annotation failed')
+        RResponse.fail('auto annotation failed')
 
     return RResponse.ok('success')
-      
 
-    
 
 if __name__ == '__main__':
     print(RServer)
