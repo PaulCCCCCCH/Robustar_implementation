@@ -50,7 +50,7 @@ def start_server():
 
     class2labelPath = osp.join(baseDir, 'class2label.json')
     class2labelMapping = {}
-    if os.path.exists(class2labelPath):
+    if osp.exists(class2labelPath):
         try:
             with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
@@ -96,9 +96,9 @@ def start_server():
     # Check file state consistency
     precheck()
 
-    # Start server
-    server.run(port='8000', host='0.0.0.0', debug=False)
-
 
 if __name__ == "__main__":
     start_server()
+
+    # Start server
+    RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

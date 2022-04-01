@@ -1,31 +1,21 @@
-import json
-import os.path as osp
-
 import pytest
 
 from objects.RServer import RServer
 from server import start_server
 
+start_server()
 
-# baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
-# datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
-# ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
-# with open(osp.join(baseDir, 'configs.json')) as jsonfile:
-#     configs = json.load(jsonfile)
-#
-# RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
-#
-# def test_valid_app_and_server():
-#     server = RServer.getServer()
-#     assert server
-#     assert server.getFlaskApp()
-#     # assert server.dataManager
-#     # assert RServer.getModelWrapper()
+
+def test_valid_app_and_server():
+    server = RServer.getServer()
+    assert server
+    assert server.getFlaskApp()
+    # assert server.dataManager
+    # assert RServer.getModelWrapper()
 
 
 @pytest.fixture()
 def app():
-    start_server()
     server = RServer.getServer()
     app = server.getFlaskApp()
     app.config['TESTING'] = True
@@ -44,7 +34,6 @@ def client(app):
 
 
 class TestConfig:
-
     def test_config(self, client):
         rv = client.get("/config").get_json()
         assert rv['code'] == 0
@@ -60,6 +49,12 @@ class TestConfig:
             "image_padding": "none",
             "num_classes": 9
         }
+
+
+class TestEdit:
+    def test_edit_wrong_split(self, client):
+        rv = client.post("/edit/test/0").get_data()
+        assert rv == -1
 
 # class TestPredict:
 #
