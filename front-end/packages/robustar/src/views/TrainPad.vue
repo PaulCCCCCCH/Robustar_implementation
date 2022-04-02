@@ -104,12 +104,12 @@
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="startTraining">
-            Start Training
+            START TRAINING
           </v-btn>
         </div>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="stopTraining">
-            Stop Training
+            STOP TRAINING
           </v-btn>
         </div>
       </v-form>

@@ -6,12 +6,12 @@
       <v-form>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_testing('validation')">
-            Start Testing on Validation Set
+            START TESTING ON VALIDATION SET
           </v-btn>
         </div>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_testing('test')">
-            Start Testing on Test Set
+            START TESTING ON TEST SET
           </v-btn>
         </div>
       </v-form>

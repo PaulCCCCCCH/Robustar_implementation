@@ -18,18 +18,18 @@
       <div class="d-flex justify-center mb-4">
         <!-- Previous page button -->
         <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
-          Prev Page
+          PREV PAGE
         </v-btn>
 
         <!-- Refresh page button & page number -->
         <div class="d-flex mx-8">
-          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
+          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
           <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
         </div>
 
         <!-- Next page button -->
         <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
-          Next Page
+          NEXT PAGE
         </v-btn>
       </div>
 
@@ -42,7 +42,7 @@
           color="primary"
           @click="gotoClass"
         >
-          Goto Class
+          GOTO CLASS
         </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
@@ -85,7 +85,7 @@
                     @click="gotoImage(idx, url, 'EditImage')"
                   >
                     <v-icon left>mdi-pencil</v-icon>
-                    Annotate
+                    ANNOTATE
                   </v-btn>
                   <v-btn
                     outlined
@@ -95,7 +95,7 @@
                     @click="setCurrentImage(idx, url)"
                   >
                     <v-icon left>mdi-cogs</v-icon>
-                    Predict
+                    PREDICT
                   </v-btn>
                 </div>
               </v-expand-transition>

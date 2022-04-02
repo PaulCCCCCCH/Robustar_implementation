@@ -26,7 +26,7 @@
 
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="startAutoAnnotate()">
-            Start Auto Annotation
+            START AUTO ANNOTATION
           </v-btn>
           <div style="">
             Warning: This will overwrite previous annotations!

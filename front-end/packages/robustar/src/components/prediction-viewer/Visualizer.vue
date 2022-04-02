@@ -49,7 +49,7 @@
         </v-expansion-panel> </v-expansion-panels
     ></v-sheet>
     <v-btn v-else class="float-button" color="secondary" outlined large @click="openVisualizer">
-      <v-icon left>mdi-eye</v-icon>visualizer
+      <v-icon left>mdi-eye</v-icon>VISUALIZER
     </v-btn>
   </div>
 </template>
