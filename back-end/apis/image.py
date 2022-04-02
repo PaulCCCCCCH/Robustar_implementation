@@ -37,7 +37,7 @@ def get_train_img(split, image_id):
     except Exception as e:
         print(e)
         return RResponse.fail('Image with given id not exist')
-    return redirect('/dataset/' + url)
+    return redirect('/dataset' + url)
 
 
 @app.route('/image/get-annotated/<image_id>')
