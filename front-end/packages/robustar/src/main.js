@@ -8,10 +8,12 @@ import { configs } from '@/configs.js';
 Vue.config.productionTip = false;
 
 // Vue.use(ElementUI);
-Vue.use(new VueSocketIO({
-  debug: false,
-  connection: configs.serverUrl,
-}))
+Vue.use(
+  new VueSocketIO({
+    debug: false,
+    connection: configs.serverUrl,
+  })
+);
 
 new Vue({
   router,

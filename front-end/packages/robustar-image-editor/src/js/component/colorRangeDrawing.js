@@ -38,21 +38,21 @@ class ColorRangeDrawing extends Component {
     /**
      * Initial threshold (threshold will be reset to this number on mouse down)
      * @type {number}
-     * @private 
+     * @private
      */
     this._initThreshold = 0;
 
     /**
      * Filter Id. Uniquely identifies a color filter drawing.
      * @type {number}
-     * @private 
+     * @private
      */
     this._filterId = 0;
 
     /**
      * Maximum _filterId value.
      * @type {number}
-     * @private 
+     * @private
      */
     this._maxFilterId = Number.MAX_SAFE_INTEGER;
 
@@ -172,7 +172,7 @@ class ColorRangeDrawing extends Component {
    * Convert the distance of mouse move into color range
    */
   _distanceToRange(mouseDownX, mouseDownY, x, y) {
-    return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10 ;
+    return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10;
   }
 
   _getPointerColor(canvas, x, y) {
@@ -209,7 +209,6 @@ class ColorRangeDrawing extends Component {
       !isLast
     );
   }
-
 }
 
 export default ColorRangeDrawing;
