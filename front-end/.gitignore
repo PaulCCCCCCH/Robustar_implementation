@@ -67,3 +67,7 @@ api
 
 dist
 !_*/dist/
+
+# cypress
+cypress/videos
+cypress/screenshots
