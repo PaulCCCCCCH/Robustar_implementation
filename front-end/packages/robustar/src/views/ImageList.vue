@@ -24,11 +24,11 @@
         <!-- Refresh page button & page number -->
         <div class="d-flex mx-8">
           <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
-          <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+          <v-text-field data-test="image-list-input-page-number" v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
         </div>
 
         <!-- Next page button -->
-        <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
+        <v-btn data-test="image-list-btn-next-page" :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
           NEXT PAGE
         </v-btn>
       </div>
