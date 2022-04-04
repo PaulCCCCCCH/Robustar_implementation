@@ -9,7 +9,7 @@
 
 ## `src/js`
 - `src/js/imageEditor.js`: 
-  - Defines `ImageEditor` object, which is an aggregation of an `UI` object (in `ui.js`), a `Graphics` object (in `graphics.js`), and an `Invoker` object (in `invoker.js`).
+  - Defines `ImageEditor` object, which is an aggregation of an `UI` instance (in `ui.js`), a `Graphics` instance (in `graphics.js`), and an `Invoker` instance (in `invoker.js`).
   - Defines a set of event handlers and attaches events to objects (with `ui.on`, `graphics.on`, etc.). Events are divided into three categories
     1. **Invoker events**. These are editor actions that we can redo/undo (e.g. draw a stroke, zoom in, etc.)
     2. **Graphics events**. These represnet UI changes (e.g. what happens when you click on color picker).
@@ -18,13 +18,12 @@
 
 - `src/js/ui.js`:
   - Sets UI styles and add DOM elements dynamically. Controls transitions, etc.
-  - Binds events to buttons (`activeMenuEvent()`). So if you want to add a button that does something, modify this file. Note that it only **binds** buttons to actions. It 
-  does not define actions. Actions are defined in `actions.js` (see below).
+  - Binds events to buttons (`activeMenuEvent()`). So if you want to add a button that does something, modify this file. Note that it only **binds** buttons to actions. It does not define actions. Actions are defined in `actions.js` (see below).
   - Defines sub menus (`_makeSubMenu()`), with the list of menus initialized in `_initializeOption()`.
   - Set the default image for `Canvas` object (`initCanvas()`).  
-
+  
 - `src/js/graphics.js`:
-  - Manages drawings (i.e. things inside the canvas element), keeps a reference to `Fabric.Canvas` object.
+  - Manages drawings (i.e. things inside the canvas element) and style settings, keeps a reference to `Fabric.Canvas` object, delegate operations on `Canvas` using the library [Fabric.js](https://github.com/fabricjs/fabric.js).
   - Strokes drawn are managed as `objects`. Many functions are provided to manipulate them. Selected object will be `active`.
   - **Important**: Exports the image in the canvas through `toDataURL()`, load an image to canvas through `setCanvasImage()`
   - Initializes drawing modes
@@ -34,34 +33,53 @@
   - Provides an `execute` function that execute a command, pushes it to undo stack, and clears redo stack. Most canvas operations should be passed to it.
 
 - `src/js/action.js`:
-  - Defines actions (e.g. download, load image, switch to drawing mode, hide menu, etc.). The actions are bind to buttons in `ui.js`. 
+  - Defines UI-related actions (e.g. download, load image, switch to drawing mode, hide menu, etc.). The actions are bind to buttons in `ui.js`. 
   - Implement action logic in this file.
 
-- `src/js/polyfill.js`: JS library .Please ignore this.
+- `src/js/polyfill.js`: JS library for backward compatibility. Please ignore this.
 
 - `src/js/consts.js`: defines constants.
 
 - `src/js/utils.js`: utility functions.
 
 
-
-
 ## `src/js/component`
-- Each file defines a drawing tool. This is the lowest level above `Fabric` layer. 
+- Each file defines a drawing tool. This is the lowest level above `Fabric` layer, which provides an abstraction of a specific drawing operation. 
 - You need to bind key events to `fabric` object with 
   `fabric.util.addListener(document, 'keydown', function)`, and remove it later with
   `fabric.util.removeListener(document, 'keydown', function)`.
 - You need to bind mouse events to `canvas` object with 
   `canvas.on({ 'mouse:move': function, 'mouse:down': function})`, and remove it later with
   `canvas.off({ 'mouse:move': function, 'mouse:down': function})`
+- The event that should be externally transmitted from the component is passed through the `Canvas`. The `Canvas` passes the event back if it is registered outside Canvas.
 
 
 ## `src/js/command`
+- Independent unit of execution for performing specific functions
 - Defines `execute` and `undo` functions. 
 - Call `graphics.getComponent(...)` and call component methods here.
+- Command instance is managed as a stack in the `Invoker`.
+- Uses `Canvas` to manage various components.
+
+## `src/js/factory`
+
+- Command factory interface for command registration and creation
 
 ## `src/js/drawingMode`
 - Triggers for corresponding component for each drawing mode. Defines `start` and `end` actions. To add new drawing mode, just follow the templates.
+- **Important**: only one drawing mode should be activated at a time, which means drawing modes are mutually exclusive.
+
+## `src/js/ui`
+
+- Traditional event-driven implementation of interfaces of different tools
+
+## `src/js/extension`
+
+- Extends functionalities of Fabric image filters.
+
+## `src/js/helper`
+
+- Helper functions for some components
 
 # Implementation of Drawing Lines
 
@@ -99,4 +117,9 @@ TODO
 - `actions` has `ImageEditor` mixed in.
 - Many components `CustomEvents` mixed in.
 
+---
+
+# Reference
+
+Official introduction of project structure: [tui.image-editor/Structure.md at master · nhn/tui.image-editor (github.com)](https://github.com/nhn/tui.image-editor/blob/master/docs/Structure.md)
 

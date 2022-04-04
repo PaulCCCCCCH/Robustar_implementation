@@ -1,6 +1,10 @@
 # Overview
 Test cases in lists/tables for each section should be run in given orders.
 
+# Requirements
+
+Make sure [Google Chrome](https://www.google.com/chrome/) has been installed on your machine before running the frontend tests.
+
 # Setup
 Make sure what's under `/Robustar2` is the same as [this one](https://drive.google.com/file/d/1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-/view?usp=sharing).
 
@@ -132,5 +136,4 @@ Run `Cleanup` step first (see the section above).
 
 ## End-to-end Correctness
 TODO
-
 

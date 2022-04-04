@@ -28,9 +28,7 @@
           <v-btn depressed color="primary" class="mx-auto" @click="startAutoAnnotate()">
             START AUTO ANNOTATION
           </v-btn>
-          <div style="">
-            Warning: This will overwrite previous annotations!
-          </div>
+          <div style="">Warning: This will overwrite previous annotations!</div>
         </div>
       </v-form>
     </v-sheet>
@@ -45,8 +43,8 @@ export default {
     return {
       configs: {
         num_to_gen: 0,
-        split: 'train'
-      } 
+        split: 'train',
+      },
     };
   },
   methods: {

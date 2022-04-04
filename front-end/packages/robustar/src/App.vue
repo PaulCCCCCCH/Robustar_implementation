@@ -49,6 +49,6 @@ export default {
 }
 
 .v-btn {
-  text-transform:none !important;
+  text-transform: none !important;
 }
 </style>

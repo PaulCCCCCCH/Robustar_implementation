@@ -55,25 +55,14 @@
             <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular
-                    indeterminate
-                    color="primary lighten-3"
-                    >
+                  <v-progress-circular indeterminate color="primary lighten-3">
                   </v-progress-circular>
                 </v-row>
               </template>
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="
-                    d-flex
-                    flex-column
-                    transition-fast-in-fast-out
-                    primary
-                    v-card--reveal
-                    text-h5
-                    white--text
-                  "
+                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
                   style="height: 100%"
                 >
                   <v-btn
@@ -251,12 +240,12 @@ export default {
       }
 
       for (let idx = 0; idx < imgNum; idx++) {
-          // console.log(idx)
-          const imgid = imagePageIdx2Id(this.currentPage, idx);
-          // console.log(imgid)
-          // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
-          this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
-        }
+        // console.log(idx)
+        const imgid = imagePageIdx2Id(this.currentPage, idx);
+        // console.log(imgid)
+        // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
+        this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
+      }
     },
   },
 };

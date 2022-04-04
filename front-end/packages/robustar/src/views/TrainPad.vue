@@ -49,7 +49,14 @@
           type="number"
         ></v-text-field>
         <!-- Set Epoch -->
-        <v-text-field value="10" v-model="configs.epoch" label="Epoch" outlined clearable type="number"></v-text-field>
+        <v-text-field
+          value="10"
+          v-model="configs.epoch"
+          label="Epoch"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
         <!-- Set Batch size -->
         <v-text-field
           v-model="configs.batch_size"
