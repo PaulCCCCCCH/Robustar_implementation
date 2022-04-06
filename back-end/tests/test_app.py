@@ -106,8 +106,7 @@ class TestImage:
     def test_image_fail_invalid_split(self, client):
         rv = client.get("/image/non-exist/0").get_json()
         assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        # TODO: meaningless error message,fix in `apis/image.py` and `utils/image_utils.py`
+        assert rv['msg'] == 'Split not supported'
 
     def test_image_fail_image_id_out_of_bound(self, client):
         rv = client.get("/image/train/100000").get_json()
@@ -149,10 +148,10 @@ class TestImage:
 
     # TODO: GET /image/get-annotated/<image_id>
 
-    def test_class_length_fail_invalid_split(self, client):  # TODO: modify project code to pass the test
+    def test_class_length_fail_invalid_split(self, client):
         rv = client.get("/image/class/non-exist").get_json()
         assert rv['code'] == -1
-        # assert rv['msg'] == ''
+        assert rv['msg'] == 'Split not supported'
 
     def test_class_length_success(self, client):
         rv = client.get("/image/class/train").get_json()
@@ -161,10 +160,10 @@ class TestImage:
                               'insect': 6000, 'primate': 7000, 'turtle': 8000}
         # TODO: test other <split>s
 
-    def test_split_length_fail_invalid_split(self, client):  # TODO: modify project code to pass the test
+    def test_split_length_fail_invalid_split(self, client):
         rv = client.get("/image/non-exist").get_json()
         assert rv['code'] == -1
-        # assert rv['msg'] == ''
+        assert rv['msg'] == 'Split not supported'
 
     def test_split_length_success(self, client):
         rv = client.get("/image/train").get_json()
@@ -174,15 +173,15 @@ class TestImage:
 
 
 class TestPredict:
-    def test_predict_fail_invalid_split(self, client):  # TODO: modify project code to pass the test
+    def test_predict_fail_invalid_split(self, client):
         rv = client.get("/predict/non-exist/0").get_json()
         assert rv['code'] == -1
-        # assert rv['msg'] == ''
+        assert rv['msg'] == 'Split not supported'
 
-    def test_predict_fail_image_id_out_of_bound(self, client):  # TODO: modify project code to pass the test
+    def test_predict_fail_image_id_out_of_bound(self, client):
         rv = client.get("/predict/train/100000").get_json()
         assert rv['code'] == -1
-        # assert rv['msg'] == ''
+        assert rv['msg'] == 'Image with given id not exist'
         # TODO: test other <split>s (?)
 
     def test_predict_success(self, client):
