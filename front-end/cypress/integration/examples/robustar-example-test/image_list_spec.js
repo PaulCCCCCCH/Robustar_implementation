@@ -1,4 +1,3 @@
-
 describe('ImageList', () => {
   beforeEach(() => {
     cy.visit('http://localhost:8080/#/image-list/train');
@@ -23,6 +22,10 @@ describe('ImageList', () => {
     cy.getBySel('image-list-btn-next-page').as("next-page").click();
     cy.get('@next-page').click();
     cy.get('@page-num').should('have.value', 127);
+
+    cy.getBySel("image-list-img-1").trigger('mouseenter'); // 'mouseover' does not trigger the overlay!
+    cy.getBySel('image-list-btn-edit-image-1').click();
+
   });
 
 });

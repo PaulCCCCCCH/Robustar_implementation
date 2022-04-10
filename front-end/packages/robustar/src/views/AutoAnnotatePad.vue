@@ -22,6 +22,7 @@
           clearable
           type="number"
           hint="0 means generate for all samples"
+          data-test="auto-annotate-input-sample-per-class"
         ></v-text-field>
 
         <div class="d-flex flex-column align-center my-4">
