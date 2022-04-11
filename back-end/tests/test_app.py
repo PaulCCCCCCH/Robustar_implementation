@@ -3,6 +3,9 @@ import pytest
 from objects.RServer import RServer
 from server import start_server
 
+import os
+import os.path as osp
+
 
 # start_server()
 # def test_valid_app_and_server():
@@ -15,12 +18,51 @@ from server import start_server
 
 @pytest.fixture()
 def app():
+    _cleanup()
     start_server()
     server = RServer.getServer()
     app = server.getFlaskApp()
     app.config['TESTING'] = True
     yield app
     app.config['TESTING'] = False
+
+
+def _cleanup():
+    base_dir = osp.join('/', 'Robustar2').replace('\\', '/')
+    dataset_dir = osp.join(base_dir, 'dataset').replace('\\', '/')
+    test_correct_root = osp.join(dataset_dir, 'test_correct.txt').replace('\\', '/')
+    test_incorrect_root = osp.join(dataset_dir, 'test_incorrect.txt').replace('\\', '/')
+    validation_correct_root = osp.join(dataset_dir, 'validation_correct.txt').replace('\\', '/')
+    validation_incorrect_root = osp.join(dataset_dir, 'validation_incorrect.txt').replace('\\', '/')
+    annotated_root = osp.join(dataset_dir, 'annotated.txt').replace('\\', '/')
+    paired_root = osp.join(dataset_dir, 'paired').replace('\\', '/')
+    if osp.exists(test_correct_root):
+        print("cleanup > delete " + test_correct_root)
+        os.remove(test_correct_root)
+    if osp.exists(test_incorrect_root):
+        print("cleanup > delete " + test_incorrect_root)
+        os.remove(test_incorrect_root)
+    if osp.exists(validation_correct_root):
+        print("cleanup > delete " + validation_correct_root)
+        os.remove(validation_correct_root)
+    if osp.exists(validation_incorrect_root):
+        print("cleanup > delete " + validation_incorrect_root)
+        os.remove(validation_incorrect_root)
+    if osp.exists(annotated_root):
+        print("cleanup > delete " + annotated_root)
+        os.remove(annotated_root)
+    if osp.exists(paired_root):
+        print("cleanup > delete " + paired_root)
+        for subfolder in os.listdir(paired_root):
+            subfolder_root = osp.join(paired_root, subfolder).replace('\\', '/')
+            print("cleanup >> delete " + subfolder_root)
+            for image in os.listdir(subfolder_root):
+                image_root = osp.join(subfolder_root, image).replace('\\', '/')
+                if os.path.isfile(image_root):
+                    # print("cleanup >>> delete " + image_root)
+                    os.remove(image_root)
+            os.rmdir(subfolder_root)
+        os.rmdir(paired_root)
 
 
 @pytest.fixture()
@@ -144,7 +186,7 @@ class TestImage:
         response = client.get("/image/test/2", follow_redirects=True)
         assert len(response.history) == 1
         assert response.request.path == "/dataset/Robustar2/dataset/test/bird/10.JPEG"
-        # TODO: test other <split>s (?)
+        # TODO: test other <split>s
 
     # TODO: GET /image/get-annotated/<image_id>
 
@@ -195,4 +237,4 @@ class TestPredict:
                            "/Robustar2/visualize_images/train_1_2.png",
                            "/Robustar2/visualize_images/train_1_3.png"]
 
-# TODO: ...
+# TODO: annotate 图片 像素位的检查   &&      training (---随机数种子 ? / weight要一致 / 无NAN ... ?---)  的test
