@@ -19,13 +19,13 @@
           </v-col>
         </v-row>
         <!-- <v-row v-for="(item, index) in digest" align="center" justify="center" :key="item[0]"> -->
-        <v-row v-for="(item, index) in digest" align="center" justify="center" :key="index">
+        <v-row v-for="(item, index) in digest" align="center" justify="center" :key="index" data-test ="task-panel-task-number">
           <v-col cols="12" lg="1" align="center" justify="center">
-            <v-btn color="red" icon @click="stopTask(item[4])"
+            <v-btn color="red" icon @click="stopTask(item[4])" data-test = "task-panel-stop-task"
               ><v-icon>mdi-minus-box</v-icon></v-btn
             >
           </v-col>
-          <v-col cols="12" lg="2" align="center" justify="center">{{ item[0] }}</v-col>
+          <v-col cols="12" lg="2" align="center" justify="center" >{{ item[0] }}</v-col>
           <v-col cols="12" lg="5" align="center" justify="center">
             <v-progress-linear
               :color="getProgressColor(Math.round(item[1] * 100) / 1)"
