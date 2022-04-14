@@ -2,10 +2,23 @@
 module.exports = {
   devServer: {
     // disableHostCheck: true,
-    // host: '0.0.0.0',
+    host: 'localhost',
+    port: 8080,
+    open: true,
+    hotOnly: true,
     overlay: {
       warnings: false,
       errors: false,
+    },
+    proxy: {
+      '/api': {
+        target: process.env.VUE_APP_BASE_URL,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': '',
+        },
+      },
     },
   },
   lintOnSave: false,
