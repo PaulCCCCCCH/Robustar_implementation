@@ -100,8 +100,7 @@ class TestEdit:
         assert rv['msg'] == 'Split test not supported! Currently we only support editing the `train` or `annotated` ' \
                             'splits!'
 
-    def test_edit_fail_image_id_out_of_bound(self, client):
-        # TODO: is it reasonable to test this function? if so, modify project code to pass the test
+    def test_edit_fail_image_id_out_of_bound(self, client): # TODO: pass the test
         rv = client.post("/edit/train/100000").get_json()  # TODO: error in `apis/edit.py` file line 67
         assert rv['code'] == -1
         # assert rv['msg'] == ''
@@ -109,9 +108,7 @@ class TestEdit:
         assert rv['code'] == -1
         # assert rv['msg'] == ''
 
-    def test_edit_success(self, client):
-        # TODO: is it reasonable to test this function? if so, modify project code to pass the test
-        # TODO: may need a 'clean up' of file in folder `Robustar2/` - apply it in function `app()`
+    def test_edit_success(self, client): # TODO: pass the test
         rv = client.post("/edit/train/9").get_json()  # TODO: error in `apis/edit.py` file line 67
         assert rv['code'] == 0
         # TODO: test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
@@ -122,7 +119,7 @@ class TestEdit:
         assert rv['code'] == -1
         assert rv['msg'] == 'Cannot propose edit to a wrong split'
 
-    def test_propose_fail_image_id_out_of_bound(self, client):  # TODO: modify project code to pass the test
+    def test_propose_fail_image_id_out_of_bound(self, client):  # TODO: pass the test
         rv = client.get("/propose/train/100000").get_json()
         assert rv['code'] == -1
         # assert rv['msg'] == ''
@@ -131,14 +128,12 @@ class TestEdit:
         # assert rv['msg'] == ''
 
     def test_propose_success(self, client):
-        # TODO: may need a 'clean up' of file in folder `Robustar2/` - apply it in function `app()`
         rv = client.get("/propose/train/9").get_json()
         assert rv['code'] == 0
         # TODO: test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
         # TODO: more test cases ...
 
     def test_auto_annotate_success(self, client):
-        # TODO: may need a 'clean up' of file in folder `Robustar2/` - apply it in function `app()`
         assert True  # TODO: test not implemented
 
     # TODO: tests on auto_annotate not implemented
@@ -237,4 +232,5 @@ class TestPredict:
                            "/Robustar2/visualize_images/train_1_2.png",
                            "/Robustar2/visualize_images/train_1_3.png"]
 
-# TODO: annotate 图片 像素位的检查   &&      training (---随机数种子 ? / weight要一致 / 无NAN ... ?---)  的test
+# TODO: annotate 图片 逐像素位的检查
+# TODO: test training
