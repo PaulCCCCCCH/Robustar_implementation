@@ -27,9 +27,13 @@ describe('Auto Annotate Pad', () => {
 
       })
       it('Test Task Panel2',()=> {
+        cy.wait(4000)
         cy.get('[data-test = header-toggle-tasks-panel]').click()
         cy.getBySel("task-panel-item-name").children().should('have.length', 1)
-        cy.wait(10000);
+
+        // reopen the task panel
+        cy.get('[data-test = header-toggle-tasks-panel]').click()
+        cy.get('[data-test = header-toggle-tasks-panel]').click()
         cy.get('p').should('have.text','No task is running now.')
 
     })
