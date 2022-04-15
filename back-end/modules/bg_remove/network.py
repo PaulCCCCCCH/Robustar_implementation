@@ -95,10 +95,16 @@ class U2NET:
         """
         start_time = time.time()  # Time counter
         image = image.type(self.torch.FloatTensor)
-        if self.torch.cuda.is_available():
+        # if self.torch.cuda.is_available():
+        #     image = self.Variable(image.cuda())
+        # else:
+        #     image = self.Variable(image)
+        if self.device == 'cuda':
             image = self.Variable(image.cuda())
         else:
             image = self.Variable(image)
+
+
         mask, d2, d3, d4, d5, d6, d7 = self.__net__(image)  # Predict mask
         print("Mask prediction completed")
         # Normalization
