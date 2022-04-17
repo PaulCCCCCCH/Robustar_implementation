@@ -38,5 +38,5 @@ Cypress.Commands.add('getBySelLike', (selector, ...args) => {
 });
 
 Cypress.Commands.add('checkSessionStorage', (key, val) => {
-  cy.window().its('sessionStorage').invoke('getItem', key).should('eq', val)
-}) 
+  cy.window().its('sessionStorage').invoke('getItem', key).should('eq', val);
+});

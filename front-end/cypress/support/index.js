@@ -29,7 +29,6 @@ if (Cypress.config('hideXHR')) {
     const style = app.document.createElement('style');
     style.innerHTML = '.command-name-request, .command-name-xhr { display: none }';
     style.setAttribute('data-hide-command-log-request', '');
-
     app.document.head.appendChild(style);
   }
 }

@@ -1,4 +1,3 @@
-// close eslint checking in Vue CLI
 module.exports = {
   devServer: {
     // disableHostCheck: true,
@@ -21,5 +20,6 @@ module.exports = {
       },
     },
   },
+  // close eslint checking in Vue CLI
   lintOnSave: false,
 };

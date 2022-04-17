@@ -26,7 +26,13 @@
         ></v-text-field>
 
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="startAutoAnnotate()" data-test = "auto-annotate-pad-start-auto-annotation">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="startAutoAnnotate()"
+            data-test="auto-annotate-pad-start-auto-annotation"
+          >
             START AUTO ANNOTATION
           </v-btn>
           <div style="">Warning: This will overwrite previous annotations!</div>

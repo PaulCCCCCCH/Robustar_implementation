@@ -28,6 +28,7 @@ Developed with `Vue2`
 ```
 
 ## Test
+
 ```
     npx cypress open
 ```

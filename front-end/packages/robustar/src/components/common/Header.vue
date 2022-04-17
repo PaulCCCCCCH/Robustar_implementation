@@ -9,7 +9,7 @@
     <v-spacer></v-spacer>
 
     <!-- Full screen button -->
-    <v-btn icon color="primary" @click="toggleTaskspanel" data-test = "header-toggle-tasks-panel">
+    <v-btn icon color="primary" @click="toggleTaskspanel" data-test="header-toggle-tasks-panel">
       <v-icon>mdi-format-list-bulleted-type</v-icon>
     </v-btn>
     <v-btn icon color="primary" @click="toggleFullscreen">
