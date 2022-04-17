@@ -59,7 +59,7 @@ def start_training():
             configs:
               type: object
               example: {
-                model: 'resnet-18-32x32',
+                model_name: 'my-test-model',
                 weight: '',
                 train_path: '/Robustar2/dataset/train',
                 test_path: '/Robustar2/dataset/test',
