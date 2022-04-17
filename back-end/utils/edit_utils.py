@@ -68,6 +68,8 @@ def propose_edit(split, image_id):
         
 
 def start_auto_annotate(split, num_to_gen):
+    num_to_gen = min(num_to_gen, len(dataManager.trainset))
+
     def auto_annotate_thread(split, num_to_gen):
         task = RTask(TaskType.AutoAnnotate, num_to_gen)
         starttime = time.time()
@@ -85,6 +87,7 @@ def start_auto_annotate(split, num_to_gen):
                 print("Time consumption:", endtime-starttime)
                 print("Auto annotate stopped!")
                 return 
+        task.exit()
 
 
     test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
