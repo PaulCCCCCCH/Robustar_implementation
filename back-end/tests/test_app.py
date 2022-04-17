@@ -234,3 +234,8 @@ class TestPredict:
 
 # TODO: annotate 图片 逐像素位的检查
 # TODO: test training
+
+# class TestTrain:
+#     def test_start_training(self, client):
+#         rv = client.post("/train").get_json()
+

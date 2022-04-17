@@ -3,6 +3,7 @@ import time
 from torchattacks import PGD
 import os
 from objects.RTask import RTask, TaskType
+from objects.RServer import RServer
 
 
 class Trainer():
@@ -44,6 +45,8 @@ class Trainer():
             os.mkdir(self.save_dir)
         torch.save(self.net.state_dict(), os.path.join(
             self.save_dir, self.name + "_" + str(float(acc))[:4]))
+        # Save the model to the Rserver instance
+        RServer.addModelWeight(self.name + "_" + str(float(acc))[:4], self.net.state_dict())
 
     def get_correct(self):
         correct_result = []
