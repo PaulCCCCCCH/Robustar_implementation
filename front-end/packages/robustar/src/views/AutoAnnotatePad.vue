@@ -22,10 +22,17 @@
           clearable
           type="number"
           hint="0 means generate for all samples"
+          data-test="auto-annotate-input-sample-per-class"
         ></v-text-field>
 
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="startAutoAnnotate()">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="startAutoAnnotate()"
+            data-test="auto-annotate-pad-start-auto-annotation"
+          >
             START AUTO ANNOTATION
           </v-btn>
           <div style="">Warning: This will overwrite previous annotations!</div>

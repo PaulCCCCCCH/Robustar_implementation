@@ -2,11 +2,15 @@
   <div class="container">
     <div class="view-home">
       <br />
-      <h1>Start your exploration!</h1>
+      <h1 data-test="home-page-welcome-msg">Start your exploration!</h1>
       <br /><br />
       <div class="d-flex flex-wrap justify-space-around">
         <div class="feature-item" v-for="(item, i) in items" :key="i">
-          <v-list-item :to="{ path: '/' + item.link }" class="d-flex align-start">
+          <v-list-item
+            :data-test="`home-${item.text}-entrance`"
+            :to="{ path: '/' + item.link }"
+            class="d-flex align-start"
+          >
             <div>
               <v-list-item-icon>
                 <v-icon v-text="item.icon"></v-icon>
@@ -42,7 +46,7 @@ export default {
         {
           icon: 'mdi-vector-link',
           link: 'influence-pad',
-          text: 'Infulence',
+          text: 'Influence',
           explain:
             ' With new test samples, the model can help identify the samples that are responsible for the prediction through influence function',
         },

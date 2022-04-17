@@ -24,11 +24,23 @@
         <!-- Refresh page button & page number -->
         <div class="d-flex mx-8">
           <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
-          <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+          <v-text-field
+            data-test="image-list-input-page-number"
+            v-model="inputPage"
+            dense
+            label="Page Number"
+            type="number"
+          ></v-text-field>
         </div>
 
         <!-- Next page button -->
-        <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
+        <v-btn
+          data-test="image-list-btn-next-page"
+          :disabled="currentPage >= maxPage"
+          depressed
+          color="primary"
+          @click="currentPage++"
+        >
           NEXT PAGE
         </v-btn>
       </div>
@@ -50,9 +62,20 @@
       <v-divider class="mb-8" style="width: 100%"></v-divider>
 
       <div class="d-flex flex-row flex-wrap justify-start" style="flex">
-        <div v-for="(url, idx) in imageList" :key="url" class="mb-8 mr-8 row-item">
+        <div
+          v-for="(url, idx) in imageList"
+          :key="url"
+          class="mb-8 mr-8 row-item"
+          data-test="image-list-div-all-imgs"
+        >
           <v-hover v-slot="{ hover }">
-            <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
+            <v-img
+              :src="url"
+              alt="invalid image URL"
+              height="200px"
+              width="200px"
+              :data-test="`image-list-img-${idx}`"
+            >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular indeterminate color="primary lighten-3">
@@ -62,7 +85,15 @@
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
+                  class="
+                    d-flex
+                    flex-column
+                    transition-fast-in-fast-out
+                    primary
+                    v-card--reveal
+                    text-h5
+                    white--text
+                  "
                   style="height: 100%"
                 >
                   <v-btn
@@ -72,6 +103,7 @@
                     color="white"
                     width="150px"
                     @click="gotoImage(idx, url, 'EditImage')"
+                    :data-test="`image-list-btn-edit-image-${idx}`"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     ANNOTATE
