@@ -52,7 +52,7 @@ def api_user_edit(split, image_id):
     """
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated']:
-        raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
 
     if split == 'annotated':
         image_id = get_train_from_annotated(image_id)
@@ -108,7 +108,7 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        raise NotImplemented('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
 
 
     json_data = request.get_json()
