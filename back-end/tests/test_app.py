@@ -26,6 +26,10 @@ def app():
     yield app
     app.config['TESTING'] = False
 
+@pytest.fixture()
+def server():
+    server = RServer.getServer()
+    return server
 
 def _cleanup():
     base_dir = osp.join('/', 'Robustar2').replace('\\', '/')
@@ -235,7 +239,11 @@ class TestPredict:
 # TODO: annotate 图片 逐像素位的检查
 # TODO: test training
 
-# class TestTrain:
-#     def test_start_training(self, client):
-#         rv = client.post("/train").get_json()
+class TestTrain:
+    # Test if the model is loaded correctly at weight level
+    def test_load_model_correctness(self, server):
+        pass
+
+
+
 

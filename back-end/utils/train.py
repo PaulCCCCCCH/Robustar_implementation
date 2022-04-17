@@ -42,7 +42,8 @@ def ml_initialize(configs):
     test_set = DataSet(testset, int(
         configs['image_size']), transforms, classes_path=configs['class_path'])
 
-    modelwrapper = initialize_model() # Model will be initialized with server config
+    # modelwrapper = initialize_model() # Model will be initialized with server config
+    modelwrapper = RServer.getModelWrapper()
     model = modelwrapper.model
 
     trainer = Trainer(model, train_set, test_set, batch_size,
