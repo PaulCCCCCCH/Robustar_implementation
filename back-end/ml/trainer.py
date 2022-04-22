@@ -48,10 +48,6 @@ class Trainer():
         # Save the model to the Rserver instance
         RServer.addModelWeight(name, self.net.state_dict())
 
-    def save_net_acc(self, acc):
-        name_str = os.path.join(self.save_dir, self.name + "_" + str(float(acc))[:4])
-        self._save_net(name_str)
-
     def save_net_best(self):
         name_str = os.path.join(self.save_dir, self.name + "_best")
         self._save_net(name_str)
