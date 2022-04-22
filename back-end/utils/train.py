@@ -13,20 +13,17 @@ import threading
 def ml_initialize(configs):
 
     # Configs from training pad
-    batch_size = int(configs['batch_size'])
-    learn_rate = float(configs['learn_rate'])
-    num_workers = int(configs['thread'])
-    shuffle = True if configs['shuffle'] == "yes" else False
-    save_dir = configs['save_dir'] if configs['save_dir'] else '/temp_path'
     use_paired_train = True if configs['use_paired_train'] == 'yes' else False
     paired_data_path = configs['paired_data_path']
-    paired_train_reg_coeff = float(configs['paired_train_reg_coeff'])
     paired_train_mixture = configs['mixture']
     image_size = int(configs['image_size'])
     classes_path = configs['class_path']
     trainset = configs['train_path']
     testset = configs['test_path']
     user_edit_buffering = configs['user_edit_buffering']
+    save_dir = configs['save_dir'] if configs['save_dir'] else '/temp_path'
+
+    model_name = configs['model_name'] if configs['model_name'] else "my-model"
     device = RServer.getServerConfigs()['device']
 
     dataManager = RServer.getDataManager()
@@ -46,11 +43,36 @@ def ml_initialize(configs):
     modelwrapper = RServer.getModelWrapper()
     model = modelwrapper.model
 
-    trainer = Trainer(model, train_set, test_set, batch_size,
-                      shuffle, num_workers, device, learn_rate, True,
-                      save_dir, modelwrapper.modelwork_type,
-                      use_paired_train=use_paired_train,
-                      paired_reg=paired_train_reg_coeff)
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+    print(configs['use_paired_train'])
+
+    trainer = Trainer(
+        net=model,
+        trainset=train_set,
+        testset=test_set,
+        batch_size=int(configs['batch_size']),
+        shuffle=configs['shuffle'],
+        num_workers=int(configs['thread']),
+        device=device,
+        learn_rate=float(configs['learn_rate']),
+        auto_save=configs['auto_save_model'],
+        save_every=int(configs['save_every']),
+        save_dir=save_dir,
+        name=model_name,
+        use_paired_train=configs['use_paired_train'],
+        paired_reg=float(configs['paired_train_reg_coeff'])
+    )
 
     return train_set, test_set, model, trainer
 
@@ -117,7 +139,7 @@ def start_train(configs):
         # train_thread.start()
 
         # Start training on a new thread
-        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
+        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model']))
         train_thread.start()
 
     except Exception as e:

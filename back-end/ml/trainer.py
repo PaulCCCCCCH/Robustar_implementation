@@ -13,19 +13,19 @@ class Trainer():
     PATH = "temp_path"
     statusInfo = {}
 
-    def __init__(self, net, trainset, testset, batch_size, shuffle, num_workers, device, learn_rate, auto_save, save_dir, name, use_paired_train=False, paired_reg=1e-4):
+    def __init__(self, net, trainset, testset, batch_size, shuffle, num_workers, device, learn_rate, auto_save, save_every, save_dir, name, use_paired_train=False, paired_reg=1e-4):
         self.initialize_loader(
             trainset, testset, batch_size, shuffle, num_workers)
         self.net = net
         self.device = device
         self.learn_rate = learn_rate
         self.auto_save = auto_save
+        self.save_every = save_every
         self.save_dir = save_dir
         self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
 
-        # Start the tensorboard
 
     def initialize_loader(self, trainset, testset, batch_size, shuffle, num_workers):
         self.testloader = torch.utils.data.DataLoader(
@@ -35,18 +35,30 @@ class Trainer():
 
     def start_train(self, call_back, epochs, auto_save):
         self.updateInfo = call_back
-        self.train(epochs, True, auto_save, False, 1)
+        self.train(epochs, auto_save=auto_save, pgd=False)
 
     def update_gui(self):
         self.updateInfo(self.statusInfo)
 
-    def save_net_acc(self, acc):
+    def _save_net(self, name):
         if not os.path.exists(self.save_dir):
             os.mkdir(self.save_dir)
-        torch.save(self.net.state_dict(), os.path.join(
-            self.save_dir, self.name + "_" + str(float(acc))[:4]))
+        torch.save(self.net.state_dict(), os.path.join(self.save_dir, name))
+
         # Save the model to the Rserver instance
-        RServer.addModelWeight(self.name + "_" + str(float(acc))[:4], self.net.state_dict())
+        RServer.addModelWeight(name, self.net.state_dict())
+
+    def save_net_acc(self, acc):
+        name_str = os.path.join(self.save_dir, self.name + "_" + str(float(acc))[:4])
+        self._save_net(name_str)
+
+    def save_net_best(self):
+        name_str = os.path.join(self.save_dir, self.name + "_best")
+        self._save_net(name_str)
+
+    def save_net_epoch(self, epoch):
+        name_str = os.path.join(self.save_dir, self.name + "_" + epoch)
+        self._save_net(name_str)
 
     def get_correct(self):
         correct_result = []
@@ -137,7 +149,7 @@ class Trainer():
     def returna(self, a, b):
         return a
 
-    def train(self, epoch, debug_info=True, save_best=True, pgd=False, merge=1):
+    def train(self, epoch, auto_save=True, pgd=False, merge=1):
         starttime = time.time()
         loader = self.trainloader
         criterion = torch.nn.CrossEntropyLoss()
@@ -219,19 +231,19 @@ class Trainer():
                     endtime = time.time()
                     print("Time consumption:", endtime-starttime)
                     print("Training stopped!")
-
                     return 
 
             # save_net(net)
             print("Epoch Finish!")
             torch.cuda.empty_cache()
-            if(debug_info):
-                current_acc = self.print_accuracy()
-                torch.cuda.empty_cache()
-                if current_acc > best:
-                    if save_best:
-                        self.save_net_acc(current_acc)
-                    best = current_acc
+            current_acc = self.print_accuracy()
+            torch.cuda.empty_cache()
+            if current_acc > best:
+                if auto_save:
+                    self.save_net_best()
+                best = current_acc
+            if epoch % self.save_every == 0:
+                self.save_net_epoch(epoch)
 
         endtime = time.time()
         print("Time consumption:", endtime-starttime)

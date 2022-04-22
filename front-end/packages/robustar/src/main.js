@@ -3,15 +3,20 @@ import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
 import VueSocketIO from 'vue-socket.io';
+import SocketIO from 'socket.io-client';
 import { configs } from '@/configs.js';
 
 Vue.config.productionTip = false;
 
-// Vue.use(ElementUI);
-Vue.use(new VueSocketIO({
-  debug: false,
-  connection: configs.serverUrl,
-}))
+Vue.use(
+  new VueSocketIO({
+    debug: false,
+    // connection: SocketIO(configs.serverUrl, { transports: ['websocket'] }),
+    connection: configs.serverUrl,
+    extraHeaders: { 'Access-Control-Allow-Origin': '*' },
+    // options: { transports: ['websocket'] },
+  })
+);
 
 new Vue({
   router,

@@ -30,7 +30,7 @@ export const postRequest = (data, route, success, failed) => {
   if (!failed) {
     failed = (res) => console.log(res);
   }
-  axios.post(`${baseUrl}${route}`, data).then(
+  axios.post(`/api${baseUrl}${route}`, data).then(
     (res) => handleResult(res, success, failed),
     (res) => failed(res)
   );
@@ -47,7 +47,7 @@ export const getRequest = (route, success, failed, pageNo) => {
   if (!failed) {
     failed = (res) => console.log(res);
   }
-  let requestUrl = `${baseUrl}${route}${pageNo ? `?pageNo=${pageNo}` : ''}`;
+  let requestUrl = `/api${route}${pageNo ? `?pageNo=${pageNo}` : ''}`;
   axios.get(requestUrl).then(
     (res) => handleResult(res, success, failed),
     (res) => failed(res)

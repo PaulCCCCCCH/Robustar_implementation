@@ -27,6 +27,12 @@ Developed with `Vue2`
     npm run serve
 ```
 
+## Test
+
+```
+    npx cypress open
+```
+
 ## TODO List
 
 - Cannot view misclassified and correctly classified images separately

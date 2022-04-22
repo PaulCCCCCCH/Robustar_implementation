@@ -18,18 +18,30 @@
       <div class="d-flex justify-center mb-4">
         <!-- Previous page button -->
         <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
-          Prev Page
+          PREV PAGE
         </v-btn>
 
         <!-- Refresh page button & page number -->
         <div class="d-flex mx-8">
-          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
-          <v-text-field v-model="inputPage" dense label="Page Number" type="number"></v-text-field>
+          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
+          <v-text-field
+            data-test="image-list-input-page-number"
+            v-model="inputPage"
+            dense
+            label="Page Number"
+            type="number"
+          ></v-text-field>
         </div>
 
         <!-- Next page button -->
-        <v-btn :disabled="currentPage >= maxPage" depressed color="primary" @click="currentPage++">
-          Next Page
+        <v-btn
+          data-test="image-list-btn-next-page"
+          :disabled="currentPage >= maxPage"
+          depressed
+          color="primary"
+          @click="currentPage++"
+        >
+          NEXT PAGE
         </v-btn>
       </div>
 
@@ -42,7 +54,7 @@
           color="primary"
           @click="gotoClass"
         >
-          Goto Class
+          GOTO CLASS
         </v-btn>
         <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
       </div>
@@ -50,15 +62,23 @@
       <v-divider class="mb-8" style="width: 100%"></v-divider>
 
       <div class="d-flex flex-row flex-wrap justify-start" style="flex">
-        <div v-for="(url, idx) in imageList" :key="url" class="mb-8 mr-8 row-item">
+        <div
+          v-for="(url, idx) in imageList"
+          :key="url"
+          class="mb-8 mr-8 row-item"
+          data-test="image-list-div-all-imgs"
+        >
           <v-hover v-slot="{ hover }">
-            <v-img :src="url" alt="invalid image URL" height="200px" width="200px">
+            <v-img
+              :src="url"
+              alt="invalid image URL"
+              height="200px"
+              width="200px"
+              :data-test="`image-list-img-${idx}`"
+            >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular
-                    indeterminate
-                    color="primary lighten-3"
-                    >
+                  <v-progress-circular indeterminate color="primary lighten-3">
                   </v-progress-circular>
                 </v-row>
               </template>
@@ -83,9 +103,10 @@
                     color="white"
                     width="150px"
                     @click="gotoImage(idx, url, 'EditImage')"
+                    :data-test="`image-list-btn-edit-image-${idx}`"
                   >
                     <v-icon left>mdi-pencil</v-icon>
-                    Annotate
+                    ANNOTATE
                   </v-btn>
                   <v-btn
                     outlined
@@ -95,7 +116,7 @@
                     @click="setCurrentImage(idx, url)"
                   >
                     <v-icon left>mdi-cogs</v-icon>
-                    Predict
+                    PREDICT
                   </v-btn>
                 </div>
               </v-expand-transition>
@@ -251,12 +272,12 @@ export default {
       }
 
       for (let idx = 0; idx < imgNum; idx++) {
-          // console.log(idx)
-          const imgid = imagePageIdx2Id(this.currentPage, idx);
-          // console.log(imgid)
-          // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
-          this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
-        }
+        // console.log(idx)
+        const imgid = imagePageIdx2Id(this.currentPage, idx);
+        // console.log(imgid)
+        // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
+        this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
+      }
     },
   },
 };

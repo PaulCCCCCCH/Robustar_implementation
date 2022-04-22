@@ -47,4 +47,8 @@ export default {
   min-height: 100%;
   width: 100%;
 }
+
+.v-btn {
+  text-transform: none !important;
+}
 </style>

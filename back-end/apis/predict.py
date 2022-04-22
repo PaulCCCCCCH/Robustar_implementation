@@ -117,7 +117,7 @@ def predict(split, image_id):
 
         output = visualize(model, imgPath, dataManager.image_size, server.configs['device'])
         if len(output) != 4:
-            raise ValueError("Invalid number of predict visualize figures. Please check.")
+            return RResponse.fail("Invalid number of predict visualize figures. Please check.")
 
         predict_fig_routes = []
 
@@ -137,7 +137,7 @@ def predict(split, image_id):
     elif split in ("test", "test_correct", "test_incorrect"):
         attribute = dataManager.testset.classes
     else:
-        raise ValueError("Wrong split. Please check.")
+        RResponse.fail("Wrong split. Please check.")
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]

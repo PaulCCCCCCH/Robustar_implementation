@@ -31,7 +31,7 @@
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
           <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
-            Start calculation
+            START CALCULATION
           </v-btn>
         </div>
       </v-form>

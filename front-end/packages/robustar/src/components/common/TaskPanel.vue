@@ -31,7 +31,7 @@
               :color="getProgressColor(Math.round(item[1] * 100) / 1)"
               height="20"
               v-bind:value="item[1] * 100"
-              >{{ Math.round(item[1] * 100) / 1 }}% ({{item[2]}})</v-progress-linear
+              >{{ Math.round(item[1] * 100) / 1 }}% ({{ item[2] }})</v-progress-linear
             >
           </v-col>
           <v-col cols="12" lg="4" align="center" justify="center">{{ item[3] }}</v-col>
