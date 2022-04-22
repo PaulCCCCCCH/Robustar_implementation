@@ -128,6 +128,8 @@ class U2NET:
             try:
                 # TODO: use existing library instead!
                 pil_image = Image.open(data)  # Load image if there is a path 
+                if pil_image.mode != 'RGB':
+                    pil_image = pil_image.convert('RGB')
             except IOError:
                 print('Cannot retrieve image. Please check file: ' + data)
                 return False, False
