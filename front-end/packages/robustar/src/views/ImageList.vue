@@ -11,13 +11,17 @@
         class="d-flex mb-4"
         style="width: 200px"
       >
-        <v-select :items="classification" v-model="split" dense @change="resetImageList"></v-select>
+        <v-select :items="classification" v-model="split" dense @change="resetImageList"
+          data-test="image-list-select-classification"
+        ></v-select>
       </div>
 
       <!-- Page navigator -->
       <div class="d-flex justify-center mb-4">
         <!-- Previous page button -->
-        <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--">
+        <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--"
+          data-test="image-list-btn-prev-page"
+         >
           PREV PAGE
         </v-btn>
 
@@ -56,7 +60,9 @@
         >
           GOTO CLASS
         </v-btn>
-        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name"></v-select>
+        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name" data-test="image-list-select-class-name">
+
+        </v-select>
       </div>
 
       <v-divider class="mb-8" style="width: 100%"></v-divider>
@@ -202,6 +208,7 @@ export default {
     },
     initImageList() {
       this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
+      sessionStorage.setItem(this.split, this.currentPage);
       APIGetSplitLength(
         this.split,
         (res) => {
