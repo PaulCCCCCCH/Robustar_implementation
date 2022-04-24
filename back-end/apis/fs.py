@@ -7,6 +7,7 @@ import os.path as osp
 import shutil
 
 server = RServer.getServer()
+dataManager = server.getDataManager()
 app = server.getFlaskApp()
 
 baseDir = server.baseDir
@@ -85,3 +86,10 @@ def write(path):
             return f.write(data)
         
     return fileOpWrapper(fileOp)
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    conn = dataManager.getDBConn()
+    if conn is not None:
+        conn.close()

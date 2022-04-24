@@ -64,6 +64,11 @@ def get_paired_path(img_path, prev_root, paired_root):
     return re.sub(prev_root, paired_root, img_path)
 
 
+def to_unix(path):
+    return path.replace('\\', '/')
+
+
+
 if __name__ == '__main__':
     assert replace_folder('/Robustar2/dataset/train', 'paired') == '/Robustar2/dataset/paired'
     assert get_paired_path('/Robustar2/dataset/train/1/2134.jpg',

@@ -1,9 +1,11 @@
 from genericpath import exists
+import imp
 import pickle
+import sqlite3
 import torchvision
 import os.path as osp
 import os
-from utils.path_utils import get_paired_path, split_path
+from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
 from PIL import Image
@@ -15,34 +17,55 @@ class RDataManager:
 
     SUPP_IMG_EXT = ['jpg', 'jpeg', 'png']
 
-    def __init__(self, baseDir, datasetDir, batch_size=32, shuffle=True, num_workers=8, image_size=32,
+    def __init__(self, baseDir, datasetDir, dbPath, batch_size=32, shuffle=True, num_workers=8, image_size=32,
                  image_padding='short_side', class2label_mapping=None):
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
         self.data_root = datasetDir
         self.base_dir = baseDir
+        self.db_path = dbPath
         self.batch_size = image_size
         self.shuffle = shuffle
         self.num_workers = num_workers
         self.image_size = image_size
         self.image_padding = image_padding
-        self.test_root = osp.join(datasetDir, "test").replace('\\', '/')
-        self.train_root = osp.join(datasetDir, 'train').replace('\\', '/')
-        self.paired_root = osp.join(datasetDir, 'paired').replace('\\', '/')
-        self.validation_root = osp.join(datasetDir, 'validation').replace('\\', '/')
-        self.visualize_root = osp.join(baseDir, 'visualize_images').replace('\\', '/')
-        self.influence_root = osp.join(baseDir, 'influence_images').replace('\\', '/')
-        self.proposed_annotation_root = osp.join(baseDir, 'proposed_annotation').replace('\\', '/')
-        self.influence_file_path = osp.join(self.influence_root, 'influence_images.pkl').replace('\\', '/')
         self.class2label = class2label_mapping
 
-        self.test_correct_root = osp.join(datasetDir, 'test_correct.txt').replace('\\', '/')
-        self.test_incorrect_root = osp.join(datasetDir, 'test_incorrect.txt').replace('\\', '/')
-        self.validation_correct_root = osp.join(datasetDir, 'validation_correct.txt').replace('\\', '/')
-        self.validation_incorrect_root = osp.join(datasetDir, 'validation_incorrect.txt').replace('\\', '/')
-        self.annotated_root = osp.join(datasetDir, 'annotated.txt').replace('\\', '/')
+        self._init_db()
+        self._init_paths()
+        self._init_transforms()
+        self._init_data_records()
+        
 
+    
+    def readify_classes(self, datasets):
+        def change_classes(mapping, dataset):
+            classes = dataset.classes
+            classes = [mapping.get(c, c) for c in classes]
+            dataset.classes = classes
+            dataset.class_to_idx = {c: idx for idx, c in enumerate(classes)}
+        for ds in datasets:
+            change_classes(self.class2label, ds)
+
+    def reload_influence_dict(self):
+        if osp.exists(self.influence_file_path):
+            print("Loading influence dictionary!")
+            with open(self.influence_file_path, 'rb') as f:
+                try:
+                    # TODO: Check image_url -> image_path consistency here!
+                    self.influenceBuffer = pickle.load(f)
+                except Exception as e:
+                    print("Influence function file not read because it is contaminated. \
+                    Please delete it manually and start the server again!")
+
+        else:
+            print("No influence dictionary found!")
+
+    def get_influence_dict(self):
+        return self.influenceBuffer
+
+    def _init_transforms(self):
         # Build transforms
         # TODO: Use different transforms according to image_padding variable
         # TODO: We need to double check to make sure that
@@ -50,12 +73,45 @@ class RDataManager:
         means = [0.485, 0.456, 0.406]
         stds = [0.229, 0.224, 0.225]
         self.transforms = transforms.Compose([
-            SquarePad(image_padding),
-            transforms.Resize((image_size, image_size)),
+            SquarePad(self.image_padding),
+            transforms.Resize((self.image_size, self.image_size)),
             transforms.ToTensor(),
             transforms.Normalize(means, stds)
         ])
 
+    def _init_db(self):
+        if osp.exists(self.db_path):
+            self.db_conn = sqlite3.connect(self.db_path)
+            self.db_cursor = self.db_conn.cursor() 
+            return
+
+        from utils.db import get_init_schema_str
+        self.db_conn = sqlite3.connect(self.db_path)
+        self.db_cursor = self.db_conn.cursor() 
+        self.db_cursor.executescript(get_init_schema_str())
+
+        # Iterate through folders to construct database
+
+        self.db_conn.commit()
+        
+
+    def _init_paths(self):
+        self.test_root = to_unix(osp.join(self.data_root, "test"))
+        self.train_root = to_unix(osp.join(self.data_root, 'train'))
+        self.paired_root = to_unix(osp.join(self.data_root, 'paired'))
+        self.validation_root = to_unix(osp.join(self.data_root, 'validation'))
+        self.visualize_root = to_unix(osp.join(self.base_dir, 'visualize_images'))
+        self.influence_root = to_unix(osp.join(self.base_dir, 'influence_images'))
+        self.proposed_annotation_root = to_unix(osp.join(self.base_dir, 'proposed_annotation'))
+        self.influence_file_path = to_unix(osp.join(self.influence_root, 'influence_images.pkl'))
+
+        self.test_correct_root = to_unix(osp.join(self.data_root, 'test_correct.txt'))
+        self.test_incorrect_root = to_unix(osp.join(self.data_root, 'test_incorrect.txt'))
+        self.validation_correct_root = to_unix(osp.join(self.data_root, 'validation_correct.txt'))
+        self.validation_incorrect_root = to_unix(osp.join(self.data_root, 'validation_incorrect.txt'))
+        self.annotated_root = to_unix(osp.join(self.data_root, 'annotated.txt'))
+
+    def _init_data_records(self):
         self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
         self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
         datasets = [self.testset, self.trainset]
@@ -68,11 +124,11 @@ class RDataManager:
         self.readify_classes(datasets)
 
         self.testloader = torch.utils.data.DataLoader(
-            self.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+            self.testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
         self.trainloader = torch.utils.data.DataLoader(
-            self.trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+            self.trainset, batch_size=self.batch_size, shuffle=self.shuffle, num_workers=self.num_workers)
         self.validationloader = torch.utils.data.DataLoader(
-            self.validationset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+            self.validationset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
         self._init_folders()
 
@@ -114,34 +170,6 @@ class RDataManager:
             'annotated': (self.annotatedBuffer, self.annotatedInvBuffer),
             'proposed': self.proposedAnnotationBuffer
         }
-
-
-    
-    def readify_classes(self, datasets):
-        def change_classes(mapping, dataset):
-            classes = dataset.classes
-            classes = [mapping.get(c, c) for c in classes]
-            dataset.classes = classes
-            dataset.class_to_idx = {c: idx for idx, c in enumerate(classes)}
-        for ds in datasets:
-            change_classes(self.class2label, ds)
-
-    def reload_influence_dict(self):
-        if osp.exists(self.influence_file_path):
-            print("Loading influence dictionary!")
-            with open(self.influence_file_path, 'rb') as f:
-                try:
-                    # TODO: Check image_url -> image_path consistency here!
-                    self.influenceBuffer = pickle.load(f)
-                except Exception as e:
-                    print("Influence function file not read because it is contaminated. \
-                    Please delete it manually and start the server again!")
-
-        else:
-            print("No influence dictionary found!")
-
-    def get_influence_dict(self):
-        return self.influenceBuffer
 
     def _init_folders(self):
         if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
@@ -254,6 +282,11 @@ class RDataManager:
     def get_incorrect_test(self, index):
         return self._pull_item(index, self.incorrectTestBuffer)
 
+    def getDBConn(self):
+        return self.db_conn
+
+    def getDBCursor(self):
+        return self.db_cursor
 
 # Return a square image
 class SquarePad:
@@ -277,20 +310,3 @@ class SquarePad:
         # TODO: Support more padding modes. E.g. pad both sides to given image size 
         else:
             raise NotImplemented
-
-
-if __name__ == '__main__':
-    # Test
-    # dataManager = RDataManager('/Robustar2/dataset')
-    # print(dataManager.trainset.imgs[0])
-    # print(osp.exists('/Robustar2/x'))
-
-    transforms = transforms.Compose([
-        SquarePad('short_side'),
-        transforms.Resize((600, 600)),
-    ])
-
-    img = Image.open('C:\\Users\\paulc\\Desktop\\temp.png')
-    print(img.size)
-    trans = transforms(img)
-    trans.save('C:\\Users\\paulc\\Desktop\\temp_trans.png')

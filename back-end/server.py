@@ -8,8 +8,10 @@ from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
+from utils.path_utils import to_unix
 
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
+
 
 def precheck():
     def check_num_classes_consistency():
@@ -39,9 +41,10 @@ def precheck():
     
 
 if __name__ == "__main__":
-    baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
-    datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
-    ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
+    baseDir = to_unix(osp.join('/', 'Robustar2'))
+    datasetDir = to_unix(osp.join(baseDir, 'dataset'))
+    ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
+    dbPath = to_unix(osp.join(baseDir, 'data.db'))
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
@@ -64,7 +67,7 @@ if __name__ == "__main__":
     # Set data manager
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
-        baseDir, datasetDir, 
+        baseDir, datasetDir, dbPath,
         batch_size=configs['batch_size'], 
         shuffle=configs['shuffle'],
         num_workers=configs['num_workers'],
