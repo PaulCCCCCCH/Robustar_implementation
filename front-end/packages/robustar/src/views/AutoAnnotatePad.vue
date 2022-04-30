@@ -44,6 +44,8 @@
 
 <script>
 import { APIStartAutoAnnotate } from '@/services/edit';
+import { APIRmDir } from '@/services/fs';
+
 export default {
   name: 'AutoAnnotatePad',
   data() {
@@ -51,6 +53,7 @@ export default {
       configs: {
         num_to_gen: 0,
         split: 'train',
+        path: 'datasetDir/annotated.txt',
       },
     };
   },
@@ -65,7 +68,24 @@ export default {
       this.$root.finishProcessing();
       this.$root.alert('error', 'Auto annotation failed to start');
     },
+    romoveSuccess(res) {
+      console.log(res);
+      this.$root.finishProcessing();
+      this.$root.alert('success', 'Remove previous directory started');
+    },
+    removeFailed(res) {
+      console.log(res);
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Remove previous directory failed to start');
+    },
     startAutoAnnotate() {
+      this.$root.startProcessing('Deleting previous directory... Please wait');
+      APIRmDir(
+        this.configs.path, 
+        this.configs,
+        this.romoveSuccess, 
+        this.removeFailed
+      );
       this.$root.startProcessing('Starting annotation... Please wait');
       APIStartAutoAnnotate(
         this.configs.split,
