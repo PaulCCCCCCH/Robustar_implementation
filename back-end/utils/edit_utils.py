@@ -87,7 +87,7 @@ def start_auto_annotate(split, num_to_gen):
                 print("Time consumption:", endtime-starttime)
                 print("Auto annotate stopped!")
                 return 
-        task.exit()
+        # task.exit()
 
 
     test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))

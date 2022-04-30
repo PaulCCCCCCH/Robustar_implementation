@@ -99,7 +99,8 @@ class TestThread(threading.Thread):
                 break
         else:
             # exit task if normal end of the test iteration
-            task.exit()
+            # task.exit()
+            pass
 
         if split == 'validation':
             dataManager.correctValidationBuffer = correct_buffer

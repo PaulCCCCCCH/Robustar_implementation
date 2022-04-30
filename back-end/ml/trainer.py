@@ -248,4 +248,4 @@ class Trainer():
 
 
         # task exit
-        task.exit()
+        # task.exit()
