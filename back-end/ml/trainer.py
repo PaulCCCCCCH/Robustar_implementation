@@ -53,7 +53,7 @@ class Trainer():
         self._save_net(name_str)
 
     def save_net_epoch(self, epoch):
-        name_str = os.path.join(self.save_dir, self.name + "_" + epoch)
+        name_str = os.path.join(self.save_dir, self.name + "_" + str(epoch))
         self._save_net(name_str)
 
     def get_correct(self):
