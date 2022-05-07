@@ -19,8 +19,10 @@ class RModelWrapper:
             self.load_net(net_path)
         else:
             print('Checkpoint file not found: {}'.format(net_path))
-        if 'cuda' in device:
-            self.apply_cuda()
+
+        # Duplicated code
+        # if 'cuda' in device:
+        #     self.apply_cuda()
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == 'resnet-18':
@@ -41,6 +43,7 @@ class RModelWrapper:
                                                    num_classes=num_classes)
             self.model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
             self.model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
+            self.model = self.model.to(self.device)
         elif network_type == 'alexnet':
             self.model = torchvision.models.alexnet(pretrained=pretrained, num_classes=num_classes).to(self.device)
         else:
@@ -54,8 +57,9 @@ class RModelWrapper:
         else:
             print('weight file not found')
 
-    def apply_cuda(self):
-        self.device = torch.device(self.device)
-        if self.model:
-            self.model = self.model.to(self.device)
-        return self
+    # Duplicated code
+    # def apply_cuda(self):
+    #     self.device = torch.device(self.device)
+    #     if self.model:
+    #         self.model = self.model.to(self.device)
+    #     return self

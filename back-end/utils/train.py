@@ -13,7 +13,7 @@ import threading
 def ml_initialize(configs):
 
     # Configs from training pad
-    use_paired_train = True if configs['use_paired_train'] == 'yes' else False
+    use_paired_train = configs['use_paired_train']
     paired_data_path = configs['paired_data_path']
     paired_train_mixture = configs['mixture']
     image_size = int(configs['image_size'])
@@ -56,7 +56,6 @@ def ml_initialize(configs):
     print(configs['use_paired_train'])
     print(configs['use_paired_train'])
     print(configs['use_paired_train'])
-
     trainer = Trainer(
         net=model,
         trainset=train_set,
