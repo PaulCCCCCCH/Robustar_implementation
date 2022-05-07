@@ -242,7 +242,7 @@ class TestPredict:
 # TODO: test training
 
 
-# Reserve 3 photos for each category in trainset and 10 photos for each category in testset to save time
+# Reserve 10 photos for each category in trainset and 10 photos for each category in testset to save time
 class TestTrain:
     # Test if the model is loaded correctly at weight level
     def test_load_model_correctness(self, client, server):
@@ -282,7 +282,7 @@ class TestTrain:
         assert rv['msg'] == 'Success'
 
         # Wait for the training
-        time.sleep(80)
+        time.sleep(25)
 
         # Compare model weights saved in local path and in memory
         for name, weight in server.getModelsWeights().items():
