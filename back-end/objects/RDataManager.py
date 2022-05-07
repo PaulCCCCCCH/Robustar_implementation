@@ -51,7 +51,7 @@ class RDataManager:
         stds = [0.229, 0.224, 0.225]
         self.transforms = transforms.Compose([
             SquarePad(image_padding),
-            transforms.Resize((image_size)),
+            transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.Normalize(means, stds)
         ])
