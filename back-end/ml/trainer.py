@@ -4,6 +4,7 @@ from torchattacks import PGD
 import os
 from objects.RTask import RTask, TaskType
 from objects.RServer import RServer
+import copy
 
 
 class Trainer():
@@ -46,7 +47,9 @@ class Trainer():
         torch.save(self.net.state_dict(), os.path.join(self.save_dir, name))
 
         # Save the model to the Rserver instance
-        RServer.addModelWeight(name, self.net.state_dict())
+        dict_in_mem = copy.deepcopy(self.net.state_dict())
+
+        RServer.addModelWeight(name, dict_in_mem)
 
     def save_net_best(self):
         name_str = self.name + "_best"
@@ -243,7 +246,7 @@ class Trainer():
                 if auto_save:
                     self.save_net_best()
                 best = current_acc
-            if epoch % self.save_every == 0:
+            if (epoch + 1) % self.save_every == 0:
                 self.save_net_epoch(epoch)
 
         endtime = time.time()

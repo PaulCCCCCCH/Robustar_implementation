@@ -268,11 +268,11 @@ class TestTrain:
                             'pgd': 'no PGD',
                             'paired_train_reg_coeff': 0.001,
                             'image_size': 32,
-                            'epoch': 2,
+                            'epoch': 3,
                             'thread': 8,
                             'pretrain': False,
                             'user_edit_buffering': False,
-                            'save_every': 2
+                            'save_every': 1
             }
         }
 
