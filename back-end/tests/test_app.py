@@ -253,8 +253,8 @@ class TestTrain:
             'configs': {
                             'model_name': 'my-test-model',
                             'weight': '',
-                            'train_path': '/Robustar2/dataset/train',
-                            'test_path': '/Robustar2/dataset/test',
+                            'train_path': '/Robustar2/dataset/train-origin',
+                            'test_path': '/Robustar2/dataset/test-origin',
                             'class_path': './model/cifar-class.txt',
                             'port': '8000',
                             'save_dir': '/Robustar2/checkpoints',
@@ -282,10 +282,11 @@ class TestTrain:
         assert rv['msg'] == 'Success'
 
         # Wait for the training
-        time.sleep(25)
+        time.sleep(80)
 
         # Compare model weights saved in local path and in memory
         for name, weight in server.getModelsWeights().items():
+            print(name)
             # Get the model weights saved in local path
             model_arch = server.getServerConfigs()['model_arch']
             net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
@@ -304,4 +305,7 @@ class TestTrain:
                 # Skip the comparing of running_mean and running_var in BN layers
                 if ('running' in key_item_1[0]):
                     continue
+                if(torch.equal(key_item_1[1], key_item_2[1]) == False):
+                    print(key_item_1)
+                    print(key_item_2)
                 assert torch.equal(key_item_1[1], key_item_2[1])
