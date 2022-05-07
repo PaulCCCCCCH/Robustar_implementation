@@ -295,11 +295,10 @@ class TestTrain:
 
             weightInMem = server.getModelsWeights()[name]
 
-            count = 0
+            # count = 0
             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
-                count += 1
-                print(count)
-
+                # count += 1
+                # print(count)
                 # print(key_item_1)
                 # print(key_item_2)
                 if ('running' in key_item_1[0]):
