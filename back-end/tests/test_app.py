@@ -241,6 +241,8 @@ class TestPredict:
 # TODO: annotate 图片 逐像素位的检查
 # TODO: test training
 
+
+# Reserve 3 photos for each category in trainset and 10 photos for each category in testset to save time
 class TestTrain:
     # Test if the model is loaded correctly at weight level
     def test_load_model_correctness(self, client, server):
