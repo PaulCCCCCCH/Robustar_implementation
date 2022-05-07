@@ -281,9 +281,12 @@ class TestTrain:
         assert rv['data'] == 'Training started!'
         assert rv['msg'] == 'Success'
 
+        # Wait for the training
         time.sleep(25)
 
+        # Compare model weights saved in local path and in memory
         for name, weight in server.getModelsWeights().items():
+            # Get the model weights saved in local path
             model_arch = server.getServerConfigs()['model_arch']
             net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
             device = server.getServerConfigs()['device']
@@ -293,15 +296,12 @@ class TestTrain:
             modelLoaded = modelWrapper.model
             weightLoaded = modelLoaded.state_dict()
 
+            # Get the model weights saved in memory
             weightInMem = server.getModelsWeights()[name]
 
-            # count = 0
+            # Compare each item in them
             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
-                # count += 1
-                # print(count)
-                # print(key_item_1)
-                # print(key_item_2)
+                # Skip the comparing of running_mean and running_var in BN layers
                 if ('running' in key_item_1[0]):
-                    print('skip')
                     continue
                 assert torch.equal(key_item_1[1], key_item_2[1])
