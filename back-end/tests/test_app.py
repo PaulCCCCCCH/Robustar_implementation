@@ -7,6 +7,7 @@ from server import start_server
 import os
 import os.path as osp
 import torch
+import time
 
 # start_server()
 # def test_valid_app_and_server():
@@ -265,11 +266,11 @@ class TestTrain:
                             'pgd': 'no PGD',
                             'paired_train_reg_coeff': 0.001,
                             'image_size': 32,
-                            'epoch': 10,
+                            'epoch': 2,
                             'thread': 8,
                             'pretrain': False,
                             'user_edit_buffering': False,
-                            'save_every': 5
+                            'save_every': 2
             }
         }
 
@@ -278,9 +279,11 @@ class TestTrain:
         assert rv['data'] == 'Training started!'
         assert rv['msg'] == 'Success'
 
+        time.sleep(25)
+
         for name, weight in server.getModelsWeights().items():
             model_arch = server.getServerConfigs()['model_arch']
-            net_path = os.path.join(server.ckptDir, name + '.pth').replace('\\', '/')
+            net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
             device = server.getServerConfigs()['device']
             pre_trained = server.getServerConfigs()['pre_trained']
             num_classes = server.getServerConfigs()['num_classes']
@@ -290,5 +293,14 @@ class TestTrain:
 
             weightInMem = server.getModelsWeights()[name]
 
+            count = 0
             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
+                count += 1
+                print(count)
+
+                # print(key_item_1)
+                # print(key_item_2)
+                if ('running' in key_item_1[0]):
+                    print('skip')
+                    continue
                 assert torch.equal(key_item_1[1], key_item_2[1])
