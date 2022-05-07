@@ -43,19 +43,6 @@ def ml_initialize(configs):
     modelwrapper = RServer.getModelWrapper()
     model = modelwrapper.model
 
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
     trainer = Trainer(
         net=model,
         trainset=train_set,

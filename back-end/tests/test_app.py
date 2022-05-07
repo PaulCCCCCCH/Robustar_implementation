@@ -255,7 +255,7 @@ class TestTrain:
                             'class_path': './model/cifar-class.txt',
                             'port': '8000',
                             'save_dir': '/Robustar2/checkpoints',
-                            'use_paired_train': True,
+                            'use_paired_train': False,
                             'mixture': 'random_pure',
                             'paired_data_path': '/Robustar2/dataset/paired',
                             'auto_save_model': True,

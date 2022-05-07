@@ -160,6 +160,7 @@ class Trainer():
 
         for epoch in range(epoch):
             print('\nEpoch: %d' % (epoch + 1))
+            sepoch = time.time()
             self.net.train()
             sum_loss = 0.0
             correct = 0.0
@@ -230,8 +231,13 @@ class Trainer():
 
             # save_net(net)
             print("Epoch Finish!")
+            eepoch = time.time()
+            print("Time consumption in training epoch:{} {}".format(epoch + 1, eepoch - sepoch))
             torch.cuda.empty_cache()
+            sepoch = time.time()
             current_acc = self.print_accuracy()
+            eepoch = time.time()
+            print("Time consumption in testing epoch:{} {}".format(epoch + 1, eepoch - sepoch))
             torch.cuda.empty_cache()
             if current_acc > best:
                 if auto_save:
