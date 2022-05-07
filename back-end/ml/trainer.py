@@ -49,66 +49,66 @@ class Trainer():
         RServer.addModelWeight(name, self.net.state_dict())
 
     def save_net_best(self):
-        name_str = os.path.join(self.save_dir, self.name + "_best")
+        name_str = self.name + "_best"
         self._save_net(name_str)
 
     def save_net_epoch(self, epoch):
-        name_str = os.path.join(self.save_dir, self.name + "_" + str(epoch))
+        name_str = self.name + "_" + str(epoch)
         self._save_net(name_str)
 
-    def get_correct(self):
-        correct_result = []
-        incorrect_result = []
-
-        loader = self.testloader
-        torch.no_grad()
-        total = 0
-        self.net.eval()
-
-        # trainer.testloader.dataset.dataset.samples[0]
-
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
-
-            _, predicted = torch.max(outputs.data, 1)
-
-            # 将正确和错误的文件名存起来
-            for i in range(len(labels)):
-                fileName = loader.dataset.dataset.samples[total+i]
-                if labels[i] == predicted[i]:
-                    correct_result.append(fileName)
-                else:
-                    incorrect_result.append(fileName)
-
-            total += labels.size(0)
-        torch.cuda.empty_cache()
-        return correct_result, incorrect_result
-
-    def get_test_result(self):
-        result = []
-
-        loader = self.testloader
-        torch.no_grad()
-        self.net.eval()
-
-        # trainer.testloader.dataset.dataset.samples[0]
-
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
-
-            _, predicted = torch.max(outputs.data, 1)
-
-            for i in range(len(labels)):
-                result.append([labels[i].cpu().numpy().tolist(), predicted[i].cpu(
-                ).numpy().tolist(), outputs.data[i].cpu().numpy().tolist()])
-        torch.cuda.empty_cache()
-        return result
+    # def get_correct(self):
+    #     correct_result = []
+    #     incorrect_result = []
+    #
+    #     loader = self.testloader
+    #     torch.no_grad()
+    #     total = 0
+    #     self.net.eval()
+    #
+    #     # trainer.testloader.dataset.dataset.samples[0]
+    #
+    #     # for data in loader:
+    #     for data in self.storeLoader(loader):
+    #         images, labels = data
+    #         images, labels = images.to(self.device), labels.to(self.device)
+    #         outputs = self.net(images)
+    #
+    #         _, predicted = torch.max(outputs.data, 1)
+    #
+    #         # 将正确和错误的文件名存起来
+    #         for i in range(len(labels)):
+    #             fileName = loader.dataset.dataset.samples[total+i]
+    #             if labels[i] == predicted[i]:
+    #                 correct_result.append(fileName)
+    #             else:
+    #                 incorrect_result.append(fileName)
+    #
+    #         total += labels.size(0)
+    #     torch.cuda.empty_cache()
+    #     return correct_result, incorrect_result
+    #
+    # def get_test_result(self):
+    #     result = []
+    #
+    #     loader = self.testloader
+    #     torch.no_grad()
+    #     self.net.eval()
+    #
+    #     # trainer.testloader.dataset.dataset.samples[0]
+    #
+    #     # for data in loader:
+    #     for data in self.storeLoader(loader):
+    #         images, labels = data
+    #         images, labels = images.to(self.device), labels.to(self.device)
+    #         outputs = self.net(images)
+    #
+    #         _, predicted = torch.max(outputs.data, 1)
+    #
+    #         for i in range(len(labels)):
+    #             result.append([labels[i].cpu().numpy().tolist(), predicted[i].cpu(
+    #             ).numpy().tolist(), outputs.data[i].cpu().numpy().tolist()])
+    #     torch.cuda.empty_cache()
+    #     return result
 
     def print_accuracy(self):
         loader = self.testloader
