@@ -243,7 +243,7 @@ class Trainer():
                 if auto_save:
                     self.save_net_best()
                 best = current_acc
-            if epoch % self.save_every == 0:
+            if (epoch + 1) % self.save_every == 0:
                 self.save_net_epoch(epoch)
 
         endtime = time.time()
