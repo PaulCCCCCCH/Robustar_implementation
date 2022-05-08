@@ -32,4 +32,10 @@ module.exports = (on, config) => {
       })
     );
   }
+
+  // override configuration variables with local variables
+  if (config.hasOwnProperty('env') && config.env.hasOwnProperty('baseUrl')) {
+    config.baseUrl = config.env.baseUrl;
+  }
+  return config;
 };
