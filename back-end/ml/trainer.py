@@ -257,10 +257,11 @@ class Trainer():
         # task exit
         task.exit()
 
-        self.stop_tb_thread()
+        # Stop updating the tensorboard
+        self.stop_tb_process()
 
-    def set_tb_thread(self, thread):
-        self.tb_thread = thread
+    def set_tb_process(self, process):
+        self.tb_process = process
 
-    def stop_tb_thread(self):
-        self.tb_thread.terminate()
+    def stop_tb_process(self):
+        self.tb_process.terminate()

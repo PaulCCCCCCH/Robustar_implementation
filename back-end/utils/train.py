@@ -86,9 +86,11 @@ def update_info(status_dict):
 
 
 def startTB(logdir):
+    """
+    Starts updating tensorboard.
+    """
+
     os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
-
-
 
 
 def start_train(configs):
@@ -118,14 +120,10 @@ def start_train(configs):
         writer.add_scalar('train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
-        # import threading
         # Start the tensorboard writer as a new process
         t = multiprocessing.Process(target=startTB, args=(logdir,))
         t.start()
-
-        # os.system('tensorboard --logdir={} &'.format(logdir))
-
-        trainer.set_tb_thread(t)
+        trainer.set_tb_process(t)
 
         # Start training on a new thread
         train_thread = threading.Thread(target=trainer.start_train, args=(
