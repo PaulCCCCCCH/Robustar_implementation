@@ -32,10 +32,10 @@ class RDataManager:
         self.image_padding = image_padding
         self.class2label = class2label_mapping
 
-        self._init_db()
         self._init_paths()
         self._init_transforms()
         self._init_data_records()
+        self._init_db()
         
 
     
@@ -81,10 +81,12 @@ class RDataManager:
 
     def _init_db(self):
         if osp.exists(self.db_path):
+            print("DB already existed. Skipping initialization.")
             self.db_conn = sqlite3.connect(self.db_path)
             self.db_cursor = self.db_conn.cursor() 
             return
 
+        print("DB file not found. Initializing db...")
         from utils.db import get_init_schema_str
         self.db_conn = sqlite3.connect(self.db_path)
         self.db_cursor = self.db_conn.cursor() 
