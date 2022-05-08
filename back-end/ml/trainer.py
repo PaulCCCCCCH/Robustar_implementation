@@ -5,6 +5,7 @@ import os
 from objects.RTask import RTask, TaskType
 from objects.RServer import RServer
 import copy
+import multiprocessing
 
 
 class Trainer():
@@ -255,3 +256,11 @@ class Trainer():
 
         # task exit
         task.exit()
+
+        self.stop_tb_thread()
+
+    def set_tb_thread(self, thread):
+        self.tb_thread = thread
+
+    def stop_tb_thread(self):
+        self.tb_thread.terminate()

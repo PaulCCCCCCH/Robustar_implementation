@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
+import multiprocessing
 
 def ml_initialize(configs):
 
@@ -83,6 +84,13 @@ def update_info(status_dict):
     after each iteration, put it here.
     """
 
+
+def startTB(logdir):
+    os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
+
+
+
+
 def start_train(configs):
     """
     Starts training on a new thread which calls back influence calculating.
@@ -112,13 +120,12 @@ def start_train(configs):
 
         # import threading
         # Start the tensorboard writer as a new process
-
-        def startTB():
-            os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
-        t = threading.Thread(target=startTB)
+        t = multiprocessing.Process(target=startTB, args=(logdir,))
         t.start()
 
         # os.system('tensorboard --logdir={} &'.format(logdir))
+
+        trainer.set_tb_thread(t)
 
         # Start training on a new thread
         train_thread = threading.Thread(target=trainer.start_train, args=(
