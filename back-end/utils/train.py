@@ -119,13 +119,10 @@ def start_train(configs):
         t.start()
 
         # os.system('tensorboard --logdir={} &'.format(logdir))
-        # Start training on a new thread
-        # train_thread = threading.Thread(target=trainer.start_train, args=(
-        #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
-        # train_thread.start()
 
         # Start training on a new thread
-        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model']))
+        train_thread = threading.Thread(target=trainer.start_train, args=(
+            update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         train_thread.start()
 
     except Exception as e:
@@ -133,16 +130,3 @@ def start_train(configs):
         return None
 
     return train_thread
-
-
-class TrainThread(threading.Thread):
-
-    def __init__(self, trainer, args, callback=None):
-        super(TrainThread, self).__init__()
-        self.trainer = trainer
-        self.args = args
-        self.callback = callback
-
-    def run(self):
-        call_back, epochs, auto_save = self.args
-        self.trainer.start_train(call_back, epochs, auto_save)
