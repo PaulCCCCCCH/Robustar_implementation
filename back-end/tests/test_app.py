@@ -3,6 +3,8 @@ import pytest
 from objects.RModelWrapper import RModelWrapper
 from objects.RServer import RServer
 from server import start_server
+from ml.dataset import PairedDataset
+import torchvision.transforms as transforms
 
 import os
 import os.path as osp
@@ -238,7 +240,31 @@ class TestPredict:
                            "/Robustar2/visualize_images/train_1_2.png",
                            "/Robustar2/visualize_images/train_1_3.png"]
 
-# TODO: annotate 图片 逐像素位的检查
+# test annotated images at pixel level
+class TestAnnotationAtPixelLevel:
+    def test_annotated_images(self, client):
+        dsroot = "/Robustar2/dataset"
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+        x = PairedDataset("{}/train".format(dsroot), "{}/paired".format(dsroot), 224, transform, None, 'pure_black', False)
+        
+        # hardcore the annotated images
+        img_idxs = range(3)
+
+        for idx in img_idxs:
+            (img, _), (aug_img, _) = x[idx]
+
+            # swap channels for easy comparison
+            img = img.permute(1, 2, 0)
+            aug_img = aug_img.permute(1, 2, 0)
+
+            # perform element wise test
+            for i in range(img.shape[0]):
+                for j in range(img.shape[1]):
+                    # each element should be equal or the augmented image should be black
+                    assert torch.equal(img[i][j], aug_img[i][j]) or torch.equal(torch.tensor([0.,0.,0.]), aug_img[i][j])
+
 # TODO: test training
 
 
