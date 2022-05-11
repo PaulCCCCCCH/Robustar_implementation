@@ -14,18 +14,7 @@ proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
-test_correct_root = dataManager.test_correct_root
-test_incorrect_root = dataManager.test_incorrect_root
-validation_correct_root = dataManager.validation_correct_root
-validation_incorrect_root = dataManager.validation_incorrect_root
-
-warning = """
-    Retrieving images with image url will not be supported soon.
-    Use /image/list/<split>/<start>/<end> to get full path and 
-    use /dataset/<path> to get the image
-"""
-
-@DeprecationWarning(warning)
+@DeprecationWarning
 def imageSplitIdToPath(split, image_id):
     return imageURLToPath("{}/{}".format(split, image_id))
 
@@ -54,7 +43,7 @@ def getImagePath(split, start=None, end=None):
         return dataManager.split_dict[split].get_image_list(start, end)
 
 
-@DeprecationWarning(warning)
+@DeprecationWarning
 def imageURLToPath(image_url):
     """
     Get the real path of the image specified by its url.
@@ -225,6 +214,3 @@ def get_annotated(image_index):
     img_num = dataManager.annotatedBuffer[int(image_index)]
     return pairedset.samples[img_num]
 
-def create_empty_paired_image(path):
-    with open(path, 'wb') as f:
-        pass

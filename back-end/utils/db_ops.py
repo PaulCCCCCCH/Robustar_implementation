@@ -18,13 +18,14 @@ def db_insert(db_conn: Connection, table_name: str, keys: Tuple[str], values: Tu
     
 
 def db_insert_many(db_conn: Connection, table_name: str, keys: Tuple[str], values: List[Tuple]):
-    assert(len(keys) == len(values)), "key and value array length not equal"
+    if len(values) == 0: return
+    assert(len(keys) == len(values[0])), "key and value array does not contain the same number of attributes"
 
     db_cursor = db_conn.cursor()
     template = "INSERT INTO {} ({}) values ({})".format(
         table_name,
         ",".join(keys),
-        ",".join(["?" for _ in values])
+        ",".join(["?" for _ in keys])
     )
     
     db_cursor.executemany(template, values)

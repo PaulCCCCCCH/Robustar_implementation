@@ -1,5 +1,4 @@
-from utils.path_utils import get_paired_path, split_path, to_unix
-from utils.image_utils import create_empty_paired_image
+from utils.path_utils import get_paired_path, split_path, to_unix, create_empty_paired_image
 from torchvision.datasets import DatasetFolder, ImageFolder
 from typing import Any, Callable, cast, Dict, List, Optional, Tuple
 from PIL import Image
@@ -96,14 +95,15 @@ class RImageFolder(DatasetFolder):
             force_reindex: bool = False
     ):
 
-        super(ImageFolder, self).__init__(root, loader, IMG_EXTENSIONS if is_valid_file is None else None,
+        super(RImageFolder, self).__init__(root, loader, IMG_EXTENSIONS if is_valid_file is None else None,
                                           transform=transform,
                                           target_transform=target_transform,
                                           is_valid_file=is_valid_file)
 
         # Change all paths to unix
         for i in range(len(self.samples)):
-            self.samples[i] = to_unix(self.samples[i])
+            tup = self.samples[i]
+            self.samples[i] = (to_unix(tup[0]), tup[1])
 
         self.root = root
         self.split = split
@@ -112,19 +112,20 @@ class RImageFolder(DatasetFolder):
         self.table_name = SPLIT_TABLE_MAP[split]
 
         # Return if no need to rebuild the index;
-        if not force_reindex and db_count_all(db_conn, SPLIT_TABLE_MAP[split]) == 0:
+        if not force_reindex and db_count_all(db_conn, SPLIT_TABLE_MAP[split]) > 0:
             return
 
         if split == "train":
             keys = ("path", "paired_path")
             values = [(path, None) for path, _ in self.imgs]
-        elif split == "validation" or "test":
+        elif split == "validation" or split == "test":
             keys = ("path", "classified")
             values = [(path, self.CLS_NONE) for path, _ in self.imgs]
-        else:
-            # Do not re-index for other splits
+        else: # Do not re-index for other splits
+            print('Not populating the db table {}'.format(self.table_name))
             return
-        
+
+        print("Populating the db table {} for split {}".format(self.table_name, split))  
         db_insert_many(db_conn, self.table_name, keys, values)
         db_conn.commit()
 

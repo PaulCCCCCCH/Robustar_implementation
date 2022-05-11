@@ -1,6 +1,10 @@
 from os.path import normpath
 import re
 
+def create_empty_paired_image(path):
+    with open(path, 'wb') as f:
+        pass
+
 
 def split_path(path):
     """
