@@ -1,5 +1,9 @@
 import { getRequest } from './common';
 
+export const APIGetImageList = (split, start, num_per_page, success, failed) => {
+  getRequest(`/image/list/${split}/${start}/${num_per_page}`, success, failed);
+};
+
 /**
  * @param {string} split
  * @param {function} success success callback function

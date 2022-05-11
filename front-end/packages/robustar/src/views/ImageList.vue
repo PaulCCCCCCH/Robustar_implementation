@@ -11,7 +11,11 @@
         class="d-flex mb-4"
         style="width: 200px"
       >
-        <v-select :items="classification" v-model="split" dense @change="resetImageList"
+        <v-select
+          :items="classification"
+          v-model="split"
+          dense
+          @change="resetImageList"
           data-test="image-list-select-classification"
         ></v-select>
       </div>
@@ -19,9 +23,13 @@
       <!-- Page navigator -->
       <div class="d-flex justify-center mb-4">
         <!-- Previous page button -->
-        <v-btn :disabled="currentPage <= 0" depressed color="primary" @click="currentPage--"
+        <v-btn
+          :disabled="currentPage <= 0"
+          depressed
+          color="primary"
+          @click="currentPage--"
           data-test="image-list-btn-prev-page"
-         >
+        >
           PREV PAGE
         </v-btn>
 
@@ -60,8 +68,13 @@
         >
           GOTO CLASS
         </v-btn>
-        <v-select :items="classNames" v-model="selectedClass" dense label="Class Name" data-test="image-list-select-class-name">
-
+        <v-select
+          :items="classNames"
+          v-model="selectedClass"
+          dense
+          label="Class Name"
+          data-test="image-list-select-class-name"
+        >
         </v-select>
       </div>
 
@@ -146,7 +159,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
-import { APIGetSplitLength, APIGetClassNames } from '@/services/images';
+import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 
 export default {
@@ -270,7 +283,6 @@ export default {
       this.loadImages();
     },
     loadImages() {
-      this.imageList = [];
       let imgNum = configs.imagePerPage;
 
       // handle last page
@@ -278,13 +290,21 @@ export default {
         imgNum = this.splitLength - configs.imagePerPage * this.maxPage;
       }
 
-      for (let idx = 0; idx < imgNum; idx++) {
-        // console.log(idx)
-        const imgid = imagePageIdx2Id(this.currentPage, idx);
-        // console.log(imgid)
-        // console.log(`${configs.imageServerUrl}/${this.split}/${imgid}`)
-        this.imageList.push(`${configs.imageServerUrl}/${this.split}/${imgid}`);
-      }
+      APIGetImageList(
+        this.split,
+        this.currentPage,
+        imgNum,
+        (res) => {
+          const list = res.data.data;
+          this.$nextTick(() => {
+            this.imageList = [];
+            list.forEach((image) => {
+              this.imageList.push(`${configs.imagePathServerUrl}${image[0]}`);
+            });
+          });
+        },
+        (err) => console.log(err)
+      );
     },
   },
 };
