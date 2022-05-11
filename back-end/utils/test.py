@@ -73,6 +73,7 @@ class TestThread(threading.Thread):
             output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
             output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
+            # TODO: replace this snippet with numpy argmax function
             max_value = 0
             max_index = -1
             index = 0

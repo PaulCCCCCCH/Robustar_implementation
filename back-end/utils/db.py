@@ -1,7 +1,7 @@
 def get_init_schema_str():
     return """
 --
--- File generated with SQLiteStudio v3.3.3 on Sat May 7 16:48:03 2022
+-- File generated with SQLiteStudio v3.3.3 on Tue May 10 12:31:41 2022
 --
 -- Text encoding used: System
 --
@@ -13,6 +13,9 @@ CREATE TABLE influ_rel (path VARCHAR (256) PRIMARY KEY UNIQUE NOT NULL, image_pa
 
 -- Table: paired_set
 CREATE TABLE paired_set (path VARCHAR (256) PRIMARY KEY UNIQUE NOT NULL, train_path VARCHAR (256) UNIQUE NOT NULL);
+
+-- Table: proposed
+CREATE TABLE proposed (path VARCHAR (256) PRIMARY KEY UNIQUE NOT NULL, train_path VARCHAR (256) NOT NULL);
 
 -- Table: split
 CREATE TABLE split (id INTEGER PRIMARY KEY UNIQUE NOT NULL, split_name VARCHAR (45) NOT NULL);
@@ -31,5 +34,4 @@ CREATE TABLE visu_rel (path VARCHAR (256) PRIMARY KEY UNIQUE NOT NULL, image_pat
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
-
     """

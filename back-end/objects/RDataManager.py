@@ -8,6 +8,7 @@ import os
 from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
+from RImageFolder import RImageFolder, RAnnotationFolder, REvalImageFolder
 from PIL import Image
 import torchvision.transforms.functional as transF
 
@@ -33,10 +34,9 @@ class RDataManager:
         self.class2label = class2label_mapping
 
         self._init_paths()
+        self._init_db()
         self._init_transforms()
         self._init_data_records()
-        self._init_db()
-        
 
     
     def readify_classes(self, datasets):
@@ -107,20 +107,14 @@ class RDataManager:
         self.proposed_annotation_root = to_unix(osp.join(self.base_dir, 'proposed_annotation'))
         self.influence_file_path = to_unix(osp.join(self.influence_root, 'influence_images.pkl'))
 
-        self.test_correct_root = to_unix(osp.join(self.data_root, 'test_correct.txt'))
-        self.test_incorrect_root = to_unix(osp.join(self.data_root, 'test_incorrect.txt'))
-        self.validation_correct_root = to_unix(osp.join(self.data_root, 'validation_correct.txt'))
-        self.validation_incorrect_root = to_unix(osp.join(self.data_root, 'validation_incorrect.txt'))
-        self.annotated_root = to_unix(osp.join(self.data_root, 'annotated.txt'))
-
     def _init_data_records(self):
-        self.testset = torchvision.datasets.ImageFolder(self.test_root, transform=self.transforms)
-        self.trainset = torchvision.datasets.ImageFolder(self.train_root, transform=self.transforms)
+        self.testset: REvalImageFolder = REvalImageFolder(self.test_root, 'test', self.db_conn, transform=self.transforms)
+        self.trainset: REvalImageFolder = RImageFolder(self.train_root, 'train', self.db_conn, transform=self.transforms)
         datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
-            self.validationset = self.testset
+            self.validationset: REvalImageFolder = self.testset
         else:
-            self.validationset = torchvision.datasets.ImageFolder(self.validation_root)
+            self.validationset: REvalImageFolder = REvalImageFolder(self.validation_root, 'validation', self.db_conn, transform=self.transforms)
 
         datasets.append(self.validationset)
         self.readify_classes(datasets)
@@ -138,48 +132,38 @@ class RDataManager:
         self.predictBuffer = {}
         self.influenceBuffer = {}
 
-        self.correctValidationBuffer = []
-        self.incorrectValidationBuffer = []
-        self.correctTestBuffer = []
-        self.incorrectTestBuffer = []
-        self.annotatedBuffer= {} # saves (annotated image idx : train image idx)
-        self.annotatedInvBuffer= {} 
         self.proposedAnnotationBuffer = set() # saves (train image id)
 
-        self.get_classify_validation_list()
-        self.get_classify_test_list()
-        self.get_annotated_list()
-
-        self.proposedset = torchvision.datasets.ImageFolder(self.proposed_annotation_root, transform=self.transforms) 
+        self.proposedset: RAnnotationFolder = RAnnotationFolder(self.proposed_annotation_root, self.train_root, 
+                    split='proposed', db_conn=self.db_conn, transform=self.transforms) 
         ## TODO: Commented this line out for now, because if the user changed the training set, 
         ## The cache will be wrong, and the user has to manually delete the annotated folder, which
         ## is not nice. Add this back when we have the option to quickly clean all cache folders.
         # self.get_proposed_list()
 
         self.reload_influence_dict()
-        self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
+        # self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
+        self.pairedset: RAnnotationFolder = RAnnotationFolder(self.paired_root, self.train_root, 
+                    split='annotated', db_conn=self.db_conn, transform=self.transforms)
         # self.pairedloader = torch.utils.data.DataLoader(
             # self.pairedloader, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         self.split_dict = {
-            'train': self.trainset.samples,
-            'validation': self.validationset.samples,
-            'test': self.testset.samples,
-            'validation_correct': self.correctValidationBuffer,
-            'validation_incorrect': self.incorrectValidationBuffer,
-            'test_correct': self.correctTestBuffer,
-            'test_incorrect': self.incorrectTestBuffer,
-            'annotated': (self.annotatedBuffer, self.annotatedInvBuffer),
-            'proposed': self.proposedAnnotationBuffer
+            'train': self.trainset,
+            'validation': self.validationset,
+            'test': self.testset,
+            'annotated': self.pairedset,
+            'proposed': self.proposedset
         }
 
     def _init_folders(self):
+        for root in [self.visualize_root, self.influence_root, self.proposed_annotation_root]:
+            os.makedirs(root, exist_ok=True)
+
         if not osp.exists(self.paired_root) or not os.listdir(self.paired_root):
             self._init_paired_folder()
         if not osp.exists(self.proposed_annotation_root) or not os.listdir(self.proposed_annotation_root):
             self._init_proposed_folder()
-        for root in [self.visualize_root, self.influence_root, self.proposed_annotation_root]:
-            os.makedirs(root, exist_ok=True)
             
     def _init_paired_folder(self):
         # Initializes paired folder. Ignores files that already exists
@@ -205,89 +189,15 @@ class RDataManager:
             with open(mirrored_img_path, 'wb') as f:
                 pass
 
-
-    def get_classify_validation_list(self):
-        if not osp.exists(self.validation_correct_root):
-            f = open(self.validation_correct_root, 'w')  # cannot use os.mknod because it's not supported by Windows
-            f.close()
-        else:
-            with open(self.validation_correct_root, 'r') as f:
-                for line in f:
-                    self.correctValidationBuffer.append(int(line))
-
-        if not osp.exists(self.validation_incorrect_root):
-            f = open(self.validation_incorrect_root, 'w')
-            f.close()
-        else:
-            with open(self.validation_incorrect_root, 'r') as f:
-                for line in f:
-                    self.incorrectValidationBuffer.append(int(line))
-
-
-    def get_classify_test_list(self):
-        if not osp.exists(self.test_correct_root):
-            f = open(self.test_correct_root, 'w')
-            f.close()
-        else:
-            with open(self.test_correct_root, 'r') as f:
-                for line in f:
-                    self.correctTestBuffer.append(int(line))
-
-        if not osp.exists(self.test_incorrect_root):
-            f = open(self.test_incorrect_root, 'w')
-            f.close()
-        else:
-            with open(self.test_incorrect_root, 'r') as f:
-                for line in f:
-                    self.incorrectTestBuffer.append(int(line))
-
-    def get_annotated_list(self):
-        if not osp.exists(self.annotated_root):
-            f = open(self.annotated_root, 'w')
-            f.close()
-        else:
-            with open(self.annotated_root, 'r') as f:
-                for idx, line in enumerate(f):
-                    self.annotatedBuffer[idx] = (int(line))
-                    self.annotatedInvBuffer[int(line)] = idx
-
-    def dump_annotated_list(self):
-        if self.annotatedBuffer:
-            with open(self.annotated_root, 'w') as f:
-                for _, img_idx in self.annotatedBuffer.items():
-                    f.write(str(img_idx) + '\n')
-
-    def get_proposed_list(self):
-        # for filename in os.listdir(self.proposed_annotation_root): 
-        # TODO: needs to be changed
-        # proposedAnnotationBuffer stores (image_url, image_path) pairs
-        for idx, (filename, _) in enumerate(self.proposedset.imgs):
-            if any([ext in filename for ext in self.SUPP_IMG_EXT]):
-                prefix = filename[:filename.find('.')]
-                split, image_id = prefix.split('_')
-                self.proposedAnnotationBuffer['{}/{}'.format(split, image_id)] = idx
-
     def _pull_item(self, index, buffer):
         if index >= len(buffer):
             return None
         return buffer[index]
 
-    def get_correct_validation(self, index):
-        return self._pull_item(index, self.correctValidationBuffer)
-
-    def get_incorrect_validation(self, index):
-        return self._pull_item(index, self.incorrectValidationBuffer)
-
-    def get_correct_test(self, index):
-        return self._pull_item(index, self.correctTestBuffer)
-
-    def get_incorrect_test(self, index):
-        return self._pull_item(index, self.incorrectTestBuffer)
-
-    def getDBConn(self):
+    def get_db_conn(self):
         return self.db_conn
 
-    def getDBCursor(self):
+    def get_db_cursor(self):
         return self.db_cursor
 
 # Return a square image

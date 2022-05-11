@@ -4,12 +4,28 @@ from flask import redirect, send_file
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import imageURLToPath, getSplitLength, getClassStart, get_annotated_from_train
+from utils.image_utils import imageURLToPath, getSplitLength, getClassStart, get_annotated_from_train, getImagePath
 
 server = RServer.getServer()
 app = server.getFlaskApp()
 
+warning = """
+    Retrieving images with image url will not be supported soon.
+    Use /image/list/<split>/<start>/<end> to get full path and 
+    use /dataset/<path> to get the image
+"""
 
+
+@app.route('/image/list/<split>/<int: start>/<int: num_per_page>')
+def get_image_list(split, start, num_per_page):
+    image_idx_start = num_per_page * start
+    image_idx_end = num_per_page * (start + 1)
+    try:
+        return RResponse.ok(getImagePath(split, image_idx_start, image_idx_end))
+    except Exception as e:
+        return RResponse.fail('Error retrieving image paths') 
+
+@DeprecationWarning(warning)
 @app.route('/image/<split>/<image_id>')
 def get_train_img(split, image_id):
     """

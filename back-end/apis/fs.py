@@ -90,6 +90,6 @@ def write(path):
 
 @app.teardown_appcontext
 def close_connection(exception):
-    conn = dataManager.getDBConn()
+    conn = dataManager.get_db_conn()
     if conn is not None:
         conn.close()

@@ -4,7 +4,7 @@ from sqlite3.dbapi2 import Cursor, Connection
 # Note: commit should be done by the caller after flushing in-memory buffer 
 # to ensure consistency!
 
-def db_insert(db_conn: Connection, table_name: str, keys: Tuple[str], values: Tuple[str]):
+def db_insert(db_conn: Connection, table_name: str, keys: Tuple[str], values: Tuple):
     assert(len(keys) == len(values)), "key and value array length not equal"
 
     db_cursor = db_conn.cursor()
@@ -17,7 +17,7 @@ def db_insert(db_conn: Connection, table_name: str, keys: Tuple[str], values: Tu
     db_cursor.execute(template, values)
     
 
-def db_insert_many(db_conn: Connection, table_name: str, keys: Tuple[str], values: List[Tuple[str]]):
+def db_insert_many(db_conn: Connection, table_name: str, keys: Tuple[str], values: List[Tuple]):
     assert(len(keys) == len(values)), "key and value array length not equal"
 
     db_cursor = db_conn.cursor()
@@ -30,6 +30,16 @@ def db_insert_many(db_conn: Connection, table_name: str, keys: Tuple[str], value
     db_cursor.executemany(template, values)
  
 
+def db_select_all(db_conn: Connection, table_name: str) -> List[Tuple]:
+    db_cursor = db_conn.cursor()
+    template = "SELECT * from {}".format(
+        table_name,
+    )
+
+    db_cursor.execute(template)
+    return db_cursor.fetchall()
+
+   
 
 def db_select_by_path(db_conn: Connection, table_name: str, path: str) -> List[Tuple]:
 
@@ -42,7 +52,7 @@ def db_select_by_path(db_conn: Connection, table_name: str, path: str) -> List[T
     return db_cursor.fetchall()
 
 
-def db_update_by_path(db_conn: Connection, table_name: str, path: str, keys: Tuple[str], values: Tuple[str]):
+def db_update_by_path(db_conn: Connection, table_name: str, path: str, keys: Tuple[str], values: Tuple):
     assert(len(keys) == len(values)), "key and value array length not equal"
     db_cursor = db_conn.cursor()
 
@@ -52,7 +62,18 @@ def db_update_by_path(db_conn: Connection, table_name: str, path: str, keys: Tup
     )
 
     db_cursor.execute(template, values + (path,))
-   
+
+
+def db_update_many_by_paths(db_conn: Connection, table_name: str, paths: List[str], keys: Tuple[str], values_list: List[Tuple]):
+    db_cursor = db_conn.cursor()
+
+    template = "UPDATE {} SET {} WHERE path=?".format(
+        table_name,
+        ",".join(["{} = ?".format(key) for key in keys])
+    )
+
+    db_cursor.executemany(template, [values + (path,) for (values, path) in zip (values_list, paths)])
+    
 
 def db_delete_by_path(db_conn: Connection, table_name: str, path: str):
     db_cursor = db_conn.cursor()
@@ -86,6 +107,21 @@ def db_count_all(db_conn: Connection, table_name: str):
     return db_cursor.fetchone()[0]
 
 
-## TODO: paging here
+def db_get_cls_result(db_conn: Connection, table_name: str, correct: bool):
+    db_cursor = db_conn.cursor()
+
+    if correct:
+        classified = 1
+    else:
+        classified = 2
+        
+    template = "SELECT * from {} WHERE classified=?".format(
+        table_name
+    )
+
+    db_cursor.execute(template, classified)
+    return db_cursor.fetchall()
+
+
 
 

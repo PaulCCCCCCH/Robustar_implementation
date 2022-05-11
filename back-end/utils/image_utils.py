@@ -2,7 +2,7 @@ from os.path import normpath
 import shutil
 from objects.RServer import RServer
 
-dataManager = RServer.getServer().dataManager
+dataManager = RServer.getDataManager()
 
 datasetDir = dataManager.data_root
 
@@ -19,9 +19,42 @@ test_incorrect_root = dataManager.test_incorrect_root
 validation_correct_root = dataManager.validation_correct_root
 validation_incorrect_root = dataManager.validation_incorrect_root
 
+warning = """
+    Retrieving images with image url will not be supported soon.
+    Use /image/list/<split>/<start>/<end> to get full path and 
+    use /dataset/<path> to get the image
+"""
+
+@DeprecationWarning(warning)
 def imageSplitIdToPath(split, image_id):
     return imageURLToPath("{}/{}".format(split, image_id))
 
+
+
+def getImagePath(split, start=None, end=None):
+    """
+    Get the real paths of the images in the range start-end
+    args: 
+        split: 'train', 'annotated', 'validation', 'proposed', 'test', 'validation_correct', 'validation_incorrect'
+        'test_correct', 'test_incorrect'
+    returns:
+        imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
+    """
+
+    # # If already buffered, just return
+    # if image_url in datasetFileBuffer:
+    #     return datasetFileBuffer[image_url]
+    if split == 'validation_correct':
+        return dataManager.validationset.get_record(correct=True, start=start, end=end)
+    if split == 'validation_incorrect':
+        return dataManager.validationset.get_record(correct=False, start=start, end=end)
+    else:
+        if split not in dataManager.split_dict:
+            raise NotImplemented('Invalid data split!')
+        return dataManager.split_dict[split].get_image_list(start, end)
+
+
+@DeprecationWarning(warning)
 def imageURLToPath(image_url):
     """
     Get the real path of the image specified by its url.
@@ -147,12 +180,7 @@ def getSplitLength(split):
         The length of the data split as an integer
     """
 
-    if split not in dataManager.split_dict:
-        raise NotImplemented('Data split not supported')
-    if split == 'annotated':
-        return len(dataManager.split_dict[split][0])
-
-    return len(dataManager.split_dict[split])
+    return len(getImagePath(split, None, None))
 
 
 def copyImage(src_split, src_id, dst_split, dst_id):
@@ -196,3 +224,7 @@ def get_train_from_annotated(annotated_image_index):
 def get_annotated(image_index):
     img_num = dataManager.annotatedBuffer[int(image_index)]
     return pairedset.samples[img_num]
+
+def create_empty_paired_image(path):
+    with open(path, 'wb') as f:
+        pass

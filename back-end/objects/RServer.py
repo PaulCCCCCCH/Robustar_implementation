@@ -49,7 +49,7 @@ class RServer:
         return RServer.serverInstance
 
     @staticmethod
-    def getDataManager():
+    def getDataManager() -> RDataManager:
         return RServer.serverInstance.dataManager
 
     @staticmethod
