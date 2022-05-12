@@ -105,29 +105,21 @@
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="
-                    d-flex
-                    flex-column
-                    transition-fast-in-fast-out
-                    primary
-                    v-card--reveal
-                    text-h5
-                    white--text
-                  "
+                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                   style="height: 100%"
                 >
                   <v-btn
                     class="mb-4"
                     outlined
                     color="white"
-                    width="150px"
+                    width="80%"
                     @click="gotoImage(idx, url, 'EditImage')"
                     :data-test="`image-list-btn-edit-image-${idx}`"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     ANNOTATE
                   </v-btn>
-                  <v-btn outlined color="white" width="150px" @click="setCurrentImage(idx, url)">
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
                     <v-icon left>mdi-cogs</v-icon>
                     PREDICT
                   </v-btn>
