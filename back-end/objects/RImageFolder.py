@@ -1,6 +1,7 @@
 from utils.path_utils import get_paired_path, split_path, to_unix, create_empty_paired_image
 from torchvision.datasets import DatasetFolder, ImageFolder
-from typing import Any, Callable, cast, Dict, List, Optional, Tuple
+from typing import Any, Callable, cast, Dict, List, Optional, Tuple, Union
+import PIL
 from PIL import Image
 from io import BytesIO
 from sqlite3.dbapi2 import Connection
@@ -134,6 +135,67 @@ class RImageFolder(DatasetFolder):
         return get_slice(self.samples, start, end)
 
 
+class RTrainImageFolder(RImageFolder):
+
+    def __init__(
+            self,
+            root: str,
+            split: str,
+            db_conn: Connection,
+            transform: Optional[Callable] = None,
+            target_transform: Optional[Callable] = None,
+            loader: Callable[[str], Any] = default_loader,
+            is_valid_file: Optional[Callable[[str], bool]] = None,
+            force_reindex: bool = False
+    ):
+
+        super(RTrainImageFolder, self).__init__(root, split, db_conn, 
+                transform=transform, 
+                target_transform=target_transform,
+                loader=loader,
+                is_valid_file=is_valid_file,
+                force_reindex=force_reindex
+        )
+
+        self.train2paired = dict()
+        self._init_buffer()
+        self._populate_buffer()
+        
+
+    def update_paired_data(self, train_paths: List[str], paired_paths: List[str]):
+        train_paths = [to_unix(train_path) for train_path in train_paths]
+        paired_paths = [to_unix(paired_path) for paired_path in paired_paths]
+
+        # 1. update database
+        db_update_many_by_paths(self.db_conn, self.table_name, train_paths, 
+            keys=("paired_path", ), values_list=[(paired_path,) for paired_path in paired_paths])
+
+        # 2. update buffer
+        for train_path, paired_path in zip(train_paths, paired_paths):
+            self.train2paired[train_path] = paired_path
+
+        # 3. commit
+        self.db_conn.commit()
+
+    def get_paired_from_train(self, train_path):
+        train_path = to_unix(train_path)
+        if train_path in self.train2paired:
+            return self.train2paired[train_path]
+        return None
+
+    def _init_buffer(self):
+        self.train2paired = dict()
+
+    def _populate_buffer(self):
+        for path, classified in db_select_all(self.db_conn, self.table_name):
+            path = to_unix(path)
+            if classified == self.CLS_CORRECT:
+                self.buffer_correct.append(path)
+            elif classified == self.CLS_INCORRECT:
+                self.buffer_incorrect.append(path)
+
+
+
 class REvalImageFolder(RImageFolder):
     """
         An extended version of RImageFolder that supports the following:
@@ -239,10 +301,7 @@ class RAnnotationFolder(RImageFolder):
         self._init_buffers()
 
         # Read from database to memory
-        for paired_path, train_path in db_select_all(self.db_conn, self.table_name):
-            paired_path, train_path = to_unix(paired_path), to_unix(train_path)
-            self._train2paired[train_path] = paired_path
-            self._paired2train[paired_path] = train_path
+        self._populate_buffers()
 
 
     def remove_image(self, path):
@@ -278,15 +337,20 @@ class RAnnotationFolder(RImageFolder):
         self.db_conn.commit()
 
 
-    def add_image(self, train_path, image_data, image_height, image_width):
+    def save_annotated_image(self, train_path, image_data: Union[Image.Image, bytes], image_height=None, image_width=None):
         train_path = to_unix(train_path)
         paired_path = get_paired_path(train_path, self.train_root, self.root)
 
-        # 1. insert new paired path to db
-        db_insert(self.db_conn, self.table_name, ("path", "train_path"), (paired_path, train_path)) 
+        # 1. insert new paired path to db if image not already annotated
+        if train_path not in self._train2paired:
+            db_insert(self.db_conn, self.table_name, ("path", "train_path"), (paired_path, train_path)) 
 
         # 2. dump the image file to disk
-        self._dump_image(paired_path, image_data, image_height, image_width)
+        if isinstance(image_data, Image.Image): # If image_data is PIL Image
+            image_data.save(paired_path, format='png')
+        else: # If image_data is an array of bytes
+            if image_height is None or image_width is None: raise ValueError("must specify image height and width")
+            self._dump_image_data(paired_path, image_data, image_height, image_width)
 
         # 3. update buffers
         self._train2paired[train_path] = paired_path
@@ -296,12 +360,35 @@ class RAnnotationFolder(RImageFolder):
         self.db_conn.commit()
 
     def get_paired_by_train(self, train_path):
+        """
+        Get paired path of the train path if paired image exists. Otherwise, return None.
+        """
         train_path = to_unix(train_path)
         if train_path in self._train2paired:
             return self._train2paired[train_path]
         return None
 
-    def get_paired_path_by_train(self, train_path):
+    def get_train_by_paired(self, paired_path):
+        """
+        Get train path of the paired path if paired image exists. Otherwise, return None.
+        """
+        paired_path = to_unix(paired_path)
+        if paired_path in self._paired2train:
+            return self._paired2train[paired_path]
+        return None
+
+    def convert_paired_path_to_train(self, paired_path):
+        """
+        Get train path of the paired path, no matter whether the paired image exists or not.
+        """
+        paired_path = to_unix(paired_path)
+        return get_paired_path(paired_path, self.root, self.train_root)
+
+
+    def convert_train_path_to_paired(self, train_path):
+        """
+        Get paired path of the train path, no matter whether the paired image exists or not.
+        """
         train_path = to_unix(train_path)
         return get_paired_path(train_path, self.train_root, self.root)
 
@@ -311,8 +398,14 @@ class RAnnotationFolder(RImageFolder):
         key_list = list(self._paired2train.keys())
         return get_slice(key_list, start, end)
 
+    def is_annotated(self, train_path):
+        """
+        Return if the given training image is annotated or not
+        """
+        return train_path in self._train2paired
 
-    def _dump_image(self, dump_path, image_data, image_height, image_width):
+
+    def _dump_image_data(self, dump_path, image_data, image_height, image_width):
         with Image.open(BytesIO(image_data)) as img:
         
             to_save = img.resize((image_width, image_height))
@@ -339,3 +432,10 @@ class RAnnotationFolder(RImageFolder):
             os.makedirs(folder_path, exist_ok=True)
 
             create_empty_paired_image(mirrored_img_path)
+        
+
+    def _populate_buffers(self):
+        for paired_path, train_path in db_select_all(self.db_conn, self.table_name):
+            paired_path, train_path = to_unix(paired_path), to_unix(train_path)
+            self._train2paired[train_path] = paired_path
+            self._paired2train[paired_path] = train_path

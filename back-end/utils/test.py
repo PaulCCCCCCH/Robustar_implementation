@@ -34,7 +34,7 @@ class TestThread(threading.Thread):
         elif split == 'test':
             dataset: REvalImageFolder = dataManager.testset
         else:
-            raise NotImplemented
+            raise NotImplementedError('Test called with wrong data split')
 
         samples = dataset.samples
         dataset_length = len(samples)

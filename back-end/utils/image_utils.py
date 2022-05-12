@@ -39,7 +39,7 @@ def getImagePath(split, start=None, end=None):
         return dataManager.validationset.get_record(correct=False, start=start, end=end)
     else:
         if split not in dataManager.split_dict:
-            raise NotImplemented('Invalid data split!')
+            raise NotImplementedError('Invalid data split!')
         return dataManager.split_dict[split].get_image_list(start, end)
 
 
@@ -83,7 +83,7 @@ def imageURLToPath(image_url):
         filePath = get_test_correct(False, imageIndex)[0]
     else:
         # data split not supported
-        raise NotImplemented('Data split not supported')
+        raise NotImplementedError('Data split not supported')
 
     if filePath:
         filePath = normpath(filePath).replace('\\', '/')
@@ -109,7 +109,7 @@ def getClassStart(split):
         class_ls = testset.classes
         class_idx = testset.class_to_idx
     else:
-        raise NotImplemented('Data split not supported')
+        raise NotImplementedError('Data split not supported')
     print(class_idx)
 
     for i in range(len(class_ls)):
@@ -117,13 +117,13 @@ def getClassStart(split):
         class_idx[class_ls[i]] = num
 
     if split == 'validation_correct':
-        buffer = dataManager.correctValidationBuffer
+        buffer = dataManager.validationset.buffer_correct
     elif split == 'validation_incorrect':
-        buffer = dataManager.incorrectValidationBuffer
+        buffer = dataManager.validationset.buffer_incorrect
     elif split == 'test_correct':
-        buffer = dataManager.correctTestBuffer
+        buffer = dataManager.testset.buffer_correct
     elif split == 'test_incorrect':
-        buffer = dataManager.incorrectTestBuffer
+        buffer = dataManager.testset.buffer_incorrect
     else:
         return class_idx
 

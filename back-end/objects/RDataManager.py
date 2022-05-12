@@ -8,7 +8,7 @@ import os
 from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
-from .RImageFolder import RImageFolder, RAnnotationFolder, REvalImageFolder
+from .RImageFolder import RImageFolder, RAnnotationFolder, REvalImageFolder, RTrainImageFolder
 from PIL import Image
 import torchvision.transforms.functional as transF
 
@@ -109,7 +109,7 @@ class RDataManager:
 
     def _init_data_records(self):
         self.testset: REvalImageFolder = REvalImageFolder(self.test_root, 'test', self.db_conn, transform=self.transforms)
-        self.trainset: RImageFolder = RImageFolder(self.train_root, 'train', self.db_conn, transform=self.transforms)
+        self.trainset: RTrainImageFolder = RTrainImageFolder(self.train_root, 'train', self.db_conn, transform=self.transforms)
         datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
             self.validationset: REvalImageFolder = self.testset
@@ -221,4 +221,4 @@ class SquarePad:
 
         # TODO: Support more padding modes. E.g. pad both sides to given image size 
         else:
-            raise NotImplemented
+            raise NotImplementedError
