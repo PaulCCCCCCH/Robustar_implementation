@@ -37,6 +37,10 @@ def getImagePath(split, start=None, end=None):
         return dataManager.validationset.get_record(correct=True, start=start, end=end)
     if split == 'validation_incorrect':
         return dataManager.validationset.get_record(correct=False, start=start, end=end)
+    if split == 'test_correct':
+        return dataManager.testset.get_record(correct=True, start=start, end=end)
+    if split == 'test_incorrect':
+        return dataManager.testset.get_record(correct=False, start=start, end=end)
     else:
         if split not in dataManager.split_dict:
             raise NotImplementedError('Invalid data split!')
@@ -94,29 +98,20 @@ def imageURLToPath(image_url):
 
 def getClassStart(split):
     if split == 'train' or split == 'annotated':
-        dataset_ls = trainset.samples
-        dataset_len = len(dataset_ls)
-        class_ls = trainset.classes
-        class_idx = trainset.class_to_idx
+        dataset = trainset
     elif split == 'validation' or split == 'validation_correct' or split == 'validation_incorrect':
-        dataset_ls = validationset.samples
-        dataset_len = len(dataset_ls)
-        class_ls = validationset.classes
-        class_idx = validationset.class_to_idx
+        dataset = validationset
     elif split == 'test' or split == 'test_correct' or split == 'test_incorrect':
-        dataset_ls = testset.samples
-        dataset_len = len(dataset_ls)
-        class_ls = testset.classes
-        class_idx = testset.class_to_idx
+        dataset = testset
     else:
         raise NotImplementedError('Data split not supported')
-    print(class_idx)
 
-    for i in range(len(class_ls)):
-        num = binarySearchLeftBorderTuple(dataset_ls, dataset_len, i)
-        class_idx[class_ls[i]] = num
+    class_ls = dataset.classes
+    class_starts = dict()
 
-    if split == 'validation_correct':
+    if split in ['train', 'annotated', 'validation', 'test']:
+        buffer = dataset.samples
+    elif split == 'validation_correct':
         buffer = dataManager.validationset.buffer_correct
     elif split == 'validation_incorrect':
         buffer = dataManager.validationset.buffer_incorrect
@@ -125,33 +120,26 @@ def getClassStart(split):
     elif split == 'test_incorrect':
         buffer = dataManager.testset.buffer_incorrect
     else:
-        return class_idx
+        raise NotImplementedError('Data split not supported')
 
     for i in range(len(class_ls)):
-        num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
-        class_idx[class_ls[i]] = num
+        num = binarySearchLeftBorder(buffer, i)
+        class_starts[class_ls[i]] = num
 
-    return class_idx
+    return class_starts
 
 
-def binarySearchLeftBorderTuple(ls, length, target):
+def binarySearchLeftBorder(ls, target: int):
+    """
+    Args
+        ls: Image.samples, a list of (image_path, class_index) pairs
+        target: target class index 
+    """
     left = 0
-    right = length
+    right = len(ls)
     while left < right:
         mid = (left + right) // 2
         if ls[mid][1] >= target:
-            right = mid
-        else:
-            left = mid + 1
-    return left
-
-
-def binarySearchLeftBorder(ls, length, target):
-    left = 0
-    right = length
-    while left < right:
-        mid = (left + right) // 2
-        if ls[mid] >= target:
             right = mid
         else:
             left = mid + 1

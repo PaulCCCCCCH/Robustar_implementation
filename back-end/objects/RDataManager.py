@@ -39,15 +39,6 @@ class RDataManager:
         self._init_data_records()
 
     
-    def readify_classes(self, datasets):
-        def change_classes(mapping, dataset):
-            classes = dataset.classes
-            classes = [mapping.get(c, c) for c in classes]
-            dataset.classes = classes
-            dataset.class_to_idx = {c: idx for idx, c in enumerate(classes)}
-        for ds in datasets:
-            change_classes(self.class2label, ds)
-
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
             print("Loading influence dictionary!")
@@ -82,13 +73,14 @@ class RDataManager:
     def _init_db(self):
         if osp.exists(self.db_path):
             print("DB already existed. Skipping initialization.")
-            self.db_conn = sqlite3.connect(self.db_path)
+            # TODO: May need to check for concurrency issues.
+            self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
             self.db_cursor = self.db_conn.cursor() 
             return
 
         print("DB file not found. Initializing db...")
         from utils.db import get_init_schema_str
-        self.db_conn = sqlite3.connect(self.db_path)
+        self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self.db_cursor = self.db_conn.cursor() 
         self.db_cursor.executescript(get_init_schema_str())
 
@@ -110,14 +102,10 @@ class RDataManager:
     def _init_data_records(self):
         self.testset: REvalImageFolder = REvalImageFolder(self.test_root, 'test', self.db_conn, transform=self.transforms)
         self.trainset: RTrainImageFolder = RTrainImageFolder(self.train_root, 'train', self.db_conn, transform=self.transforms)
-        datasets = [self.testset, self.trainset]
         if not os.path.exists(self.validation_root):
             self.validationset: REvalImageFolder = self.testset
         else:
             self.validationset: REvalImageFolder = REvalImageFolder(self.validation_root, 'validation', self.db_conn, transform=self.transforms)
-
-        datasets.append(self.validationset)
-        self.readify_classes(datasets)
 
         self.testloader = torch.utils.data.DataLoader(
             self.testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)

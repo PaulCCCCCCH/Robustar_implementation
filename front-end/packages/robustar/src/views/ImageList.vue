@@ -201,6 +201,7 @@ export default {
   computed: {
     classification() {
       return [
+        { text: 'All', value: this.$route.params.split},
         { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
@@ -215,9 +216,6 @@ export default {
     },
     updateSplit() {
       this.split = this.$route.params.split;
-      if (this.split === 'validation' || this.split === 'test') {
-        this.split += '_correct';
-      }
     },
     initImageList() {
       this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
