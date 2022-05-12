@@ -78,21 +78,22 @@
         </v-select>
       </div>
 
-      <v-divider class="mb-8" style="width: 100%"></v-divider>
+      <v-divider class="mb-8" style="width: 70%"></v-divider>
 
-      <div class="d-flex flex-row flex-wrap justify-start" style="flex">
-        <div
+      <v-row style="width: 70%">
+        <!-- 6 images per row -->
+        <v-col
           v-for="(url, idx) in imageList"
           :key="url"
-          class="mb-8 mr-8 row-item"
+          class="d-flex child-flex"
+          cols="2"
           data-test="image-list-div-all-imgs"
         >
           <v-hover v-slot="{ hover }">
             <v-img
               :src="url"
               alt="invalid image URL"
-              height="200px"
-              width="200px"
+              aspect-ratio="1"
               :data-test="`image-list-img-${idx}`"
             >
               <template v-slot:placeholder>
@@ -104,36 +105,21 @@
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="
-                    d-flex
-                    flex-column
-                    transition-fast-in-fast-out
-                    primary
-                    v-card--reveal
-                    text-h5
-                    white--text
-                  "
+                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                   style="height: 100%"
                 >
                   <v-btn
                     class="mb-4"
                     outlined
-                    large
                     color="white"
-                    width="150px"
+                    width="80%"
                     @click="gotoImage(idx, url, 'EditImage')"
                     :data-test="`image-list-btn-edit-image-${idx}`"
                   >
                     <v-icon left>mdi-pencil</v-icon>
                     ANNOTATE
                   </v-btn>
-                  <v-btn
-                    outlined
-                    large
-                    color="white"
-                    width="150px"
-                    @click="setCurrentImage(idx, url)"
-                  >
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
                     <v-icon left>mdi-cogs</v-icon>
                     PREDICT
                   </v-btn>
@@ -141,8 +127,8 @@
               </v-expand-transition>
             </v-img>
           </v-hover>
-        </div>
-      </div>
+        </v-col>
+      </v-row>
     </div>
 
     <Visualizer
@@ -309,10 +295,6 @@ export default {
 </script>
 
 <style scoped>
-.row-item:last-child {
-  margin-right: 0 !important;
-}
-
 .v-card--reveal {
   justify-content: center;
   align-items: center;
