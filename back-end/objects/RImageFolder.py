@@ -137,7 +137,7 @@ class RImageFolder(DatasetFolder):
 
 
     def get_image_list(self, start=None, end=None):
-        return get_slice(self.samples, start, end)
+        return [p[0] for p in get_slice(self.samples, start, end)]
 
 
     def readify_classes(self):
@@ -257,7 +257,7 @@ class REvalImageFolder(RImageFolder):
 
     def get_record(self, correct: bool, start=None, end=None):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
-        return get_slice(buffer, start, end)
+        return [p[0] for p in get_slice(buffer, start, end)]
     
     def _populate_buffers(self):
         db_data = db_select_all(self.db_conn, self.table_name)

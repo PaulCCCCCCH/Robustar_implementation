@@ -282,8 +282,8 @@ export default {
           const list = res.data.data;
           this.$nextTick(() => {
             this.imageList = [];
-            list.forEach((image) => {
-              this.imageList.push(`${configs.imagePathServerUrl}${image[0]}`);
+            list.forEach((imagePath) => {
+              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
             });
           });
         },
