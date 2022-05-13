@@ -1,8 +1,6 @@
 <template>
   <div class="d-flex justify-center align-center" style="height: 100%">
-    <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
-
-    <div v-if="hasImages" class="d-flex flex-column flex-grow-1 align-center px-4">
+    <div class="d-flex flex-column flex-grow-1 align-center px-4">
       <!-- Page header-->
       <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
 
@@ -24,7 +22,7 @@
       <div class="d-flex justify-center mb-4">
         <!-- Previous page button -->
         <v-btn
-          :disabled="currentPage <= 0"
+          :disabled="currentPage <= 0 || !hasImages"
           depressed
           color="primary"
           @click="currentPage--"
@@ -35,7 +33,9 @@
 
         <!-- Refresh page button & page number -->
         <div class="d-flex mx-8">
-          <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
+          <v-btn class="mr-4" depressed color="primary" :disabled="!hasImages" @click="gotoPage">
+            GOTO PAGE
+          </v-btn>
           <v-text-field
             data-test="image-list-input-page-number"
             v-model="inputPage"
@@ -48,7 +48,7 @@
         <!-- Next page button -->
         <v-btn
           data-test="image-list-btn-next-page"
-          :disabled="currentPage >= maxPage"
+          :disabled="currentPage >= maxPage || !hasImages"
           depressed
           color="primary"
           @click="currentPage++"
@@ -78,9 +78,11 @@
         </v-select>
       </div>
 
-      <v-divider class="mb-8" style="width: 70%"></v-divider>
+      <v-divider class="mb-8" style="width: 85%"></v-divider>
 
-      <v-row style="width: 70%">
+      <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
+
+      <v-row v-else style="width: 85%">
         <!-- 6 images per row -->
         <v-col
           v-for="(url, idx) in imageList"
@@ -216,7 +218,10 @@ export default {
           console.log(res.data.data);
           this.getClassNames();
         },
-        (err) => console.log(err)
+        (err) => {
+          console.log(err);
+          this.imageList = [];
+        }
       );
     },
     resetImageList() {
@@ -235,7 +240,10 @@ export default {
           this.classNames = Object.keys(this.classStartIdx);
           this.loadImages();
         },
-        (err) => console.log(err)
+        (err) => {
+          console.log(err);
+          this.imageList = [];
+        }
       );
     },
     setCurrentImage(idx, url) {
@@ -289,7 +297,10 @@ export default {
             });
           });
         },
-        (err) => console.log(err)
+        (err) => {
+          console.log(err);
+          this.imageList = [];
+        }
       );
     },
   },
@@ -304,5 +315,10 @@ export default {
   bottom: 0;
   width: 100%;
   opacity: 0.8;
+}
+
+.v-card--reveal button {
+  font-size: 0.5vw;
+  overflow: hidden;
 }
 </style>

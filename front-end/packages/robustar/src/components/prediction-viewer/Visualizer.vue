@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex" style="height: 100%; max-width: 40%">
+  <div class="d-flex" style="height: 100%; max-width: 30vw">
     <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>

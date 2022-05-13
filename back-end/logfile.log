@@ -3131,3 +3131,784 @@ IndexError: list index out of range
 2022-02-26 00:16:17,120: 127.0.0.1 - - [26/Feb/2022 00:16:17] "[32mGET /image/train/28 HTTP/1.1[0m" 302 -
 2022-02-26 00:16:17,124: 127.0.0.1 - - [26/Feb/2022 00:16:17] "[32mGET /image/train/26 HTTP/1.1[0m" 302 -
 2022-02-26 00:16:32,134: 127.0.0.1 - - [26/Feb/2022 00:16:32] "[32mGET /image/train/29 HTTP/1.1[0m" 302 -
+2022-05-13 10:28:00,990: Running on: 10 images per class.
+2022-05-13 10:28:00,992: Starting at img number: 0 per class.
+2022-05-13 10:28:21,120: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:28:22,938: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:30:50,429: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:31:14,765: Exception on /image/test_incorrect [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:31:18,768: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:31:22,609: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:31:45,075: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:33:52,415: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:33:52,559: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:34:09,191: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:34:22,126: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:35:15,272: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:35:16,766: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:35:16,830: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:35:17,925: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:35:18,177: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:35:18,933: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:35:19,188: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:06,573: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:06,633: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:08,268: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:08,805: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:11,440: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:13,768: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:15,617: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:16,429: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:19,470: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:22,248: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:24,268: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:38:27,942: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:38:29,911: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:45:03,765: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:45:05,130: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:52:22,590: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:52:23,758: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:52:24,673: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:52:27,412: Exception on /image/test_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 135, in get_split_length
+    return RResponse.ok(getSplitLength(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 172, in getSplitLength
+    return len(getImagePath(split, None, None))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 42, in getImagePath
+    raise NotImplementedError('Invalid data split!')
+NotImplementedError: Invalid data split!
+2022-05-13 10:52:28,808: Exception on /image/class/validation_correct [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\image.py", line 104, in get_class_page
+    return RResponse.ok(getClassStart(split))
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 131, in getClassStart
+    num = binarySearchLeftBorder(buffer, len(buffer), class_idx[class_ls[i]])
+  File "F:\Robustar_migration\back-end\utils\image_utils.py", line 154, in binarySearchLeftBorder
+    if ls[mid] >= target:
+TypeError: '>=' not supported between instances of 'str' and 'int'
+2022-05-13 10:53:51,912: Exception on /predict/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 99, in predict
+    datasetImgPath = imageURLToPath(imageURL)
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,223: Exception on /propose/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\edit.py", line 91, in api_propose_edit
+    proposed_image_path, _ = propose_edit(split, path)
+  File "F:\Robustar_migration\back-end\utils\edit_utils.py", line 61, in propose_edit
+    dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
+  File "F:\Robustar_migration\back-end\objects\RImageFolder.py", line 352, in save_annotated_image
+    if image_height is None or image_width is None: raise ValueError("must specify image height and width")
+ValueError: must specify image height and width
+2022-05-13 10:53:52,227: Exception on /influence/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 185, in get_influence
+    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,660: Exception on /predict/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 99, in predict
+    datasetImgPath = imageURLToPath(imageURL)
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,697: Exception on /influence/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 185, in get_influence
+    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,706: Exception on /propose/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\edit.py", line 91, in api_propose_edit
+    proposed_image_path, _ = propose_edit(split, path)
+  File "F:\Robustar_migration\back-end\utils\edit_utils.py", line 61, in propose_edit
+    dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
+  File "F:\Robustar_migration\back-end\objects\RImageFolder.py", line 346, in save_annotated_image
+    db_insert(self.db_conn, self.table_name, ("path", "train_path"), (paired_path, train_path))
+  File "F:\Robustar_migration\back-end\utils\db_ops.py", line 17, in db_insert
+    db_cursor.execute(template, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: proposed.path
+2022-05-13 10:53:52,709: Exception on /predict/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 99, in predict
+    datasetImgPath = imageURLToPath(imageURL)
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,912: Exception on /influence/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\predict.py", line 185, in get_influence
+    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))
+TypeError: 'DeprecationWarning' object is not callable
+2022-05-13 10:53:52,970: Exception on /propose/train/36 [GET]
+Traceback (most recent call last):
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 2070, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1515, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1513, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\Robustar_migration\back-end\venv\lib\site-packages\flask\app.py", line 1499, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\Robustar_migration\back-end\apis\edit.py", line 91, in api_propose_edit
+    proposed_image_path, _ = propose_edit(split, path)
+  File "F:\Robustar_migration\back-end\utils\edit_utils.py", line 61, in propose_edit
+    dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
+  File "F:\Robustar_migration\back-end\objects\RImageFolder.py", line 346, in save_annotated_image
+    db_insert(self.db_conn, self.table_name, ("path", "train_path"), (paired_path, train_path))
+  File "F:\Robustar_migration\back-end\utils\db_ops.py", line 17, in db_insert
+    db_cursor.execute(template, values)
+sqlite3.IntegrityError: UNIQUE constraint failed: proposed.path
