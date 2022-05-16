@@ -120,6 +120,7 @@
                     color="white"
                     width="150px"
                     @click="setCurrentImage(idx, url)"
+                    :data-test="`image-list-btn-predict-image-${idx}`"
                   >
                     <v-icon left>mdi-cogs</v-icon>
                     PREDICT

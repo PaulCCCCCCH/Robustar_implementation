@@ -1,6 +1,7 @@
 <template>
   <div class="d-flex" style="height: 100%; max-width: 40%">
-    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
+    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1"
+    data-test="visualizer-sheet">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -8,47 +9,56 @@
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
         <v-expansion-panel @click="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down"
+          data-test="model-prediction">
             Model Prediction
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <div class="d-flex justify-center align-center">
-              <PredView :dataArr="predDataArr" :config="predViewConfig" />
+              <PredView :dataArr="predDataArr" :config="predViewConfig" 
+              data-test="model-prediction-sheet"/>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Model Focus -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down"
+          data-test="model-focus">
             Model Focus
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <FocusView :focusImgUrl="focusImgUrl" />
+            <FocusView :focusImgUrl="focusImgUrl" 
+            data-test="model-focus-panel"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Influence -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down"
+          data-test="influence-images">
             Influence Images
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <InfluView :influImgUrl="influImgUrl" />
+            <InfluView :influImgUrl="influImgUrl"
+            data-test="influence-images-panel" />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Proposed Annotation -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down"
+          data-test="proposed-annotation">
             Proposed annotation
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <ProposedEditView :proposedEditUrl="proposedEditUrl" />
+            <ProposedEditView :proposedEditUrl="proposedEditUrl" 
+            data-test="proposed-annotation-panel"/>
           </v-expansion-panel-content>
         </v-expansion-panel> </v-expansion-panels
     ></v-sheet>
-    <v-btn v-else class="float-button" color="secondary" outlined large @click="openVisualizer">
+    <v-btn v-else class="float-button" color="secondary" outlined large @click="openVisualizer"
+    data-test="visualizer-btn">
       <v-icon left>mdi-eye</v-icon>VISUALIZER
     </v-btn>
   </div>
