@@ -10,7 +10,7 @@ import { postRequest, getRequest } from './common';
  */
 export const APISendEdit = (
   split,
-  image_id,
+  image_url,
   image_height,
   image_width,
   image_base64,
@@ -22,11 +22,11 @@ export const APISendEdit = (
     image_height,
     image_width,
   };
-  postRequest(data, `/edit/${split}/${image_id}`, success, failed);
+  postRequest(data, `/edit/${split}/${image_url}`, success, failed);
 };
 
-export const APIGetProposedEdit = (split, image_id, success, failed) => {
-  getRequest(`/propose/${split}/${image_id}`, success, failed);
+export const APIGetProposedEdit = (split, image_url, success, failed) => {
+  getRequest(`/propose/${split}/${image_url}`, success, failed);
 };
 
 export const APIStartAutoAnnotate = (split, data, success, failed) => {

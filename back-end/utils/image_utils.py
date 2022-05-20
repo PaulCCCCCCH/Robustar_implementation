@@ -1,6 +1,6 @@
 from os.path import normpath
-import shutil
 from objects.RServer import RServer
+from utils.edit_utils import get_train_and_paired_path
 
 dataManager = RServer.getDataManager()
 
@@ -13,11 +13,6 @@ pairedset = dataManager.pairedset
 proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
-
-@DeprecationWarning
-def imageSplitIdToPath(split, image_id):
-    return imageURLToPath("{}/{}".format(split, image_id))
-
 
 
 def getImagePath(split, start=None, end=None):
@@ -45,55 +40,13 @@ def getImagePath(split, start=None, end=None):
         if split not in dataManager.split_dict:
             raise NotImplementedError('Invalid data split!')
         return dataManager.split_dict[split].get_image_list(start, end)
+    
+def getNextImagePath(split, path):
+    allowed_splits = ['train', 'annotated', 'proposed']
+    if split not in allowed_splits:
+        raise NotImplementedError('Next image only supported for {}'.format(allowed_splits))
 
-
-@DeprecationWarning
-def imageURLToPath(image_url):
-    """
-    Get the real path of the image specified by its url.
-    When getting proposed image, split should be "proposed", and index
-    should be training set index
-    args: 
-        imageId:    The url of the image consisting of the dataset split (train/dev/test) 
-                    and an index(id).
-                    e.g.  train/10, test/300
-    returns:
-        imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
-    """
-
-    split, indexStr = image_url.split('/')
-    imageIndex = int(indexStr)
-
-    # If already buffered, just return
-    if image_url in datasetFileBuffer:
-        return datasetFileBuffer[image_url]
-    if split == 'train':
-        filePath = trainset.samples[imageIndex][0]
-    elif split == 'annotated':
-        filePath = get_annotated(imageIndex)[0]
-    elif split == 'validation':
-        filePath = validationset.samples[imageIndex][0]
-    elif split == 'proposed':
-        filePath = proposedset.samples[imageIndex][0]
-    elif split == 'test':
-        filePath = testset.samples[imageIndex][0]
-    elif split == 'validation_correct':
-        filePath = get_validation_correct(True, imageIndex)[0]
-    elif split == 'validation_incorrect':
-        filePath = get_validation_correct(False, imageIndex)[0]
-    elif split == 'test_correct':
-        filePath = get_test_correct(True, imageIndex)[0]
-    elif split == 'test_incorrect':
-        filePath = get_test_correct(False, imageIndex)[0]
-    else:
-        # data split not supported
-        raise NotImplementedError('Data split not supported')
-
-    if filePath:
-        filePath = normpath(filePath).replace('\\', '/')
-        datasetFileBuffer[image_url] = filePath
-
-    return filePath
+    return dataManager.split_dict[split].get_next_image(path)
 
 
 def getClassStart(split):
@@ -158,47 +111,3 @@ def getSplitLength(split):
     """
 
     return len(getImagePath(split, None, None))
-
-
-def copyImage(src_split, src_id, dst_split, dst_id):
-    src_path = imageSplitIdToPath(src_split, src_id)
-    dst_path = imageSplitIdToPath(dst_split, dst_id)
-    print("Copying from {} to {}".format(src_path, dst_path))
-    shutil.copyfile(src_path, dst_path)
-
-
-def get_validation_correct(is_correct, image_index):
-    correctValidationBuffer = dataManager.correctValidationBuffer
-    incorrectValidationBuffer = dataManager.incorrectValidationBuffer
-
-    if is_correct:
-        img_num = correctValidationBuffer[image_index]
-    else:
-        img_num = incorrectValidationBuffer[image_index]
-
-    return validationset.samples[img_num]
-
-
-def get_test_correct(is_correct, image_index):
-    correctTestBuffer = dataManager.correctTestBuffer
-    incorrectTestBuffer = dataManager.incorrectTestBuffer
-
-    if is_correct:
-        img_num = correctTestBuffer[image_index]
-    else:
-        img_num = incorrectTestBuffer[image_index]
-
-    return testset.samples[img_num]
-
-def get_annotated_from_train(train_image_index):
-    if int(train_image_index) in dataManager.annotatedInvBuffer:
-        return dataManager.annotatedInvBuffer[int(train_image_index)]
-    return None
-
-def get_train_from_annotated(annotated_image_index):
-    return dataManager.annotatedBuffer[int(annotated_image_index)]
-
-def get_annotated(image_index):
-    img_num = dataManager.annotatedBuffer[int(image_index)]
-    return pairedset.samples[img_num]
-

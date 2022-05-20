@@ -144,6 +144,7 @@ class RDataManager:
             'proposed': self.proposedset
         }
 
+
     def _init_folders(self):
         for root in [self.visualize_root, self.influence_root, self.proposed_annotation_root]:
             os.makedirs(root, exist_ok=True)

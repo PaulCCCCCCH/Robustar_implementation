@@ -1,9 +1,9 @@
-import shutil
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
 import base64
 from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
+from utils.path_utils import to_unix
 
 server = RServer.getServer()
 app = server.getFlaskApp()
@@ -82,12 +82,13 @@ def api_propose_edit(split, path):
         server url as prefix
     """
 
-    proposed_image_id = ""
+    proposed_image_path = ""
     if split not in ['annotated', 'train']:
         print("Cannot propose edit to a wrong split")
-        return RResponse.ok(proposed_image_id)
+        return RResponse.ok(proposed_image_path)
 
 
+    path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
 
     return RResponse.ok(proposed_image_path)

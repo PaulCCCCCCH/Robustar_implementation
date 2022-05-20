@@ -169,6 +169,8 @@ class RTrainImageFolder(RImageFolder):
                 class2label=class2label
         )
 
+
+        self._init_next_imgs()
         self._init_buffer()
         self._populate_buffer()
         
@@ -193,6 +195,16 @@ class RTrainImageFolder(RImageFolder):
         if train_path in self.train2paired:
             return self.train2paired[train_path]
         return None
+
+    def get_next_image(self, image_path):
+        return self.next_imgs.get(image_path, None)
+
+
+    def _init_next_imgs(self):
+        self.next_imgs = dict()
+        for (img_path, _), (next_img_path, _) in zip(self.imgs, self.imgs[1:]):
+            self.next_imgs[img_path] = next_img_path 
+
 
     def _init_buffer(self):
         self.train2paired = dict()
@@ -236,24 +248,48 @@ class REvalImageFolder(RImageFolder):
         self.buffer_correct = []
         self.buffer_incorrect = []
         self._populate_buffers()
+        self._init_next_records()
 
-    def add_records(self, paths: List[str], correct: bool):
+    def add_records(self, records: List[Tuple[str, int]], correct: bool):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
+        next_record = self.next_correct if correct else self.next_incorrect
 
-        paths = [to_unix(path) for path in paths]
+        paths = [to_unix(record[0]) for record in records]
 
         # 1. update db with the result
         db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), [correct for _ in paths])
 
         # 2. update buffer
-        buffer.extend(paths)
+        buffer.extend(records)
+        
+        # 3. update next record datastructure
+        for (img_path, _), (next_img_path, _) in zip([buffer[-1]] + records, records):
+            next_record[img_path] = next_img_path
 
-        # 3. commit
+        # 4. commit
         self.db_conn.commit()
 
+    def add_record(self, pair: Tuple[str, int], correct: bool): 
+        self.add_records([(to_unix(pair[0]), pair[1])], correct)
 
-    def add_record(self, path: str, correct: bool): 
-        self.add_records[[to_unix(path)], correct]
+
+    def get_next_record(self, path, correct: bool):
+        next_record = self.next_correct if correct else self.next_incorrect
+        return next_record.get(path, None)
+
+
+    def _init_next_records(self):
+        self.next_imgs = dict()
+        for (img_path, _), (next_img_path, _) in zip(self.imgs, self.imgs[1:]):
+            self.next_imgs[img_path] = next_img_path 
+
+        self.next_correct = dict()
+        for (img_path, _), (next_img_path, _) in zip(self.buffer_correct, self.buffer_correct[1:]):
+            self.next_correct[img_path] = next_img_path 
+       
+        self.next_incorrect = dict()
+        for (img_path, _), (next_img_path, _) in zip(self.buffer_incorrect, self.buffer_incorrect[1:]):
+            self.next_incorrect[img_path] = next_img_path 
 
     def get_record(self, correct: bool, start=None, end=None):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
@@ -324,6 +360,13 @@ class RAnnotationFolder(RImageFolder):
         # Read from database to memory
         self._populate_buffers()
 
+        # Initializa next record datastructure
+        self.last_record = None
+        self.next_records = dict()
+        self.prev_records = dict()
+        self._init_next_records()
+        
+
 
     def remove_image(self, path):
         path = to_unix(path)
@@ -334,12 +377,20 @@ class RAnnotationFolder(RImageFolder):
         os.remove(path) 
         create_empty_paired_image(path)
 
-        # 3. update buffers
+        # 3. update next records datastructures
+        prev_record = self.prev_records.get(path, None)
+        next_record = self.next_records.get(path, None)
+        if next_record:
+            self.prev_records[next_record] = prev_record
+        if prev_record:
+            self.next_records[prev_record] = next_record
+
+        # 4. update buffers
         train_path = self._paired2train[path]
         del self._train2paired[train_path]
         del self._paired2train[path]
 
-        # 4. commit
+        # 5. commit
         self.db_conn.commit()
 
 
@@ -353,6 +404,8 @@ class RAnnotationFolder(RImageFolder):
 
         # 3. empty the buffers
         self._init_buffers()
+        self.next_records = dict()
+        self.prev_records = dict()
 
         # 4. commit
         self.db_conn.commit()
@@ -377,7 +430,13 @@ class RAnnotationFolder(RImageFolder):
         self._train2paired[train_path] = paired_path
         self._paired2train[paired_path] = train_path
 
-        # 4. commit
+        # 4. update next record datastructures
+        if self.last_record:
+            self.next_records[self.last_record] = paired_path
+            self.prev_records[paired_path] = self.last_record
+        self.last_record = paired_path
+
+        # 5. commit
         self.db_conn.commit()
 
     def get_paired_by_train(self, train_path):
@@ -425,6 +484,10 @@ class RAnnotationFolder(RImageFolder):
         """
         return train_path in self._train2paired
 
+    def get_next_image(self, paired_path):
+        paired_path = to_unix(paired_path)
+        return self.next_records.get(paired_path, None)
+
 
     def _dump_image_data(self, dump_path, image_data, image_height, image_width):
         with Image.open(BytesIO(image_data)) as img:
@@ -460,3 +523,11 @@ class RAnnotationFolder(RImageFolder):
             paired_path, train_path = to_unix(paired_path), to_unix(train_path)
             self._train2paired[train_path] = paired_path
             self._paired2train[paired_path] = train_path
+
+    def _init_next_records(self):
+        paired_imgs = self.get_image_list()
+        for img_path, next_img_path in zip(paired_imgs, paired_imgs[1:]):
+            self.next_records[img_path] = next_img_path
+            self.prev_records[next_img_path] = img_path 
+        if paired_imgs:
+            self.last_record = paired_imgs[-1]

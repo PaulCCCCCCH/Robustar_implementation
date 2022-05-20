@@ -2,7 +2,6 @@ from PIL import Image
 from sklearn import datasets
 from objects.RServer import RServer
 from io import BytesIO
-from utils.image_utils import imageURLToPath, imageSplitIdToPath
 from utils.path_utils import get_paired_path
 import shutil
 import threading
@@ -14,22 +13,32 @@ app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
 
-def save_edit(split, image_path, image_data, image_height, image_width):
-    """
-    Save edited image as png in paired data folder.
-    If 'split' is 'train', image_path should point to the training image.
-    If 'split' is 'annotated', image_path should point to the annotated image.
-    The file name will still end with `JPEG` extension.
-    """
-
+def get_train_and_paired_path(split, image_path):
     if split == 'train':
         train_img_path = image_path
         paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
     elif split == 'annotated':
         paired_img_path = image_path
         train_img_path = dataManager.pairedset.convert_paired_path_to_train(paired_img_path)
+    elif split == 'proposed':
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(image_path)
+        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
     else:
-        raise NotImplementedError
+        raise NotImplementedError('Getting train-paired pair only works for `train`, `annotated` and `proposed` splits')
+
+    return train_img_path, paired_img_path
+
+
+def save_edit(split, image_path, image_data, image_height, image_width):
+    """
+    Save edited image as png in paired data folder.
+    If 'split' is 'train', image_path should point to the training image.
+    If 'split' is 'annotated', image_path should point to the annotated image.
+    If 'split' is 'proposed', image_path should point to the proposed image.
+    The file name will still end with `JPEG` extension.
+    """
+
+    train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
 
     with Image.open(BytesIO(image_data)) as img:
 

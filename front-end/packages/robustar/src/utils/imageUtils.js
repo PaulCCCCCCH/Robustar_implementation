@@ -22,35 +22,13 @@ export const getPageNumber = (imageIdx) => {
   return Math.floor(imageIdx / configs.imagePerPage);
 };
 
-/**
- * derive id and url for next image according current id and url
- * @param {number} image_id
- * @param {string} image_url
- * @returns
- */
-export const getNextImageByIdAndURL = (image_id, image_url) => {
-  const newId = Number(image_id) + 1;
-  const arr = image_url.split('/');
-  const newUrl = arr.slice(0, arr.length - 1).join('/') + `/${newId}`;
-  return [newId, newUrl];
-};
 
 /*
- * Return image id and split from a full url, e.g. 'http://localhost:8080/route/train/10
- * gives ["10", "train"]
+ * Return image_url from a full url, e.g. 'http://localhost:8080/dataset/Robustar2/dataset/train/bird/115.JPEG'
+ * gives 'Robustar2/dataset/train/bird/115.JPEG'
+ * 
+ * TODO: this feels hard coded. Does it work on all systems?
  */
 export const getImageUrlFromFullUrl = (full_url) => {
-  const arr = full_url.split('/');
-  return [arr[arr.length - 1], arr[arr.length - 2]];
-};
-
-/*
- * Replace the split and image id in a full url, e.g.
- * Changing 'http://localhost:8080/route/train/10
- * to 'http://localhost:8080/route/annotated/20
- */
-export const replaceSplitAndId = (full_url, split, image_id) => {
-  const arr = full_url.split('/');
-  const newUrl = arr.slice(0, arr.length - 2).join('/') + `/${split}` + `/${image_id}`;
-  return newUrl;
+  return "/" + full_url.split('/').slice(4).join("/")
 };

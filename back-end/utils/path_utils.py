@@ -1,4 +1,4 @@
-from os.path import normpath
+from os.path import normpath, join
 import re
 
 def create_empty_paired_image(path):
@@ -69,7 +69,7 @@ def get_paired_path(img_path, prev_root, paired_root):
 
 
 def to_unix(path):
-    return path.replace('\\', '/')
+    return join('/', path.replace('\\', '/'))
 
 
 

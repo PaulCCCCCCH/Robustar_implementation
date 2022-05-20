@@ -57,7 +57,7 @@ export default {
       }
       options.includeUI.loadImage = {
         path: sessionStorage.getItem('image_url'),
-        name: sessionStorage.getItem('image_id'),
+        name: '',
       };
       this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
       this.addEventListener();

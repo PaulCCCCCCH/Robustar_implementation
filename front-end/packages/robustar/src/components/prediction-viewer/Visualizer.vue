@@ -74,7 +74,7 @@ export default {
       type: String,
       default: () => '',
     },
-    image_id: {
+    image_url: {
       type: String,
       default: () => '',
     },
@@ -102,7 +102,7 @@ export default {
     };
   },
   watch: {
-    image_id: function () {
+    image_url: function () {
       this.get_visualize_data();
     },
     split: function () {
@@ -121,13 +121,13 @@ export default {
   },
   methods: {
     get_visualize_data() {
-      if (this.split && this.image_id) {
-        this.view_prediction(this.split, this.image_id);
-        this.get_influence(this.split, this.image_id);
-        this.get_proposed_edit(this.split, this.image_id);
+      if (this.split && this.image_url) {
+        this.view_prediction(this.split, this.image_url);
+        this.get_influence(this.split, this.image_url);
+        this.get_proposed_edit(this.split, this.image_url);
       }
     },
-    get_proposed_edit(split, image_id) {
+    get_proposed_edit(split, image_url) {
       const success = (response) => {
         if (response.data.code == -1) {
           this.proposedEditUrl = '';
@@ -139,9 +139,9 @@ export default {
       const failed = (err) => {
         console.log(err);
       };
-      APIGetProposedEdit(split, image_id, success, failed);
+      APIGetProposedEdit(split, image_url, success, failed);
     },
-    view_prediction(split, image_id) {
+    view_prediction(split, image_url) {
       const success = (response) => {
         let cap = 10;
         let responseData = response.data.data;
@@ -169,10 +169,10 @@ export default {
         console.log(err);
         alert('Server error. Check console.');
       };
-      APIPredict(split, image_id, success, failed);
+      APIPredict(split, image_url, success, failed);
     },
 
-    get_influence(split, imageId) {
+    get_influence(split, image_url) {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
@@ -194,7 +194,7 @@ export default {
         console.log(err);
       };
 
-      APIGetInfluenceImages(split, imageId, success, failed);
+      APIGetInfluenceImages(split, image_url, success, failed);
     },
 
     toggle_panel() {

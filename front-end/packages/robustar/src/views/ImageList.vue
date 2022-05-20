@@ -133,11 +133,11 @@
 
     <Visualizer
       v-if="hasImages"
-      :is-active="image_id !== ''"
-      :image_id="String(image_id)"
+      :is-active="image_url !== ''"
+      :image_url="image_url"
       :split="split"
-      @open="fetchImageId"
-      @close="image_id = ''"
+      @open="fetchImageUrl"
+      @close="image_url = ''"
     />
   </div>
 </template>
@@ -147,6 +147,7 @@ import { configs } from '@/configs.js';
 import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
+import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 export default {
   name: 'ImageList',
@@ -165,7 +166,6 @@ export default {
       classStartIdx: {},
       selectedClass: 0,
       split: 'test_correct',
-      image_id: '',
       image_url: '',
     };
   },
@@ -197,8 +197,8 @@ export default {
     },
   },
   methods: {
-    fetchImageId() {
-      this.image_id = sessionStorage.getItem('image_id') || '';
+    fetchImageUrl() {
+      this.image_url = sessionStorage.getItem('image_url') || '';
     },
     updateSplit() {
       this.split = this.$route.params.split;
@@ -237,17 +237,12 @@ export default {
       );
     },
     setCurrentImage(idx, url) {
-      const image_id = imagePageIdx2Id(this.currentPage, idx);
-      this.image_id = image_id;
-      this.image_url = url;
+      this.image_url = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', this.split);
-      sessionStorage.setItem('image_id', image_id);
-      sessionStorage.setItem('image_url', url);
-      sessionStorage.setItem('save_image_id', image_id);
-      sessionStorage.setItem('save_image_split', this.$route.params.split);
+      sessionStorage.setItem('image_url', this.image_url);
     },
     gotoImage(idx, url, componentName) {
-      this.setCurrentImage(idx, url);
+      this.setCurrentImage(idx, getImageUrlFromFullUrl(url));
       this.$router.push({
         name: componentName,
         params: { mode: this.$route.params.split },

@@ -1,7 +1,6 @@
 import threading
 from objects.RServer import RServer
 from utils.path_utils import to_unix
-from utils.image_utils import imageURLToPath
 from utils.predict import get_image_prediction, convert_predict_to_array
 from objects.RImageFolder import REvalImageFolder
 from os import path as osp
@@ -61,9 +60,9 @@ class TestThread(threading.Thread):
 
             is_correct = (max_index == label)
             if is_correct:
-                correct_buffer.append(img_path)
+                correct_buffer.append((img_path, label))
             else:
-                incorrect_buffer.append(img_path)
+                incorrect_buffer.append((img_path, label))
 
             # task update
             task_update_res = task.update()
