@@ -1,94 +1,113 @@
 <template>
   <div class="d-flex justify-center align-center" style="height: 100%">
-    <div class="d-flex flex-column flex-grow-1 align-center px-4">
-      <!-- Page header-->
-      <!-- <div class="text-h5 text-center font-weight-medium mb-4 mt-8">Select the image to edit</div> -->
-
-      <div
-        v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
-        class="d-flex mb-4"
-        style="width: 200px"
-      >
-        <v-select
-          :items="classification"
-          v-model="split"
-          dense
-          @change="resetImageList"
-          data-test="image-list-select-classification"
-        ></v-select>
-      </div>
-
-      <!-- Page navigator -->
-      <div class="d-flex justify-center mb-4">
-        <!-- Previous page button -->
-        <v-btn
-          :disabled="currentPage <= 0 || !hasImages"
-          depressed
-          color="primary"
-          @click="currentPage--"
-          data-test="image-list-btn-prev-page"
+    <div class="d-flex flex-column flex-grow-1 align-center py-8">
+      <!-- sticky header: settings -->
+      <div class="d-flex flex-column align-center rounded px-8 sticky-header">
+        <div
+          v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
+          style="width: 200px"
         >
-          PREV PAGE
-        </v-btn>
-
-        <!-- Refresh page button & page number -->
-        <div class="d-flex mx-8">
-          <v-btn class="mr-4" depressed color="primary" :disabled="!hasImages" @click="gotoPage">
-            GOTO PAGE
-          </v-btn>
-          <v-text-field
-            data-test="image-list-input-page-number"
-            v-model="inputPage"
-            dense
-            label="Page Number"
-            type="number"
-          ></v-text-field>
+          <v-select
+            v-model="split"
+            :items="classification"
+            @change="resetImageList"
+            data-test="image-list-select-classification"
+          ></v-select>
         </div>
 
-        <!-- Next page button -->
-        <v-btn
-          data-test="image-list-btn-next-page"
-          :disabled="currentPage >= maxPage || !hasImages"
-          depressed
-          color="primary"
-          @click="currentPage++"
-        >
-          NEXT PAGE
-        </v-btn>
+        <!-- Page navigator -->
+        <div class="d-flex justify-center align-center my-4">
+          <!-- Previous page button -->
+          <v-btn
+            :disabled="currentPage <= 0 || !hasImages"
+            depressed
+            color="primary"
+            @click="currentPage--"
+            data-test="image-list-btn-prev-page"
+          >
+            PREV PAGE
+          </v-btn>
+
+          <!-- Refresh page button & page number -->
+          <div class="d-flex align-center mx-8">
+            <v-btn class="mr-4" depressed color="primary" :disabled="!hasImages" @click="gotoPage">
+              GOTO PAGE
+            </v-btn>
+            <v-text-field
+              data-test="image-list-input-page-number"
+              v-model="inputPage"
+              label="Page Number"
+              type="number"
+            ></v-text-field>
+          </div>
+
+          <!-- Next page button -->
+          <v-btn
+            data-test="image-list-btn-next-page"
+            :disabled="currentPage >= maxPage || !hasImages"
+            depressed
+            color="primary"
+            @click="currentPage++"
+          >
+            NEXT PAGE
+          </v-btn>
+
+          <v-divider vertical class="mx-8"></v-divider>
+
+          <!-- Class filter -->
+          <div class="d-flex align-center">
+            <v-btn
+              :disabled="selectedClass === 0"
+              class="mr-4"
+              depressed
+              color="primary"
+              @click="gotoClass"
+            >
+              GOTO CLASS
+            </v-btn>
+            <v-select
+              :items="classNames"
+              v-model="selectedClass"
+              label="Class Name"
+              data-test="image-list-select-class-name"
+            >
+            </v-select>
+          </div>
+        </div>
+
+        <!-- row & col settings -->
+        <div class="d-flex">
+          <v-text-field
+            v-model="imagePerPage"
+            label="Number of image per page"
+            type="number"
+            outlined
+            style="width: 170px"
+            class="mr-8"
+            @change="setImagePerPage"
+          ></v-text-field>
+          <v-text-field
+            :value="imageColSpan"
+            label="Number of columns (12 in total) per image"
+            type="number"
+            outlined
+            style="width: 260px"
+            @change="setImageColSpan"
+          ></v-text-field>
+        </div>
       </div>
 
-      <!-- Class filter -->
-      <div class="d-flex mb-4" style="width: 300px">
-        <v-btn
-          :disabled="selectedClass === 0"
-          class="mr-4"
-          depressed
-          color="primary"
-          @click="gotoClass"
-        >
-          GOTO CLASS
-        </v-btn>
-        <v-select
-          :items="classNames"
-          v-model="selectedClass"
-          dense
-          label="Class Name"
-          data-test="image-list-select-class-name"
-        >
-        </v-select>
-      </div>
-
-      <v-divider class="mb-8" style="width: 85%"></v-divider>
+      <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
       <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
-      <v-row v-else style="width: 85%">
+      <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
         <v-col
           v-for="(url, idx) in imageList"
           :key="url"
+          :cols="imageColSpan"
           class="d-flex child-flex"
-          cols="2"
           data-test="image-list-div-all-imgs"
         >
           <v-hover v-slot="{ hover }">
@@ -161,7 +180,6 @@ export default {
       inputPage: 0,
       maxPage: 0,
       imageList: [],
-      configs: configs,
       splitLength: 1000,
       classNames: [],
       classStartIdx: {},
@@ -169,6 +187,8 @@ export default {
       split: 'test_correct',
       image_id: '',
       image_url: '',
+      imagePerPage: configs.imagePerPage,
+      imageColSpan: configs.imageColSpan,
     };
   },
   mounted() {
@@ -214,8 +234,7 @@ export default {
         this.split,
         (res) => {
           this.splitLength = res.data.data;
-          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0));
-          console.log(res.data.data);
+          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
           this.getClassNames();
         },
         (err) => {
@@ -268,20 +287,41 @@ export default {
       if (this.inputPage > this.maxPage) {
         this.$root.alert('error', 'This is the end of the list.');
         this.inputPage = this.maxPage;
+      } else if (this.inputPage < 0) {
+        this.inputPage = 0;
       }
       this.currentPage = this.inputPage;
     },
     gotoClass() {
       let startIdx = this.classStartIdx[this.selectedClass];
-      this.currentPage = Math.floor(startIdx / configs.imagePerPage);
+      this.currentPage = Math.floor(startIdx / this.imagePerPage);
+      this.initImageList();
       this.loadImages();
     },
+    setImagePerPage(value) {
+      if (value > configs.MAX_IMAGE_PER_PAGE) {
+        this.imagePerPage = configs.MAX_IMAGE_PER_PAGE;
+      } else if (value < configs.MIN_IMAGE_PER_PAGE) {
+        this.imagePerPage = configs.MIN_IMAGE_PER_PAGE;
+      }
+      this.initImageList();
+      this.loadImages();
+    },
+    setImageColSpan(value) {
+      if (value > configs.MAX_IMAGE_COL_SPAN) {
+        this.imageColSpan = configs.MAX_IMAGE_COL_SPAN;
+      } else if (value < configs.MIN_IMAGE_COL_SPAN) {
+        this.imageColSpan = configs.MIN_IMAGE_COL_SPAN;
+      } else {
+        this.imageColSpan = value;
+      }
+    },
     loadImages() {
-      let imgNum = configs.imagePerPage;
+      let imgNum = this.imagePerPage;
 
       // handle last page
       if (this.currentPage === this.maxPage) {
-        imgNum = this.splitLength - configs.imagePerPage * this.maxPage;
+        imgNum = this.splitLength - this.imagePerPage * this.maxPage;
       }
 
       APIGetImageList(
@@ -320,5 +360,12 @@ export default {
 .v-card--reveal button {
   font-size: 0.5vw;
   overflow: hidden;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 80px;
+  z-index: 999;
+  background-color: white;
 }
 </style>
