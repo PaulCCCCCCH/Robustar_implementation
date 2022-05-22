@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex" style="height: 100%; max-width: 40%">
-    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
+  <div style="height: 100%; max-width: 30vw">
+    <v-sheet v-if="isActive" class="pa-4 sticky-content" color="white" elevation="1">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -225,5 +225,13 @@ export default {
 .float-button:hover {
   transform: translate(0, -50%);
   transition: 0.3s;
+}
+
+.sticky-content {
+  position: sticky;
+  top: 65px;
+  height: 95vh;
+  z-index: 9999;
+  background-color: white;
 }
 </style>

@@ -18,8 +18,8 @@ export const imageCoord2Idx = (row, col) => {
   return row * configs.imageListCol + col;
 };
 
-export const getPageNumber = (imageIdx) => {
-  return Math.floor(imageIdx / configs.imagePerPage);
+export const getPageNumber = (imageIdx, imagePerPage) => {
+  return Math.floor(imageIdx / imagePerPage);
 };
 
 
