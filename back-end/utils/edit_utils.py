@@ -58,10 +58,10 @@ def propose_edit(split, image_path, return_image=False):
 
     if split == 'train':
         train_img_path = image_path
-        proposed_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
+        proposed_path = dataManager.proposedset.convert_train_path_to_paired(train_img_path)
     elif split == 'annotated':
         proposed_path = image_path
-        train_img_path = dataManager.pairedset.convert_paired_path_to_train(proposed_path)
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(proposed_path)
     else:
         raise NotImplementedError("We can only propose an edit for 'train' or `annotated` split")
 

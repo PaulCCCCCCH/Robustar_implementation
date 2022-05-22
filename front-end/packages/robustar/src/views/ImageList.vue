@@ -123,6 +123,11 @@
                     <v-icon left>mdi-cogs</v-icon>
                     PREDICT
                   </v-btn>
+                  <v-btn v-if="$route.params.split === 'annotated'" outlined color="white" width="80%" @click="deleteAnnotatedImage(idx, url)">
+                    <v-icon left>mdi-cogs</v-icon>
+                    DELETE
+                  </v-btn>
+
                 </div>
               </v-expand-transition>
             </v-img>
@@ -145,6 +150,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
+import { APIDeleteEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
@@ -241,6 +247,16 @@ export default {
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
+    deleteImageSuccess(idx) {
+        this.imageList.splice(idx, 1);
+    },
+    deleteImageFailed() {
+        console.log('Delete image failed');
+    },
+    deleteAnnotatedImage(idx, url) {
+      APIDeleteEdit(this.split, getImageUrlFromFullUrl(url), () => this.deleteImageSuccess(idx), this.deleteImageFailed);
+    },
+
     gotoImage(idx, url, componentName) {
       this.setCurrentImage(idx, getImageUrlFromFullUrl(url));
       this.$router.push({

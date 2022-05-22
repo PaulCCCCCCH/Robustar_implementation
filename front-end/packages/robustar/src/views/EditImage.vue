@@ -105,6 +105,8 @@ export default {
     },
     getNextImageSuccess(res) {
       sessionStorage.setItem('image_url', res.data.data)
+      this.$refs.editor.initInstance();
+      this.loadImageInfo()
     },
     getNextImageFailed(res) {
       this.$root.alert('error', 'Failed to get next image');
@@ -113,7 +115,6 @@ export default {
     sendEditSuccess(res) {
       console.log(res);
       APIGetNextImage(this.split, this.image_url, this.getNextImageSuccess, this.getNextImageFailed);
-      this.$refs.editor.initInstance();
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
     },
@@ -130,7 +131,7 @@ export default {
       const height = sessionStorage.getItem('image_height');
       const width = sessionStorage.getItem('image_width');
       APISendEdit(
-        split,
+        this.split,
         image_url,
         height,
         width,

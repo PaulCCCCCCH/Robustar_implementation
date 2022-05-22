@@ -133,8 +133,8 @@ export default {
           this.proposedEditUrl = '';
           return;
         }
-        const proposedId = response.data.data;
-        this.proposedEditUrl = `${configs.imageServerUrl}/proposed/${proposedId}`;
+        const proposedPath = response.data.data;
+        this.proposedEditUrl = `${configs.imagePathServerUrl}/${proposedPath}`;
       };
       const failed = (err) => {
         console.log(err);
@@ -186,7 +186,7 @@ export default {
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
-          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`);
+          this.influImgUrl.push(`${configs.imagePathServerUrl}/${url}`);
         }
       };
 

@@ -1,4 +1,4 @@
-import { postRequest, getRequest } from './common';
+import { postRequest, getRequest, deleteRequest } from './common';
 
 /**
  * Send the annotated information to the server to be saved
@@ -31,4 +31,8 @@ export const APIGetProposedEdit = (split, image_url, success, failed) => {
 
 export const APIStartAutoAnnotate = (split, data, success, failed) => {
   postRequest(data, `/auto-annotate/${split}`, success, failed);
+};
+
+export const APIDeleteEdit = (split, image_url, success, failed) => {
+  deleteRequest(`/edit/${split}/${image_url}`, success, failed);
 };

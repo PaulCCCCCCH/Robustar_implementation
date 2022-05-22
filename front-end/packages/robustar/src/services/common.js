@@ -53,3 +53,21 @@ export const getRequest = (route, success, failed, pageNo) => {
     (res) => failed(res)
   );
 };
+
+/**
+ * make DELETE request
+ * @param {string} route
+ * @param {function} success callback for success
+ * @param {function} failed callback for failure
+ * @param {number} pageNo optional
+ */
+export const deleteRequest = (route, success, failed) => {
+  if (!failed) {
+    failed = (res) => console.log(res);
+  }
+  let requestUrl = `/api${route}`;
+  axios.delete(requestUrl).then(
+    (res) => handleResult(res, success, failed),
+    (res) => failed(res)
+  );
+};

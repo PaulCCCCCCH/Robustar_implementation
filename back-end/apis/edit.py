@@ -52,6 +52,7 @@ def api_user_edit(split, path):
     if split not in ['train', 'annotated']:
         RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
 
+    path = to_unix(path)
     json_data = request.get_json()
     encoded_string = json_data['image'].split(',')[1]
     decoded = base64.b64decode(encoded_string)
@@ -61,6 +62,11 @@ def api_user_edit(split, path):
 
     save_edit(split, path, decoded, h, w)
 
+    return RResponse.ok("Success!")
+
+@app.route('/edit/<split>/<path:path>', methods=['DELETE'])
+def api_delete_edit(split, path):
+    dataManager.pairedset.remove_image(path)
     return RResponse.ok("Success!")
 
 

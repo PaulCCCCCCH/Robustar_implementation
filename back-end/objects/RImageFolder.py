@@ -392,6 +392,7 @@ class RAnnotationFolder(RImageFolder):
 
         # 5. commit
         self.db_conn.commit()
+        return True
 
 
     def clear_images(self):
