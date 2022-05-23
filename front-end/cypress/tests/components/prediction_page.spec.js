@@ -1,8 +1,9 @@
+const { _ } = Cypress
 describe('This is testing visualizer', () => {
     beforeEach(() => {
-        cy.visit('image-list/train');
-        cy.getBySel('image-list-img-0').trigger('mouseenter');
-        cy.getBySel('image-list-btn-predict-image-0').click();
+        cy.visit('image-list/train').wait(500);
+        cy.getBySel('image-list-img-0').trigger('mouseenter').wait(500);
+        cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
     });
 
     // it('Test Visualizer button', () => {
@@ -14,48 +15,35 @@ describe('This is testing visualizer', () => {
       });
 
     it('Test Model Prediction Panel', () => {
-        cy.getBySel('model-prediction').click();
+        cy.getBySel('model-prediction').click()
         cy.getBySel('model-prediction-sheet')
-            .find('.num').invoke('text').then(parseFloat).should('be.lte', 1);
+            .find('.num').invoke('text').then(parseFloat).should('be.lte', 1).wait(500)
 
         let DataArr = {
             label:[],
             perc:[]
-        };
-        let flag = 1;
-        // labels are accessed at run-time from the chart object
+        };            
+        cy.get('li:nth-child(1)')
         cy.request('http://localhost:8080/api/predict/train/0')
             .then((res)=>{
                 DataArr.label = res.body.data[0]
                 DataArr.perc = res.body.data[1]
-                console.log('tag', DataArr)
-                for(var i=0; i<DataArr.perc.length; i++){
-                    if(DataArr.perc[i]> DataArr.perc[i+1]){
-                        flag = -1;
-                        console.log('"tag"', '')
-                    }
+                var down = 0
+                var up = 0
+                for(let i=0; i<DataArr.perc.length-1; i++){
+                    cy.getBySel(`item-${i}`).invoke('attr', 'title')
+                        .then((res)=>{
+                            up = parseFloat(res)
+                            
+                            cy.getBySel(`item-${i}`).parent().next().children(`[data-test=item-${i+1}]`).invoke('attr', 'title')
+                                .then((res)=>{
+                                    down = parseFloat(res)
+                                    expect(up).to.be.least(down)
+                                })
+                        })
                 }
             });
-
-
-            cy.get(flag);
-            
-            // make sure we have a valid list with labels
-            // .should('have.length.gt', 0)
-            // .then(labels => {
-            // labels.forEach((label, k) => {
-            //     cy.get(rectangles)
-            //     .eq(k)
-            //     .trigger('mousemove')
-            //     .wait(500)
-
-            //     cy.get('.graph-svg-tip', { log: false }).should('contain', label)
-            // })
-            // })
-
-            
-        cy.getBySel('model-prediction').click();
-      });
+    });
 
     it('Test Model Focus Panel', () => {
         cy.getBySel('model-focus').click();
