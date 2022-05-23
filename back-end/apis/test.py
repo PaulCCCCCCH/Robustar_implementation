@@ -4,7 +4,7 @@ from objects.RResponse import RResponse
 from objects.RServer import RServer
 from utils.test import start_test
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 
 
 @app.route('/test', methods=['POST'])

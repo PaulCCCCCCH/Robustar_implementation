@@ -15,3 +15,4 @@ from .test import *
 from .config import *
 from .socket import *
 from .task import *
+from .fs import *

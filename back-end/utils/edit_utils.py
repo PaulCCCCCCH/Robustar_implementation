@@ -9,7 +9,6 @@ from objects.RTask import RTask, TaskType
 import time
 
 server = RServer.getServer()
-app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
 

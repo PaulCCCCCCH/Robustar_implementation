@@ -7,7 +7,7 @@ from objects.RResponse import RResponse
 from utils.path_utils import to_unix
 from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer

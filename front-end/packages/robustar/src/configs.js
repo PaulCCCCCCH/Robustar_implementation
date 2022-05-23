@@ -5,7 +5,7 @@ export const configs = {
   MIN_IMAGE_PER_PAGE: 1,
   MAX_IMAGE_COL_SPAN: 12,
   MIN_IMAGE_COL_SPAN: 1,
-  serverUrl: process.env.VUE_APP_BASE_URL,
+  serverUrl: `${process.env.VUE_APP_BASE_URL}`,
   imageServerUrl: `${process.env.VUE_APP_BASE_URL}/image`,
   imagePathServerUrl: `${process.env.VUE_APP_BASE_URL}/dataset`,
 };

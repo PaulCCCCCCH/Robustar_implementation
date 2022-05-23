@@ -4,10 +4,8 @@ from utils.path_utils import to_unix
 from utils.predict import get_image_prediction, convert_predict_to_array
 from objects.RImageFolder import REvalImageFolder
 from os import path as osp
-import os
 from objects.RTask import RTask, TaskType
 
-# app = RServer.getServer().getFlaskApp()
 server = RServer.getServer()
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer

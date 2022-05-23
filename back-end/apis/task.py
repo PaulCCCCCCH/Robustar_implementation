@@ -2,7 +2,7 @@ from objects.RServer import RServer
 from objects.RResponse import RResponse
 from objects.RTask import RTask
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 
 
 @app.route("/task/stop/<tid>", methods=["GET"])

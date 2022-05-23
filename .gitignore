@@ -16,6 +16,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 **/*.log
+back-end/tests/runs/*
 
 back-end/runs
 back-end/influence_list

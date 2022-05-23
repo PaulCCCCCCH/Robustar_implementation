@@ -6,7 +6,7 @@ from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
-app = server.getFlaskApp()
+app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
 @app.route('/edit/<split>/<path:path>', methods=['POST'])
@@ -112,12 +112,13 @@ def api_auto_annotate(split):
     json_data = request.get_json()
     num_to_gen = int(json_data['num_to_gen'])
     try:
-      start_auto_annotate(split, num_to_gen)
+        start_auto_annotate(split, num_to_gen)
     except Exception as e:
-      RResponse.fail('auto annotation failed')
+        RResponse.fail('auto annotation failed')
 
     return RResponse.ok('success')
-      
+
+    
 
 if __name__ == '__main__':
     print(RServer)
