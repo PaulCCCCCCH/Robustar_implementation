@@ -96,7 +96,12 @@ def predict(split, image_id):
         output_object = predictBuffer[imageURL]
     else:
         # get output array from prediction
-        datasetImgPath = imageURLToPath(imageURL)
+        try:
+            datasetImgPath = imageURLToPath(imageURL)
+        except IndexError:
+            return RResponse.fail("Image with given id not exist")
+        except NotImplementedError:
+            return RResponse.fail("Split not supported")
 
         # try:
         imgPath = osp.join(server.baseDir, datasetImgPath).replace('\\', '/')

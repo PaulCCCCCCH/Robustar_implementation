@@ -41,6 +41,7 @@ def imageURLToPath(image_url):
     # If already buffered, just return
     if image_url in datasetFileBuffer:
         return datasetFileBuffer[image_url]
+
     if split == 'train':
         filePath = trainset.samples[imageIndex][0]
     elif split == 'annotated':
@@ -61,7 +62,7 @@ def imageURLToPath(image_url):
         filePath = get_test_correct(False, imageIndex)[0]
     else:
         # data split not supported
-        raise NotImplemented('Data split not supported')
+        raise NotImplementedError('Data split not supported')
 
     if filePath:
         filePath = normpath(filePath).replace('\\', '/')

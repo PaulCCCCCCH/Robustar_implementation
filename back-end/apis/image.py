@@ -34,10 +34,12 @@ def get_train_img(split, image_id):
     """
     try:
         url = imageURLToPath('/'.join([split, image_id]))
-    except Exception as e:
-        print(e)
+    except (IndexError, KeyError):
         return RResponse.fail('Image with given id not exist')
-    return redirect('/dataset/' + url)
+    except NotImplementedError:
+        return RResponse.fail('Split not supported')
+
+    return redirect('/dataset' + url)
 
 
 @app.route('/image/get-annotated/<image_id>')
@@ -91,7 +93,12 @@ def get_class_page(split):
       200:
         description: A map of class names with the index of the first image of the class
     """
-    return RResponse.ok(getClassStart(split))
+    try:
+        response = getClassStart(split)
+    except Exception:
+        return RResponse.fail("Split not supported")
+
+    return RResponse.ok(response)
 
 
 @app.route('/image/<split>')
@@ -122,7 +129,12 @@ def get_split_length(split):
               type: string
               example: Success
     """
-    return RResponse.ok(getSplitLength(split))
+    try:
+        response = getSplitLength(split)
+    except Exception:
+        return RResponse.fail("Split not supported")
+
+    return RResponse.ok(response)
 
 
 @app.route('/dataset/<path:dataset_img_path>')
@@ -132,6 +144,7 @@ def get_dataset_img(dataset_img_path):
         return send_file(normal_path)
     else:
         return RResponse.fail()
+
 
 @app.route('/visualize/<path:visualize_img_path>')
 def get_influence_img(visualize_img_path):

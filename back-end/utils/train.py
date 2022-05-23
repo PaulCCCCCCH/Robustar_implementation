@@ -9,11 +9,12 @@ import torchvision.transforms as transforms
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
+import multiprocessing
 
 def ml_initialize(configs):
 
     # Configs from training pad
-    use_paired_train = True if configs['use_paired_train'] == 'yes' else False
+    use_paired_train = configs['use_paired_train']
     paired_data_path = configs['paired_data_path']
     paired_train_mixture = configs['mixture']
     image_size = int(configs['image_size'])
@@ -39,22 +40,9 @@ def ml_initialize(configs):
     test_set = DataSet(testset, int(
         configs['image_size']), transforms, classes_path=configs['class_path'])
 
-    modelwrapper = initialize_model() # Model will be initialized with server config
+    # modelwrapper = initialize_model() # Model will be initialized with server config
+    modelwrapper = RServer.getModelWrapper()
     model = modelwrapper.model
-
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
-    print(configs['use_paired_train'])
 
     trainer = Trainer(
         net=model,
@@ -96,6 +84,15 @@ def update_info(status_dict):
     after each iteration, put it here.
     """
 
+
+def startTB(logdir):
+    """
+    Starts updating tensorboard.
+    """
+
+    os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
+
+
 def start_train(configs):
     """
     Starts training on a new thread which calls back influence calculating.
@@ -123,22 +120,14 @@ def start_train(configs):
         writer.add_scalar('train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
-        # import threading
         # Start the tensorboard writer as a new process
-
-        def startTB():
-            os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
-        t = threading.Thread(target=startTB)
+        t = multiprocessing.Process(target=startTB, args=(logdir,))
         t.start()
-
-        # os.system('tensorboard --logdir={} &'.format(logdir))
-        # Start training on a new thread
-        # train_thread = threading.Thread(target=trainer.start_train, args=(
-        #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
-        # train_thread.start()
+        trainer.set_tb_process(t)
 
         # Start training on a new thread
-        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model']))
+        train_thread = threading.Thread(target=trainer.start_train, args=(
+            update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         train_thread.start()
 
     except Exception as e:
@@ -146,16 +135,3 @@ def start_train(configs):
         return None
 
     return train_thread
-
-
-class TrainThread(threading.Thread):
-
-    def __init__(self, trainer, args, callback=None):
-        super(TrainThread, self).__init__()
-        self.trainer = trainer
-        self.args = args
-        self.callback = callback
-
-    def run(self):
-        call_back, epochs, auto_save = self.args
-        self.trainer.start_train(call_back, epochs, auto_save)
