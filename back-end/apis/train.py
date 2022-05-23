@@ -4,7 +4,7 @@ from utils.train import start_train
 from objects.RResponse import RResponse
 from objects.RTask import RTask, TaskType
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 
 @app.route('/train/stop', methods=['GET'])
 def stop_training():

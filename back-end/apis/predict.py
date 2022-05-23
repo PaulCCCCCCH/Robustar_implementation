@@ -1,21 +1,13 @@
-from numpy.lib.polynomial import roots
-import torchvision
-from matplotlib import pyplot as plt
 from flask import request
 
 from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
-from flask import jsonify
-from utils.image_utils import imageURLToPath
-from os import path as osp
-from utils.predict import convert_predict_to_array, CalcInfluenceThread
-from utils.image_utils import imageURLToPath
-import json
-from utils.predict import get_image_prediction
+from utils.path_utils import to_unix
+from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
@@ -23,24 +15,24 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>/<image_id>')
-def predict(split, image_id):
+@app.route('/predict/<split>/<path:image_path>')
+def predict(split, image_path):
     """
-    Gets the prediction path of the image specified by its id
+    Gets the prediction path of the image specified by its split and path
     ---
     tags:
       - predict
     parameters:
       - name: "split"
         in: "path"
-        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        description: "name of the split, valid values are 'train', 'test' or 'validation'"
         required: true
         type: "string"
-      - name: "image_id"
+      - name: "path"
         in: "path"
-        description: "the index of the image within the dataset"
+        description: "the path to the image to be predicted"
         required: true
-        type: "integer"
+        type: "string"
     responses:
       200:
         description: a list of [attribute, output_array, predict_fig_routes]
@@ -89,33 +81,22 @@ def predict(split, image_id):
     """
 
     # e.g.  train/10, test/300
-    imageURL = "{}/{}".format(split, image_id)
     visualize_root = dataManager.visualize_root
+    image_path = to_unix(image_path)
 
-    if imageURL in predictBuffer:
-        output_object = predictBuffer[imageURL]
+    if image_path in predictBuffer:
+        output_object = predictBuffer[image_path]
     else:
-        # get output array from prediction
-        try:
-            datasetImgPath = imageURLToPath(imageURL)
-        except IndexError:
-            return RResponse.fail("Image with given id not exist")
-        except NotImplementedError:
-            return RResponse.fail("Split not supported")
-
-        # try:
-        imgPath = osp.join(server.baseDir, datasetImgPath).replace('\\', '/')
-
-        output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
+        output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
 
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
-        image_name = imageURL.replace('.', '_').replace('/', '_').replace('\\', '_')
+        image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
 
         model = modelWrapper.model
 
-        output = visualize(model, imgPath, dataManager.image_size, server.configs['device'])
+        output = visualize(model, image_path, dataManager.image_size, server.configs['device'])
         if len(output) != 4:
             return RResponse.fail("Invalid number of predict visualize figures. Please check.")
 
@@ -126,8 +107,8 @@ def predict(split, image_id):
             fig.savefig(predict_fig_route)
             predict_fig_routes.append(predict_fig_route)
 
-        predictBuffer[imageURL] = [output_array, predict_fig_routes]
         output_object = [output_array, predict_fig_routes]
+        predictBuffer[image_path] = output_object
 
     # get attributes
     if split in ("train", 'annotated'):
@@ -153,8 +134,8 @@ def predict(split, image_id):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/<split>/<image_id>')
-def get_influence(split, image_id):
+@app.route('/influence/<split>/<path:image_path>')
+def get_influence(split, image_path):
     """
      Gets the influence for an image specified by its id
     ---
@@ -163,14 +144,14 @@ def get_influence(split, image_id):
     parameters:
       - name: "split"
         in: "path"
-        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        description: "name of the split, valid values are 'train', 'test' or 'validation'"
         required: true
         type: "string"
-      - name: "image_id"
+      - name: "image_path"
         in: "path"
-        description: "the index of the image within the dataset"
+        description: "the path to the image"
         required: true
-        type: "integer"
+        type: "string"
     responses:
       200:
         description: path of influence images, or influence not found or calculated
@@ -187,9 +168,9 @@ def get_influence(split, image_id):
               example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
-    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
-    if target_img_path in influence_dict:
-        return RResponse.ok(influence_dict[target_img_path], 'Success')
+    image_path = to_unix(image_path)
+    if image_path in influence_dict:
+        return RResponse.ok(influence_dict[image_path], 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
 
 

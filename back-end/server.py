@@ -8,6 +8,7 @@ from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
+from utils.path_utils import to_unix
 
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
 
@@ -39,11 +40,11 @@ def precheck():
 
     check_num_classes_consistency()
 
-
 def start_server():
-    baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
-    datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
-    ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
+    baseDir = to_unix(osp.join('/', 'Robustar2'))
+    datasetDir = to_unix(osp.join(baseDir, 'dataset'))
+    ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
+    dbPath = to_unix(osp.join(baseDir, 'data.db'))
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
@@ -66,8 +67,8 @@ def start_server():
     # Set data manager
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
-        baseDir, datasetDir,
-        batch_size=configs['batch_size'],
+        baseDir, datasetDir, dbPath,
+        batch_size=configs['batch_size'], 
         shuffle=configs['shuffle'],
         num_workers=configs['num_workers'],
         image_size=configs['image_size'],
@@ -91,7 +92,7 @@ def start_server():
     RServer.setAutoAnnotator(annotator)
 
     # register all api routes
-    import apis
+    RServer.registerAPIs()
 
     # Check file state consistency
     precheck()

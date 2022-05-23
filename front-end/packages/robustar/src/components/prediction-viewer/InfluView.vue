@@ -25,13 +25,9 @@ export default {
   },
   methods: {
     gotoImage(url) {
-      const [image_id, split] = getImageUrlFromFullUrl(url);
-      sessionStorage.setItem('split', split);
-      sessionStorage.setItem('image_id', image_id);
-      sessionStorage.setItem('image_url', url);
-      sessionStorage.setItem('save_image_id', split);
-      sessionStorage.setItem('save_image_split', image_id);
-      this.$router.push({ name: 'EditImage', params: { mode: split } });
+      sessionStorage.setItem('split', 'train');
+      sessionStorage.setItem('image_url', getImageUrlFromFullUrl(url));
+      this.$router.push({ name: 'EditImage', params: { mode: "train"} });
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex" style="height: 100%; max-width: 40%">
-    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
+  <div style="height: 100%; max-width: 30vw">
+    <v-sheet v-if="isActive" class="pa-4 sticky-content" color="white" elevation="1">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -74,7 +74,7 @@ export default {
       type: String,
       default: () => '',
     },
-    image_id: {
+    image_url: {
       type: String,
       default: () => '',
     },
@@ -102,7 +102,7 @@ export default {
     };
   },
   watch: {
-    image_id: function () {
+    image_url: function () {
       this.get_visualize_data();
     },
     split: function () {
@@ -121,27 +121,27 @@ export default {
   },
   methods: {
     get_visualize_data() {
-      if (this.split && this.image_id) {
-        this.view_prediction(this.split, this.image_id);
-        this.get_influence(this.split, this.image_id);
-        this.get_proposed_edit(this.split, this.image_id);
+      if (this.split && this.image_url) {
+        this.view_prediction(this.split, this.image_url);
+        this.get_influence(this.split, this.image_url);
+        this.get_proposed_edit(this.split, this.image_url);
       }
     },
-    get_proposed_edit(split, image_id) {
+    get_proposed_edit(split, image_url) {
       const success = (response) => {
         if (response.data.code == -1) {
           this.proposedEditUrl = '';
           return;
         }
-        const proposedId = response.data.data;
-        this.proposedEditUrl = `${configs.imageServerUrl}/proposed/${proposedId}`;
+        const proposedPath = response.data.data;
+        this.proposedEditUrl = `${configs.imagePathServerUrl}/${proposedPath}`;
       };
       const failed = (err) => {
         console.log(err);
       };
-      APIGetProposedEdit(split, image_id, success, failed);
+      APIGetProposedEdit(split, image_url, success, failed);
     },
-    view_prediction(split, image_id) {
+    view_prediction(split, image_url) {
       const success = (response) => {
         let cap = 10;
         let responseData = response.data.data;
@@ -169,10 +169,10 @@ export default {
         console.log(err);
         alert('Server error. Check console.');
       };
-      APIPredict(split, image_id, success, failed);
+      APIPredict(split, image_url, success, failed);
     },
 
-    get_influence(split, imageId) {
+    get_influence(split, image_url) {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
@@ -186,7 +186,7 @@ export default {
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
-          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`);
+          this.influImgUrl.push(`${configs.imagePathServerUrl}/${url}`);
         }
       };
 
@@ -194,7 +194,7 @@ export default {
         console.log(err);
       };
 
-      APIGetInfluenceImages(split, imageId, success, failed);
+      APIGetInfluenceImages(split, image_url, success, failed);
     },
 
     toggle_panel() {
@@ -225,5 +225,13 @@ export default {
 .float-button:hover {
   transform: translate(0, -50%);
   transition: 0.3s;
+}
+
+.sticky-content {
+  position: sticky;
+  top: 65px;
+  height: 95vh;
+  z-index: 9999;
+  background-color: white;
 }
 </style>

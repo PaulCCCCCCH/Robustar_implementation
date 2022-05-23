@@ -7,6 +7,7 @@
 <script>
 import ImageEditor from '@robustar/image-editor';
 import '@robustar/image-editor/dist/tui-image-editor.css';
+import { configs } from '@/configs.js';
 import whiteTheme from './white-theme.js';
 
 const includeUIOptions = {
@@ -56,8 +57,8 @@ export default {
         options = Object.assign(includeUIOptions, this.options);
       }
       options.includeUI.loadImage = {
-        path: sessionStorage.getItem('image_url'),
-        name: sessionStorage.getItem('image_id'),
+        path: `${configs.imagePathServerUrl}/${sessionStorage.getItem('image_url')}`,
+        name: sessionStorage.getItem('image_url')
       };
       this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
       this.addEventListener();

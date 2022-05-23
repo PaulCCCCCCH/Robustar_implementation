@@ -3,8 +3,7 @@ from flask import request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 
-app = RServer.getServer().getFlaskApp()
-
+app = RServer.getServer().getFlaskBluePrint()
 
 @app.route('/config', methods=['GET'])
 def get_config():
