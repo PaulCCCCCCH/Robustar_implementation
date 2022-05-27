@@ -13,7 +13,11 @@ const successCode = [200, 201];
  */
 const handleResult = (res, success, failed) => {
   if (successCode.includes(res.status)) {
-    success(res);
+    if (res.data.code == -1) {
+      console.log(res.data.msg)
+    } else{
+      success(res);
+    }
   } else {
     failed(res);
   }
