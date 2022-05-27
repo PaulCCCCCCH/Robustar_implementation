@@ -118,7 +118,7 @@ def predict(split, image_path):
     elif split in ("test", "test_correct", "test_incorrect"):
         attribute = dataManager.testset.classes
     else:
-        RResponse.fail("Wrong split. Please check.")
+        return RResponse.fail("Wrong split. Please check.")
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]

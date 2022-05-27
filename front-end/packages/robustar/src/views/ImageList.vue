@@ -205,6 +205,7 @@ export default {
     $route() {
       this.updateSplit();
       this.initImageList();
+      this.image_url = ''; // Reset current image url for visualizaer
     },
     currentPage() {
       sessionStorage.setItem(this.split, this.currentPage);
@@ -258,7 +259,6 @@ export default {
       APIGetClassNames(
         this.split,
         (res) => {
-          console.log(res.data.data);
           this.classStartIdx = res.data.data;
           this.classNames = Object.keys(this.classStartIdx);
           this.loadImages();
@@ -288,7 +288,7 @@ export default {
       this.setCurrentImage(idx, getImageUrlFromFullUrl(url));
       this.$router.push({
         name: componentName,
-        params: { mode: this.$route.params.split },
+        params: { split: this.$route.params.split },
       });
     },
     gotoPage() {

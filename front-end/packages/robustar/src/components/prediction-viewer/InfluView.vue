@@ -27,7 +27,7 @@ export default {
     gotoImage(url) {
       sessionStorage.setItem('split', 'train');
       sessionStorage.setItem('image_url', getImageUrlFromFullUrl(url));
-      this.$router.push({ name: 'EditImage', params: { mode: "train"} });
+      this.$router.push({ name: 'EditImage', params: { split: "train"} });
     },
   },
 };

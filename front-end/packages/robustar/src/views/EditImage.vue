@@ -48,6 +48,7 @@ export default {
   },
   mounted() {
     this.loadImageInfo();
+    this.split = this.$route.params.split;
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -57,7 +58,6 @@ export default {
   methods: {
     loadImageInfo() {
       this.image_url = sessionStorage.getItem('image_url');
-      this.split = sessionStorage.getItem('split');
     },
     loadEditSuccess(res) {
       const edit_url = res.data.data;
@@ -113,7 +113,6 @@ export default {
       console.log(res)
     },
     sendEditSuccess(res) {
-      console.log(res);
       APIGetNextImage(this.split, this.image_url, this.getNextImageSuccess, this.getNextImageFailed);
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
@@ -130,8 +129,9 @@ export default {
       const image_url = sessionStorage.getItem('image_url') || '';
       const height = sessionStorage.getItem('image_height');
       const width = sessionStorage.getItem('image_width');
+      const split = sessionStorage.getItem('split');
       APISendEdit(
-        this.split,
+        split,
         image_url,
         height,
         width,
