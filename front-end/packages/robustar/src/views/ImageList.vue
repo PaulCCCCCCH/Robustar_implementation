@@ -129,26 +129,40 @@
                   class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                   style="height: 100%"
                 >
-                  <v-btn
-                    class="mb-4"
-                    outlined
-                    color="white"
-                    width="80%"
-                    @click="gotoImage(idx, url, 'EditImage')"
-                    :data-test="`image-list-btn-edit-image-${idx}`"
-                  >
-                    <v-icon left>mdi-pencil</v-icon>
-                    ANNOTATE
-                  </v-btn>
-                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
-                    <v-icon left>mdi-cogs</v-icon>
-                    PREDICT
-                  </v-btn>
-                  <v-btn v-if="$route.params.split === 'annotated'" outlined color="white" width="80%" @click="deleteAnnotatedImage(idx, url)">
-                    <v-icon left>mdi-cogs</v-icon>
-                    DELETE
-                  </v-btn>
-
+                  <v-row>
+                    <v-btn
+                      color="secondary"
+                      class="my-5"
+                      icon
+                      small
+                      right
+                      absolute
+                      @click="deleteAnnotatedImage(idx, url)"
+                    >
+                      <v-icon color="red">mdi-close-box</v-icon>
+                    </v-btn>
+                  </v-row>
+                    <v-btn
+                      class="my-2"
+                      outlined
+                      color="white"
+                      width="80%"
+                      @click="gotoImage(idx, url, 'EditImage')"
+                      :data-test="`image-list-btn-edit-image-${idx}`"
+                    >
+                      <v-icon left>mdi-pencil</v-icon>
+                      ANNOTATE
+                    </v-btn>
+                    <v-btn
+                      outlined
+                      color="white"
+                      width="80%"
+                      class="my-3"
+                      @click="setCurrentImage(idx, url)"
+                    >
+                      <v-icon left>mdi-cogs</v-icon>
+                      PREDICT
+                    </v-btn>
                 </div>
               </v-expand-transition>
             </v-img>
@@ -215,7 +229,7 @@ export default {
   computed: {
     classification() {
       return [
-        { text: 'All', value: this.$route.params.split},
+        { text: 'All', value: this.$route.params.split },
         { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
@@ -275,13 +289,18 @@ export default {
       sessionStorage.setItem('image_url', this.image_url);
     },
     deleteImageSuccess(idx) {
-        this.imageList.splice(idx, 1);
+      this.imageList.splice(idx, 1);
     },
     deleteImageFailed() {
-        console.log('Delete image failed');
+      console.log('Delete image failed');
     },
     deleteAnnotatedImage(idx, url) {
-      APIDeleteEdit(this.split, getImageUrlFromFullUrl(url), () => this.deleteImageSuccess(idx), this.deleteImageFailed);
+      APIDeleteEdit(
+        this.split,
+        getImageUrlFromFullUrl(url),
+        () => this.deleteImageSuccess(idx),
+        this.deleteImageFailed
+      );
     },
 
     gotoImage(idx, url, componentName) {
