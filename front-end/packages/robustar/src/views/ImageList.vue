@@ -135,12 +135,12 @@
                     @click="gotoImage(url, 'EditImage')"
                     :data-test="`image-list-btn-edit-image-${idx}`"
                   >
-                    <v-icon left>mdi-pencil</v-icon>
-                    ANNOTATE
+                    <v-icon>mdi-pencil</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                   </v-btn>
                   <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
-                    <v-icon left>mdi-cogs</v-icon>
-                    PREDICT
+                    <v-icon>mdi-cogs</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                   </v-btn>
                   <v-btn
                     v-if="$route.params.split === 'annotated'"
@@ -150,8 +150,8 @@
                     width="80%"
                     @click="deleteAnnotatedImage(idx, url)"
                   >
-                    <v-icon left>mdi-cogs</v-icon>
-                    DELETE
+                    <v-icon>mdi-delete</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">DELETE</span>
                   </v-btn>
                 </div>
               </v-expand-transition>
