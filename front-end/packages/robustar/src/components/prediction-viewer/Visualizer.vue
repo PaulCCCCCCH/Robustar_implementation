@@ -227,7 +227,7 @@ export default {
   position: sticky;
   top: 65px;
   height: 95vh;
-  z-index: 9999;
+  z-index: 9;
   background-color: white;
 }
 </style>

@@ -19,8 +19,8 @@ import Visualizer from '@/components/prediction-viewer/Visualizer';
 /**
  * The implementation for this component is tricky, because after a `loadEdit` or `autoEdit` call
  * (and session storage is set to point to an annoated image), when you try to get next image, you should be able
- * to fetch the next **train** image instead of **annotated** image. 
- * 
+ * to fetch the next **train** image instead of **annotated** image.
+ *
  * This is achieved by always using this.split and this.image_url when getting next image, and using
  * session storage only for loading image. Sync the two when an image is just loaded, but don't sync them
  * when loading an image after `loadEdit` or `autoEdit` call
@@ -104,16 +104,21 @@ export default {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
     getNextImageSuccess(res) {
-      sessionStorage.setItem('image_url', res.data.data)
+      sessionStorage.setItem('image_url', res.data.data);
       this.$refs.editor.initInstance();
-      this.loadImageInfo()
+      this.loadImageInfo();
     },
     getNextImageFailed(res) {
       this.$root.alert('error', 'Failed to get next image');
-      console.log(res)
+      console.log(res);
     },
     sendEditSuccess(res) {
-      APIGetNextImage(this.split, this.image_url, this.getNextImageSuccess, this.getNextImageFailed);
+      APIGetNextImage(
+        this.split,
+        this.image_url,
+        this.getNextImageSuccess,
+        this.getNextImageFailed
+      );
       this.$root.finishProcessing();
       this.$root.alert('success', 'Sending succeeded');
     },

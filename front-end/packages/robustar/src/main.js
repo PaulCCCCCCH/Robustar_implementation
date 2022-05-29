@@ -11,10 +11,10 @@ Vue.config.productionTip = false;
 Vue.use(
   new VueSocketIO({
     debug: false,
-    // connection: SocketIO(configs.serverUrl, { transports: ['websocket'] }),
-    connection: configs.serverUrl,
+    connection: SocketIO(configs.serverUrl, { transports: ['websocket'] }),
+    // connection: configs.serverUrl,
     extraHeaders: { 'Access-Control-Allow-Origin': '*' },
-    // options: { transports: ['websocket'] },
+    options: { transports: ['websocket'] },
   })
 );
 
