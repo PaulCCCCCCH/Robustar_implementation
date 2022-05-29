@@ -144,6 +144,7 @@
                   </v-btn>
                   <v-btn
                     v-if="$route.params.split === 'annotated'"
+                    class="mt-4"
                     outlined
                     color="white"
                     width="80%"
@@ -294,7 +295,7 @@ export default {
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-    deleteImageSuccess(idx) {
+    deleteImageSuccess() {
       this.initImageList();
     },
     deleteImageFailed() {
