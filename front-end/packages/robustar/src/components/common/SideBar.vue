@@ -14,7 +14,7 @@
 
     <v-list nav>
       <!-- first level -->
-      <div v-for="(item, i) in items" :key="i">
+      <div v-for="item in items" :key="item.text" class="mb-2">
         <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
@@ -22,12 +22,15 @@
           <v-list-item-content>
             <v-list-item-title v-text="item.text"></v-list-item-title> </v-list-item-content
         ></v-list-item>
-        <v-list-group v-else :value="false" :prepend-icon="item.icon">
+        <v-list-group v-else :value="isGroupActive" :prepend-icon="item.icon" no-action>
           <template v-slot:activator>
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
           </template>
+
           <!-- second level -->
-          <div v-for="(child, i) in item.children" :key="i">
+          <div v-for="child in item.children" :key="child.text">
             <v-list-item v-if="!child.children" color="primary" :to="{ path: '/' + child.link }">
               <v-list-item-icon>
                 <v-icon v-text="child.icon"></v-icon>
@@ -35,7 +38,7 @@
               <v-list-item-content>
                 <v-list-item-title v-text="child.text"></v-list-item-title> </v-list-item-content
             ></v-list-item>
-            <v-list-group v-else :value="true" no-action sub-group>
+            <v-list-group v-else no-action sub-group>
               <template v-slot:activator>
                 <v-list-item-content>
                   <v-list-item-title>{{ child.text }}</v-list-item-title>
@@ -43,8 +46,8 @@
               </template>
               <!-- third level -->
               <v-list-item
-                v-for="(desc, i) in child.children"
-                :key="i"
+                v-for="desc in child.children"
+                :key="desc.text"
                 :to="{ path: '/' + desc.link }"
               >
                 <v-list-item-subtitle v-text="desc.text"></v-list-item-subtitle>
@@ -72,34 +75,37 @@ export default {
           icon: 'mdi-eye',
           children: [
             { text: 'Training Data', icon: '', link: 'image-list/train' },
+            { text: 'Annotated Data', icon: '', link: 'image-list/annotated' },
             {
               text: 'Validation Data',
               icon: '',
-              children: [{ text: 'Correctly Classified', link: 'image-list/validation_correct' },
-                         { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' }],
+              link: 'image-list/validation',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/validation_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
+              // ],
             },
             {
               text: 'Test Data',
               icon: '',
-              children: [{ text: 'Correctly Classified', link: 'image-list/test_correct' },
-                         { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' }],
+              link: 'image-list/test',
+              // children: [
+              //   { text: 'Correctly Classified', link: 'image-list/test_correct' },
+              //   { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
+              // ],
             },
           ],
         },
         { text: 'Test', icon: 'mdi-code-braces', link: 'test' },
+        { text: 'Auto Annotate', icon: 'mdi-auto-fix', link: 'auto-annotate' },
+        { text: 'Config', icon: 'mdi-file-table-box', link: 'config' },
         { text: 'About', icon: 'mdi-information', link: 'about' },
       ],
     };
   },
-  methods: {
-    navigateTo(path) {
-      if (this.$route.path != path) {
-        this.$router.push(path);
-      }
-    },
-    changewindow() {
-      this.is_mini_side_bar = !this.is_mini_side_bar;
-      this.$emit('updatewindow', this.is_mini_side_bar);
+  computed: {
+    isGroupActive() {
+      return this.$route.path.startsWith('/image-list/');
     },
   },
 };

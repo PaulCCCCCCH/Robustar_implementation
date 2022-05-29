@@ -1,62 +1,31 @@
 <template>
-  <div style="height: 100%">
-    <!-- <v-btn depressed color="#FDBA3B" class="white--text float-button" @click="adjustImageSize">
-      adjust
-    </v-btn> -->
-
-    <div style="position: absolute; top: 50px; width: 100%">
-      <Visualizer />
-    </div>
+  <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
     <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
-
-    <v-overlay :value="sending" opacity="0.7">
-      <v-progress-circular indeterminate size="30" class="mr-4"></v-progress-circular>
-      <span style="vertical-align: middle">
-        The editing information of this image is being sent. Please wait...
-      </span>
-    </v-overlay>
-
-    <!-- sending succeeded -->
-    <v-snackbar
-      rounded
-      dark
-      right
-      v-model="snackbar"
-      timeout="3000"
-      elevation="3"
-      transition="slide-x-reverse-transition"
-      class="mb-2 mr-2"
-    >
-      <div class="white--text">Sending succeeded</div>
-      <template v-slot:action="{ attrs }">
-        <v-btn color="accent" text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
-
-    <!-- sending failed -->
-    <v-snackbar
-      rounded
-      dark
-      right
-      v-model="snackbarError"
-      timeout="3000"
-      elevation="3"
-      transition="slide-x-reverse-transition"
-      class="mb-2 mr-2"
-    >
-      <div class="white--text">Sending failed</div>
-      <template v-slot:action="{ attrs }">
-        <v-btn color="error" text v-bind="attrs" @click="snackbarError = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
+    <Visualizer
+      :is-active="image_url !== ''"
+      :image_url="image_url"
+      :split="split"
+      @open="loadImageInfo"
+      @close="image_url = ''"
+    />
   </div>
 </template>
 <script>
 import ImageEditor from '@/components/image-editor/ImageEditor';
-import { APISendEdit } from '@/apis/edit';
-import { getNextImageByIdAndURL } from '@/utils/image_utils';
-import  Visualizer from '@/components/prediction-viewer/Visualizer';
+import { APISendEdit, APIGetProposedEdit } from '@/services/edit';
+import { APIGetAnnotated, APIGetNextImage } from '@/services/images';
+import Visualizer from '@/components/prediction-viewer/Visualizer';
 
+/**
+ * The implementation for this component is tricky, because after a `loadEdit` or `autoEdit` call
+ * (and session storage is set to point to an annoated image), when you try to get next image, you should be able
+ * to fetch the next **train** image instead of **annotated** image. 
+ * 
+ * This is achieved by always using this.split and this.image_url when getting next image, and using
+ * session storage only for loading image. Sync the two when an image is just loaded, but don't sync them
+ * when loading an image after `loadEdit` or `autoEdit` call
+ *
+ */
 export default {
   components: {
     ImageEditor,
@@ -70,12 +39,16 @@ export default {
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
         apiSendEdit: this.sendEdit.bind(this),
+        apiLoadEdit: this.loadEdit.bind(this),
+        apiAutoEdit: this.autoEdit.bind(this),
       },
-
-      sending: false, // sending image data
-      snackbar: false,
-      snackbarError: false,
+      image_url: '',
+      split: '',
     };
+  },
+  mounted() {
+    this.loadImageInfo();
+    this.split = this.$route.params.split;
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -83,34 +56,83 @@ export default {
     });
   },
   methods: {
+    loadImageInfo() {
+      this.image_url = sessionStorage.getItem('image_url');
+    },
+    loadEditSuccess(res) {
+      const edit_url = res.data.data;
+      if (!edit_url) {
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'No previous annotation found');
+      } else {
+        // Don't change this.split and this.image_url here because they will be used
+        // to get the next image
+        sessionStorage.setItem('split', 'annotated');
+        sessionStorage.setItem('image_url', edit_url);
+        this.$refs.editor.initInstance();
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Previous annotation loaded');
+      }
+    },
+    loadEditFailed(res) {
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Failed to load previous annotation');
+    },
+    loadEdit() {
+      this.$root.startProcessing('Loading previous annotation. Please wait...');
+      APIGetAnnotated(this.split, this.image_url, this.loadEditSuccess, this.loadEditFailed);
+    },
+    autoEditSuccess(res) {
+      const proposed_url = res.data.data;
+      // Same as above, don't change this.split and this.image_url here because they will be used
+      // to get the next image
+      sessionStorage.setItem('image_url', proposed_url);
+      sessionStorage.setItem('split', 'proposed');
+      this.$refs.editor.initInstance();
+      this.$root.finishProcessing();
+      this.$root.alert('success', 'Automatic annotation applied.');
+    },
+    autoEditFailed(res) {
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Failed to auto annotate');
+    },
+    autoEdit() {
+      this.$root.startProcessing('Auto-annotating...');
+      APIGetProposedEdit(this.split, this.image_url, this.autoEditSuccess, this.autoEditFailed);
+    },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
-    sendEditSuccess(res) {
-      // TODO: Edit success and jump to the next image or back to the image list
-      console.log(res);
-      const id = localStorage.getItem('image_id');
-      const url = localStorage.getItem('image_url');
-      const [newId, newUrl] = getNextImageByIdAndURL(id, url);
-      localStorage.setItem('image_id', newId);
-      localStorage.setItem('image_url', newUrl);
+    getNextImageSuccess(res) {
+      sessionStorage.setItem('image_url', res.data.data)
       this.$refs.editor.initInstance();
-      this.sending = false;
-      this.snackbar = true;
+      this.loadImageInfo()
+    },
+    getNextImageFailed(res) {
+      this.$root.alert('error', 'Failed to get next image');
+      console.log(res)
+    },
+    sendEditSuccess(res) {
+      APIGetNextImage(this.split, this.image_url, this.getNextImageSuccess, this.getNextImageFailed);
+      this.$root.finishProcessing();
+      this.$root.alert('success', 'Sending succeeded');
     },
     sendEditFailed(res) {
       console.log(res);
-      this.sending = false;
-      this.snackbarError = true;
+      this.$root.finishProcessing();
+      this.$root.alert('error', 'Sending failed');
     },
     sendEdit(image_base64) {
-      this.sending = true;
-      const image_id = localStorage.getItem('image_id') || '';
-      const height = localStorage.getItem('image_height');
-      const width = localStorage.getItem('image_width');
+      this.$root.startProcessing(
+        'The editing information of this image is being sent. Please wait...'
+      );
+      const image_url = sessionStorage.getItem('image_url') || '';
+      const height = sessionStorage.getItem('image_height');
+      const width = sessionStorage.getItem('image_width');
+      const split = sessionStorage.getItem('split');
       APISendEdit(
-        'train',
-        image_id,
+        split,
+        image_url,
         height,
         width,
         image_base64,
