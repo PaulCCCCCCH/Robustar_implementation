@@ -96,20 +96,31 @@
           ></v-text-field>
         </div>
       </div>
-
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
       <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
+
         <v-col
           v-for="(url, idx) in imageList"
           :key="url"
           :cols="imageColSpan"
-          class="d-flex child-flex"
           data-test="image-list-div-all-imgs"
         >
+          <!-- class="d-flex child-flex" -->
+          <div class="d-flex align-right">
+            <v-btn
+              color="secondary"
+              class="mr-n1 mb-n1 mx-auto"
+              icon
+              small
+              @click="deleteAnnotatedImage(idx, url)"
+            >
+              <v-icon color="red">mdi-close-box</v-icon>
+            </v-btn>
+          </div>
           <v-hover v-slot="{ hover }">
             <v-img
               :src="url"
@@ -123,46 +134,28 @@
                   </v-progress-circular>
                 </v-row>
               </template>
+
               <v-expand-transition>
                 <div
                   v-if="hover"
                   class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                   style="height: 100%"
                 >
-                  <v-row>
-                    <v-btn
-                      color="secondary"
-                      class="my-5"
-                      icon
-                      small
-                      right
-                      absolute
-                      @click="deleteAnnotatedImage(idx, url)"
-                    >
-                      <v-icon color="red">mdi-close-box</v-icon>
-                    </v-btn>
-                  </v-row>
-                    <v-btn
-                      class="my-2"
-                      outlined
-                      color="white"
-                      width="80%"
-                      @click="gotoImage(idx, url, 'EditImage')"
-                      :data-test="`image-list-btn-edit-image-${idx}`"
-                    >
-                      <v-icon left>mdi-pencil</v-icon>
-                      ANNOTATE
-                    </v-btn>
-                    <v-btn
-                      outlined
-                      color="white"
-                      width="80%"
-                      class="my-3"
-                      @click="setCurrentImage(idx, url)"
-                    >
-                      <v-icon left>mdi-cogs</v-icon>
-                      PREDICT
-                    </v-btn>
+                  <v-btn
+                    class="mb-4"
+                    outlined
+                    color="white"
+                    width="80%"
+                    @click="gotoImage(idx, url, 'EditImage')"
+                    :data-test="`image-list-btn-edit-image-${idx}`"
+                  >
+                    <v-icon left>mdi-pencil</v-icon>
+                    ANNOTATE
+                  </v-btn>
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
+                    <v-icon left>mdi-cogs</v-icon>
+                    PREDICT
+                  </v-btn>
                 </div>
               </v-expand-transition>
             </v-img>
