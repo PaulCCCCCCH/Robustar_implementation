@@ -2,7 +2,7 @@
   <div class="d-flex justify-center align-center" style="height: 100%">
     <div class="d-flex flex-column flex-grow-1 align-center py-8">
       <!-- sticky header: settings -->
-      <div class="d-flex flex-column align-center rounded px-8 sticky-header">
+      <div class="d-flex flex-column align-center rounded px-8 elevation-2 sticky-header">
         <div
           v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
           style="width: 200px"
@@ -30,9 +30,7 @@
 
           <!-- Refresh page button & page number -->
           <div class="d-flex align-center mx-8">
-            <v-btn class="mr-4" depressed color="primary" :disabled="!hasImages" @click="gotoPage">
-              GOTO PAGE
-            </v-btn>
+            <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
             <v-text-field
               data-test="image-list-input-page-number"
               v-model="inputPage"
@@ -77,23 +75,23 @@
 
         <!-- row & col settings -->
         <div class="d-flex">
-          <v-text-field
+          <v-select
+            :items="imagePerPageOptions"
             v-model="imagePerPage"
             label="Number of image per page"
-            type="number"
-            outlined
-            style="width: 170px"
             class="mr-8"
-            @change="setImagePerPage"
-          ></v-text-field>
-          <v-text-field
-            :value="imageColSpan"
-            label="Number of columns (12 in total) per image"
-            type="number"
             outlined
-            style="width: 260px"
-            @change="setImageColSpan"
-          ></v-text-field>
+            @change="resetImageList"
+          >
+          </v-select>
+          <v-select
+            :items="Object.keys(imageSizeMap)"
+            v-model="imageSize"
+            label="Image size"
+            outlined
+            @change="setImageSize"
+          >
+          </v-select>
         </div>
       </div>
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
@@ -106,7 +104,7 @@
         <v-col
           v-for="(url, idx) in imageList"
           :key="url"
-          :cols="imageColSpan"
+          :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
           <!-- class="d-flex child-flex" -->
@@ -146,15 +144,15 @@
                     outlined
                     color="white"
                     width="80%"
-                    @click="gotoImage(idx, url, 'EditImage')"
+                    @click="gotoImage(url, 'EditImage')"
                     :data-test="`image-list-btn-edit-image-${idx}`"
                   >
-                    <v-icon left>mdi-pencil</v-icon>
-                    ANNOTATE
+                    <v-icon>mdi-pencil</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                   </v-btn>
-                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
-                    <v-icon left>mdi-cogs</v-icon>
-                    PREDICT
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
+                    <v-icon>mdi-cogs</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                   </v-btn>
                 </div>
               </v-expand-transition>
@@ -200,18 +198,29 @@ export default {
       selectedClass: 0,
       split: 'test_correct',
       image_url: '',
-      imagePerPage: configs.imagePerPage,
-      imageColSpan: configs.imageColSpan,
+      imagePerPage: 0,
+      imageSize: configs.imageSize,
+      imageSizeMap: {
+        'extra small': 1,
+        small: 2,
+        medium: 3,
+        large: 4,
+        'extra large': 6,
+      },
     };
   },
   mounted() {
     this.updateSplit();
+    this.fetchCurrentPage();
+    this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
   },
   watch: {
     $route() {
       this.updateSplit();
+      this.fetchCurrentPage();
       this.initImageList();
+      this.image_url = ''; // Reset current image url for visualizaer
     },
     currentPage() {
       sessionStorage.setItem(this.split, this.currentPage);
@@ -230,26 +239,34 @@ export default {
     hasImages() {
       return this.imageList.length > 0;
     },
+    imagePerPageOptions() {
+      const imagePerRow = 12 / this.imageSizeMap[this.imageSize];
+      // images per page is a multiple of imagePerRow
+      return new Array(5).fill().map((option, index) => imagePerRow * (index + 1));
+    },
   },
   methods: {
     fetchImageUrl() {
       this.image_url = sessionStorage.getItem('image_url') || '';
     },
+    fetchCurrentPage() {
+      this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
+      sessionStorage.setItem(this.split, this.currentPage);
+    },
     updateSplit() {
       this.split = this.$route.params.split;
     },
     initImageList() {
-      this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
-      sessionStorage.setItem(this.split, this.currentPage);
       APIGetSplitLength(
         this.split,
         (res) => {
           this.splitLength = res.data.data;
           this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
           this.getClassNames();
+          this.loadImages();
         },
         (err) => {
-          console.log(err);
+          this.$root.alert('error', 'Image list initialization failed');
           this.imageList = [];
         }
       );
@@ -265,27 +282,25 @@ export default {
       APIGetClassNames(
         this.split,
         (res) => {
-          console.log(res.data.data);
           this.classStartIdx = res.data.data;
           this.classNames = Object.keys(this.classStartIdx);
-          this.loadImages();
         },
         (err) => {
-          console.log(err);
+          this.$root.alert('error', 'Fetching class names failed');
           this.imageList = [];
         }
       );
     },
-    setCurrentImage(idx, url) {
+    setCurrentImage(url) {
       this.image_url = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-    deleteImageSuccess(idx) {
-      this.imageList.splice(idx, 1);
+    deleteImageSuccess() {
+      this.initImageList();
     },
     deleteImageFailed() {
-      console.log('Delete image failed');
+      this.$root.alert('error', 'Image deletion failed');
     },
     deleteAnnotatedImage(idx, url) {
       APIDeleteEdit(
@@ -295,12 +310,11 @@ export default {
         this.deleteImageFailed
       );
     },
-
-    gotoImage(idx, url, componentName) {
-      this.setCurrentImage(idx, getImageUrlFromFullUrl(url));
+    gotoImage(url, componentName) {
+      this.setCurrentImage(getImageUrlFromFullUrl(url));
       this.$router.push({
         name: componentName,
-        params: { mode: this.$route.params.split },
+        params: { split: this.$route.params.split },
       });
     },
     gotoPage() {
@@ -316,39 +330,17 @@ export default {
     gotoClass() {
       let startIdx = this.classStartIdx[this.selectedClass];
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
-      this.initImageList();
       this.loadImages();
     },
-    setImagePerPage(value) {
-      if (value > configs.MAX_IMAGE_PER_PAGE) {
-        this.imagePerPage = configs.MAX_IMAGE_PER_PAGE;
-      } else if (value < configs.MIN_IMAGE_PER_PAGE) {
-        this.imagePerPage = configs.MIN_IMAGE_PER_PAGE;
-      }
-      this.initImageList();
-      this.loadImages();
-    },
-    setImageColSpan(value) {
-      if (value > configs.MAX_IMAGE_COL_SPAN) {
-        this.imageColSpan = configs.MAX_IMAGE_COL_SPAN;
-      } else if (value < configs.MIN_IMAGE_COL_SPAN) {
-        this.imageColSpan = configs.MIN_IMAGE_COL_SPAN;
-      } else {
-        this.imageColSpan = value;
-      }
+    setImageSize() {
+      this.imagePerPage = this.imagePerPageOptions[1];
+      this.resetImageList();
     },
     loadImages() {
-      let imgNum = this.imagePerPage;
-
-      // handle last page
-      if (this.currentPage === this.maxPage) {
-        imgNum = this.splitLength - this.imagePerPage * this.maxPage;
-      }
-
       APIGetImageList(
         this.split,
         this.currentPage,
-        imgNum,
+        this.imagePerPage,
         (res) => {
           const list = res.data.data;
           this.$nextTick(() => {
@@ -359,7 +351,7 @@ export default {
           });
         },
         (err) => {
-          console.log(err);
+          this.$root.alert('error', 'Loading images failed');
           this.imageList = [];
         }
       );
@@ -386,7 +378,7 @@ export default {
 .sticky-header {
   position: sticky;
   top: 80px;
-  z-index: 999;
+  z-index: 9;
   background-color: white;
 }
 </style>
