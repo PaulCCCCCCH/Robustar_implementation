@@ -110,6 +110,7 @@
           <!-- class="d-flex child-flex" -->
           <div class="d-flex align-right">
             <v-btn
+              v-if="$route.params.split === 'annotated'"
               color="secondary"
               class="mr-n1 mb-n1 mx-auto"
               icon
