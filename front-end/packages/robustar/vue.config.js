@@ -4,7 +4,6 @@ module.exports = {
     host: 'localhost',
     port: process.env.VUE_APP_DEV_PORT,
     open: true,
-    hotOnly: true,
     overlay: {
       warnings: false,
       errors: false,
@@ -12,7 +11,7 @@ module.exports = {
     proxy: {
       '/api': {
         target: process.env.VUE_APP_BASE_URL,
-        // ws: true,
+        ws: true,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',
