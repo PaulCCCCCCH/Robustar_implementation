@@ -138,7 +138,8 @@
                     <v-icon>mdi-pencil</v-icon>
                     <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                   </v-btn>
-                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)"
+                  :data-test="`image-list-btn-predict-image-${idx}`">
                     <v-icon>mdi-cogs</v-icon>
                     <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                   </v-btn>
@@ -149,7 +150,6 @@
                     color="white"
                     width="80%"
                     @click="deleteAnnotatedImage(idx, url)"
-                    :data-test="`image-list-btn-predict-image-${idx}`"
                   >
                     <v-icon>mdi-delete</v-icon>
                     <span v-if="imageSize !== 'extra small'" class="ml-2">DELETE</span>

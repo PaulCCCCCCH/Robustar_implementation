@@ -23,34 +23,36 @@ describe('This is testing visualizer', () => {
       .should('be.lte', 1)
       .wait(500);
 
-    let DataArr = {
-      label: [],
-      perc: [],
-    };
     cy.get('li:nth-child(1)');
-    cy.request('http://localhost:8080/api/predict/train/0').then((res) => {
-      DataArr.label = res.body.data[0];
-      DataArr.perc = res.body.data[1];
-      var down = 0;
-      var up = 0;
-      for (let i = 0; i < DataArr.perc.length - 1; i++) {
-        cy.getBySel(`item-${i}`)
-          .invoke('attr', 'title')
-          .then((res) => {
-            up = parseFloat(res);
 
-            cy.getBySel(`item-${i}`)
-              .parent()
-              .next()
-              .children(`[data-test=item-${i + 1}]`)
-              .invoke('attr', 'title')
-              .then((res) => {
-                down = parseFloat(res);
-                expect(up).to.be.least(down);
-              });
-          });
-      }
-    });
+    let intialLength = 0;
+    cy.getBySel('table').find("li").then((li) => {
+        intialLength = li.length;
+    })
+
+    cy.getBySel('table').find("li").then((res)=>{
+        console.log('li', res)
+        var down = 0;
+        var up = 0;
+        for (let i = 0; i < intialLength - 1; i++) {
+          cy.getBySel(`item-${i}`)
+            .invoke('attr', 'title')
+            .then((res) => {
+              up = parseFloat(res);
+  
+              cy.getBySel(`item-${i}`)
+                .parent()
+                .next()
+                .children(`[data-test=item-${i + 1}]`)
+                .invoke('attr', 'title')
+                .then((res) => {
+                  down = parseFloat(res);
+                  expect(up).to.be.least(down);
+                });
+            });
+        }        
+
+    });  
   });
 
   it('Test Model Focus Panel', () => {
@@ -72,7 +74,7 @@ describe('This is testing visualizer', () => {
   });
 
   it('Test single page panel expansion/closing', () => {
-    cy.getBySel('model-prediction').click();
+    cy.getBySel('model-prediction').click().wait(500);
     cy.getBySel('model-prediction-sheet').should('be.visible');
     cy.getBySel('model-focus').click();
     cy.getBySel('model-focus-panel').should('be.visible');
