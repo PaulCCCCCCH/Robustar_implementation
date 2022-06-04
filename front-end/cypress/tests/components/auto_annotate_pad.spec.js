@@ -13,7 +13,6 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('image-list-img-1').trigger('mouseenter');
     cy.getBySel('image-list-btn-edit-image-1').click();
     cy.checkSessionStorage('split', 'annotated');
-
   });
 
   it('Delete the Only One Task', () => {
@@ -28,7 +27,7 @@ describe('Auto Annotate Pad', () => {
   it('Test Input Zero', () => {
     cy.getBySel('auto-annotate-input-sample-per-class').clear().type('0');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
-    cy.getBySel('header-toggle-tasks-panel').click()
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.get('p').should('have.text', 'No task is running now.');
   });
 
@@ -36,24 +35,23 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('auto-annotate-input-sample-per-class').clear().type('0100').click();
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
 
-    cy.getBySel('header-toggle-tasks-panel').click()
-    cy.getBySel('task-panel-progress-linear').should('contain', "100")
+    cy.getBySel('header-toggle-tasks-panel').click();
+    cy.getBySel('task-panel-progress-linear').should('contain', '100');
   });
-
 
   it('Test Input Big Integer', () => {
     cy.getBySel('auto-annotate-input-sample-per-class').clear().type('9999');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
-    cy.getBySel('header-toggle-tasks-panel').click()
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
-    cy.getBySel('task-panel-progress-linear').should('contain', "9000")
+    cy.getBySel('task-panel-progress-linear').should('contain', '9000');
     cy.getBySel('task-panel-stop-task').click();
   });
 
   it('Test Input Floating Point Number', () => {
     cy.getBySel('auto-annotate-input-sample-per-class').clear().type('9.9');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
-    cy.getBySel('header-toggle-tasks-panel').click()
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.get('p').should('have.text', 'No task is running now.');
   });
 });
