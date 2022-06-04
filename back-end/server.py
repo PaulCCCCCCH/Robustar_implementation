@@ -8,8 +8,10 @@ from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
+from utils.path_utils import to_unix
 
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
+
 
 def precheck():
     def check_num_classes_consistency():
@@ -22,33 +24,34 @@ def precheck():
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []
-        if len(trainset.classes)!=classes_num:
+        if len(trainset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Training Set", len(trainset.classes))
             )
-        if len(testset.classes)!=classes_num:
+        if len(testset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Test Set", len(trainset.classes))
             )
-        if len(validationset.classes)!=classes_num:
+        if len(validationset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Validation Set", len(trainset.classes))
             )
-        assert len(errors)==0, "\n".join(errors)
-    check_num_classes_consistency()
-    
+        assert len(errors) == 0, "\n".join(errors)
 
-if __name__ == "__main__":
-    baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
-    datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
-    ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
+    check_num_classes_consistency()
+
+def start_server():
+    baseDir = to_unix(osp.join('/', 'Robustar2'))
+    datasetDir = to_unix(osp.join(baseDir, 'dataset'))
+    ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
+    dbPath = to_unix(osp.join(baseDir, 'data.db'))
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
     class2labelPath = osp.join(baseDir, 'class2label.json')
     class2labelMapping = {}
-    if os.path.exists(class2labelPath):
+    if osp.exists(class2labelPath):
         try:
             with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
@@ -59,12 +62,12 @@ if __name__ == "__main__":
     else:
         print('Class to label file not found!')
 
-    # Create server 
+    # Create server
 
     # Set data manager
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
-        baseDir, datasetDir, 
+        baseDir, datasetDir, dbPath,
         batch_size=configs['batch_size'], 
         shuffle=configs['shuffle'],
         num_workers=configs['num_workers'],
@@ -82,17 +85,21 @@ if __name__ == "__main__":
     # TODO: model_name and checkpoint hard-coded for now
     checkpoint_name = "u2net.pth"
     annotator = RAutoAnnotator(
-        configs['device'], 
-        checkpoint=osp.join(baseDir, checkpoint_name), 
+        configs['device'],
+        checkpoint=osp.join(baseDir, checkpoint_name),
         model_name="u2net"
-    ) 
+    )
     RServer.setAutoAnnotator(annotator)
 
     # register all api routes
-    import apis 
+    RServer.registerAPIs()
 
     # Check file state consistency
     precheck()
 
+
+if __name__ == "__main__":
+    start_server()
+
     # Start server
-    server.run(port='8000', host='0.0.0.0', debug=False)
+    RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

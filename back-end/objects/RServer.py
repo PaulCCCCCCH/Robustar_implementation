@@ -1,5 +1,5 @@
 from .RDataManager import RDataManager
-from flask import Flask
+from flask import Flask, Blueprint
 from flasgger import Swagger
 import os.path as osp
 from flask_socketio import SocketIO
@@ -17,6 +17,10 @@ class RServer:
         app.after_request(self.afterRequest)
         socket_ = SocketIO(app, cors_allowed_origins='*')
         self.socket_ = socket_
+
+        # TODO: use /api/<version> prefix
+        # self.bp = Blueprint('api', __name__, url_prefix='/api/v1')
+        self.bp = Blueprint('api', __name__)
         
         app.config['SWAGGER'] = {
             'title': 'Robustar API',
@@ -32,6 +36,7 @@ class RServer:
         self.app = app
         self.configs = configs
         self.modelWrapper = None
+        self.modelsWeights = {}
 
     @staticmethod
     def createServer(configs: dict, baseDir: str, datasetDir: str, ckptDir: str):
@@ -49,7 +54,7 @@ class RServer:
         return RServer.serverInstance
 
     @staticmethod
-    def getDataManager():
+    def getDataManager() -> RDataManager:
         return RServer.serverInstance.dataManager
 
     @staticmethod
@@ -77,9 +82,22 @@ class RServer:
         RServer.serverInstance.modelWrapper = modelWrapper
 
     @staticmethod
+    def getModelsWeights():
+        return RServer.serverInstance.modelsWeights
+
+    @staticmethod
+    def addModelWeight(name, weight):
+        RServer.serverInstance.modelsWeights[name] = weight
+
+    @staticmethod
     def getSocket():
         return RServer.getServer().socket_
-        
+
+    @staticmethod
+    def registerAPIs():
+        import apis
+        server = RServer.getServer()
+        server.getFlaskApp().register_blueprint(server.bp)
     
     def afterRequest(self, resp):
         resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -88,6 +106,9 @@ class RServer:
 
     def getFlaskApp(self):
         return self.app
+
+    def getFlaskBluePrint(self):
+        return self.bp
 
     def run(self, port=8000, host='0.0.0.0', debug=True):
         self.port = port

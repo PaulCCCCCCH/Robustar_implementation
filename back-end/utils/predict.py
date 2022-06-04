@@ -5,8 +5,6 @@ import modules.influence_module as ptif
 import threading
 from objects.RDataManager import RDataManager
 import pickle
-from utils.image_utils import imageURLToPath
-
 
 
 # Turns prediction results into array
@@ -49,6 +47,7 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
     return out_probs
 
 
+# TODO: need to refactor. ImageURLToPath no long exists
 def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, test_sample_num=1, r_averaging=1):
     """
     Calculate the influence function for the model.

@@ -13,7 +13,11 @@ const successCode = [200, 201];
  */
 const handleResult = (res, success, failed) => {
   if (successCode.includes(res.status)) {
-    success(res);
+    if (res.data.code == -1) {
+      console.log(res.data.msg);
+    } else {
+      success(res);
+    }
   } else {
     failed(res);
   }
@@ -49,6 +53,24 @@ export const getRequest = (route, success, failed, pageNo) => {
   }
   let requestUrl = `/api${route}${pageNo ? `?pageNo=${pageNo}` : ''}`;
   axios.get(requestUrl).then(
+    (res) => handleResult(res, success, failed),
+    (res) => failed(res)
+  );
+};
+
+/**
+ * make DELETE request
+ * @param {string} route
+ * @param {function} success callback for success
+ * @param {function} failed callback for failure
+ * @param {number} pageNo optional
+ */
+export const deleteRequest = (route, success, failed) => {
+  if (!failed) {
+    failed = (res) => console.log(res);
+  }
+  let requestUrl = `/api${route}`;
+  axios.delete(requestUrl).then(
     (res) => handleResult(res, success, failed),
     (res) => failed(res)
   );

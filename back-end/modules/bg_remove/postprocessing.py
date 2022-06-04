@@ -16,7 +16,7 @@ def method_detect(method: str):
     if method == "rtb-bnb":
         return RemovingTooTransparentBordersHardAndBlurringHardBorders()
     else:
-        raise NotImplemented('Unsupported post processing method')
+        raise NotImplementedError('Unsupported post processing method')
 
 class RemovingTooTransparentBordersHardAndBlurringHardBorders:
     """

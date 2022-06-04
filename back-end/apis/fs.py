@@ -7,6 +7,8 @@ import os.path as osp
 import shutil
 
 server = RServer.getServer()
+dataManager = server.getDataManager()
+bp = server.getFlaskBluePrint()
 app = server.getFlaskApp()
 
 baseDir = server.baseDir
@@ -21,19 +23,19 @@ def fileOpWrapper(fileOp):
         return RResponse.fail(e)
 
 
-@app.route("/fs/ls/<path>", methods=["GET"])
+@bp.route("/fs/ls/<path>", methods=["GET"])
 def ls(path):
     return fileOpWrapper(lambda: os.listdir(osp.join(baseDir, path)))
 
-@app.route("/fs/dirlen/<path>", methods=["GET"])
+@bp.route("/fs/dirlen/<path>", methods=["GET"])
 def dirlen(path):
     return fileOpWrapper(lambda: os.listdir(osp.join(baseDir, path)))
 
-@app.route("/fs/exist/<path>", methods=["GET"])
+@bp.route("/fs/exist/<path>", methods=["GET"])
 def exist(path):
     return fileOpWrapper(lambda: osp.exists(osp.join(baseDir, path)))
     
-@app.route("/fs/rm/<path>", methods=["GET"])
+@bp.route("/fs/rm/<path>", methods=["GET"])
 def rm(path):
     target = osp.join(baseDir, path)
     def fileOp():
@@ -42,17 +44,17 @@ def rm(path):
         return os.remove(target)
     return fileOpWrapper(fileOp)
 
-@app.route("/fs/mkdir/<path>", methods=["GET"])
+@bp.route("/fs/mkdir/<path>", methods=["GET"])
 def mkdir(path):
     return fileOpWrapper(lambda: os.mkdir(osp.join(baseDir, path)))
 
 
-@app.route("/fs/mkdirs/<path>", methods=["GET"])
+@bp.route("/fs/mkdirs/<path>", methods=["GET"])
 def mkdirs(path):
     return fileOpWrapper(lambda: os.makedirs(osp.join(baseDir, path), exist_ok=True))
 
 
-@app.route("/fs/cp", methods=["POST"])
+@bp.route("/fs/cp", methods=["POST"])
 def cp():
     json_data = request.get_json()
     def fileOp():
@@ -63,7 +65,7 @@ def cp():
     return fileOpWrapper(fileOp)
 
 
-@app.route("/fs/read/<path>/<length>", methods=["GET"])
+@bp.route("/fs/read/<path>/<length>", methods=["GET"])
 def read(path, length):
     target = osp.join(baseDir, path)
     def fileOp():
@@ -73,7 +75,7 @@ def read(path, length):
 
     return fileOpWrapper(fileOp)
 
-@app.route("/fs/write/<path>", methods=["POST"])
+@bp.route("/fs/write/<path>", methods=["POST"])
 def write(path):
     target = osp.join(baseDir, path)
     json_data = request.get_json()
@@ -85,3 +87,11 @@ def write(path):
             return f.write(data)
         
     return fileOpWrapper(fileOp)
+
+
+# TODO: Registering this function somehow closes DB immediatly after server startup.
+# @app.teardown_appcontext
+def close_connection(exception):
+    conn = dataManager.get_db_conn()
+    if conn is not None:
+        conn.close()
