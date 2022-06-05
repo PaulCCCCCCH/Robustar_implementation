@@ -6,9 +6,7 @@
     <v-main class="page-content">
       <TaskPanel v-if="!isTaskspanelHidden"></TaskPanel>
       <Notification></Notification>
-      <v-container fluid>
-        <router-view />
-      </v-container>
+      <router-view />
     </v-main>
   </v-app>
 </template>

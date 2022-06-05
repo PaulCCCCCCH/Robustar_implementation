@@ -1,5 +1,4 @@
 <template>
-  
   <v-sheet rounded width="800" elevation="3" class="my-8 pa-4" style="margin: 0 auto">
     <div class="text-h4 text-center font-weight-medium">Configuration</div>
     <v-divider class="mt-4 mb-8"></v-divider>
@@ -54,18 +53,18 @@ export default {
 }
 
 .key {
-    font-size: 1.1rem !important;
-    font-weight: 600;
-    line-height: 1.7rem;
-    letter-spacing: normal !important;
-    text-align: center;
-    border-right:3px solid #74A2CF;
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  line-height: 1.7rem;
+  letter-spacing: normal !important;
+  text-align: center;
+  border-right: 3px solid #74a2cf;
 }
 .value {
-    font-size: 1.0rem !important;
-    font-weight: 500;
-    line-height: 1.7rem;
-    letter-spacing: normal !important;
-    text-align: right;
+  font-size: 1rem !important;
+  font-weight: 500;
+  line-height: 1.7rem;
+  letter-spacing: normal !important;
+  text-align: right;
 }
 </style>
