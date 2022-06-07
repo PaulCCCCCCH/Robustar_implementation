@@ -96,7 +96,7 @@ class RDataManager:
         self.validation_root = to_unix(osp.join(self.data_root, 'validation'))
         self.visualize_root = to_unix(osp.join(self.base_dir, 'visualize_images'))
         self.influence_root = to_unix(osp.join(self.base_dir, 'influence_images'))
-        self.proposed_annotation_root = to_unix(osp.join(self.base_dir, 'proposed_annotation'))
+        self.proposed_annotation_root = to_unix(osp.join(self.base_dir, 'proposed'))
         self.influence_file_path = to_unix(osp.join(self.influence_root, 'influence_images.pkl'))
 
     def _init_data_records(self):

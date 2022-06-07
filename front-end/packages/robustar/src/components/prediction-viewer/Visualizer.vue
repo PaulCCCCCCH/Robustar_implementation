@@ -114,9 +114,6 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
-    if (this.split === 'annotated') {
-      this.split = 'train';
-    }
     this.get_visualize_data();
   },
   methods: {
@@ -179,7 +176,6 @@ export default {
           this.influImgUrl = [];
           return;
         }
-        console.log(response);
 
         const responseData = response.data.data;
         this.influImgUrl = [];
@@ -231,7 +227,7 @@ export default {
   position: sticky;
   top: 65px;
   height: 95vh;
-  z-index: 9999;
+  z-index: 9;
   background-color: white;
 }
 </style>

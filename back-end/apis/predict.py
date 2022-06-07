@@ -118,7 +118,7 @@ def predict(split, image_path):
     elif split in ("test", "test_correct", "test_incorrect"):
         attribute = dataManager.testset.classes
     else:
-        RResponse.fail("Wrong split. Please check.")
+        return RResponse.fail("Wrong split. Please check.")
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]
@@ -195,7 +195,8 @@ def calculate_influence():
             configs:
               type: object
               example: {
-                test_sample_num: 2,
+                test_sample_start_idx: 2,
+                test_sample_end_idx: 5,
                 r_averaging: 10
               }
     responses:
@@ -218,7 +219,8 @@ def calculate_influence():
     calcInfluenceThread = CalcInfluenceThread(
         modelWrapper, 
         dataManager, 
-        test_sample_num=int(configs['test_sample_num']),
+        start_idx=int(configs['test_sample_start_idx']),
+        end_idx=int(configs['test_sample_end_idx']),
         r_averaging=int(configs['r_averaging'])
     )
     calcInfluenceThread.start()
