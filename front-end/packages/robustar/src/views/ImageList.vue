@@ -94,20 +94,32 @@
           </v-select>
         </div>
       </div>
-
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
       <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
+
         <v-col
           v-for="(url, idx) in imageList"
           :key="url"
           :cols="imageSizeMap[imageSize]"
-          class="d-flex child-flex"
           data-test="image-list-div-all-imgs"
         >
+          <!-- class="d-flex child-flex" -->
+          <div class="d-flex align-right">
+            <v-btn
+              v-if="$route.params.split === 'annotated'"
+              color="secondary"
+              class="mr-n1 mb-n1 mx-auto"
+              icon
+              small
+              @click="deleteAnnotatedImage(idx, url)"
+            >
+              <v-icon color="red">mdi-close-box</v-icon>
+            </v-btn>
+          </div>
           <v-hover v-slot="{ hover }">
             <v-img
               :src="url"
@@ -121,6 +133,7 @@
                   </v-progress-circular>
                 </v-row>
               </template>
+
               <v-expand-transition>
                 <div
                   v-if="hover"
@@ -141,17 +154,6 @@
                   <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
                     <v-icon>mdi-cogs</v-icon>
                     <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
-                  </v-btn>
-                  <v-btn
-                    v-if="$route.params.split === 'annotated'"
-                    class="mt-4"
-                    outlined
-                    color="white"
-                    width="80%"
-                    @click="deleteAnnotatedImage(idx, url)"
-                  >
-                    <v-icon>mdi-delete</v-icon>
-                    <span v-if="imageSize !== 'extra small'" class="ml-2">DELETE</span>
                   </v-btn>
                 </div>
               </v-expand-transition>
