@@ -186,10 +186,13 @@ class Launcher(QWidget):
     def startServer(self):
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
 
-        missingConfig = self.getMissingConfig()
-        if missingConfig:
-            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Please provide {}".format(missingConfig))
-            return
+        # If its in createTab
+        # Check if the config is complete
+        if (self.ui.tabWidget.currentIndex() == 0):
+            missingConfig = self.getMissingConfig()
+            if missingConfig:
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Please provide {}".format(missingConfig))
+                return
 
         def startServerInThread():
             try:
