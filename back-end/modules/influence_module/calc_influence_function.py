@@ -428,7 +428,29 @@ def get_dataset_sample_ids(num_samples, test_loader, start_index=0):
     return sample_dict, sample_list
 
 
-def calc_img_wise(config, model, train_loader, test_loader):
+def calc_img_wise(index, model, train_loader, test_loader, gpu, recursion_depth, r_averaging) -> dict[str, float]:
+    """
+    Calculates the influence function for a single test sample. Calcualtes
+    the `s_test` and `grad_z` values on the fly and discards them afterwards.
+
+    Arguments:
+        config: dict, contains the configuration from cli params
+    """
+
+    start_time = time.time()
+    max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
+        model, train_loader, test_loader, test_id_num=index, gpu=gpu,
+        recursion_depth=recursion_depth, r=r_averaging)
+    end_time = time.time()
+
+    print("Influence calculation for test {} done. Time: {} seconds".format(index, end_time-start_time))
+
+    return max_influence_dict
+
+
+
+
+def calc_img_wise_batch(config, model, train_loader, test_loader, dump_log=False):
     """Calculates the influence function one test point at a time. Calcualtes
     the `s_test` and `grad_z` values on the fly and discards them afterwards.
 
@@ -439,7 +461,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
     test_start_index = config['test_start_index']
     test_end_index = config['test_end_index']
     outdir = Path(config['outdir'])
-    outdir.mkdir(exist_ok=True, parents=True)
+    if dump_log: outdir.mkdir(exist_ok=True, parents=True)
 
     test_dataset_iter_len = len(test_loader.dataset)
 
@@ -450,15 +472,13 @@ def calc_img_wise(config, model, train_loader, test_loader):
     influences_meta_fn = f"influences_results_meta_{test_start_index}-" \
                          f"{test_sample_num}.json"
     influences_meta_path = outdir.joinpath(influences_meta_fn)
-    save_json(influences_meta, influences_meta_path)
+    if dump_log: save_json(influences_meta, influences_meta_path)
 
     influences = {}
     max_influence_dicts = {}
     # Main loop for calculating the influence function one test sample per
     # iteration.
     for i in range(test_start_index, test_end_index):
-        # If we calculate evenly per class, choose the test img indicies
-        # from the sample_list instead
         start_time = time.time()
         max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
             model, train_loader, test_loader, test_id_num=i, gpu=config['gpu'],
@@ -471,25 +491,27 @@ def calc_img_wise(config, model, train_loader, test_loader):
         influences[str(i)] = {}
         _, label = test_loader.dataset[i]
         influences[str(i)]['label'] = label
-        influences[str(i)]['num_in_dataset'] = j
+        influences[str(i)]['num_in_dataset'] = i
         influences[str(i)]['time_calc_influence_s'] = end_time - start_time
         infl = [x.cpu().numpy().tolist() for x in influence]
         influences[str(i)]['influence'] = infl
         influences[str(i)]['harmful'] = harmful[:500]
         influences[str(i)]['helpful'] = helpful[:500]
 
-        tmp_influences_path = outdir.joinpath(f"influence_results_tmp_"
-                                              f"{test_start_index}_"
-                                              f"{test_sample_num}"
-                                              f"_last-i_{i}.json")
-        save_json(influences, tmp_influences_path)
-
         max_influence_dicts[str(i)] = max_influence_dict
-        max_influences_path = outdir.joinpath(f"max_influences_dicts_"
-                                              f"{test_start_index}_"
-                                              f"{test_sample_num}"
-                                              f"_last-i_{i}.json")
-        save_json(max_influence_dicts, max_influences_path)
+        if dump_log:
+            tmp_influences_path = outdir.joinpath(f"influence_results_tmp_"
+                                                f"{test_start_index}_"
+                                                f"{test_sample_num}"
+                                                f"_last-i_{i}.json")
+
+            max_influences_path = outdir.joinpath(f"max_influences_dicts_"
+                                                f"{test_start_index}_"
+                                                f"{test_sample_num}"
+                                                f"_last-i_{i}.json")
+
+            save_json(influences, tmp_influences_path)
+            save_json(max_influence_dicts, max_influences_path)
 
         display_progress("Test samples processed: ", i, test_dataset_iter_len)
 
@@ -501,9 +523,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
     logging.info("Most helpful img IDs: ")
     logging.info(helpful[:3])
 
-    influences_path = outdir.joinpath(f"influence_results_{test_start_index}_"
-                                      f"{test_sample_num}.json")
-    save_json(influences, influences_path)
+    if dump_log:
+        influences_path = outdir.joinpath(f"influence_results_{test_start_index}_"
+                                        f"{test_sample_num}.json")
+        save_json(influences, influences_path)
 
     return max_influence_dicts
 

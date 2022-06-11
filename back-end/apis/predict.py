@@ -9,7 +9,7 @@ from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_ima
 
 app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
-dataManager = server.dataManager
+dataManager = server.getDataManager()
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
@@ -167,10 +167,10 @@ def get_influence(split, image_path):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
-    influence_dict = dataManager.get_influence_dict()
+    influence_dict = dataManager.get_influence_buffer()
     image_path = to_unix(image_path)
-    if image_path in influence_dict:
-        return RResponse.ok(influence_dict[image_path], 'Success')
+    if influence_dict.contains(image_path):
+        return RResponse.ok(influence_dict.get(image_path), 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
 
 

@@ -5,6 +5,7 @@ import modules.influence_module as ptif
 import threading
 from objects.RDataManager import RDataManager
 import pickle
+from utils.path_utils import to_unix
 
 
 # Turns prediction results into array
@@ -59,8 +60,7 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
                 influence for the entire dataset.
     """
 
-    INFLUENCES_SAVE_PATH = dataManager.influence_file_path
-    influences = {}
+    influence_buffer = dataManager.get_influence_buffer()
 
     trainloader = dataManager.trainloader
     testloader = dataManager.testloader
@@ -70,52 +70,27 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
     else:
         end_idx = min(len(testloader.dataset), end_idx)
 
-    config = ptif.get_default_config()
-    config['gpu'] = -1 if modelWrapper.device == 'cpu' else 0
-    config['test_start_index'] = start_idx
-    config['test_end_index'] = end_idx 
-    config['test_sample_num'] = end_idx - start_idx
-    config['r_averaging'] = r_averaging
-    config['recursion_depth'] = int(len(trainloader.dataset) / config['r_averaging'])
+    gpu = -1 if modelWrapper.device == 'cpu' else 0
+
+    recursion_depth = int(len(trainloader.dataset) / r_averaging)
     ptif.init_logging('logfile.log')
 
-    # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
-    #   e.g.    {
-    #               "0": {
+    # max_influence_dict is the dictionary containing the four most influential training images for a testing image
+    #   e.g.    
+    #               {
     #                       "523": 254.1763153076172,
     #                       "719": 221.39866638183594,
     #                       "667": 216.841064453125,
     #                       "653": 214.35723876953125
-    #                      },
-    #               "1":{...},
-    #               ...
-    #           }
+    #               }
 
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
-    max_influence_dicts = ptif.calc_img_wise(config, modelWrapper.model, trainloader, testloader) 
-
-    for key in max_influence_dicts.keys():
-        train_img_paths = []
-
-        testId = "test/" + key
-        test_img_path = imageURLToPath(testId)
-
-        max_influence_dict = max_influence_dicts[key]
-        trainIds = list(max_influence_dict.keys())
-
-        for j in range(4):
-            trainUrl = "train/" + str(trainIds[j])
-            train_img_path = imageURLToPath(trainUrl)
-            # TODO: Stores both image path and image url. 
-            # Adding / removing samples to training set will cause inconsistency
-            # Need to check consistency in data manager when loading.
-            train_img_paths.append((train_img_path, trainUrl)) 
-
-        influences[test_img_path] = train_img_paths
-
-    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
-        pickle.dump(influences, influence_file)
+    for idx in range(start_idx, end_idx):
+        max_influence_dict = ptif.calc_img_wise(idx, modelWrapper.model, trainloader, testloader, gpu, recursion_depth, r_averaging) 
+        lst = sorted(list(max_influence_dict.items()), key=lambda p: p[1]) # sort according to influence value
+        lst = [p[0] for p in lst] 
+        influence_buffer.set(testloader.dataset[idx][0], [to_unix(trainloader.dataset[int(train_idx)][0]) for train_idx in lst])
 
     
 class CalcInfluenceThread(threading.Thread):
