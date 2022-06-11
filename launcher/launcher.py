@@ -7,6 +7,7 @@ from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QTextBrowser
 from PySide2.QtCore import Signal, QObject, Qt
 from threading import Thread
+from datetime import datetime
 
 # Change path input by the user to system path
 def getSystemPath(userPath: str):
@@ -43,6 +44,8 @@ class Launcher(QWidget):
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
+
+        self.container = None
 
         # Set the default path of the path choosing window
         self.cwd = '/'
@@ -86,7 +89,7 @@ class Launcher(QWidget):
         self.ui.startServerButton.clicked.connect(self.startServer)
         self.ui.stopServerButton.clicked.connect(self.stopServer)
         self.ui.deleteServerButton.clicked.connect(self.deleteServer)
-        self.ui.refreshListWidgetsButton.clicked.connect(self.initContainerList)
+        self.ui.refreshListWidgetsButton.clicked.connect(self.initExistContainer)
 
         self.customSignals.printMessageSignal.connect(self.printMessage)
         self.customSignals.addItemSignal.connect(self.addItem)
@@ -186,6 +189,8 @@ class Launcher(QWidget):
     def startServer(self):
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
 
+        oldContainer = self.container
+
         # If its in createTab
         # Check if the config is complete
         if (self.ui.tabWidget.currentIndex() == 0):
@@ -221,6 +226,8 @@ class Launcher(QWidget):
                                                                     self.container.name + ' is available at http://localhost:' +
                                                                     self.configs['websitePort'])
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+
+                        self.printLogs(self.container)
 
 
                     except docker.errors.APIError as apiError:
@@ -287,6 +294,8 @@ class Launcher(QWidget):
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
 
+                    self.printLogs(self.container)
+
                 # If the container has been created
                 # Start the container
                 elif self.container.status == 'created':
@@ -295,6 +304,8 @@ class Launcher(QWidget):
                         self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
+
+                    self.printLogs(self.container)
 
                 # If the container is running
                 elif self.container.status == 'running':
@@ -371,6 +382,8 @@ class Launcher(QWidget):
 
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
+
+
 
 
     def stopServer(self):
@@ -458,9 +471,9 @@ class Launcher(QWidget):
             self.customSignals.enableControlSignal.emit()
 
 
-    def initContainerList(self):
+    def initExistContainer(self):
 
-        def initContainerInThread():
+        def initExistContainerInThread():
             # Clear all content in the listWidgets
             for listWidget in self.listWidgets:
                 listWidget.clear()
@@ -473,6 +486,9 @@ class Launcher(QWidget):
                 if ('paulcccccch/robustar:' in str(container.image)):
                     if (container.status == 'running'):
                         self.customSignals.addItemSignal.emit(self.ui.runningListWidget, container.name)
+
+                        # Print its logs
+                        self.printLogs(container)
                     elif (container.status == 'exited'):
                         self.customSignals.addItemSignal.emit(self.ui.exitedListWidget, container.name)
                     elif (container.status == 'created'):
@@ -481,7 +497,7 @@ class Launcher(QWidget):
                         self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
 
-        listContainerThread = Thread(target=initContainerInThread())
+        listContainerThread = Thread(target=initExistContainerInThread)
         listContainerThread.start()
 
     def printMessage(self, textBrowser, message):
@@ -556,10 +572,31 @@ class Launcher(QWidget):
             self.ui.exitedListWidget.selectedItems()) > 0 else self.ui.createdListWidget.selectedItems() if len(
             self.ui.createdListWidget.selectedItems()) > 0 else []
 
+    # Function to print the logs of the container
+    def printLogs(self, container):
+
+        def printLogsInThread(container):
+
+            # curTime = datetime.now()
+
+            logs = container.logs(stream=True)
+            try:
+                while True:
+                    log = next(logs).decode("utf-8")
+                    print(log)
+            except StopIteration:
+                return
+
+        printLogsThread = Thread(target=printLogsInThread, args=(container,))
+        printLogsThread.start()
+
+
+
+
 app = QApplication([])
 launcher = Launcher()
 
 launcher.ui.setFixedSize(1000, 850)
 launcher.ui.show()
-launcher.initContainerList()
+launcher.initExistContainer()
 app.exec_()
