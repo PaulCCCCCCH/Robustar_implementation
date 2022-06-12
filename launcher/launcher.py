@@ -384,7 +384,7 @@ class Launcher(QWidget):
                 ]
             )
 
-        startServerThread = Thread(target=startServerInThread)
+        startServerThread = Thread(target=startServerInThread, daemon=True)
         startServerThread.start()
 
 
@@ -433,7 +433,7 @@ class Launcher(QWidget):
             finally:
                 self.customSignals.enableControlSignal.emit()
 
-        stopServerThread = Thread(target=stopServerInThread)
+        stopServerThread = Thread(target=stopServerInThread, daemon=True)
         stopServerThread.start()
 
 
@@ -501,7 +501,7 @@ class Launcher(QWidget):
                         self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
 
-        listContainerThread = Thread(target=initExistContainerInThread)
+        listContainerThread = Thread(target=initExistContainerInThread, daemon=True)
         listContainerThread.start()
 
     def printMessage(self, textBrowser, message):
@@ -598,7 +598,7 @@ class Launcher(QWidget):
             except StopIteration:
                 return
 
-        printLogsThread = Thread(target=printLogsInThread, args=(container,))
+        printLogsThread = Thread(target=printLogsInThread, args=(container,), daemon=True)
         printLogsThread.start()
 
 
