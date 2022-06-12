@@ -6,6 +6,7 @@ import os
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QTextBrowser
 from PySide2.QtCore import Signal, QObject, Qt
+from PySide2 import QtGui
 from threading import Thread
 from datetime import datetime
 
@@ -507,11 +508,12 @@ class Launcher(QWidget):
     def printMessage(self, textBrowser, message):
         currentTime = time.strftime("%H:%M:%S", time.localtime())
         textBrowser.append(currentTime + ' - - ' + message + '\n')
-        textBrowser.ensureCursorVisible()
+        textBrowser.verticalScrollBar().setValue(textBrowser.verticalScrollBar().maximum())
 
     def printLog(self, log):
         self.ui.logBrowser.append(log)
-        self.ui.logBrowser.ensureCursorVisible()
+        self.ui.logBrowser.verticalScrollBar().setValue(self.ui.logBrowser.verticalScrollBar().maximum())
+
 
     def addItem(self, listWidget, name):
         listWidget.addItem(name)
