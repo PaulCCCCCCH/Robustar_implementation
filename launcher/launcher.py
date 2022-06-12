@@ -2,6 +2,7 @@ import json
 import time
 import docker
 import os
+import re
 
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QWidget, QListWidget, QTextBrowser
@@ -510,6 +511,7 @@ class Launcher(QWidget):
         textBrowser.verticalScrollBar().setValue(textBrowser.verticalScrollBar().maximum())
 
     def printLog(self, log):
+        # re.sub(r"\x1b\[((\d+;)*\d+)m", "", log)
         self.ui.logBrowser.append(log)
         self.ui.logBrowser.verticalScrollBar().setValue(self.ui.logBrowser.verticalScrollBar().maximum())
 
