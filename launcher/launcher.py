@@ -309,8 +309,14 @@ class Launcher(QWidget):
                 ports={
                     '80/tcp': (
                         '127.0.0.1', int(self.configs['websitePort'])),
-                    '8000/tcp': ('127.0.0.1', 6848),
-                    '6006/tcp': ('127.0.0.1', 6006),
+                    '8000/tcp': ('127.0.0.1', self.configs['backendPort']),
+                    '6006/tcp': ('127.0.0.1', self.configs['tensorboardPort']),
+                },
+                environment={
+                    'websitePort': self.configs['websitePort'],
+                    'backendPort': self.configs['backendPort'],
+                    'tensorboardPort': self.configs['tensorboardPort'],
+                    'VUE_APP_BASE_URL': f"http://localhost:{self.configs['backendPort']}",
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',
@@ -339,8 +345,14 @@ class Launcher(QWidget):
                 ports={
                     '80/tcp': (
                         '127.0.0.1', int(self.configs['websitePort'])),
-                    '8000/tcp': ('127.0.0.1', 6848),
-                    '6006/tcp': ('127.0.0.1', 6006),
+                    '8000/tcp': ('127.0.0.1', self.configs['backendPort']),
+                    '6006/tcp': ('127.0.0.1', self.configs['tensorboardPort']),
+                },
+                environment={
+                    'websitePort': self.configs['websitePort'],
+                    'backendPort': self.configs['backendPort'],
+                    'tensorboardPort': self.configs['tensorboardPort'],
+                    'VUE_APP_BASE_URL': f"http://localhost:{self.configs['backendPort']}",
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',

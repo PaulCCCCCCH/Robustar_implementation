@@ -90,7 +90,10 @@ def startTB(logdir):
     Starts updating tensorboard.
     """
 
-    os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
+    os.system(
+        'tensorboard --logdir={}'
+        .format(os.path.abspath(logdir), os.environ.get('tensorboardPort'))
+        )
 
 
 def start_train(configs):
