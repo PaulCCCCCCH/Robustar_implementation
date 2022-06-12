@@ -4,8 +4,8 @@ import { getRequest, postRequest } from './common';
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-export const APIPredict = (split, imageId, success, failed) => {
-  getRequest(`/predict/${split}/${imageId}`, success, failed);
+export const APIPredict = (split, image_url, success, failed) => {
+  getRequest(`/predict/${split}/${image_url}`, success, failed);
 };
 
 /**
