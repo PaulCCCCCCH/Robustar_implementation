@@ -4,7 +4,7 @@ from utils.train import start_train
 from objects.RResponse import RResponse
 from objects.RTask import RTask, TaskType
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 
 @app.route('/train/stop', methods=['GET'])
 def stop_training():
@@ -59,27 +59,28 @@ def start_training():
             configs:
               type: object
               example: {
-                model: 'resnet-18-32x32',
-                weight: '',
-                train_path: '/Robustar2/dataset/train',
-                test_path: '/Robustar2/dataset/test',
-                class_path: './model/cifar-class.txt',
-                port: '8000',
-                save_dir: '/Robustar2/checkpoints',
-                use_paired_train: 'false',
-                mixture: 'random_pure',
-                paired_data_path: '/Robustar2/dataset/paired',
-                device: 'cuda',
-                auto_save_model: 'yes',
-                batch_size: '128',
-                shuffle: 'yes',
-                learn_rate: 0.1,
-                pgd: 'no PGD',
-                paired_train_reg_coeff: 0.001,
-                image_size: 32,
-                epoch: 20,
-                thread: 8,
-                pretrain: 'no',
+                'model_name': 'my-test-model',
+                'weight': '',
+                'train_path': '/Robustar2/dataset/train',
+                'test_path': '/Robustar2/dataset/test',
+                'class_path': './model/cifar-class.txt',
+                'port': '8000',
+                'save_dir': '/Robustar2/checkpoints',
+                'use_paired_train': True,
+                'mixture': 'random_pure',
+                'paired_data_path': '/Robustar2/dataset/paired',
+                'auto_save_model': True,
+                'batch_size': '128',
+                'shuffle': True,
+                'learn_rate': 0.1,
+                'pgd': 'no PGD',
+                'paired_train_reg_coeff': 0.001,
+                'image_size': 32,
+                'epoch': 20,
+                'thread': 8,
+                'pretrain': False,
+                'user_edit_buffering': False,
+                'save_every': 5
               }
             info:
               type: string
@@ -102,6 +103,7 @@ def start_training():
 
     print("Requested to training with the following configuration: ")
     json_data = request.get_json()
+    print(json_data)
     configs = json_data['configs']
     print(configs)
 

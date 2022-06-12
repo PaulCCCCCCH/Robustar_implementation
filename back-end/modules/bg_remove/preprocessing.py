@@ -16,7 +16,7 @@ def method_detect(method: str):
     if method == "bbd-fastrcnn":
         return BoundingBoxDetectionFastRcnn()
     else:
-        raise NotImplemented('Unsupported pre processing method')
+        raise NotImplementedError('Unsupported pre processing method')
 
 
 class BoundingBoxDetectionFastRcnn:

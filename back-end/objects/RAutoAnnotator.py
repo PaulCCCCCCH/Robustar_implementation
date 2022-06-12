@@ -13,7 +13,7 @@ class RAutoAnnotator:
         if "u2net" in model_name:
             self.model = U2NET(device, checkpoint, model_name)
         else:
-            raise NotImplemented("Only support u2net model for background removal")
+            raise NotImplementedError("Only support u2net model for background removal")
 
         # We ignore pre and post processing for now
 
