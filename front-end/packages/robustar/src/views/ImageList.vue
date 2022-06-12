@@ -147,7 +147,6 @@
 
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
-
         <v-col
           v-for="(url, idx) in imageList"
           :key="url"
@@ -161,6 +160,7 @@
               color="warning"
               icon="mdi-check"
               overlap
+              style="width: 100%; height: 100%"
             >
               <v-img
                 :src="url"
