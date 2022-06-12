@@ -646,7 +646,7 @@ QPushButton:hover {
                          <property name="currentText">
                           <string>cuda11.1-0.1.0-beta</string>
                          </property>
-                         <property name="placeholderText" stdset="0">
+                         <property name="placeholderText">
                           <string/>
                          </property>
                          <item>
@@ -1518,6 +1518,21 @@ QPushButton:hover {
             <string>Details</string>
            </attribute>
            <widget class="QTextBrowser" name="detailBrowser">
+            <property name="geometry">
+             <rect>
+              <x>-1</x>
+              <y>-1</y>
+              <width>821</width>
+              <height>291</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_3">
+           <attribute name="title">
+            <string>Logs</string>
+           </attribute>
+           <widget class="QTextBrowser" name="logBrowser">
             <property name="geometry">
              <rect>
               <x>-1</x>

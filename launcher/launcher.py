@@ -19,6 +19,9 @@ class CustomSignals(QObject):
     # Custom signal for printing message in promptBrowser or detailBrowser
     printMessageSignal = Signal(QTextBrowser, str)
 
+    # Custom signal for printing log in logBrowser
+    printLogSignal = Signal(str)
+
     # Custom signal for adding items in running or exited container list widget
     addItemSignal = Signal(QListWidget, str)
 
@@ -92,6 +95,7 @@ class Launcher(QWidget):
         self.ui.refreshListWidgetsButton.clicked.connect(self.initExistContainer)
 
         self.customSignals.printMessageSignal.connect(self.printMessage)
+        self.customSignals.printLogSignal.connect(self.printLog)
         self.customSignals.addItemSignal.connect(self.addItem)
         self.customSignals.removeItemSignal.connect(self.removeItem)
         self.customSignals.enableControlSignal.connect(self.enableControl)
@@ -502,8 +506,12 @@ class Launcher(QWidget):
 
     def printMessage(self, textBrowser, message):
         currentTime = time.strftime("%H:%M:%S", time.localtime())
-        textBrowser.append(currentTime + ' -- ' + message + '\n')
+        textBrowser.append(currentTime + ' - - ' + message + '\n')
         textBrowser.ensureCursorVisible()
+
+    def printLog(self, log):
+        self.ui.logBrowser.append(log)
+        self.ui.logBrowser.ensureCursorVisible()
 
     def addItem(self, listWidget, name):
         listWidget.addItem(name)
@@ -576,14 +584,18 @@ class Launcher(QWidget):
     def printLogs(self, container):
 
         def printLogsInThread(container):
+            # Get the current utc time
+            curTime = datetime.utcnow()
 
-            # curTime = datetime.now()
+            # Get the logs since current utc time as an iterator
+            logs = container.logs(stream=True, since=curTime)
 
-            logs = container.logs(stream=True)
+            # Print the logs until the container is stopped
             try:
                 while True:
                     log = next(logs).decode("utf-8")
                     print(log)
+                    self.customSignals.printLogSignal.emit(log)
             except StopIteration:
                 return
 
