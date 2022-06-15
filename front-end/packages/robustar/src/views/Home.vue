@@ -2,55 +2,39 @@
   <div class="container">
     <div class="view-home">
       <br />
-      <h1>Start your exploration!</h1>
+      <h1 data-test="home-page-welcome-msg">Start your exploration!</h1>
       <br /><br />
-      <v-hover>
+       <v-hover>
         <div class="d-flex flex-wrap justify-space-around">
-          <div
-            class="featureItem"
-            v-for="(item, i) in items"
-            :key="i"
-            @mouseover="hoverIndex = i"
-            @mouseout="hoverIndex = -1"
+        <div class="feature-item" v-for="(item, i) in items" :key="i"
+              @mouseover="hoverIdx = i"
+              @mouseout="hoverIdx = -1">
+          <v-list-item
+            :data-test="`home-${item.text}-entrance`"
+            :to="{ path: '/' + item.link }"
+            class="d-flex align-start"
           >
-            <v-list-item :to="{ path: '/' + item.link }" class="d-flex align-start" color="primary">
-              <div>
-                <v-list-item-icon  :class="{ hoverBg: i == hoverIndex }">
-                  <v-icon v-text="item.icon"></v-icon>
-                </v-list-item-icon>
-              </div>
-              <div :class="{ hoverBg: i == hoverIndex }">
-                <v-list-item-content
-                  class="font-weight-medium"
-                  v-text="item.text"
-                ></v-list-item-content>
-                <v-list-item-content v-text="item.explain"></v-list-item-content>
-              </div>
-            </v-list-item>
-          </div>
+            <div>
+              <v-list-item-icon>
+                <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+            </div>
+            <div :class="{ hoverbg: i == hoverIdx }">
+              <v-list-item-content
+                class="font-weight-medium"
+                v-text="item.text"
+              ></v-list-item-content>
+              <v-list-item-content v-text="item.explain"></v-list-item-content>
+            </div>
+          </v-list-item>
         </div>
-      </v-hover>
+      </div>
+
+        
+        </v-hover> 
     </div>
   </div>
 </template>
-<style>
-.featureItem {
-  height: auto;
-  width: 45%;
-  padding: 20px 30px;
-  margin: 5px;
-  border-radius: 10px;
-  background-color: #fff;
-  text-align: left;
-}
-.container {
-  text-align: center;
-}
-
-.hoverBg {
-  color: #1976d2;
-}
-</style>
 
 <script>
 // @ is an alias to /src
@@ -68,7 +52,7 @@ export default {
         {
           icon: 'mdi-vector-link',
           link: 'influence-pad',
-          text: 'Infulence',
+          text: 'Influence',
           explain:
             ' With new test samples, the model can help identify the samples that are responsible for the prediction through influence function',
         },
@@ -86,7 +70,7 @@ export default {
           explain: 'The users can use the drawing tools to brush out the superficial pixels',
         },
       ],
-      hoverIndex: -1,
+      hoverIdx: -1
     };
   },
   methods: {
@@ -98,3 +82,21 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.feature-item {
+  height: auto;
+  width: 45%;
+  padding: 20px 30px;
+  margin: 5px;
+  border-radius: 10px;
+  background-color: #fff;
+  text-align: left;
+}
+.container {
+  text-align: center;
+}
+.hoverbg {
+  color: #1976d2;
+}
+</style>
