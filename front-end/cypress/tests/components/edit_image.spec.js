@@ -10,6 +10,7 @@ describe('Annotation Pad (Image Editor)', () => {
     Cypress._.times(3, (index) => {
       cy.get('.tui-image-editor-send-edit-btn').click();
       cy.wait(1000);
+      cy.get('.tui-image-editor').should('exist');
       cy.checkSessionStorage('image_id', index + 1);
     });
   });

@@ -26,12 +26,16 @@ describe('This is testing visualizer', () => {
     cy.get('li:nth-child(1)');
 
     let intialLength = 0;
-    cy.getBySel('table').find("li").then((li) => {
+    cy.getBySel('table')
+      .find('li')
+      .then((li) => {
         intialLength = li.length;
-    })
+      });
 
-    cy.getBySel('table').find("li").then((res)=>{
-        console.log('li', res)
+    cy.getBySel('table')
+      .find('li')
+      .then((res) => {
+        console.log('li', res);
         var down = 0;
         var up = 0;
         for (let i = 0; i < intialLength - 1; i++) {
@@ -39,7 +43,7 @@ describe('This is testing visualizer', () => {
             .invoke('attr', 'title')
             .then((res) => {
               up = parseFloat(res);
-  
+
               cy.getBySel(`item-${i}`)
                 .parent()
                 .next()
@@ -50,9 +54,8 @@ describe('This is testing visualizer', () => {
                   expect(up).to.be.least(down);
                 });
             });
-        }        
-
-    });  
+        }
+      });
   });
 
   it('Test Model Focus Panel', () => {
