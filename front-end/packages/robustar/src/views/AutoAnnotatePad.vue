@@ -26,7 +26,7 @@
           min="0"
           hint="A value of 0 means the beginning of all samples"
           required
-          data-test = "auto-annotate-start-index"
+          data-test="auto-annotate-start-index"
         ></v-text-field>
 
         <v-text-field
@@ -39,7 +39,7 @@
           min="-1"
           hint="A value of -1 means the end of all samples"
           required
-          data-test = "auto-annotate-end-index"
+          data-test="auto-annotate-end-index"
         ></v-text-field>
 
         <div class="d-flex flex-column align-center my-4">
