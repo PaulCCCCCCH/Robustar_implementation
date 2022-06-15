@@ -1,9 +1,6 @@
-const configs = {
-  imageListRow: 3,
-  imageListCol: 6,
-  imagePerPage: 18,
-  serverUrl: process.env.VUE_APP_BASE_URL,
+export const configs = {
+  imageSize: 'small', // 'extra small', 'small', 'medium', 'large', 'extra large'
+  serverUrl: `${process.env.VUE_APP_BASE_URL}`,
   imageServerUrl: `${process.env.VUE_APP_BASE_URL}/image`,
+  imagePathServerUrl: `${process.env.VUE_APP_BASE_URL}/dataset`,
 };
-
-export { configs };

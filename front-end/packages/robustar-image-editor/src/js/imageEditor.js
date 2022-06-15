@@ -137,6 +137,8 @@ const {
  *  @param {number} [options.selectionStyle.rotatingPointOffset] - selection rotating point length
  *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  *  @param {function} [options.apiSendEdit] - API to send user edit to the server. If not given, will download the image instead.
+ *  @param {function} [options.apiLoadEdit] - API to load previously annotated image.
+ *  @param {function} [options.apiAutoEdit] - API to apply automatically proposed edit to the image.
  * @example
  * var ImageEditor = require('tui-image-editor');
  * var blackTheme = require('./js/theme/black-theme.js');
@@ -179,15 +181,17 @@ class ImageEditor {
 
     /**
      * UI instance
-     * @type {Ui}
+     * @type {UI}
      */
     if (options.includeUI) {
       const UIOption = options.includeUI;
       UIOption.usageStatistics = options.usageStatistics;
 
-      // Send edit api configs
+      // Send/Load edit api configs
       UIOption.replaceDownload = !!options.apiSendEdit;
       UIOption.apiSendEdit = options.apiSendEdit;
+      UIOption.apiLoadEdit = options.apiLoadEdit;
+      UIOption.apiAutoEdit = options.apiAutoEdit;
 
       this.ui = new UI(wrapper, UIOption, this.getActions());
       options = this.ui.setUiDefaultSelectionStyle(options);
@@ -205,7 +209,7 @@ class ImageEditor {
      * @type {Graphics}
      * @private
      */
-    this._graphics = new Graphics(this.ui ? this.ui.getEditorArea() : wrapper, {
+    this._graphics = new Graphics(this, this.ui ? this.ui.getEditorArea() : wrapper, {
       cssMaxWidth: options.cssMaxWidth,
       cssMaxHeight: options.cssMaxHeight,
     });

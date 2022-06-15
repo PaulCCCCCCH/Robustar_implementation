@@ -1,5 +1,5 @@
 <template>
-  <div ref="tuiImageEditor" style="width: 100%; height: 200%">
+  <div ref="tuiImageEditor" style="width: 100%; height: 100%">
     <canvas></canvas>
   </div>
 </template>
@@ -7,6 +7,7 @@
 <script>
 import ImageEditor from '@robustar/image-editor';
 import '@robustar/image-editor/dist/tui-image-editor.css';
+import { configs } from '@/configs.js';
 import whiteTheme from './white-theme.js';
 
 const includeUIOptions = {
@@ -19,10 +20,12 @@ const includeUIOptions = {
     theme: whiteTheme,
   },
 };
+
 const editorDefaultOptions = {
   cssMaxWidth: 1000,
   cssMaxHeight: 1000,
 };
+
 export default {
   name: 'ImageEditor',
   props: {
@@ -54,8 +57,8 @@ export default {
         options = Object.assign(includeUIOptions, this.options);
       }
       options.includeUI.loadImage = {
-        path: localStorage.getItem('image_url'),
-        name: localStorage.getItem('image_id'),
+        path: `${configs.imagePathServerUrl}/${sessionStorage.getItem('image_url')}`,
+        name: sessionStorage.getItem('image_url'),
       };
       this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);
       this.addEventListener();

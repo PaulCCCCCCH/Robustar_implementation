@@ -38,6 +38,10 @@
 <symbol id="ic-draw-free" viewBox="0 0 32 32">
     <path fill="none" stroke="inherit" d="M2.5 20.929C2.594 10.976 4.323 6 7.686 6c5.872 0 2.524 19 7.697 19s1.89-14.929 6.414-14.929 1.357 10.858 5.13 10.858c1.802 0 2.657-2.262 2.566-6.786"/>
 </symbol>
+<symbol id="ic-draw-color-range" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4.5" stroke="inherit" fill="none"/>
+    <path stroke="none" fill="inherit" d="M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z"/>
+</symbol>
 <symbol id="ic-draw-line" viewBox="0 0 32 32">
     <path fill="none" stroke="inherit" d="M2 15.5h28"/>
 </symbol>

@@ -9,23 +9,22 @@ import torchvision.transforms as transforms
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
+import multiprocessing
 
 def ml_initialize(configs):
 
     # Configs from training pad
-    batch_size = int(configs['batch_size'])
-    learn_rate = float(configs['learn_rate'])
-    num_workers = int(configs['thread'])
-    shuffle = True if configs['shuffle'] == "yes" else False
-    save_dir = configs['save_dir'] if configs['save_dir'] else '/temp_path'
-    use_paired_train = True if configs['use_paired_train'] == 'yes' else False
+    use_paired_train = configs['use_paired_train']
     paired_data_path = configs['paired_data_path']
-    paired_train_reg_coeff = float(configs['paired_train_reg_coeff'])
     paired_train_mixture = configs['mixture']
     image_size = int(configs['image_size'])
     classes_path = configs['class_path']
     trainset = configs['train_path']
     testset = configs['test_path']
+    user_edit_buffering = configs['user_edit_buffering']
+    save_dir = configs['save_dir'] if configs['save_dir'] else '/temp_path'
+
+    model_name = configs['model_name'] if configs['model_name'] else "my-model"
     device = RServer.getServerConfigs()['device']
 
     dataManager = RServer.getDataManager()
@@ -33,21 +32,34 @@ def ml_initialize(configs):
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset, paired_data_path, image_size, transforms, classes_path, paired_train_mixture)
+            trainset, paired_data_path, image_size, transforms, 
+            classes_path, paired_train_mixture, user_edit_buffering)
     else:
         train_set = DataSet(trainset, image_size, transforms, classes_path)
 
     test_set = DataSet(testset, int(
         configs['image_size']), transforms, classes_path=configs['class_path'])
 
-    modelwrapper = initialize_model() # Model will be initialized with server config
+    # modelwrapper = initialize_model() # Model will be initialized with server config
+    modelwrapper = RServer.getModelWrapper()
     model = modelwrapper.model
 
-    trainer = Trainer(model, train_set, test_set, batch_size,
-                      shuffle, num_workers, device, learn_rate, True,
-                      save_dir, modelwrapper.modelwork_type,
-                      use_paired_train=use_paired_train,
-                      paired_reg=paired_train_reg_coeff)
+    trainer = Trainer(
+        net=model,
+        trainset=train_set,
+        testset=test_set,
+        batch_size=int(configs['batch_size']),
+        shuffle=configs['shuffle'],
+        num_workers=int(configs['thread']),
+        device=device,
+        learn_rate=float(configs['learn_rate']),
+        auto_save=configs['auto_save_model'],
+        save_every=int(configs['save_every']),
+        save_dir=save_dir,
+        name=model_name,
+        use_paired_train=configs['use_paired_train'],
+        paired_reg=float(configs['paired_train_reg_coeff'])
+    )
 
     return train_set, test_set, model, trainer
 
@@ -62,13 +74,24 @@ def initialize_model():
     pre_trained = server_configs['pre_trained']
     num_classes = server_configs['num_classes']
 
-    return RModelWrapper(model_arch, weight_to_load, device, pre_trained, num_classes)
+    net_path = os.path.join(RServer.getServer().ckptDir, weight_to_load).replace('\\', '/')
+
+    return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
 
 
 def update_info(status_dict):
     return """This is a placeholder function. If anything needs to be done
     after each iteration, put it here.
     """
+
+
+def startTB(logdir):
+    """
+    Starts updating tensorboard.
+    """
+
+    os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
+
 
 def start_train(configs):
     """
@@ -94,27 +117,17 @@ def start_train(configs):
         logdir = os.path.join('runs', 'run_{}'.format(date))
         writer = SummaryWriter(logdir)
         trainer.writer = writer
-
-        writer.add_scalar(
-            'train accuracy', 0, 0)
+        writer.add_scalar('train accuracy', 0, 0)
         writer.add_scalar('loss', 0, 0)
 
-        # import threading
         # Start the tensorboard writer as a new process
-
-        def startTB():
-            os.system('tensorboard --logdir={}'.format(os.path.abspath(logdir)))
-        t = threading.Thread(target=startTB)
+        t = multiprocessing.Process(target=startTB, args=(logdir,))
         t.start()
-
-        # os.system('tensorboard --logdir={} &'.format(logdir))
-        # Start training on a new thread
-        # train_thread = threading.Thread(target=trainer.start_train, args=(
-        #     update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
-        # train_thread.start()
+        trainer.set_tb_process(t)
 
         # Start training on a new thread
-        train_thread = TrainThread(trainer, (update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
+        train_thread = threading.Thread(target=trainer.start_train, args=(
+            update_info, int(configs['epoch']), configs['auto_save_model'] == 'yes'))
         train_thread.start()
 
     except Exception as e:
@@ -122,20 +135,3 @@ def start_train(configs):
         return None
 
     return train_thread
-
-
-class TrainThread(threading.Thread):
-
-    def __init__(self, trainer, args, callback=None):
-        super(TrainThread, self).__init__()
-        self.trainer = trainer
-        self.args = args
-        self.callback = callback
-
-    def run(self):
-        call_back, epochs, auto_save = self.args
-        self.trainer.start_train(call_back, epochs, auto_save)
-    
-    def stop(self):
-        print("Setting trainer stop flag...")
-        self.trainer.stop = True

@@ -1,5 +1,9 @@
-from os.path import normpath
+from os.path import normpath, join
 import re
+
+def create_empty_paired_image(path):
+    with open(path, 'wb') as f:
+        pass
 
 
 def split_path(path):
@@ -62,6 +66,11 @@ def get_paired_path(img_path, prev_root, paired_root):
         new image path
     """
     return re.sub(prev_root, paired_root, img_path)
+
+
+def to_unix(path):
+    return join('/', path.replace('\\', '/'))
+
 
 
 if __name__ == '__main__':

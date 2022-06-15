@@ -1,173 +1,367 @@
 <template>
-  <div class="d-flex flex-column align-center">
-    <!-- Page header-->
-    <div class="text-h5 text-center font-weight-medium mb-4 mt-8">
-      Select the image to edit
-    </div>
+  <div class="d-flex justify-center align-center" style="height: 100%">
+    <div class="d-flex flex-column flex-grow-1 align-center py-8">
+      <!-- sticky header: settings -->
+      <div class="d-flex flex-column align-center rounded px-8 elevation-2 sticky-header">
+        <div
+          v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
+          style="width: 200px"
+        >
+          <v-select
+            v-model="split"
+            :items="classification"
+            @change="resetImageList"
+            data-test="image-list-select-classification"
+          ></v-select>
+        </div>
 
-    <!-- Image list controller -->
-    <div class="d-flex justify-space-between px-16 py-8" style="width: 60%">
-      <!-- Previous page button -->
-      <v-btn depressed color="primary" @click="prevPage"> Prev Page </v-btn>
+        <!-- Page navigator -->
+        <div class="d-flex justify-center align-center my-4">
+          <!-- Previous page button -->
+          <v-btn
+            :disabled="currentPage <= 0 || !hasImages"
+            depressed
+            color="primary"
+            @click="currentPage--"
+            data-test="image-list-btn-prev-page"
+          >
+            PREV PAGE
+          </v-btn>
 
-      <!-- Refresh page button & page number -->
-      <div class="d-flex">
-        <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> Goto Page </v-btn>
-        <v-text-field v-model="currentPage" dense label="Page Number"></v-text-field>
+          <!-- Refresh page button & page number -->
+          <div class="d-flex align-center mx-8">
+            <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
+            <v-text-field
+              data-test="image-list-input-page-number"
+              v-model="inputPage"
+              label="Page Number"
+              type="number"
+            ></v-text-field>
+          </div>
+
+          <!-- Next page button -->
+          <v-btn
+            data-test="image-list-btn-next-page"
+            :disabled="currentPage >= maxPage || !hasImages"
+            depressed
+            color="primary"
+            @click="currentPage++"
+          >
+            NEXT PAGE
+          </v-btn>
+
+          <v-divider vertical class="mx-8"></v-divider>
+
+          <!-- Class filter -->
+          <div class="d-flex align-center">
+            <v-btn
+              :disabled="selectedClass === 0"
+              class="mr-4"
+              depressed
+              color="primary"
+              @click="gotoClass"
+            >
+              GOTO CLASS
+            </v-btn>
+            <v-select
+              :items="classNames"
+              v-model="selectedClass"
+              label="Class Name"
+              data-test="image-list-select-class-name"
+            >
+            </v-select>
+          </div>
+        </div>
+
+        <!-- row & col settings -->
+        <div class="d-flex">
+          <v-select
+            :items="imagePerPageOptions"
+            v-model="imagePerPage"
+            label="Number of image per page"
+            class="mr-8"
+            outlined
+            @change="resetImageList"
+          >
+          </v-select>
+          <v-select
+            :items="Object.keys(imageSizeMap)"
+            v-model="imageSize"
+            label="Image size"
+            outlined
+            @change="setImageSize"
+          >
+          </v-select>
+        </div>
       </div>
+      <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
-      <!-- Next page button -->
-      <v-btn v-if="isListEnd" depressed disabled color="primary" @click="nextPage"> Next Page </v-btn>
-      <v-btn v-else depressed color="primary" @click="nextPage"> Next Page </v-btn>
-    </div>
+      <div v-if="!hasImages" class="d-flex text-h2 grey--text">Sorry, image list is empty</div>
 
-    <!-- Image List -->
-    <div v-for="(imgline, row) in imageMatrix" :key="row">
-      <div class="d-flex">
-        <div class="mb-8 mr-8 row-item" v-for="(url, col) in imgline" :key="col">
-          <!-- minus 1 is necessary since Vue counts from 1 -->
-          <!-- <img :src="url" alt="img" class="w-95" @click="editImage(row, col, url)" /> -->
+      <v-row v-else class="d-flex" style="width: 85%">
+        <!-- 6 images per row -->
+
+        <v-col
+          v-for="(url, idx) in imageList"
+          :key="url"
+          :cols="imageSizeMap[imageSize]"
+          data-test="image-list-div-all-imgs"
+        >
+          <!-- class="d-flex child-flex" -->
+          <div class="d-flex align-right">
+            <v-btn
+              v-if="$route.params.split === 'annotated'"
+              color="secondary"
+              class="mr-n1 mb-n1 mx-auto"
+              icon
+              small
+              @click="deleteAnnotatedImage(idx, url)"
+            >
+              <v-icon color="red">mdi-close-box</v-icon>
+            </v-btn>
+          </div>
           <v-hover v-slot="{ hover }">
-            <v-img :src="url" alt="invalid image URL" height="200px" width="200px" @error="onListEnd">
+            <v-img
+              :src="url"
+              alt="invalid image URL"
+              aspect-ratio="1"
+              :data-test="`image-list-img-${idx}`"
+            >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular
-                    v-if="!isListEnd"
-                    indeterminate
-                    color="primary lighten-3"
-                  ></v-progress-circular>
+                  <v-progress-circular indeterminate color="primary lighten-3">
+                  </v-progress-circular>
                 </v-row>
               </template>
+
               <v-expand-transition>
                 <div
                   v-if="hover"
-                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal text-h5 white--text"
+                  class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                   style="height: 100%"
                 >
                   <v-btn
                     class="mb-4"
                     outlined
-                    large
                     color="white"
-                    width="150px"
-                    @click="gotoImage(row, col, url, 'EditImage')"
+                    width="80%"
+                    @click="gotoImage(url, 'EditImage')"
+                    :data-test="`image-list-btn-edit-image-${idx}`"
                   >
-                    <v-icon left>mdi-pencil</v-icon>
-                    Annotate
+                    <v-icon>mdi-pencil</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                   </v-btn>
-                  <v-btn
-                    outlined
-                    large
-                    color="white"
-                    width="150px"
-                    @click="gotoImage(row, col, url, 'Prediction')"
-                  >
-                    <v-icon left>mdi-cogs</v-icon>
-                    Predict
+                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
+                    <v-icon>mdi-cogs</v-icon>
+                    <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                   </v-btn>
                 </div>
               </v-expand-transition>
             </v-img>
           </v-hover>
-        </div>
-      </div>
+        </v-col>
+      </v-row>
     </div>
 
-    <div v-if="imageMatrix.length === 0" class="d-flex text-h2 grey--text mt-16 pt-16">
-      Sorry, image list is empty
-    </div>
+    <Visualizer
+      v-if="hasImages"
+      :is-active="image_url !== ''"
+      :image_url="image_url"
+      :split="split"
+      @open="fetchImageUrl"
+      @close="image_url = ''"
+    />
   </div>
 </template>
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, imageCoord2Idx, getPageNumber } from '@/utils/image_list';
-import { APIGetSplitLength } from '@/apis/images'
+import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
+import { APIDeleteEdit } from '@/services/edit';
+import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
+import Visualizer from '@/components/prediction-viewer/Visualizer';
+import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 export default {
   name: 'ImageList',
-  components: {},
+  components: {
+    Visualizer,
+  },
   data() {
     return {
       currentPage: 0,
-      imageMatrix: [],
-      configs: configs,
-      isListEnd: false,
-      splitLength: 1000
+      inputPage: 0,
+      maxPage: 0,
+      imageList: [],
+      splitLength: 1000,
+      classNames: [],
+      classStartIdx: {},
+      selectedClass: 0,
+      split: 'test_correct',
+      image_url: '',
+      imagePerPage: 0,
+      imageSize: configs.imageSize,
+      imageSizeMap: {
+        'extra small': 1,
+        small: 2,
+        medium: 3,
+        large: 4,
+        'extra large': 6,
+      },
     };
   },
   mounted() {
-    this.getMaxPage();
-    this.loadImages();
+    this.updateSplit();
+    this.fetchCurrentPage();
+    this.imagePerPage = this.imagePerPageOptions[1];
+    this.initImageList();
   },
   watch: {
     $route() {
-      this.currentPage = 0;
-      this.getMaxPage();
+      this.updateSplit();
+      this.fetchCurrentPage();
+      this.initImageList();
+      this.image_url = ''; // Reset current image url for visualizaer
+    },
+    currentPage() {
+      sessionStorage.setItem(this.split, this.currentPage);
+      this.inputPage = this.currentPage;
       this.loadImages();
     },
   },
+  computed: {
+    classification() {
+      return [
+        { text: 'All', value: this.$route.params.split },
+        { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
+        { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
+      ];
+    },
+    hasImages() {
+      return this.imageList.length > 0;
+    },
+    imagePerPageOptions() {
+      const imagePerRow = 12 / this.imageSizeMap[this.imageSize];
+      // images per page is a multiple of imagePerRow
+      return new Array(5).fill().map((option, index) => imagePerRow * (index + 1));
+    },
+  },
   methods: {
-    getMaxPage() {
-      APIGetSplitLength(this.$route.params.split,
-        (res) => {this.splitLength = res.data.data; console.log(res.data.data)},
-        (err) => console.log(err)
-      )
-    }, 
-    nextPage() {
-      this.currentPage++;
-      this.loadImages();
+    fetchImageUrl() {
+      this.image_url = sessionStorage.getItem('image_url') || '';
     },
-    prevPage() {
-      if (this.currentPage <= 0) {
-        return;
-      }
-      this.currentPage--;
-      this.loadImages();
+    fetchCurrentPage() {
+      this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
+      sessionStorage.setItem(this.split, this.currentPage);
     },
-    gotoImage(row, col, url, componentName) {
-      const idx = imageCoord2Idx(row, col);
-      const image_id = imagePageIdx2Id(this.currentPage, idx);
-      localStorage.setItem('split', this.$route.params.split);
-      localStorage.setItem('image_id', image_id);
-      localStorage.setItem('image_url', url);
-      this.$router.push({ name: componentName });
+    updateSplit() {
+      this.split = this.$route.params.split;
     },
-    calcMaxPage() {
-      return getPageNumber(Math.max(this.splitLength - 1, 0));
+    initImageList() {
+      APIGetSplitLength(
+        this.split,
+        (res) => {
+          this.splitLength = res.data.data;
+          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+          this.getClassNames();
+          this.loadImages();
+        },
+        (err) => {
+          this.$root.alert('error', 'Image list initialization failed');
+          this.imageList = [];
+        }
+      );
+    },
+    resetImageList() {
+      this.currentPage = 0;
+      this.classNames = [];
+      this.classStartIdx = {};
+      this.selectedClass = 0;
+      this.initImageList();
+    },
+    getClassNames() {
+      APIGetClassNames(
+        this.split,
+        (res) => {
+          this.classStartIdx = res.data.data;
+          this.classNames = Object.keys(this.classStartIdx);
+        },
+        (err) => {
+          this.$root.alert('error', 'Fetching class names failed');
+          this.imageList = [];
+        }
+      );
+    },
+    setCurrentImage(url) {
+      this.image_url = getImageUrlFromFullUrl(url);
+      sessionStorage.setItem('split', this.split);
+      sessionStorage.setItem('image_url', this.image_url);
+    },
+    deleteImageSuccess() {
+      this.initImageList();
+    },
+    deleteImageFailed() {
+      this.$root.alert('error', 'Image deletion failed');
+    },
+    deleteAnnotatedImage(idx, url) {
+      APIDeleteEdit(
+        this.split,
+        getImageUrlFromFullUrl(url),
+        () => this.deleteImageSuccess(idx),
+        this.deleteImageFailed
+      );
+    },
+    gotoImage(url, componentName) {
+      this.setCurrentImage(getImageUrlFromFullUrl(url));
+      this.$router.push({
+        name: componentName,
+        params: { split: this.$route.params.split },
+      });
     },
     gotoPage() {
-      this.currentPage = Math.min(this.calcMaxPage(), this.currentPage);
-      console.log(this.currentPage)
+      this.inputPage = Number(this.inputPage);
+      if (this.inputPage > this.maxPage) {
+        this.$root.alert('error', 'This is the end of the list.');
+        this.inputPage = this.maxPage;
+      } else if (this.inputPage < 0) {
+        this.inputPage = 0;
+      }
+      this.currentPage = this.inputPage;
+    },
+    gotoClass() {
+      let startIdx = this.classStartIdx[this.selectedClass];
+      this.currentPage = Math.floor(startIdx / this.imagePerPage);
       this.loadImages();
     },
-    loadImages() {
-      this.isListEnd = false;
-      this.imageMatrix = [];
-      for (let row = 0; row < configs.imageListRow; row++) {
-        let line = [];
-        for (let col = 0; col < configs.imageListCol; col++) {
-          const idx = imageCoord2Idx(row, col);
-          const imgid = imagePageIdx2Id(this.currentPage, idx);
-          // TODO: '/train/' should be a component prop, not hard-coded
-          line.push(`${configs.imageServerUrl}/${this.$route.params.split}/${imgid}`);
-        }
-        this.imageMatrix.push(line);
-      }
+    setImageSize() {
+      this.imagePerPage = this.imagePerPageOptions[1];
+      this.resetImageList();
     },
-    onListEnd() {
-      this.isListEnd = true;
-      this.$root.alert('error', 'This is the end of the list.');
-    }
+    loadImages() {
+      APIGetImageList(
+        this.split,
+        this.currentPage,
+        this.imagePerPage,
+        (res) => {
+          const list = res.data.data;
+          this.$nextTick(() => {
+            this.imageList = [];
+            list.forEach((imagePath) => {
+              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            });
+          });
+        },
+        (err) => {
+          this.$root.alert('error', 'Loading images failed');
+          this.imageList = [];
+        }
+      );
+    },
   },
 };
 </script>
 
 <style scoped>
-.row-item:last-child {
-  margin-right: 0 !important;
-}
-
 .v-card--reveal {
   justify-content: center;
   align-items: center;
@@ -175,5 +369,17 @@ export default {
   bottom: 0;
   width: 100%;
   opacity: 0.8;
+}
+
+.v-card--reveal button {
+  font-size: 0.5vw;
+  overflow: hidden;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 80px;
+  z-index: 9;
+  background-color: white;
 }
 </style>
