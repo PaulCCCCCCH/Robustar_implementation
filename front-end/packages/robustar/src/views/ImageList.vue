@@ -104,8 +104,8 @@
           <div v-if="showExtraSettings" class="mr-4">
             <p>Click image to select its index</p>
             <v-radio-group v-model="imageIdxSelection" mandatory row>
-              <v-radio :label="`Start Index : ${absoluteStartIdx}`" value="start"></v-radio>
-              <v-radio :label="`End Index : ${absoluteEndIdx}`" value="end"></v-radio>
+              <v-radio :label="`Start Index : ${imageStartIdx}`" value="start"></v-radio>
+              <v-radio :label="`End Index : ${imageEndIdx}`" value="end"></v-radio>
             </v-radio-group>
             <v-btn
               depressed
@@ -115,7 +115,7 @@
               @click="
                 $router.push({
                   name: 'InfluencePad',
-                  params: { startIdx: absoluteStartIdx, endIdx: absoluteEndIdx },
+                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
                 })
               "
             >
@@ -128,7 +128,7 @@
               @click="
                 $router.push({
                   name: 'AutoAnnotatePad',
-                  params: { startIdx: absoluteStartIdx, endIdx: absoluteEndIdx },
+                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
                 })
               "
             >
@@ -155,9 +155,14 @@
         >
           <v-hover :disabled="showExtraSettings" v-slot="{ hover }">
             <v-badge
-              :value="showExtraSettings && (idx === imageStartIdx || idx === imageEndIdx)"
+              :value="
+                showExtraSettings &&
+                calcAbsIdx(idx) >= imageStartIdx &&
+                calcAbsIdx(idx) <= imageEndIdx
+              "
+              :color="calcAbsIdx(idx) < imageEndIdx ? 'warning' : 'success'"
+              :dot="calcAbsIdx(idx) > imageStartIdx && calcAbsIdx(idx) < imageEndIdx"
               bordered
-              color="warning"
               icon="mdi-check"
               overlap
               style="width: 100%; height: 100%"
@@ -245,7 +250,7 @@ export default {
       showExtraSettings: false,
       imageIdxSelection: 'start',
       imageStartIdx: 0,
-      imageEndIdx: 22,
+      imageEndIdx: 0,
       currentPage: 0,
       inputPage: 0,
       maxPage: 0,
@@ -301,12 +306,6 @@ export default {
       const imagePerRow = 12 / this.imageSizeMap[this.imageSize];
       // images per page is a multiple of imagePerRow
       return new Array(5).fill().map((option, index) => imagePerRow * (index + 1));
-    },
-    absoluteStartIdx() {
-      return this.currentPage * this.imagePerPage + this.imageStartIdx;
-    },
-    absoluteEndIdx() {
-      return this.currentPage * this.imagePerPage + this.imageEndIdx;
     },
   },
   methods: {
@@ -422,12 +421,16 @@ export default {
     },
     selectImage(idx) {
       if (this.showExtraSettings) {
+        const absoluteIdx = this.calcAbsIdx(idx);
         if (this.imageIdxSelection === 'start') {
-          this.imageStartIdx = idx;
+          this.imageStartIdx = absoluteIdx;
         } else if (this.imageIdxSelection === 'end') {
-          this.imageEndIdx = idx;
+          this.imageEndIdx = absoluteIdx;
         }
       }
+    },
+    calcAbsIdx(idx) {
+      return this.currentPage * this.imagePerPage + idx;
     },
   },
 };
