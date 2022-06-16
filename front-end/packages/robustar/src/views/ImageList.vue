@@ -107,6 +107,9 @@
               <v-radio :label="`Start Index : ${imageStartIdx}`" value="start"></v-radio>
               <v-radio :label="`End Index : ${imageEndIdx}`" value="end"></v-radio>
             </v-radio-group>
+            <p v-if="imageEndIdx < imageStartIdx" style="color: red">
+              End Index smaller than Start Index
+            </p>
             <v-btn
               depressed
               outlined
