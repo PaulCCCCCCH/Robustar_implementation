@@ -162,7 +162,7 @@ class Launcher(QWidget):
             self.ui.configFileDisplay.setText(userPath)
 
     def loadProfile(self):
-        self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Profile", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.loadPath, 'r') as f:
                 self.configs = json.load(f)
@@ -185,7 +185,7 @@ class Launcher(QWidget):
             print('Load path not found')
 
     def saveProfile(self):
-        self.savePath, _ = QFileDialog.getSaveFileName(self, "Save Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.savePath, _ = QFileDialog.getSaveFileName(self, "Save Profile", self.cwd, "JSON Files (*.json);;All Files (*)")
         try:
             with open(self.savePath, 'w') as f:
                 json.dump(self.configs, f)
@@ -614,6 +614,9 @@ class Launcher(QWidget):
             try:
                 while True:
                     log = next(logs).decode("utf-8")
+
+                    # Remove the color of log
+                    log = re.sub('.\[\d+m', '', log)
                     self.customSignals.printLogSignal.emit(log)
             except StopIteration:
                 return
