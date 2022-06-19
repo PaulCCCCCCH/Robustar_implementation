@@ -24,7 +24,12 @@
             Model Focus
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <FocusView :focusImgUrl="focusImgUrl" />
+            <v-slide-group multiple show-arrows>
+              <template v-slot:prev-icon>
+                <v-icon large>mdi-chevron-right </v-icon>
+              </template>
+              <FocusView :focusImgUrl="focusImgUrl" />
+            </v-slide-group>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
