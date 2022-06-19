@@ -46,8 +46,18 @@ class Launcher(QWidget):
         # Initialize the signal source object
         self.customSignals = CustomSignals()
 
-        # Initialize the client to communicate with the Docker daemon
-        self.client = docker.from_env()
+        self.dockerRunning = True
+
+        try:
+            # Initialize the client to communicate with the Docker daemon
+            self.client = docker.from_env()
+        except docker.errors.DockerException:
+            self.dockerRunning = False
+
+            self.popup = QUiLoader().load('popup.ui')
+            self.popup.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            # self.popup.setWindowModality(Qt.ApplicationModal)
+            self.popup.okButton.clicked.connect(exit)
 
         self.container = None
 
@@ -630,7 +640,10 @@ class Launcher(QWidget):
 app = QApplication([])
 launcher = Launcher()
 
-launcher.ui.setFixedSize(1000, 850)
-launcher.ui.show()
-launcher.initExistContainer()
+if(launcher.dockerRunning == False):
+    launcher.popup.show()
+else:
+    launcher.ui.setFixedSize(1000, 850)
+    launcher.ui.show()
+    launcher.initExistContainer()
 app.exec_()
