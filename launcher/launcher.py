@@ -55,8 +55,7 @@ class Launcher(QWidget):
             self.dockerRunning = False
 
             self.popup = QUiLoader().load('popup.ui')
-            self.popup.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            # self.popup.setWindowModality(Qt.ApplicationModal)
+            self.popup.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
             self.popup.okButton.clicked.connect(exit)
 
         self.container = None
