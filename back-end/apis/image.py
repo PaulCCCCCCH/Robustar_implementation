@@ -153,5 +153,5 @@ def get_dataset_img(dataset_img_path):
 
 
 @app.route('/visualize/<path:visualize_img_path>')
-def get_influence_img(visualize_img_path):
+def get_visualize_img(visualize_img_path):
     return send_file(to_unix(visualize_img_path))

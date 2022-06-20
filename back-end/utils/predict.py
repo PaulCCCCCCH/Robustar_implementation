@@ -3,7 +3,9 @@ from objects.RModelWrapper import RModelWrapper
 import torch
 import modules.influence_module as ptif
 import threading
+import time
 from objects.RDataManager import RDataManager
+from objects.RTask import RTask, TaskType
 import pickle
 from utils.path_utils import to_unix
 
@@ -37,7 +39,6 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
     image = image.to(modelWrapper.device)
 
     model = modelWrapper.model
-
     out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
 
     if argmax:
@@ -60,10 +61,18 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
                 influence for the entire dataset.
     """
 
+    task = RTask(TaskType.AutoAnnotate, end_idx - start_idx)
+    starttime = time.time()
     influence_buffer = dataManager.get_influence_buffer()
 
-    trainloader = dataManager.trainloader
-    testloader = dataManager.testloader
+    # Force num_workers to be 0 to prevent error
+    testloader = torch.utils.data.DataLoader(
+        dataManager.testset, batch_size=dataManager.batch_size, shuffle=False, num_workers=0)
+    trainloader = torch.utils.data.DataLoader(
+        dataManager.trainset, batch_size=dataManager.batch_size, shuffle=False, num_workers=0)
+
+    # trainloader = dataManager.trainloader
+    # testloader = dataManager.testloader
 
     if end_idx == -1:
         end_idx = len(testloader.dataset)
@@ -92,16 +101,9 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
         lst = [p[0] for p in lst] 
         influence_buffer.set(testloader.dataset[idx][0], [to_unix(trainloader.dataset[int(train_idx)][0]) for train_idx in lst])
 
-    
-class CalcInfluenceThread(threading.Thread):
-    def __init__(self, modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging):
-        super(CalcInfluenceThread, self).__init__()
-        self.modelWrapper = modelWrapper
-        self.dataManager = dataManager
-        self.start_idx = start_idx
-        self.end_idx = end_idx
-        self.r_averaging = r_averaging
-        self.stop = True
-
-    def run(self):
-        calculate_influence(self.modelWrapper, self.dataManager, self.start_idx, self.end_idx, self.r_averaging)
+        task_update_res = task.update()
+        if not task_update_res:
+            endtime = time.time()
+            print("Time consumption:", endtime-starttime)
+            print("Influence calculation stopped")
+            return 

@@ -1,10 +1,23 @@
 <template>
   <!-- Influence functions (if calculated) -->
   <div class="d-flex flex-column align-center">
-    <div v-if="influImgUrl.length === 0">
+    <div v-if="influImgUrlList.length === 0">
       <p>Influence not calculated.</p>
-      <p>To calculate influence</p>
-      <p>please go to Influence page from the side bar</p>
+
+      <div v-if="split === 'test'">
+        <v-btn
+          depressed
+          color="primary"
+          @click="
+            $router.push({
+              name: 'InfluencePad',
+              params: {},
+            })
+          "
+        >
+          Calculate Influence
+        </v-btn>
+      </div>
     </div>
     <div v-else>
       <div v-for="(url, index) in influImgUrl" :key="index">
@@ -21,7 +34,9 @@ import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 export default {
   props: {
-    influImgUrl: Array,
+    influImgUrlList: Array,
+    victimUrl: String,
+    split: String,
   },
   methods: {
     gotoImage(url) {

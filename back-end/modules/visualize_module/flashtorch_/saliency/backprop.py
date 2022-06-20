@@ -220,6 +220,7 @@ class Backprop:
 
     def _register_conv_hook(self):
         def _record_gradients(module, grad_in, grad_out):
+            if grad_in[0] is None: return
             if self.gradients.shape == grad_in[0].shape:
                 self.gradients = grad_in[0]
 
@@ -234,6 +235,7 @@ class Backprop:
             self.relu_outputs.append(output)
 
         def _clip_gradients(module, grad_in, grad_out):
+            if not self.relu_outputs: return
             relu_output = self.relu_outputs.pop()
             clippled_grad_out = grad_out[0].clamp(0.0)
 

@@ -34,7 +34,7 @@
             Influence Images
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <InfluView :influImgUrl="influImgUrl" />
+            <InfluView :split="split" :influImgUrlList="influImgUrlList" :victimUrl="image_url" />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -86,7 +86,7 @@ export default {
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
       ],
       focusImgUrl: [],
-      influImgUrl: [],
+      influImgUrlList: [],
       proposedEditUrl: '',
       predViewConfig: {
         componentWidth: 300,
@@ -169,20 +169,20 @@ export default {
       APIPredict(split, image_url, success, failed);
     },
 
-    get_influence(split, image_url) {
+    get_influence(image_url) {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
-          this.influImgUrl = [];
+          this.influImgUrlList = [];
           return;
         }
 
         const responseData = response.data.data;
-        this.influImgUrl = [];
+        this.influImgUrlList = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
-          this.influImgUrl.push(`${configs.imagePathServerUrl}/${url}`);
+          this.influImgUrlList.push(`${configs.imagePathServerUrl}/${url}`);
         }
       };
 
@@ -190,7 +190,7 @@ export default {
         console.log(err);
       };
 
-      APIGetInfluenceImages(split, image_url, success, failed);
+      APIGetInfluenceImages(image_url, success, failed);
     },
 
     toggle_panel() {

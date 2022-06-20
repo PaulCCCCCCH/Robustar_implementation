@@ -8,7 +8,7 @@ import copy
 import logging
 
 from pathlib import Path
-from pytorch_influence_functions.influence_function import s_test, grad_z
+from .influence_function import s_test, grad_z
 from pytorch_influence_functions.utils import save_json, display_progress
 
 
@@ -355,6 +355,8 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
             max_influence_dict = dict_slice(max_influence_dict, 0, 4)
 
         display_progress("Calc. influence function: ", i, train_dataset_size)
+
+
 
     harmful = np.argsort(influences)
     helpful = harmful[::-1]

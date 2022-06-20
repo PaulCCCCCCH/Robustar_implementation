@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
 
+from regex import W
 import torch
 from torch.autograd import grad
-from utils import display_progress
+from pytorch_influence_functions.utils import display_progress
 
 
 def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
@@ -43,8 +44,8 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
                 x, t = x.cuda(), t.cuda()
             y = model(x)
             loss = calc_loss(y, t)
-            params = [ p for p in model.parameters() if p.requires_grad ]
-            hv = hvp(loss, params, h_estimate)
+            # params = [ p for p in model.parameters() if p.requires_grad ]
+            hv = hvp(loss, list(model.parameters()), h_estimate)
             # Recursively caclulate h_estimate
             h_estimate = [
                 _v + (1 - damp) * _h_e - _hv / scale
@@ -94,8 +95,11 @@ def grad_z(z, t, model, gpu=-1):
     y = model(z)
     loss = calc_loss(y, t)
     # Compute sum of gradients from model parameters to loss
-    params = [ p for p in model.parameters() if p.requires_grad ]
-    return list(grad(loss, params, create_graph=True))
+
+    # params = [ p for p in model.parameters() if p.requires_grad ]
+    # print(params)
+
+    return list(grad(loss, list(model.parameters()), create_graph=True))
 
 
 def hvp(y, w, v):

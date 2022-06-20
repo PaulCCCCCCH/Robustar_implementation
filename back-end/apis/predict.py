@@ -1,11 +1,11 @@
 from flask import request
-
+import threading
 from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from utils.path_utils import to_unix
-from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
+from utils.predict import convert_predict_to_array, get_image_prediction, calculate_influence
 
 app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
@@ -134,8 +134,8 @@ def predict(split, image_path):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/<split>/<path:image_path>')
-def get_influence(split, image_path):
+@app.route('/influence/list/<split>/<path:image_path>')
+def get_influence_list(split, image_path):
     """
      Gets the influence for an image specified by its id
     ---
@@ -175,7 +175,7 @@ def get_influence(split, image_path):
 
 
 @app.route('/influence', methods=['POST'])
-def calculate_influence():
+def api_calculate_influence():
     """
     Calculates the influence for the test set
     ---
@@ -216,12 +216,15 @@ def calculate_influence():
     """
     json_data = request.get_json()
     configs = json_data['configs']
-    calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper, 
-        dataManager, 
-        start_idx=int(configs['test_sample_start_idx']),
-        end_idx=int(configs['test_sample_end_idx']),
-        r_averaging=int(configs['r_averaging'])
-    )
+
+    calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
+      modelWrapper, 
+      dataManager,  
+      int(configs['test_sample_start_idx']) ,
+      int(configs['test_sample_end_idx']),
+      int(configs['r_averaging'])
+    ))
+
     calcInfluenceThread.start()
+
     return RResponse.ok({}, "Influence calculation started!")
