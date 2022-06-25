@@ -78,6 +78,7 @@ export default {
         test_sample_start_idx: 0,
         test_sample_end_idx: 9,
         r_averaging: 1,
+        is_batch: true,
       },
     };
   },

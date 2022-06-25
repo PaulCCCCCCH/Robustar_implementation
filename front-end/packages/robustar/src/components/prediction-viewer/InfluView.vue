@@ -31,6 +31,7 @@
 
 <script>
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
+import { APICalculateInfluence } from '@/services/predict';
 
 export default {
   props: {
@@ -38,11 +39,26 @@ export default {
     victimUrl: String,
     split: String,
   },
+  data() {
+    return {};
+  },
   methods: {
     gotoImage(url) {
       sessionStorage.setItem('split', 'train');
       sessionStorage.setItem('image_url', getImageUrlFromFullUrl(url));
       this.$router.push({ name: 'EditImage', params: { split: 'train' } });
+    },
+    calculateInfluence() {
+      APICalculateInfluence(
+        {
+          test_sample_start_idx: -1,
+          test_sample_end_idx: -1, // Don't need to specify start/end for instance influence calculation
+          r_averaging: 1, // TODO: Read from session storage
+          is_batch: false, // not batch calculation
+        },
+        () => {},
+        () => {} // TODO
+      );
     },
   },
 };

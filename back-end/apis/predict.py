@@ -198,6 +198,7 @@ def api_calculate_influence():
                 test_sample_start_idx: 2,
                 test_sample_end_idx: 5,
                 r_averaging: 10
+                is_batch: true
               }
     responses:
       200:
@@ -217,12 +218,21 @@ def api_calculate_influence():
     json_data = request.get_json()
     configs = json_data['configs']
 
+    if 'is_batch' in configs and configs['is_batch']:
+      start = int(configs['test_sample_start_idx']) ,
+      end = int(configs['test_sample_end_idx']),
+
+    else:
+      start = dataManager.testset.get_idx_from_path(json_data['instance_path'])
+      end = start + 1
+
+
     calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
       modelWrapper, 
       dataManager,  
-      int(configs['test_sample_start_idx']) ,
-      int(configs['test_sample_end_idx']),
-      int(configs['r_averaging'])
+      start,
+      end,
+      int(configs['r_averaging']),
     ))
 
     calcInfluenceThread.start()
