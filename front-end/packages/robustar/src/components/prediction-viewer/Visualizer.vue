@@ -24,10 +24,7 @@
             Model Focus
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <v-slide-group multiple show-arrows>
-              <template v-slot:prev-icon>
-                <v-icon large>mdi-chevron-right </v-icon>
-              </template>
+            <v-slide-group multiple show-arrows class = "icon-size-change">
               <FocusView :focusImgUrl="focusImgUrl" />
             </v-slide-group>
           </v-expansion-panel-content>
@@ -215,7 +212,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang='less'>
+.icon-size-change{
+  ::v-deep {
+    .v-slide-group__prev,.v-slide-group__next {
+      .mdi:before{
+        font-size: 20px;
+      }
+    }
+  }
+}
 .float-button {
   position: fixed;
   right: 10px;
