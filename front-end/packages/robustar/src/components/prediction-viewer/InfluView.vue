@@ -5,18 +5,8 @@
       <p>Influence not calculated.</p>
 
       <div v-if="split === 'test'">
-        <v-btn
-          depressed
-          color="primary"
-          @click="
-            $router.push({
-              name: 'InfluencePad',
-              params: {},
-            })
-          "
-        >
-          Calculate Influence
-        </v-btn>
+        <v-btn depressed color="primary" @click="calculateInfluence"> Calculate Influence </v-btn>
+        <p>Current config: r_averaging: {{ r_averaging }}</p>
       </div>
     </div>
     <div v-else>
@@ -32,6 +22,7 @@
 <script>
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 import { APICalculateInfluence } from '@/services/predict';
+import { configs } from '@/configs.js';
 
 export default {
   props: {
@@ -40,7 +31,12 @@ export default {
     split: String,
   },
   data() {
-    return {};
+    return {
+      r_averaging: configs.defaultRAveraging,
+    };
+  },
+  mounted() {
+    this.r_averaging = sessionStorage.getItem('r_averaging') || configs.defaultRAveraging;
   },
   methods: {
     gotoImage(url) {
@@ -49,15 +45,29 @@ export default {
       this.$router.push({ name: 'EditImage', params: { split: 'train' } });
     },
     calculateInfluence() {
+      this.$root.startProcessing('The influence is being calculated. Please wait...');
+      const success = (response) => {
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Influence calculation succeeded');
+      };
+      const failed = (err) => {
+        alert('Server error. Check console.');
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Influence calculation failed');
+      };
+
       APICalculateInfluence(
         {
-          test_sample_start_idx: -1,
-          test_sample_end_idx: -1, // Don't need to specify start/end for instance influence calculation
-          r_averaging: 1, // TODO: Read from session storage
-          is_batch: false, // not batch calculation
+          configs: {
+            test_sample_start_idx: -1,
+            test_sample_end_idx: -1, // Don't need to specify start/end for instance influence calculation
+            r_averaging: this.r_averaging, // TODO: Read from session storage
+            is_batch: false, // not batch calculation
+            instance_path: this.victimUrl, // only calculate influence for this image
+          },
         },
-        () => {},
-        () => {} // TODO
+        success,
+        failed
       );
     },
   },
