@@ -219,11 +219,11 @@ def api_calculate_influence():
     configs = json_data['configs']
 
     if 'is_batch' in configs and configs['is_batch']:
-      start = int(configs['test_sample_start_idx']) ,
-      end = int(configs['test_sample_end_idx']),
+      start = int(configs['test_sample_start_idx'])
+      end = int(configs['test_sample_end_idx'])
 
     else:
-      start = dataManager.testset.get_idx_from_path(json_data['instance_path'])
+      start = dataManager.testset.get_idx_from_path(configs['instance_path'])
       end = start + 1
 
 

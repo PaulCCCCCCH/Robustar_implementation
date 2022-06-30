@@ -4,6 +4,7 @@ from regex import W
 import torch
 from torch.autograd import grad
 from pytorch_influence_functions.utils import display_progress
+import numpy as np
 
 
 def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
@@ -47,9 +48,12 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
             # params = [ p for p in model.parameters() if p.requires_grad ]
             hv = hvp(loss, list(model.parameters()), h_estimate)
             # Recursively caclulate h_estimate
-            h_estimate = [
-                _v + (1 - damp) * _h_e - _hv / scale
-                for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+            with torch.no_grad():
+                h_estimate = [
+                    _v + (1 - damp) * _h_e - _hv / scale
+                    for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+            if np.nan in hv[-1]:
+                raise ValueError("NaN detected. Existing.")
             break
         display_progress("Calc. s_test recursions: ", i, recursion_depth)
     return h_estimate
