@@ -11,7 +11,7 @@
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Prediction
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content >
             <div class="d-flex justify-center align-center">
               <PredView :dataArr="predDataArr" :config="predViewConfig" />
             </div>
@@ -23,10 +23,8 @@
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Focus
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-slide-group multiple show-arrows class = "icon-size-change">
-              <FocusView :focusImgUrl="focusImgUrl" />
-            </v-slide-group>
+          <v-expansion-panel-content style = "overflow-x:scroll" >
+            <FocusView :focusImgUrl="focusImgUrl" />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -212,16 +210,7 @@ export default {
 };
 </script>
 
-<style scoped lang='less'>
-.icon-size-change{
-  ::v-deep {
-    .v-slide-group__prev,.v-slide-group__next {
-      .mdi:before{
-        font-size: 20px;
-      }
-    }
-  }
-}
+<style scoped>
 .float-button {
   position: fixed;
   right: 10px;
