@@ -28,7 +28,7 @@ class RBuffer:
         self.dict[key].append(val)
 
     def get(self, key: str):
-        self.dict.get(key)
+        return self.dict.get(key)
 
 
 
@@ -52,7 +52,7 @@ class RInfluenceBuffer(RBuffer):
             arr.sort() # sort dictionary according to order
         
         # get rid of 'order' field in temp_dict
-        self.dict = {key: [source_path for arr[1] in arr] for key, arr in temp_dict.items()}
+        self.dict = {key: [elem[1] for elem in arr] for key, arr in temp_dict.items()}
              
 
     def set(self, key: str, arr: list):
@@ -61,7 +61,7 @@ class RInfluenceBuffer(RBuffer):
         db_insert_many(self.db_conn, self.table_name, ('path', 'source_path', '[order]'), values=[(key, val, idx) for idx, val in enumerate(arr)])
 
         # 2. update buffer
-        self.set(key, arr)
+        super().set(key, arr)
 
         # 3. commit
         self.db_conn.commit()

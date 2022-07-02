@@ -9,8 +9,8 @@
         <p>Current config: r_averaging: {{ r_averaging }}</p>
       </div>
     </div>
-    <div v-else>
-      <div v-for="(url, index) in influImgUrl" :key="index">
+    <div class="d-flex flex-row align-center justify-center" v-else>
+      <div v-for="(url, index) in influImgUrlList" :key="index">
         <button @click="() => gotoImage(url)">
           <img :src="url" style="width: 15vh" />
         </button>
@@ -36,6 +36,7 @@ export default {
     };
   },
   mounted() {
+    console.log(this.influImgUrlList)
     this.r_averaging = sessionStorage.getItem('r_averaging') || configs.defaultRAveraging;
   },
   methods: {

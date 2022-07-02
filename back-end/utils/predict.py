@@ -98,7 +98,6 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
     for idx in range(start_idx, end_idx):
         test_path = to_unix(testloader.dataset.samples[idx][0])
         if not influence_buffer.contains(test_path):
-
             max_influence_dict = ptif.calc_img_wise(idx, modelWrapper.model, trainloader, testloader, gpu, recursion_depth, r_averaging) 
             lst = sorted(list(max_influence_dict.items()), key=lambda p: p[1]) # sort according to influence value
             lst = [p[0] for p in lst] 

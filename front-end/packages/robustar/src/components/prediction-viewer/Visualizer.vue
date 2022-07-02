@@ -139,6 +139,7 @@ export default {
       APIGetProposedEdit(split, image_url, success, failed);
     },
     view_prediction(split, image_url) {
+      this.influImgUrlList = [];
       const success = (response) => {
         let cap = 10;
         let responseData = response.data.data;
@@ -169,20 +170,18 @@ export default {
       APIPredict(split, image_url, success, failed);
     },
 
-    get_influence(image_url) {
+    get_influence(split, image_url) {
       const success = (response) => {
         // If influence not predicted:
         if (response.data.code == -1) {
-          this.influImgUrlList = [];
           return;
         }
 
         const responseData = response.data.data;
         this.influImgUrlList = [];
         for (let i = 0; i < 4; i++) {
-          // responseData[i] is a length 2 array [image_path, image_url]
-          const url = responseData[i][1];
-          this.influImgUrlList.push(`${configs.imagePathServerUrl}/${url}`);
+          const url = responseData[i];
+          this.influImgUrlList.push(`${configs.imagePathServerUrl}${url}`);
         }
       };
 
@@ -190,7 +189,7 @@ export default {
         console.log(err);
       };
 
-      APIGetInfluenceImages(image_url, success, failed);
+      APIGetInfluenceImages(split, image_url, success, failed);
     },
 
     toggle_panel() {
