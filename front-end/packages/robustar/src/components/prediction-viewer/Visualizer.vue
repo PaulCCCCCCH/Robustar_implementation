@@ -11,7 +11,7 @@
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Prediction
           </v-expansion-panel-header>
-          <v-expansion-panel-content >
+          <v-expansion-panel-content>
             <div class="d-flex justify-center align-center">
               <PredView :dataArr="predDataArr" :config="predViewConfig" />
             </div>
@@ -23,7 +23,7 @@
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Focus
           </v-expansion-panel-header>
-          <v-expansion-panel-content style = "overflow-x:scroll" >
+          <v-expansion-panel-content style="overflow-x: scroll">
             <FocusView :focusImgUrl="focusImgUrl" />
           </v-expansion-panel-content>
         </v-expansion-panel>
