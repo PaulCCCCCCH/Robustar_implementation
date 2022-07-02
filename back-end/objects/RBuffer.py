@@ -35,6 +35,8 @@ class RBuffer:
 class RInfluenceBuffer(RBuffer):
     """
     This class keeps track of meta data for calculated influence 
+    It uses dict as underlining datastructure. Key is the influenced image path (path to a test image), and
+    value is a list of source paths (paths to train images).
     """
 
     def __init__(self, db_conn: Connection):
@@ -55,7 +57,8 @@ class RInfluenceBuffer(RBuffer):
 
     def set(self, key: str, arr: list):
         # 1. push all values to database
-        db_insert_many(self.db_conn, self.table_name, ('path', 'source_path', 'order'), values=[(key, val, idx) for idx, val in enumerate(arr)])
+        # 'order' is a keyword in sql, so wrapping it with square brackets.
+        db_insert_many(self.db_conn, self.table_name, ('path', 'source_path', '[order]'), values=[(key, val, idx) for idx, val in enumerate(arr)])
 
         # 2. update buffer
         self.set(key, arr)

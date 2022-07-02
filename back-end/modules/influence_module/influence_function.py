@@ -27,6 +27,8 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
 
     Returns:
         h_estimate: list of torch tensors, s_test"""
+
+    recursion_depth = 100
     v = grad_z(z_test, t_test, model, gpu)
     h_estimate = v.copy()
 

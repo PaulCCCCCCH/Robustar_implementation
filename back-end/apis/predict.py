@@ -227,6 +227,7 @@ def api_calculate_influence():
       end = start + 1
 
 
+    print("Calculating influence from {} to {}".format(start, end))
     calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
       modelWrapper, 
       dataManager,  

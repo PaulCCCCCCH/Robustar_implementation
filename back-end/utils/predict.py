@@ -96,10 +96,13 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
     for idx in range(start_idx, end_idx):
-        max_influence_dict = ptif.calc_img_wise(idx, modelWrapper.model, trainloader, testloader, gpu, recursion_depth, r_averaging) 
-        lst = sorted(list(max_influence_dict.items()), key=lambda p: p[1]) # sort according to influence value
-        lst = [p[0] for p in lst] 
-        influence_buffer.set(testloader.dataset[idx][0], [to_unix(trainloader.dataset[int(train_idx)][0]) for train_idx in lst])
+        test_path = to_unix(testloader.dataset.samples[idx][0])
+        if not influence_buffer.contains(test_path):
+
+            max_influence_dict = ptif.calc_img_wise(idx, modelWrapper.model, trainloader, testloader, gpu, recursion_depth, r_averaging) 
+            lst = sorted(list(max_influence_dict.items()), key=lambda p: p[1]) # sort according to influence value
+            lst = [p[0] for p in lst] 
+            influence_buffer.set(test_path, [to_unix(trainloader.dataset.samples[int(train_idx)][0]) for train_idx in lst])
 
         task_update_res = task.update()
         if not task_update_res:
