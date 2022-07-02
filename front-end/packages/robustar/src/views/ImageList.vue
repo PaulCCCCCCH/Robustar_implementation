@@ -156,6 +156,18 @@
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
+          <div class="d-flex align-right">
+            <v-btn
+              v-if="$route.params.split === 'annotated'"
+              color="secondary"
+              class="mr-n1 mb-n1 mx-auto"
+              icon
+              small
+              @click="deleteAnnotatedImage(idx, url)"
+            >
+              <v-icon color="red">mdi-close-box</v-icon>
+            </v-btn>
+          </div>
           <v-hover :disabled="showExtraSettings" v-slot="{ hover }">
             <v-badge
               :value="
@@ -203,17 +215,6 @@
                     <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
                       <v-icon>mdi-cogs</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
-                    </v-btn>
-                    <v-btn
-                      v-if="$route.params.split === 'annotated'"
-                      class="mt-4"
-                      outlined
-                      color="white"
-                      width="80%"
-                      @click="deleteAnnotatedImage(idx, url)"
-                    >
-                      <v-icon>mdi-delete</v-icon>
-                      <span v-if="imageSize !== 'extra small'" class="ml-2">DELETE</span>
                     </v-btn>
                   </div>
                 </v-expand-transition>
