@@ -41,13 +41,22 @@ class Launcher(QWidget):
     def __init__(self):
         # Initialize the UI
         super(Launcher, self).__init__()
-        self.ui = QUiLoader().load('launcher_v2.ui')
+        self.ui = QUiLoader().load('resources/launcher_v2.ui')
 
         # Initialize the signal source object
         self.customSignals = CustomSignals()
 
-        # Initialize the client to communicate with the Docker daemon
-        self.client = docker.from_env()
+        self.dockerRunning = True
+
+        try:
+            # Initialize the client to communicate with the Docker daemon
+            self.client = docker.from_env()
+        except docker.errors.DockerException:
+            self.dockerRunning = False
+
+            self.popup = QUiLoader().load('resources/popup.ui')
+            self.popup.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+            self.popup.okButton.clicked.connect(exit)
 
         self.container = None
 
@@ -61,7 +70,7 @@ class Launcher(QWidget):
         self.fromCreateTab = True
 
         # Set the default configuration
-        self.configs = {
+        self.profile = {
                         'containerName': 'robustar',
                         'imageVersion': 'cuda11.1-0.1.0-beta',
                         'websitePort': '8000',
@@ -69,13 +78,11 @@ class Launcher(QWidget):
                         'tensorboardPort': '6006',
                         'trainPath': '',
                         'testPath': '',
-                        'devPath': '',
                         'checkPointPath': '',
                         'influencePath': '',
                         'configFile': ''
                         }
-        self.loadPath = ''
-        self.savePath = ''
+
 
         # Match the corresponding signals and slots
         self.ui.nameInput.textEdited.connect(self.changeContainerName)
@@ -85,7 +92,6 @@ class Launcher(QWidget):
         self.ui.tensorboardPortInput.textEdited.connect(self.changeTensorboardPort)
         self.ui.trainPathButton.clicked.connect(self.chooseTrainPath)
         self.ui.testPathButton.clicked.connect(self.chooseTestPath)
-        self.ui.devPathButton.clicked.connect(self.chooseDevPath)
         self.ui.checkPointPathButton.clicked.connect(self.chooseCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.chooseInfluencePath)
         self.ui.configFileButton.clicked.connect(self.chooseConfigFile)
@@ -111,102 +117,102 @@ class Launcher(QWidget):
         self.ui.createdListWidget.selectionModel().selectionChanged.connect(lambda sel, unsel: self.singleSelect(self.ui.createdListWidget, self.listWidgets))
 
     def changeContainerName(self):
-        self.configs['containerName'] = self.ui.nameInput.text()
+        self.profile['containerName'] = self.ui.nameInput.text()
 
     def changeImageVersion(self):
-        self.configs['imageVersion'] = self.ui.versionComboBox.currentText()
+        self.profile['imageVersion'] = self.ui.versionComboBox.currentText()
 
     def changeWebsitePort(self):
-        self.configs['websitePort'] = self.ui.websitePortInput.text()
+        self.profile['websitePort'] = self.ui.websitePortInput.text()
 
     def changeBackendPort(self):
-        self.configs['backendPort'] = self.ui.backendPortInput.text()
+        self.profile['backendPort'] = self.ui.backendPortInput.text()
 
     def changeTensorboardPort(self):
-        self.configs['tensorboardPort'] = self.ui.tensorboardPortInput.text()
+        self.profile['tensorboardPort'] = self.ui.tensorboardPortInput.text()
 
     def chooseTrainPath(self):
         userPath = QFileDialog.getExistingDirectory(self, "Choose Train Set Path", self.cwd)
+        self.cwd = os.path.dirname(userPath)
         if userPath:
-            self.configs['trainPath'] = userPath
+            self.profile['trainPath'] = userPath
             self.ui.trainPathDisplay.setText(userPath)
 
     def chooseTestPath(self):
         userPath = QFileDialog.getExistingDirectory(self, "Choose Test Set Path", self.cwd)
+        self.cwd = os.path.dirname(userPath)
         if userPath:
-            self.configs['testPath'] = userPath
+            self.profile['testPath'] = userPath
             self.ui.testPathDisplay.setText(userPath)
-
-    def chooseDevPath(self):
-        userPath = QFileDialog.getExistingDirectory(self, "Choose Dev Set Path", self.cwd)
-        if userPath:
-            self.configs['devPath'] = userPath
-            self.ui.devPathDisplay.setText(userPath)
 
     def chooseCheckPointPath(self):
         userPath = QFileDialog.getExistingDirectory(self, "Choose Checkpoints Path", self.cwd)
+        self.cwd = os.path.dirname(userPath)
         if userPath:
-            self.configs['checkPointPath'] = userPath
+            self.profile['checkPointPath'] = userPath
             self.ui.checkPointPathDisplay.setText(userPath)
 
     def chooseInfluencePath(self):
         userPath = QFileDialog.getExistingDirectory(self, "Choose Influence Result Path", self.cwd)
+        self.cwd = os.path.dirname(userPath)
         if userPath:
-            self.configs['influencePath'] = userPath
+            self.profile['influencePath'] = userPath
             self.ui.influencePathDisplay.setText(userPath)
 
     def chooseConfigFile(self):
         userPath, _ = QFileDialog.getOpenFileName(self, "Choose Config File", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.cwd = os.path.dirname(userPath)
         if userPath:
-            self.configs['configFile'] = userPath
+            self.profile['configFile'] = userPath
             self.ui.configFileDisplay.setText(userPath)
 
     def loadProfile(self):
-        self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.loadPath, _ = QFileDialog.getOpenFileName(self, "Load Profile", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.cwd = os.path.dirname(self.loadPath)
         try:
             with open(self.loadPath, 'r') as f:
-                self.configs = json.load(f)
-                print(self.configs['imageVersion'])
+                self.profile = json.load(f)
+                print(self.profile['imageVersion'])
                 # Update the UI according to the loaded file
-                self.ui.nameInput.setText(self.configs['containerName'])
-                self.ui.versionComboBox.setCurrentText(self.configs['imageVersion'])
-                self.ui.websitePortInput.setText(self.configs['websitePort'])
-                self.ui.backendPortInput.setText(self.configs['backendPort'])
-                self.ui.tensorboardPortInput.setText(self.configs['tensorboardPort'])
-                self.ui.trainPathDisplay.setText(self.configs['trainPath'])
-                self.ui.testPathDisplay.setText(self.configs['testPath'])
-                self.ui.devPathDisplay.setText(self.configs['devPath'])
-                self.ui.checkPointPathDisplay.setText(self.configs['checkPointPath'])
-                self.ui.influencePathDisplay.setText(self.configs['influencePath'])
-                self.ui.configFileDisplay.setText(self.configs['configFile'])
+                self.ui.nameInput.setText(self.profile['containerName'])
+                self.ui.versionComboBox.setCurrentText(self.profile['imageVersion'])
+                self.ui.websitePortInput.setText(self.profile['websitePort'])
+                self.ui.backendPortInput.setText(self.profile['backendPort'])
+                self.ui.tensorboardPortInput.setText(self.profile['tensorboardPort'])
+                self.ui.trainPathDisplay.setText(self.profile['trainPath'])
+                self.ui.testPathDisplay.setText(self.profile['testPath'])
+                self.ui.checkPointPathDisplay.setText(self.profile['checkPointPath'])
+                self.ui.influencePathDisplay.setText(self.profile['influencePath'])
+                self.ui.configFileDisplay.setText(self.profile['configFile'])
 
 
         except FileNotFoundError:
             print('Load path not found')
 
     def saveProfile(self):
-        self.savePath, _ = QFileDialog.getSaveFileName(self, "Save Configs", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.savePath, _ = QFileDialog.getSaveFileName(self, "Save Profile", self.cwd, "JSON Files (*.json);;All Files (*)")
+        self.cwd = os.path.dirname(self.savePath)
         try:
             with open(self.savePath, 'w') as f:
-                json.dump(self.configs, f)
+                json.dump(self.profile, f)
         except FileNotFoundError:
             print('The dialog is closed')
 
 
     def getMissingConfig(self):
-        for configName in ['trainPath', 'testPath', 'devPath', 'influencePath', 'checkPointPath', 'configFile']:
-            if not self.configs[configName].strip():
+        for configName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath', 'configFile']:
+            if not self.profile[configName].strip():
                 return configName
         return ""
 
 
     def startServer(self):
-        image = 'paulcccccch/robustar:' + self.configs['imageVersion']
+        image = 'paulcccccch/robustar:' + self.profile['imageVersion']
 
 
         # If it's in createTab, check for missing config
         if (self.ui.tabWidget.currentIndex() == 0):
-            missConfigDict = {'trainPath': 'train set path', 'testPath': 'test set path', 'devPath': 'dev set path',
+            missConfigDict = {'trainPath': 'train set path', 'testPath': 'test set path',
              'influencePath': 'influence result path', 'checkPointPath': 'check point path',
              'configFile': 'config file path'}
 
@@ -225,24 +231,33 @@ class Launcher(QWidget):
 
                 startExistingContainer()
 
-            # If the container with the input name has not been created yet
-            # Create a new container and run it
+            # If the container does not exist
             except docker.errors.NotFound:
 
                 if(self.fromCreateTab == True):
-                    try:
-                        # If the version uses cuda
-                        if 'cuda' in image:
-                            createCudaContainer()
-                        # If the version only uses cpu
-                        else:
-                            createCpuContainer()
 
-                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Running " + self.configs['imageVersion'])
+                    configFile = self.profile['configFile']
+                    f = open(configFile)
+                    data = json.load(f)
+                    device = data['device']
+
+                    try:
+                        # If the version uses cuda and the device is cuda
+                        if 'cuda' in image and 'cuda' in device:
+                            createCudaContainer()
+                        # If the version uses cpu and the device is cpu
+                        elif 'cpu' in image and 'cpu' in device:
+                            createCpuContainer()
+                        # If the device doesn't match the version
+                        else:
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "The image version doesn't match the device. Fail to create the container")
+                            return
+
+                        self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, "Running " + self.profile['imageVersion'])
                         self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                                                                    self.container.name + ' is available at http://localhost:' +
-                                                                    self.configs['websitePort'])
-                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
+                                                                   self.profile['containerName'] + ' is available at http://localhost:' +
+                                                                   self.profile['websitePort'])
+                        self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.profile['containerName'])
 
                         self.printLogs(self.container)
 
@@ -257,9 +272,9 @@ class Launcher(QWidget):
                             # self.container has not been changed to the created one
                             # Thus use self.configs['containerName'] instead of self.container.name
                             self.customSignals.addItemSignal.emit(self.ui.createdListWidget,
-                                                                  self.configs['containerName'])
+                                                                  self.profile['containerName'])
 
-                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.configs[
+                            self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, self.profile[
                                 'containerName'] + ' is created but fails to run because port is already allocated. See more in <i>Details</i> page')
                             self.customSignals.printMessageSignal.emit(self.ui.detailBrowser, str(apiError))
 
@@ -307,7 +322,7 @@ class Launcher(QWidget):
                 if self.container.status == 'exited':
                     self.container.restart()
                     self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                        self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
+                                                               self.container.name + ' is available at http://localhost:' + self.profile['websitePort'])
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.exitedListWidget, self.container.name)
 
@@ -318,7 +333,7 @@ class Launcher(QWidget):
                 elif self.container.status == 'created':
                     self.container.start()
                     self.customSignals.printMessageSignal.emit(self.ui.promptBrowser,
-                        self.container.name + ' is available at http://localhost:' + self.configs['websitePort'])
+                                                               self.container.name + ' is available at http://localhost:' + self.profile['websitePort'])
                     self.customSignals.addItemSignal.emit(self.ui.runningListWidget, self.container.name)
                     self.customSignals.removeItemSignal.emit(self.ui.createdListWidget, self.container.name)
 
@@ -336,66 +351,60 @@ class Launcher(QWidget):
             self.container = self.client.containers.run(
                 image,
                 detach=True,
-                name=self.configs['containerName'],
+                name=self.profile['containerName'],
                 ports={
                     '80/tcp': (
-                        '127.0.0.1', int(self.configs['websitePort'])),
+                        '127.0.0.1', int(self.profile['websitePort'])),
                     '8000/tcp': ('127.0.0.1', 6848),
                     '6006/tcp': ('127.0.0.1', 6006),
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',
-                                       source=getSystemPath(self.configs['trainPath']),
+                                       source=getSystemPath(self.profile['trainPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/dataset/test',
-                                       source=getSystemPath(self.configs['testPath']),
-                                       type='bind'),
-                    docker.types.Mount(target='/Robustar2/dataset/validation',
-                                       source=getSystemPath(self.configs['devPath']),
+                                       source=getSystemPath(self.profile['testPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
-                                       source=getSystemPath(self.configs['influencePath']),
+                                       source=getSystemPath(self.profile['influencePath']),
                                        type='bind'),
                     docker.types.Mount(
                         target='/Robustar2/checkpoints',
-                        source=getSystemPath(self.configs['checkPointPath']),
+                        source=getSystemPath(self.profile['checkPointPath']),
                         type='bind'),
                 ],
                 volumes=[
-                    getSystemPath(self.configs['configFile']) + ':/Robustar2/configs.json']
+                    getSystemPath(self.profile['configFile']) + ':/Robustar2/configs.json']
             )
 
         def createCudaContainer():
             self.container = self.client.containers.run(
                 image,
                 detach=True,
-                name=self.configs['containerName'],
+                name=self.profile['containerName'],
                 ports={
                     '80/tcp': (
-                        '127.0.0.1', int(self.configs['websitePort'])),
+                        '127.0.0.1', int(self.profile['websitePort'])),
                     '8000/tcp': ('127.0.0.1', 6848),
                     '6006/tcp': ('127.0.0.1', 6006),
                 },
                 mounts=[
                     docker.types.Mount(target='/Robustar2/dataset/train',
-                                       source=getSystemPath(self.configs['trainPath']),
+                                       source=getSystemPath(self.profile['trainPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/dataset/test',
-                                       source=getSystemPath(self.configs['testPath']),
-                                       type='bind'),
-                    docker.types.Mount(target='/Robustar2/dataset/validation',
-                                       source=getSystemPath(self.configs['devPath']),
+                                       source=getSystemPath(self.profile['testPath']),
                                        type='bind'),
                     docker.types.Mount(target='/Robustar2/influence_images',
-                                       source=getSystemPath(self.configs['influencePath']),
+                                       source=getSystemPath(self.profile['influencePath']),
                                        type='bind'),
                     docker.types.Mount(
                         target='/Robustar2/checkpoints',
-                        source=getSystemPath(self.configs['checkPointPath']),
+                        source=getSystemPath(self.profile['checkPointPath']),
                         type='bind'),
                 ],
                 volumes=[
-                    self.configs['configFile'] + ':/Robustar2/configs.json'],
+                    self.profile['configFile'] + ':/Robustar2/configs.json'],
 
                 # Set the device_requests parm
                 device_requests=[
@@ -529,7 +538,6 @@ class Launcher(QWidget):
         textBrowser.verticalScrollBar().setValue(textBrowser.verticalScrollBar().maximum())
 
     def printLog(self, log):
-        # re.sub(r"\x1b\[((\d+;)*\d+)m", "", log)
         self.ui.logBrowser.append(log)
         self.ui.logBrowser.verticalScrollBar().setValue(self.ui.logBrowser.verticalScrollBar().maximum())
 
@@ -575,8 +583,8 @@ class Launcher(QWidget):
         # Get the container with the input name
         if (self.ui.tabWidget.currentIndex() == 0):
             self.fromCreateTab = True
-            self.tempName = self.configs['containerName']
-            self.container = self.client.containers.get(self.configs['containerName'])
+            self.tempName = self.profile['containerName']
+            self.container = self.client.containers.get(self.profile['containerName'])
 
         # If it's in manageTab
         # Get the selected container
@@ -585,7 +593,7 @@ class Launcher(QWidget):
             items = self.getItemsFromListWidgets()
             if (len(items) == 0):
                 self.container = None
-                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Please select a container you want to stop')
+                self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Please select a container first')
             else:
                 item = items[0]
                 containerName = item.text()
@@ -614,6 +622,9 @@ class Launcher(QWidget):
             try:
                 while True:
                     log = next(logs).decode("utf-8")
+
+                    # Remove the color of log
+                    log = re.sub('.\[\d+m', '', log)
                     self.customSignals.printLogSignal.emit(log)
             except StopIteration:
                 return
@@ -627,7 +638,10 @@ class Launcher(QWidget):
 app = QApplication([])
 launcher = Launcher()
 
-launcher.ui.setFixedSize(1000, 850)
-launcher.ui.show()
-launcher.initExistContainer()
+if(launcher.dockerRunning == False):
+    launcher.popup.show()
+else:
+    launcher.ui.setFixedSize(1000, 850)
+    launcher.ui.show()
+    launcher.initExistContainer()
 app.exec_()
