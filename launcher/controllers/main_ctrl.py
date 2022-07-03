@@ -6,6 +6,9 @@ import time
 from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
 
+from controllers.docker_ctrl import DockerController
+
+
 class MainController(QObject):
     def __init__(self):
         super().__init__()
@@ -21,8 +24,7 @@ class MainController(QObject):
 
     def init(self):
         try:
-            # Initialize the client to communicate with the Docker daemon
-            self.client = docker.from_env()
+            self.dockerCtrl = DockerController
 
             self.mainView.show()
         except docker.errors.DockerException:

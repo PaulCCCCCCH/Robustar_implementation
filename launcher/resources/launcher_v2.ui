@@ -649,7 +649,7 @@ QPushButton:hover {
                          <property name="currentText">
                           <string>cuda11.1-0.0.1-beta</string>
                          </property>
-                         <property name="placeholderText">
+                         <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
                          <item>
