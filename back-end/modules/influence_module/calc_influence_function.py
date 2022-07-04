@@ -13,7 +13,7 @@ from pytorch_influence_functions.utils import save_json, display_progress
 
 
 def calc_s_test(model, test_loader, train_loader, save=False, gpu=-1,
-                damp=0.01, scale=25, recursion_depth=5000, r=1, start=0):
+                damp=0.01, scale=500, recursion_depth=5000, r=1, start=0):
     """Calculates s_test for the whole test dataset taking into account all
     training data images.
 
@@ -67,7 +67,7 @@ def calc_s_test(model, test_loader, train_loader, save=False, gpu=-1,
 
 
 def calc_s_test_single(model, z_test, t_test, train_loader, gpu=-1,
-                       damp=0.01, scale=25, recursion_depth=5000, r=1):
+                       damp=0.01, scale=500, recursion_depth=5000, r=1):
     """Calculates s_test for a single test image taking into account the whole
     training dataset. s_test = invHessian * nabla(Loss(test_img, model params))
 
@@ -355,7 +355,6 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
             max_influence_dict = dict_slice(max_influence_dict, 0, 4)
 
         display_progress("Calc. influence function: ", i, train_dataset_size)
-
 
 
     harmful = np.argsort(influences)
