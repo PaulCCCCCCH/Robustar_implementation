@@ -24,6 +24,7 @@
             <!-- Previous page button -->
             <v-btn
               :disabled="currentPage <= 0 || !hasImages"
+              :loading="isLoadingImages"
               depressed
               color="primary"
               @click="currentPage--"
@@ -47,6 +48,7 @@
             <v-btn
               data-test="image-list-btn-next-page"
               :disabled="currentPage >= maxPage || !hasImages"
+              :loading="isLoadingImages"
               depressed
               color="primary"
               @click="currentPage++"
@@ -243,11 +245,14 @@
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
+import { getPageNumber } from '@/utils/imageUtils';
 import { APIDeleteEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
+import { debounce } from 'lodash';
+
+const APIGetImageListDebounced = debounce(APIGetImageList, 300);
 
 export default {
   name: 'ImageList',
@@ -256,6 +261,7 @@ export default {
   },
   data() {
     return {
+      isLoadingImages: false,
       showExtraSettings: false,
       imageIdxSelection: 'start',
       imageStartIdx: 0,
@@ -409,7 +415,8 @@ export default {
       this.resetImageList();
     },
     loadImages() {
-      APIGetImageList(
+      this.isLoadingImages = true;
+      APIGetImageListDebounced(
         this.split,
         this.currentPage,
         this.imagePerPage,
@@ -424,10 +431,12 @@ export default {
               this.imageList.push(imagePath);
             });
           });
+          this.isLoadingImages = false;
         },
         (err) => {
           this.$root.alert('error', 'Loading images failed');
           this.imageList = [];
+          this.isLoadingImages = false;
         }
       );
     },
