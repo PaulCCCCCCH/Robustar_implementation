@@ -12,8 +12,8 @@ export const APIPredict = (split, image_url, success, failed) => {
  * @param {function} success success callback function
  * @param {function} fail fail callback function
  */
-export const APIGetInfluenceImages = (split, imageId, success, failed) => {
-  getRequest(`/influence/${split}/${imageId}`, success, failed);
+export const APIGetInfluenceImages = (split, image_url, success, failed) => {
+  getRequest(`/influence/list/${split}/${image_url}`, success, failed);
 };
 
 /**

@@ -1,11 +1,13 @@
 #! /usr/bin/env python3
 
+from regex import W
 import torch
 from torch.autograd import grad
-from utils import display_progress
+from pytorch_influence_functions.utils import display_progress
+import numpy as np
 
 
-def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
+def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=500,
            recursion_depth=5000):
     """s_test can be precomputed for each test point of interest, and then
     multiplied with grad_z to get the desired value for each training point.
@@ -25,6 +27,7 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
 
     Returns:
         h_estimate: list of torch tensors, s_test"""
+
     v = grad_z(z_test, t_test, model, gpu)
     h_estimate = v.copy()
 
@@ -45,12 +48,17 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=25.0,
             loss = calc_loss(y, t)
             params = [ p for p in model.parameters() if p.requires_grad ]
             hv = hvp(loss, params, h_estimate)
+            # print(hv)
             # Recursively caclulate h_estimate
-            h_estimate = [
-                _v + (1 - damp) * _h_e - _hv / scale
-                for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+            with torch.no_grad():
+                h_estimate = [
+                    _v + (1 - damp) * _h_e - _hv / scale
+                    for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+            if np.nan in hv[-1]:
+                raise ValueError("NaN detected. Existing.")
             break
         display_progress("Calc. s_test recursions: ", i, recursion_depth)
+        print(h_estimate)
     return h_estimate
 
 
@@ -94,7 +102,10 @@ def grad_z(z, t, model, gpu=-1):
     y = model(z)
     loss = calc_loss(y, t)
     # Compute sum of gradients from model parameters to loss
+
     params = [ p for p in model.parameters() if p.requires_grad ]
+    # print(params)
+
     return list(grad(loss, params, create_graph=True))
 
 

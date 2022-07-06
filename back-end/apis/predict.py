@@ -1,15 +1,15 @@
 from flask import request
-
+import threading
 from modules.visualize_module.visualize.visual import visualize
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from utils.path_utils import to_unix
-from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
+from utils.predict import convert_predict_to_array, get_image_prediction, calculate_influence
 
 app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
-dataManager = server.dataManager
+dataManager = server.getDataManager()
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
@@ -134,8 +134,8 @@ def predict(split, image_path):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/<split>/<path:image_path>')
-def get_influence(split, image_path):
+@app.route('/influence/list/<split>/<path:image_path>')
+def get_influence_list(split, image_path):
     """
      Gets the influence for an image specified by its id
     ---
@@ -167,15 +167,15 @@ def get_influence(split, image_path):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
-    influence_dict = dataManager.get_influence_dict()
+    influence_dict = dataManager.get_influence_buffer()
     image_path = to_unix(image_path)
-    if image_path in influence_dict:
-        return RResponse.ok(influence_dict[image_path], 'Success')
+    if influence_dict.contains(image_path):
+        return RResponse.ok(influence_dict.get(image_path), 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
 
 
 @app.route('/influence', methods=['POST'])
-def calculate_influence():
+def api_calculate_influence():
     """
     Calculates the influence for the test set
     ---
@@ -198,6 +198,7 @@ def calculate_influence():
                 test_sample_start_idx: 2,
                 test_sample_end_idx: 5,
                 r_averaging: 10
+                is_batch: true
               }
     responses:
       200:
@@ -216,12 +217,25 @@ def calculate_influence():
     """
     json_data = request.get_json()
     configs = json_data['configs']
-    calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper, 
-        dataManager, 
-        start_idx=int(configs['test_sample_start_idx']),
-        end_idx=int(configs['test_sample_end_idx']),
-        r_averaging=int(configs['r_averaging'])
-    )
+
+    if 'is_batch' in configs and configs['is_batch']:
+      start = int(configs['test_sample_start_idx'])
+      end = int(configs['test_sample_end_idx'])
+
+    else:
+      start = dataManager.testset.get_idx_from_path(configs['instance_path'])
+      end = start + 1
+
+
+    print("Calculating influence from {} to {}".format(start, end))
+    calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
+      modelWrapper, 
+      dataManager,  
+      start,
+      end,
+      int(configs['r_averaging']),
+    ))
+
     calcInfluenceThread.start()
+
     return RResponse.ok({}, "Influence calculation started!")

@@ -41,6 +41,7 @@
           hint="Number of iterations of which to take the avg.
             of the h_estimate calculation; recursion_depth = len(train_data) / r."
           required
+          @blur="r_averaging_updated"
         ></v-text-field>
 
         <v-divider class="mt-4 mb-8"></v-divider>
@@ -56,6 +57,7 @@
 
 <script>
 import { APICalculateInfluence } from '@/services/predict';
+import { configs } from '@/configs.js';
 export default {
   name: 'InfluencePad',
   data() {
@@ -78,10 +80,28 @@ export default {
         test_sample_start_idx: 0,
         test_sample_end_idx: 9,
         r_averaging: 1,
+        is_batch: true,
       },
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      const { startIdx, endIdx } = vm.$route.params;
+      if (startIdx) {
+        vm.configs.test_sample_start_idx = startIdx;
+      }
+      if (endIdx) {
+        vm.configs.test_sample_end_idx = endIdx;
+      }
+    });
+  },
+  mounted() {
+    this.configs.r_averaging = sessionStorage.getItem('r_averaging') || configs.defaultRAveraging;
+  },
   methods: {
+    r_averaging_updated() {
+      sessionStorage.setItem('r_averaging', this.configs.r_averaging) 
+    },
     start_calculation() {
       if (!this.$refs.form.validate()) {
         return;

@@ -9,6 +9,7 @@ from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
 from .RImageFolder import RImageFolder, RAnnotationFolder, REvalImageFolder, RTrainImageFolder
+from .RBuffer import RInfluenceBuffer
 from PIL import Image
 import torchvision.transforms.functional as transF
 
@@ -39,21 +40,7 @@ class RDataManager:
         self._init_data_records()
 
     
-    def reload_influence_dict(self):
-        if osp.exists(self.influence_file_path):
-            print("Loading influence dictionary!")
-            with open(self.influence_file_path, 'rb') as f:
-                try:
-                    # TODO: Check image_url -> image_path consistency here!
-                    self.influenceBuffer = pickle.load(f)
-                except Exception as e:
-                    print("Influence function file not read because it is contaminated. \
-                    Please delete it manually and start the server again!")
-
-        else:
-            print("No influence dictionary found!")
-
-    def get_influence_dict(self):
+    def get_influence_buffer(self) -> RInfluenceBuffer:
         return self.influenceBuffer
 
     def _init_transforms(self):
@@ -118,7 +105,7 @@ class RDataManager:
 
         self.datasetFileBuffer = {}
         self.predictBuffer = {}
-        self.influenceBuffer = {}
+        self.influenceBuffer = RInfluenceBuffer(self.db_conn)
 
         self.proposedAnnotationBuffer = set() # saves (train image id)
 
@@ -129,7 +116,6 @@ class RDataManager:
         ## is not nice. Add this back when we have the option to quickly clean all cache folders.
         # self.get_proposed_list()
 
-        self.reload_influence_dict()
         # self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
         self.pairedset: RAnnotationFolder = RAnnotationFolder(self.paired_root, self.train_root, 
                     split='annotated', db_conn=self.db_conn, transform=self.transforms)

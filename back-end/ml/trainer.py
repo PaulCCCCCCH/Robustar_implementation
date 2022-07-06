@@ -116,26 +116,26 @@ class Trainer():
 
     def print_accuracy(self):
         loader = self.testloader
-        torch.no_grad()
-        correct = 0
-        total = 0
-        self.net.eval()
+        with torch.no_grad():
+            correct = 0
+            total = 0
+            self.net.eval()
 
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
+            # for data in loader:
+            for data in self.storeLoader(loader):
+                images, labels = data
+                images, labels = images.to(self.device), labels.to(self.device)
+                outputs = self.net(images)
 
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum()
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum()
 
-        result = 1.0 * 100 * correct / total
-        self.statusInfo['test_acc'] = float(result)
-        self.update_gui()
-        print('The accuracy is: %.3f%%' % result)
-        torch.cuda.empty_cache()
+            result = 1.0 * 100 * correct / total
+            self.statusInfo['test_acc'] = float(result)
+            self.update_gui()
+            print('The accuracy is: %.3f%%' % result)
+            torch.cuda.empty_cache()
         return result
 
     def storeLoader(self, loader):
