@@ -5,6 +5,7 @@ import time
 
 from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
+from threading import Thread
 
 from controllers.docker_ctrl import DockerController
 
@@ -24,7 +25,7 @@ class MainController(QObject):
 
     def init(self):
         try:
-            self.dockerCtrl = DockerController
+            self.dockerCtrl = DockerController(self.model, self.mainView)
 
             self.mainView.show()
         except docker.errors.DockerException:
@@ -95,6 +96,12 @@ class MainController(QObject):
         except FileNotFoundError:
             print('The dialog is closed')
 
+    def startServer(self):
+        if(self.checkProfile()):
+            return
+        else:
+            t = ServerOperationThread(target=self.dockerCtrl.startServer)
+
 
 
 
@@ -154,11 +161,43 @@ class MainController(QObject):
         listWidget.takeItem(row)
 
     def enableControl(self):
-        self.ui.startServerButton.setEnabled(True)
-        self.ui.stopServerButton.setEnabled(True)
-        self.ui.deleteServerButton.setEnabled(True)
+        self.mainView.ui.startServerButton.setEnabled(True)
+        self.mainView.ui.stopServerButton.setEnabled(True)
+        self.mainView.ui.deleteServerButton.setEnabled(True)
 
     def disableControl(self):
-        self.ui.startServerButton.setEnabled(False)
-        self.ui.stopServerButton.setEnabled(False)
-        self.ui.deleteServerButton.setEnabled(False)
+        self.mainView.ui.startServerButton.setEnabled(False)
+        self.mainView.ui.stopServerButton.setEnabled(False)
+        self.mainView.ui.deleteServerButton.setEnabled(False)
+
+    def checkProfile(self):
+        missProfileDict = {'trainPath': 'train set path', 'testPath': 'test set path',
+                          'influencePath': 'influence result path', 'checkPointPath': 'check point path',
+                          'configFile': 'config file path'}
+
+        for profileName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath', 'configFile']:
+            if not self.model.profile[profileName].strip():
+                self.printMessage(self.mainView.ui.promptBrowser, "Please provide {}".format(missProfileDict[profileName]))
+                return 1
+        return 0
+    
+    def getItemsFromListWidgets(self):
+        return self.mainView.ui.runningListWidget.selectedItems() if len(
+            self.mainView.ui.runningListWidget.selectedItems()) > 0 else self.mainView.ui.exitedListWidget.selectedItems() if len(
+            self.mainView.ui.exitedListWidget.selectedItems()) > 0 else self.mainView.ui.createdListWidget.selectedItems() if len(
+            self.mainView.ui.createdListWidget.selectedItems()) > 0 else []
+
+
+
+
+
+
+class ServerOperationThread(Thread):
+    def __init__(self, target):
+        Thread.__init__(self, daemon=True)
+        self.func = target
+
+    def run(self):
+        MainController.disableControl()
+        self.func()
+        MainController.enableControl()

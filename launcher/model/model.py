@@ -53,9 +53,6 @@ class Model(QObject):
         self.madeOnCreateTab = False
 
 
-        self._list = []
-
-
 
         # Match the corresponding signals to slots in controllers
         self.containerNameChanged.connect(self.ctrl.setVContainerName)
@@ -179,14 +176,3 @@ class Model(QObject):
         self.checkPointPath = val['checkPointPath']
         self.influencePath = val['influencePath']
         self.configFile = val['configFile']
-
-
-
-    @property
-    def list(self):
-        return self._list
-
-    @list.setter
-    def list(self, nl):
-        print('pass')
-        self._list = nl

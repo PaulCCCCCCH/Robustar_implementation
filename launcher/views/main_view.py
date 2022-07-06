@@ -23,7 +23,7 @@ class MainView(QWidget):
         self.ui.configFileButton.clicked.connect(self.ctrl.setMConfigFile)
         self.ui.loadProfileButton.clicked.connect(self.ctrl.loadProfile)
         self.ui.saveProfileButton.clicked.connect(self.ctrl.saveProfile)
-        # self.ui.startServerButton.clicked.connect(self.ctrl.startServer)
+        self.ui.startServerButton.clicked.connect(self.ctrl.startServer)
         # self.ui.stopServerButton.clicked.connect(self.ctrl.stopServer)
         # self.ui.deleteServerButton.clicked.connect(self.ctrl.deleteServer)
         # self.ui.refreshListWidgetsButton.clicked.connect(self.ctrl.initExistContainer)
