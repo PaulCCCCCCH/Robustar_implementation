@@ -205,7 +205,7 @@ export default {
       console.log(res);
       this.$root.finishProcessing();
       this.$root.alert('success', 'Training started successfully');
-      window.open('http://localhost:'+process.env.tensorboardPort);
+      window.open('http://localhost:'+(await (await fetch("serverUrls.json")).json()).tensorboardPort);
     },
     trainingFailed(res) {
       console.log(res);

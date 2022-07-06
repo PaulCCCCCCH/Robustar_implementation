@@ -185,6 +185,7 @@ class Launcher(QWidget):
 
     def startServer(self):
         image = 'paulcccccch/robustar:' + self.configs['imageVersion']
+        tmp_file_path = "/Robustar2/launcher/tmp.json"
 
         missingConfig = self.getMissingConfig()
         if missingConfig:
@@ -301,7 +302,17 @@ class Launcher(QWidget):
                 else:
                     self.customSignals.printMessageSignal.emit(self.ui.promptBrowser, 'Illegal container status encountered')
 
+        def writeTmpFile():
+            content = '''{
+    "websitePort": ''' + self.configs['websitePort'] + ''',
+    "backendPort": ''' + self.configs['backendPort'] + ''',
+    "tensorboardPort": ''' + self.configs['tensorboardPort'] + '''
+}'''
+            with open(os.path.abspath(tmp_file_path), 'w') as f:
+                f.write(content)
+
         def createCpuContainer():
+            writeTmpFile()
             self.container = self.client.containers.run(
                 image,
                 detach=True,
@@ -334,10 +345,12 @@ class Launcher(QWidget):
                         type='bind'),
                 ],
                 volumes=[
-                    getSystemPath(self.configs['configFile']) + ':/Robustar2/configs.json']
+                    getSystemPath(self.configs['configFile']) + ':/Robustar2/configs.json',
+                    os.path.abspath(tmp_file_path) + ':/var/www/html/serverUrls.json']
             )
 
         def createCudaContainer():
+            writeTmpFile()
             self.container = self.client.containers.run(
                 image,
                 detach=True,
@@ -370,13 +383,24 @@ class Launcher(QWidget):
                         type='bind'),
                 ],
                 volumes=[
-                    self.configs['configFile'] + ':/Robustar2/configs.json'],
+                    self.configs['configFile'] + ':/Robustar2/configs.json',
+                    os.path.abspath(tmp_file_path) + ':/var/www/html/serverUrls.json'],
 
                 # Set the device_requests parm
                 device_requests=[
                     docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])
                 ]
             )
+
+            # hard core for now
+            cont_flag = True
+            while cont_flag:
+                try:
+                    sleep(10)
+                    containerPostSteps()
+                    cont_flag = False
+                except:
+                    pass
 
         startServerThread = Thread(target=startServerInThread)
         startServerThread.start()
