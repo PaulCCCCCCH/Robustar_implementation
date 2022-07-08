@@ -151,7 +151,7 @@ class ColorRangeDrawing extends Component {
     this._threshold = this._distanceToRange(this._mouseDownX, this._mouseDownY, x, y);
     this._applyFilter(false);
 
-    canvas.renderAll();
+    // canvas.renderAll();
   }
 
   /**
@@ -172,39 +172,62 @@ class ColorRangeDrawing extends Component {
    * Convert the distance of mouse move into color range
    */
   _distanceToRange(mouseDownX, mouseDownY, x, y) {
-    return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10;
+    // return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 10;
+    return Math.sqrt((mouseDownX - x) ** 2 + (mouseDownY - y) ** 2) / 1000;
   }
+
+  // _getPointerColor(canvas, x, y) {
+  //   const context = canvas.getContext('2d');
+  //   const { width, height } = canvas;
+  //   const data = context.getImageData(0, 0, width, height).data;
+  //   const bytes = 4;
+  //   const color = [0, 0, 0, 0];
+
+  //   const position = (width * Math.floor(y) + Math.floor(x)) * bytes;
+  //   color[0] = data[position];
+  //   color[1] = data[position + 1];
+  //   color[2] = data[position + 2];
+  //   color[3] = data[position + 3];
+
+  //   return color;
+  // }
 
   _getPointerColor(canvas, x, y) {
     const context = canvas.getContext('2d');
     const { width, height } = canvas;
     const data = context.getImageData(0, 0, width, height).data;
     const bytes = 4;
-    const color = [0, 0, 0, 0];
 
     const position = (width * Math.floor(y) + Math.floor(x)) * bytes;
-    color[0] = data[position];
-    color[1] = data[position + 1];
-    color[2] = data[position + 2];
-    color[3] = data[position + 3];
 
-    return color;
+    return 'rgb(' + [data[position], data[position + 1], data[position + 2]].join(', ') + ')';
   }
 
   _applyFilter(isLast) {
     const editor = this.getEditor();
     const filterAction = editor.getActions().filter;
 
+    // filterAction.applyFilter(
+    //   true,
+    //   'colorFilter',
+    //   {
+    //     filterId: this._filterId,
+    //     threshold: this._threshold,
+    //     x: this._mouseDownX,
+    //     y: this._mouseDownY,
+    //     appending: isLast,
+    //     color: this._color,
+    //   },
+    //   !isLast
+    // );
     filterAction.applyFilter(
       true,
-      'colorFilter',
+      'removeColor',
       {
         filterId: this._filterId,
-        threshold: this._threshold,
-        x: this._mouseDownX,
-        y: this._mouseDownY,
-        appending: isLast,
+        distance: this._threshold,
         color: this._color,
+        appending: isLast,
       },
       !isLast
     );
