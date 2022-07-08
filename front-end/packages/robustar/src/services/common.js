@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { configs } from '@/configs.js';
 
-const baseUrl = configs.serverUrl;
-
 const successCode = [200, 201];
 
 /**
@@ -34,7 +32,7 @@ export const postRequest = (data, route, success, failed) => {
   if (!failed) {
     failed = (res) => console.log(res);
   }
-  axios.post(`/api${baseUrl}${route}`, data).then(
+  axios.post(`/api${configs.serverUrl}${route}`, data).then(
     (res) => handleResult(res, success, failed),
     (res) => failed(res)
   );
