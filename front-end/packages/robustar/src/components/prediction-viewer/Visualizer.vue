@@ -23,9 +23,11 @@
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Focus
           </v-expansion-panel-header>
-          <v-expansion-panel-content style="overflow-x: scroll">
-            <FocusView :focusImgUrl="focusImgUrl" />
-          </v-expansion-panel-content>
+          <div style="overflow-x: scroll">
+            <v-expansion-panel-content>
+              <FocusView :focusImgUrl="focusImgUrl" />
+            </v-expansion-panel-content>
+          </div>
         </v-expansion-panel>
 
         <!-- View Influence -->
