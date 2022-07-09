@@ -91,7 +91,7 @@ def startTB(logdir):
     """
 
     os.system(
-        'tensorboard --logdir={}'
+        'tensorboard --logdir={} --port={}'
         .format(os.path.abspath(logdir), os.environ.get('tensorboardPort'))
         )
 
