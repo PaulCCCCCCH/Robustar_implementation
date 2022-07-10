@@ -1,11 +1,11 @@
 import docker
 import json
 import os
-import datetime
 import re
 
 from PySide2.QtCore import QObject
 from threading import Thread
+from datetime import datetime
 
 class DockerController(QObject):
     def __init__(self, model, view, ctrl):
@@ -274,7 +274,7 @@ class DockerController(QObject):
             self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
     def printLog(self, container):
-        def func():
+        def func(container):
             # Get the logs since current utc time as an iterator
             curTime = datetime.utcnow()
             logs = container.logs(stream=True, since=curTime)
@@ -286,7 +286,7 @@ class DockerController(QObject):
 
                     # Remove the color of log
                     log = re.sub('.\[\d+m', '', log)
-                    self.mainCtrl.printMessage(self.mainView.ui.logBrowser, log, timeStamp=False)
+                    self.mainCtrl.printMessage(self.mainView.ui.logBrowser, log, timestamp=False)
             except StopIteration:
                 return
 
