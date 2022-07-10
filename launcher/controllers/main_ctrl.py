@@ -7,8 +7,6 @@ from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
 from threading import Thread
 
-from controllers.docker_ctrl import DockerController
-
 
 class MainController(QObject):
     def __init__(self):
@@ -24,9 +22,11 @@ class MainController(QObject):
         self.popupView = view
 
     def init(self):
-        try:
-            self.dockerCtrl = DockerController(self.model, self.mainView)
+        from controllers.docker_ctrl import DockerController
 
+        try:
+            self.dockerCtrl = DockerController(self.model, self.mainView, self)
+            self.dockerCtrl.refreshServers()
             self.mainView.show()
         except docker.errors.DockerException:
             self.popupView.show()
@@ -97,13 +97,23 @@ class MainController(QObject):
             print('The dialog is closed')
 
     def startServer(self):
-        if(self.checkProfile()):
+        if(self.mainView.ui.tabWidget.currentIndex() == 0 and self.checkProfile()):
             return
         else:
-            t = ServerOperationThread(target=self.dockerCtrl.startServer)
+            t = ServerOperationThread(target=self.dockerCtrl.startServer, ctrl=self)
+            t.start()
 
+    def stopServer(self):
+        t = ServerOperationThread(target=self.dockerCtrl.stopServer, ctrl=self)
+        t.start()
 
+    def deleteServer(self):
+        t = ServerOperationThread(target=self.dockerCtrl.deleteServer, ctrl=self)
+        t.start()
 
+    def refreshServers(self):
+        t = Thread(target=self.dockerCtrl.refreshServers)
+        t.start()
 
 
 
@@ -188,16 +198,21 @@ class MainController(QObject):
             self.mainView.ui.createdListWidget.selectedItems()) > 0 else []
 
 
-
+    def updateSucView(self):
+        self.printMessage(self.mainView.ui.promptBrowser,
+                                    '{} is available at http://localhost:{}'.format(self.model.tempName,
+                                                                                    self.model.tempWPort))
+        self.addItem(self.mainView.ui.runningListWidget, self.model.tempName)
 
 
 
 class ServerOperationThread(Thread):
-    def __init__(self, target):
+    def __init__(self, target, ctrl):
         Thread.__init__(self, daemon=True)
         self.func = target
+        self.ctrl = ctrl
 
     def run(self):
-        MainController.disableControl()
+        self.ctrl.disableControl()
         self.func()
-        MainController.enableControl()
+        self.ctrl.enableControl()

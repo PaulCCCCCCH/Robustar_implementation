@@ -24,9 +24,9 @@ class MainView(QWidget):
         self.ui.loadProfileButton.clicked.connect(self.ctrl.loadProfile)
         self.ui.saveProfileButton.clicked.connect(self.ctrl.saveProfile)
         self.ui.startServerButton.clicked.connect(self.ctrl.startServer)
-        # self.ui.stopServerButton.clicked.connect(self.ctrl.stopServer)
-        # self.ui.deleteServerButton.clicked.connect(self.ctrl.deleteServer)
-        # self.ui.refreshListWidgetsButton.clicked.connect(self.ctrl.initExistContainer)
+        self.ui.stopServerButton.clicked.connect(self.ctrl.stopServer)
+        self.ui.deleteServerButton.clicked.connect(self.ctrl.deleteServer)
+        self.ui.refreshListWidgetsButton.clicked.connect(self.ctrl.refreshServers)
 
         # Set the listWidgets so that only one entry in them can be selected at a time
         self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget, self.ui.createdListWidget]

@@ -50,10 +50,10 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=500,
             hv = hvp(loss, params, h_estimate)
             # print(hv)
             # Recursively caclulate h_estimate
-            with torch.no_grad():
-                h_estimate = [
-                    _v + (1 - damp) * _h_e - _hv / scale
-                    for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+            # with torch.no_grad():
+            h_estimate = [
+                _v + (1 - damp) * _h_e - _hv / scale
+                for _v, _h_e, _hv in zip(v, h_estimate, hv)]
             if np.nan in hv[-1]:
                 raise ValueError("NaN detected. Existing.")
             break
