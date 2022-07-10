@@ -205,7 +205,6 @@ class RTrainImageFolder(RImageFolder):
         for (img_path, _), (next_img_path, _) in zip(self.imgs, self.imgs[1:]):
             self.next_imgs[img_path] = next_img_path 
 
-
     def _init_buffer(self):
         self.train2paired = dict()
 

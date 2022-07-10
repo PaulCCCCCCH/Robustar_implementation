@@ -9,6 +9,7 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
+
 @app.route('/edit/<split>/<path:path>', methods=['POST'])
 def api_user_edit(split, path):
     """
@@ -50,7 +51,7 @@ def api_user_edit(split, path):
     """
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        return RResponse.fail('Split {} not supported'.format(split))
 
     path = to_unix(path)
     json_data = request.get_json()
@@ -63,6 +64,7 @@ def api_user_edit(split, path):
     save_edit(split, path, decoded, h, w)
 
     return RResponse.ok("Success!")
+
 
 @app.route('/edit/<split>/<path:path>', methods=['DELETE'])
 def api_delete_edit(split, path):
@@ -93,7 +95,6 @@ def api_propose_edit(split, path):
         print("Cannot propose edit to a wrong split")
         return RResponse.ok(proposed_image_path)
 
-
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
 
@@ -106,8 +107,9 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
-
+        return RResponse.fail(
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
 
     json_data = request.get_json()
     num_to_gen = int(json_data['num_to_gen'])
@@ -118,7 +120,6 @@ def api_auto_annotate(split):
 
     return RResponse.ok('success')
 
-    
 
 if __name__ == '__main__':
     print(RServer)

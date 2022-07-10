@@ -11,16 +11,21 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
+
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
     image_idx_start = num_per_page * start
     image_idx_end = num_per_page * (start + 1)
     try:
-        return RResponse.ok(getImagePath(split, image_idx_start, image_idx_end))
+        image_path = getImagePath(split, image_idx_start, image_idx_end)
+        if len(image_path) == 0:
+            return RResponse.fail('Error retrieving image paths - cannot get image idx [{}, {})'
+                                  .format(image_idx_start, image_idx_end))
+        return RResponse.ok(image_path)
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths') 
-    
-  
+        return RResponse.fail('Error retrieving image paths - {}'.format(str(e)))
+
+
 @app.route('/image/next/<split>/<path:path>')
 def get_next_image(split, path):
     """
@@ -28,11 +33,14 @@ def get_next_image(split, path):
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
     if split not in ['train', 'annotated', 'proposed']:
-        raise NotImplementedError
+        return RResponse.fail('Split {} not supported'.format(split))
 
     path = to_unix(path)
-    return RResponse.ok(getNextImagePath(split, path))
-    
+    next_image_path = getNextImagePath(split, path)
+    if next_image_path is None:
+        return RResponse.fail('Invalid image path {}'.format(path))
+
+    return RResponse.ok(next_image_path)
 
 
 @app.route('/image/annotated/<split>/<path:path>')

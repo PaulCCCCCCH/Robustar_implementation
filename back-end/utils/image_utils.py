@@ -38,11 +38,12 @@ def getImagePath(split, start=None, end=None):
         return dataManager.testset.get_record(correct=False, start=start, end=end)
     else:
         if split not in dataManager.split_dict:
-            raise NotImplementedError('Invalid data split!')
+            raise NotImplementedError('Invalid data split')
         return dataManager.split_dict[split].get_image_list(start, end)
-    
+
+
 def getNextImagePath(split, path):
-    allowed_splits = ['train', 'annotated', 'proposed']
+    allowed_splits = ['train', 'annotated', 'proposed']  # TODO: redundancy check (apis/image.py)?
     if split not in allowed_splits:
         raise NotImplementedError('Next image only supported for {}'.format(allowed_splits))
 
