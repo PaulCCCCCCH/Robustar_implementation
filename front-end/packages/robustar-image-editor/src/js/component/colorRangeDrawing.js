@@ -220,6 +220,8 @@ class ColorRangeDrawing extends Component {
     //   },
     //   !isLast
     // );
+
+    // native RemoveColor filter
     filterAction.applyFilter(
       true,
       'removeColor',

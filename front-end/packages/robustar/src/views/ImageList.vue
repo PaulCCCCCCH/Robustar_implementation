@@ -24,7 +24,6 @@
             <!-- Previous page button -->
             <v-btn
               :disabled="currentPage <= 0 || !hasImages"
-              :loading="isLoadingImages"
               depressed
               color="primary"
               @click="currentPage--"
@@ -48,7 +47,6 @@
             <v-btn
               data-test="image-list-btn-next-page"
               :disabled="currentPage >= maxPage || !hasImages"
-              :loading="isLoadingImages"
               depressed
               color="primary"
               @click="currentPage++"
@@ -245,9 +243,9 @@ import { APIDeleteEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
-import { debounce } from 'lodash';
+import pDebounce from 'p-debounce';
 
-const APIGetImageListDebounced = debounce(APIGetImageList, 300);
+const APIGetImageListDebounced = pDebounce(APIGetImageList, 300);
 
 export default {
   name: 'ImageList',
@@ -329,20 +327,18 @@ export default {
     updateSplit() {
       this.split = this.$route.params.split;
     },
-    initImageList() {
-      APIGetSplitLength(
-        this.split,
-        (res) => {
-          this.splitLength = res.data.data;
-          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
-          this.getClassNames();
-          this.loadImages();
-        },
-        (err) => {
-          this.$root.alert('error', 'Image list initialization failed');
-          this.imageList = [];
-        }
-      );
+    async initImageList() {
+      try {
+        const res = await APIGetSplitLength(this.split);
+        this.splitLength = res.data.data;
+        this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+        this.getClassNames();
+        this.loadImages();
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Image list initialization failed');
+        this.imageList = [];
+      }
     },
     resetImageList() {
       this.currentPage = 0;
@@ -351,37 +347,28 @@ export default {
       this.selectedClass = 0;
       this.initImageList();
     },
-    getClassNames() {
-      APIGetClassNames(
-        this.split,
-        (res) => {
-          this.classStartIdx = res.data.data;
-          this.classNames = Object.keys(this.classStartIdx);
-        },
-        (err) => {
-          this.$root.alert('error', 'Fetching class names failed');
-          this.imageList = [];
-        }
-      );
+    async getClassNames() {
+      try {
+        const res = await APIGetClassNames(this.split);
+        this.classStartIdx = res.data.data;
+        this.classNames = Object.keys(this.classStartIdx);
+      } catch (error) {
+        this.$root.alert('error', 'Fetching class names failed');
+        this.imageList = [];
+      }
     },
     setCurrentImage(url) {
       this.image_url = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-    deleteImageSuccess() {
-      this.initImageList();
-    },
-    deleteImageFailed() {
-      this.$root.alert('error', 'Image deletion failed');
-    },
-    deleteAnnotatedImage(idx, url) {
-      APIDeleteEdit(
-        this.split,
-        getImageUrlFromFullUrl(url),
-        () => this.deleteImageSuccess(idx),
-        this.deleteImageFailed
-      );
+    async deleteAnnotatedImage(idx, url) {
+      try {
+        await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
+        this.initImageList();
+      } catch (error) {
+        this.$root.alert('error', 'Image deletion failed');
+      }
     },
     gotoImage(url, componentName) {
       this.setCurrentImage(getImageUrlFromFullUrl(url));
@@ -409,28 +396,24 @@ export default {
       this.imagePerPage = this.imagePerPageOptions[1];
       this.resetImageList();
     },
-    loadImages() {
+    async loadImages() {
       this.isLoadingImages = true;
-      APIGetImageListDebounced(
-        this.split,
-        this.currentPage,
-        this.imagePerPage,
-        (res) => {
-          const list = res.data.data;
-          this.$nextTick(() => {
-            this.imageList = [];
-            list.forEach((imagePath) => {
-              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
-            });
-          });
-          this.isLoadingImages = false;
-        },
-        (err) => {
-          this.$root.alert('error', 'Loading images failed');
+      try {
+        const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
+        const list = res.data.data;
+        this.$nextTick(() => {
           this.imageList = [];
-          this.isLoadingImages = false;
-        }
-      );
+          list.forEach((imagePath) => {
+            this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+          });
+        });
+        this.isLoadingImages = false;
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Loading images failed');
+        this.imageList = [];
+        this.isLoadingImages = false;
+      }
     },
     selectImage(idx) {
       if (this.showExtraSettings) {

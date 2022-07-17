@@ -21,6 +21,8 @@ const handleResult = (res, success, failed) => {
   }
 };
 
+const validateStatus = (status) => [200, 201].includes(status);
+
 /**
  * make POST request
  * @param {object} data
@@ -28,14 +30,23 @@ const handleResult = (res, success, failed) => {
  * @param {function} success callback for success
  * @param {function} failed callback for failure
  */
-export const postRequest = (data, route, success, failed) => {
-  if (!failed) {
-    failed = (res) => console.log(res);
-  }
-  axios.post(`/api${configs.serverUrl}${route}`, data).then(
-    (res) => handleResult(res, success, failed),
-    (res) => failed(res)
-  );
+// export const postRequest = (data, route, success, failed) => {
+//   if (!failed) {
+//     failed = (res) => console.log(res);
+//   }
+//   axios.post(`/api${configs.serverUrl}${route}`, data).then(
+//     (res) => handleResult(res, success, failed),
+//     (res) => failed(res)
+//   );
+// };
+
+/**
+ * make POST request
+ * @param {object} data
+ * @param {string} route
+ */
+export const postRequest = async (data, route) => {
+  return axios.post(`/api${route}`, data, { validateStatus: validateStatus });
 };
 
 /**
@@ -45,31 +56,32 @@ export const postRequest = (data, route, success, failed) => {
  * @param {function} failed callback for failure
  * @param {number} pageNo optional
  */
-export const getRequest = (route, success, failed, pageNo) => {
-  if (!failed) {
-    failed = (res) => console.log(res);
-  }
+// export const getRequest = (route, success, failed, pageNo) => {
+//   if (!failed) {
+//     failed = (res) => console.log(res);
+//   }
+//   let requestUrl = `/api${route}${pageNo ? `?pageNo=${pageNo}` : ''}`;
+//   axios.get(requestUrl).then(
+//     (res) => handleResult(res, success, failed),
+//     (res) => failed(res)
+//   );
+// };
+
+/**
+ * make GET request
+ * @param {string} route
+ * @param {number} pageNo optional
+ */
+export const getRequest = async (route, pageNo) => {
   let requestUrl = `/api${route}${pageNo ? `?pageNo=${pageNo}` : ''}`;
-  axios.get(requestUrl).then(
-    (res) => handleResult(res, success, failed),
-    (res) => failed(res)
-  );
+  return axios.get(requestUrl, { validateStatus: validateStatus });
 };
 
 /**
  * make DELETE request
  * @param {string} route
- * @param {function} success callback for success
- * @param {function} failed callback for failure
- * @param {number} pageNo optional
  */
-export const deleteRequest = (route, success, failed) => {
-  if (!failed) {
-    failed = (res) => console.log(res);
-  }
+export const deleteRequest = async (route) => {
   let requestUrl = `/api${route}`;
-  axios.delete(requestUrl).then(
-    (res) => handleResult(res, success, failed),
-    (res) => failed(res)
-  );
+  return axios.delete(requestUrl);
 };

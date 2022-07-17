@@ -18,6 +18,7 @@ import { rejectMessages, componentNames } from '@/consts';
 // filters.Emboss = Emboss;
 // filters.ColorFilter = ColorFilter;
 
+// use WebGL as backend
 fabric.textureSize = 4096;
 fabric.isWebglSupported(fabric.textureSize);
 fabric.filterBackend = new fabric.WebglFilterBackend();
