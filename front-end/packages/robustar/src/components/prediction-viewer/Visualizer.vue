@@ -7,7 +7,7 @@
 
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
-        <v-expansion-panel @click="toggle_panel">
+        <v-expansion-panel @click="toggle_panel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Model Prediction
           </v-expansion-panel-header>
@@ -19,19 +19,33 @@
         </v-expansion-panel>
 
         <!-- View Model Focus -->
-        <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
-            Model Focus
-          </v-expansion-panel-header>
-          <div style="overflow-x: scroll">
-            <v-expansion-panel-content>
-              <FocusView :focusImgUrl="focusImgUrl" />
-            </v-expansion-panel-content>
+        <v-expansion-panel v-if="!show">
+          <div style="float: right">
+            <v-icon @click="showCount"> mdi-magnify-minus</v-icon>
           </div>
+            <div style="overflow-x: scroll" class="d-flex flex-row align-center">
+              <div v-for="(url, index) in focusImgUrl" :key="index">
+                <img :src="url" />
+              </div>
+            </div>
+        </v-expansion-panel>
+        <v-expansion-panel @change="toggle_panel" v-if="show">
+          <v-expansion-panel-header>
+            Model Focus
+            <template v-slot:actions>
+              <v-icon> mdi-menu-down </v-icon>
+            </template>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div style="overflow-x: scroll">
+              <FocusView :focusImgUrl="focusImgUrl" />
+            </div>
+            <v-icon @click="showCount" style="float: right"> mdi-magnify-plus</v-icon>
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Influence -->
-        <v-expansion-panel @change="toggle_panel">
+        <v-expansion-panel @change="toggle_panel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Influence Images
           </v-expansion-panel-header>
@@ -41,7 +55,7 @@
         </v-expansion-panel>
 
         <!-- View Proposed Annotation -->
-        <v-expansion-panel @change="toggle_panel">
+        <v-expansion-panel @change="toggle_panel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down">
             Proposed annotation
           </v-expansion-panel-header>
@@ -101,6 +115,7 @@ export default {
       },
       configs: configs,
       panels: [],
+      show: true,
     };
   },
   watch: {
@@ -119,6 +134,9 @@ export default {
     this.get_visualize_data();
   },
   methods: {
+    showCount: function () {
+      this.show = !this.show;
+    },
     get_visualize_data() {
       if (this.split && this.image_url) {
         this.view_prediction(this.split, this.image_url);
