@@ -45,7 +45,7 @@
             depressed
             color="primary"
             class="mb-4"
-            @click="startAutoAnnotate()"
+            @click="startAutoAnnotate"
             data-test="auto-annotate-pad-start-auto-annotation"
           >
             START AUTO ANNOTATION
@@ -95,27 +95,21 @@ export default {
     });
   },
   methods: {
-    annotateSuccess(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Auto annotation started');
-    },
-    annotateFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Auto annotation failed to start');
-    },
-    startAutoAnnotate() {
+    async startAutoAnnotate() {
       if (!this.$refs.form.validate()) {
         return;
       }
       this.$root.startProcessing('Starting annotation... Please wait');
-      APIStartAutoAnnotate(
-        this.configs.split,
-        this.configs,
-        this.annotateSuccess,
-        this.annotateFailed
-      );
+      try {
+        const res = await APIStartAutoAnnotate(this.configs.split, this.configs);
+        console.log(res);
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Auto annotation started');
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Auto annotation failed to start');
+      }
     },
   },
 };

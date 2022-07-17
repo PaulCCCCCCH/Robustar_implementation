@@ -5,34 +5,30 @@ import { postRequest, getRequest, deleteRequest } from './common';
  * @param {string} dataset either 'train' or 'test'
  * @param {string} dataid the id of the image edited
  * @param {string} image_base64 base64 string repr of the image obtained by Fabric.js API canvas.getDataURL()
- * @param {function} success success callback function
- * @param {function} fail fail callback function
  */
-export const APISendEdit = (
+export const APISendEdit = async ({
   split,
   image_url,
   image_height,
   image_width,
   image_base64,
-  success,
-  failed
-) => {
+}) => {
   const data = {
     image: image_base64,
     image_height,
     image_width,
   };
-  postRequest(data, `/edit/${split}/${image_url}`, success, failed);
+  return postRequest(data, `/edit/${split}/${image_url}`);
 };
 
-export const APIGetProposedEdit = (split, image_url, success, failed) => {
-  getRequest(`/propose/${split}/${image_url}`, success, failed);
+export const APIGetProposedEdit = async (split, image_url) => {
+  return getRequest(`/propose/${split}/${image_url}`);
 };
 
-export const APIStartAutoAnnotate = (split, data, success, failed) => {
-  postRequest(data, `/auto-annotate/${split}`, success, failed);
+export const APIStartAutoAnnotate = async (split, data) => {
+  return postRequest(data, `/auto-annotate/${split}`);
 };
 
-export const APIDeleteEdit = (split, image_url, success, failed) => {
-  deleteRequest(`/edit/${split}/${image_url}`, success, failed);
+export const APIDeleteEdit = async (split, image_url) => {
+  return deleteRequest(`/edit/${split}/${image_url}`);
 };

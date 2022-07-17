@@ -79,15 +79,13 @@ export default {
       }
       return colorBar;
     },
-    stopTaskSuccess(res) {
-      console.log(res);
-    },
-    stopTaskFailed(res) {
-      console.log(res);
-      alert('Failed to stop task');
-    },
-    stopTask(tid) {
-      APIStopTask(tid, this.stopTaskSuccess, this.stopTaskFailed);
+    async stopTask(tid) {
+      try {
+        await APIStopTask(tid);
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Failed to stop task');
+      }
     },
   },
 };

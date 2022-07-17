@@ -201,38 +201,32 @@ export default {
     };
   },
   methods: {
-    trainingSuccess(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Training started successfully');
-      window.open('http://localhost:6006');
-    },
-    trainingFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Training failed');
-    },
-    startTraining() {
+    async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
-      APIStartTrain(
-        {
+      try {
+        const res = await APIStartTrain({
           configs: this.configs,
           info: 'placeholder',
-        },
-        this.trainingSuccess,
-        this.trainingFailed
-      );
+        });
+        console.log(res);
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Training started successfully');
+        window.open('http://localhost:6006');
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Training failed');
+      }
     },
-    stopSuccess(res) {
-      console.log(res);
-      alert('Successfully stop training');
-    },
-    stopFailed(res) {
-      console.log(res);
-      alert('Failed to stop training');
-    },
-    stopTraining() {
-      APIStopTrain(this.stopSuccess, this.stopFailed);
+    async stopTraining() {
+      try {
+        const res = await APIStopTrain();
+        console.log(res);
+        this.$root.alert('success', 'Successfully stop training');
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Failed to stop training');
+      }
     },
   },
 };

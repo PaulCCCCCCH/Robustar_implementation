@@ -59,91 +59,80 @@ export default {
     loadImageInfo() {
       this.image_url = sessionStorage.getItem('image_url');
     },
-    loadEditSuccess(res) {
-      const edit_url = res.data.data;
-      if (!edit_url) {
+    async loadEdit() {
+      this.$root.startProcessing('Loading previous annotation. Please wait...');
+      try {
+        const res = await APIGetAnnotated(
+          this.split,
+          this.image_url,
+          this.loadEditSuccess,
+          this.loadEditFailed
+        );
+        const edit_url = res.data.data;
+        if (!edit_url) {
+          this.$root.finishProcessing();
+          this.$root.alert('error', 'No previous annotation found');
+        } else {
+          // Don't change this.split and this.image_url here because they will be used
+          // to get the next image
+          sessionStorage.setItem('split', 'annotated');
+          sessionStorage.setItem('image_url', edit_url);
+          this.$refs.editor.initInstance();
+          this.$root.finishProcessing();
+          this.$root.alert('success', 'Previous annotation loaded');
+        }
+      } catch (error) {
         this.$root.finishProcessing();
-        this.$root.alert('error', 'No previous annotation found');
-      } else {
-        // Don't change this.split and this.image_url here because they will be used
-        // to get the next image
-        sessionStorage.setItem('split', 'annotated');
-        sessionStorage.setItem('image_url', edit_url);
-        this.$refs.editor.initInstance();
-        this.$root.finishProcessing();
-        this.$root.alert('success', 'Previous annotation loaded');
+        this.$root.alert('error', 'Failed to load previous annotation');
       }
     },
-    loadEditFailed(res) {
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Failed to load previous annotation');
-    },
-    loadEdit() {
-      this.$root.startProcessing('Loading previous annotation. Please wait...');
-      APIGetAnnotated(this.split, this.image_url, this.loadEditSuccess, this.loadEditFailed);
-    },
-    autoEditSuccess(res) {
-      const proposed_url = res.data.data;
-      // Same as above, don't change this.split and this.image_url here because they will be used
-      // to get the next image
-      sessionStorage.setItem('image_url', proposed_url);
-      sessionStorage.setItem('split', 'proposed');
-      this.$refs.editor.initInstance();
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Automatic annotation applied.');
-    },
-    autoEditFailed(res) {
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Failed to auto annotate');
-    },
-    autoEdit() {
+    async autoEdit() {
       this.$root.startProcessing('Auto-annotating...');
-      APIGetProposedEdit(this.split, this.image_url, this.autoEditSuccess, this.autoEditFailed);
+      try {
+        const res = await APIGetProposedEdit(this.split, this.image_url);
+        const proposed_url = res.data.data;
+        // Same as above, don't change this.split and this.image_url here because they will be used
+        // to get the next image
+        sessionStorage.setItem('image_url', proposed_url);
+        sessionStorage.setItem('split', 'proposed');
+        this.$refs.editor.initInstance();
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Automatic annotation applied.');
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Failed to auto annotate');
+      }
     },
     adjustImageSize() {
       this.$refs.editor.invoke('resize', { width: 500, height: 500 });
     },
-    getNextImageSuccess(res) {
-      sessionStorage.setItem('image_url', res.data.data);
-      this.$refs.editor.initInstance();
-      this.loadImageInfo();
-    },
-    getNextImageFailed(res) {
-      this.$root.alert('error', 'Failed to get next image');
-      console.log(res);
-    },
-    sendEditSuccess(res) {
-      APIGetNextImage(
-        this.split,
-        this.image_url,
-        this.getNextImageSuccess,
-        this.getNextImageFailed
-      );
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Sending succeeded');
-    },
-    sendEditFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Sending failed');
-    },
-    sendEdit(image_base64) {
+    async sendEdit(image_base64) {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
       const image_url = sessionStorage.getItem('image_url') || '';
-      const height = sessionStorage.getItem('image_height');
-      const width = sessionStorage.getItem('image_width');
+      const image_height = sessionStorage.getItem('image_height');
+      const image_width = sessionStorage.getItem('image_width');
       const split = sessionStorage.getItem('split');
-      APISendEdit(
-        split,
-        image_url,
-        height,
-        width,
-        image_base64,
-        this.sendEditSuccess,
-        this.sendEditFailed
-      );
+      try {
+        await APISendEdit({ split, image_url, image_height, image_width, image_base64 });
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Sending succeeded');
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Sending failed');
+      }
+      try {
+        const res = await APIGetNextImage(this.split, this.image_url);
+        sessionStorage.setItem('image_url', res.data.data);
+        this.$refs.editor.initInstance();
+        this.loadImageInfo();
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Failed to get next image');
+      }
     },
   },
 };
