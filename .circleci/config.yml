@@ -1,26 +1,139 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  clone-repo:
     docker:
       - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Clone Robustar Code Repository
+          command: | 
+            ls -al
+            echo '^^^^^^^^^^^^^ Files cloned from repo'
+            echo 'Current Branch: $(git branch --show-current)'
+            echo 'Commit: $(git rev-parse HEAD)'
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  # If having a release 
+  env-setup-main:
+    docker:
+      - image: cimg/base:stable
+    steps:
+     - run:
+          name: Set Up Environment Variables For Release Builds
+          command: |
+            echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+            echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
+
+  # If having a dev build
+  env-setup-dev:
+    docker:
+      - image: cimg/base:stable
+    steps:
+     - run:
+          name: Set Up Environment Variables For Dev Builds
+          command: |
+            echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
+            echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
+
+  build-frontend:
+    docker:
+      - image: cimg/node:17.2
+    steps:
+      - run:
+          name: Build Frontend
+          working_directory: /front-end
+          command: |
+            lerna run build
+
+  run-frontend-tests:
+    docker:
+      - image: cimg/node:17.2
+    steps:
+      - run:
+          name: Run Frontend Tests
+          working_directory: /front-end
+          command: | # Placeholder her
+            echo "Placeholder for running frontend tests!"
+
+  run-backend-tests:
+    docker:
+      - image: cimg/node:17.2 # Need to use another docker image
+    steps:
+      - run:
+          name: Run Backend Tests
+          working_directory: /back-end
+          command: | # Placeholder here
+            echo "Placeholder for running backend tests!"
+ 
+
+  build-docker-image:
+    environment:
+      IMAGE_NAME: 
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps: 
+      - setup_remote_docker
+      - run:
+          name: Run Docker Build
+          # Hard coded VCUDA to cpu for now. Maybe build for cpu only for dev builds, and build for cpu & all gpu versionse for release builds
+          command: docker build -t $IMAGE_NAME:$IMAGE_TAG --build-arg VCUDA=cpu 
+    
+  push-docker-image:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Push Docker Image to DockerHub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:$IMAGE_TAG
+
+    
+
 workflows:
-  say-hello-workflow:
+  # Release image build workflow
+  robustar-workflow-main:
     jobs:
-      - say-hello
+      - clone-repo
+      - env-setup-main
+      - build-frontend:
+          requires:
+            - clone-repo
+            - env-setup-main
+      - run-frontend-tests
+      - run-backend-tests
+      - build-docker-image:
+          filters:
+            branches:
+              only: main
+          requires:
+            - build-frontend
+            - run-frontend-tests
+            - run-backend-tests
+      - push-docker-image:
+          requires:
+            - build-docker-image
+
+  # Dev image build workflow
+  robustar-workflow-dev:
+    jobs:
+      - clone-repo
+      - env-setup-dev
+      - build-frontend:
+          requires:
+            - clone-repo
+            - env-setup-dev
+      - run-frontend-tests
+      - run-backend-tests
+      - build-docker-image:
+          requires:
+            - build-frontend
+            - run-frontend-tests
+            - run-backend-tests
+      - push-docker-image:
+          requires:
+            - build-docker-image
+
+

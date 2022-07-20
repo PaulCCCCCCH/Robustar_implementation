@@ -32,13 +32,12 @@ export const APIGetAnnotated = (split, image_url, success, failed) => {
   getRequest(`/image/annotated/${split}/${image_url}`, success, failed);
 };
 
-
 /**
- * @param {string} split 
- * @param {string} image_url 
- * @param {function} success 
- * @param {function} failed 
+ * @param {string} split
+ * @param {string} image_url
+ * @param {function} success
+ * @param {function} failed
  */
 export const APIGetNextImage = (split, image_url, success, failed) => {
-  getRequest(`/image/next/${split}/${image_url}`, success, failed)
-}
+  getRequest(`/image/next/${split}/${image_url}`, success, failed);
+};
