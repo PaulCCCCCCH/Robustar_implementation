@@ -9,42 +9,34 @@ jobs:
       - run:
           name: Clone Robustar Code Repository
           command: | 
+            echo "Current working directory: $(pwd)"
             ls -al
             echo '^^^^^^^^^^^^^ Files cloned from repo'
             echo 'Current Branch: $(git branch --show-current)'
             echo 'Commit: $(git rev-parse HEAD)'
+      - persist_to_workspace:
+          root: .
+          paths:
+            - back-end/*
 
-  env-setup:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run: echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
-      - when: # When having a release build
-          condition:
-            equal: [ main, << pipeline.git.branch >> ] 
-          steps:
-            - run:
-                name: Set Up Environment Variables For Release Builds
-                command: echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-      - when: # When having a dev build
-          condition:
-            not:
-              equal: [ main, << pipeline.git.branch >> ]          
-          steps:
-            - run:
-                name: Set Up Environment Variables For Dev Builds
-                command: echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
 
   build-frontend:
     docker:
       - image: cimg/node:17.2
     steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Build Frontend
           working_directory: ./front-end
           command: |
+            echo "Files in directory: $(ls)"
             npx lerna@latest init
             npx lerna run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - front-end/packages/robustar/dist/*
 
   run-frontend-tests:
     docker:
@@ -54,6 +46,7 @@ jobs:
           name: Run Frontend Tests
           working_directory: ./front-end
           command: | # Placeholder her
+            echo "Files in directory: $(ls)"
             echo "Placeholder for running frontend tests!"
 
   run-backend-tests:
@@ -64,54 +57,67 @@ jobs:
           name: Run Backend Tests
           working_directory: ./back-end
           command: | # Placeholder here
+            echo "Files in directory: $(ls)"
             echo "Placeholder for running backend tests!"
  
 
-  build-docker-image:
-    environment:
-      IMAGE_NAME: 
+  build-and-push-docker-image:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps: 
+      - checkout 
       - setup_remote_docker
-      - run:
-          name: Run Docker Build
-          # Hard coded VCUDA to cpu for now. Maybe build for cpu only for dev builds, and build for cpu & all gpu versionse for release builds
-          command: docker build -t $IMAGE_NAME:$IMAGE_TAG --build-arg VCUDA=cpu 
-    
-  push-docker-image:
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    steps:
-      - setup_remote_docker
-      - run:
-          name: Push Docker Image to DockerHub
-          command: |
-            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:$IMAGE_TAG
+      - attach_workspace:
+          at: .
+      - when: # When having a dev build
+          condition:
+            not:
+              equal: [ main, << pipeline.git.branch >> ]          
+          steps:
+            - run: 
+                name: Build And Push Dev Docker Image
+                # We have to have this blob of command and repeat it twice because CircleCI does not support sharing variables between steps.
+                # Try using custom executor? 
+                command: |
+                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
+                  source $BASH_ENV
+                  echo "Current working directory: $(pwd)"
+                  echo "Files in directory: $(ls)"
+                  docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
+                  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                  docker push $IMAGE_NAME:$IMAGE_TAG
 
-    
+      - when: # When having a release build
+          condition:
+            equal: [ main, << pipeline.git.branch >> ] 
+          steps:
+            - run:
+                name: Build And Push Docker Image For Release
+                command: | 
+                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+                  source $BASH_ENV
+                  echo "Current working directory: $(pwd)"
+                  echo "Files in directory: $(ls)"
+                  docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
+                  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                  docker push $IMAGE_NAME:$IMAGE_TAG
+
 
 workflows:
   robustar-workflow:
     jobs:
       - clone-repo
-      - env-setup
       - build-frontend:
           requires:
             - clone-repo
-            - env-setup
       - run-frontend-tests:
           requires:
             - clone-repo
       - run-backend-tests:
           requires:
             - clone-repo
-      - build-docker-image:
+      - build-and-push-docker-image:
          requires:
             - build-frontend
             - run-frontend-tests
             - run-backend-tests
-      - push-docker-image:
-          requires:
-            - build-docker-image
