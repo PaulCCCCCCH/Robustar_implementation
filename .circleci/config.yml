@@ -14,27 +14,26 @@ jobs:
             echo 'Current Branch: $(git branch --show-current)'
             echo 'Commit: $(git rev-parse HEAD)'
 
-  # If having a release 
-  env-setup-main:
+  env-setup:
     docker:
       - image: cimg/base:stable
     steps:
-     - run:
-          name: Set Up Environment Variables For Release Builds
-          command: |
-            echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-            echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
-
-  # If having a dev build
-  env-setup-dev:
-    docker:
-      - image: cimg/base:stable
-    steps:
-     - run:
-          name: Set Up Environment Variables For Dev Builds
-          command: |
-            echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
-            echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
+      - run: echo 'export IMAGE_NAME=${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO_NAME}' >> $BASH_ENV 
+      - when: # When having a release build
+          condition:
+            equal: [ main, << pipeline.git.branch >> ] 
+          steps:
+            - run:
+                name: Set Up Environment Variables For Release Builds
+                command: echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+      - when: # When having a dev build
+          condition:
+            not:
+              equal: [ main, << pipeline.git.branch >> ]          
+          steps:
+            - run:
+                name: Set Up Environment Variables For Dev Builds
+                command: echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
 
   build-frontend:
     docker:
@@ -42,9 +41,10 @@ jobs:
     steps:
       - run:
           name: Build Frontend
-          working_directory: /front-end
+          working_directory: ./front-end
           command: |
-            lerna run build
+            npx lerna@latest init
+            npx lerna run build
 
   run-frontend-tests:
     docker:
@@ -52,7 +52,7 @@ jobs:
     steps:
       - run:
           name: Run Frontend Tests
-          working_directory: /front-end
+          working_directory: ./front-end
           command: | # Placeholder her
             echo "Placeholder for running frontend tests!"
 
@@ -62,7 +62,7 @@ jobs:
     steps:
       - run:
           name: Run Backend Tests
-          working_directory: /back-end
+          working_directory: ./back-end
           command: | # Placeholder here
             echo "Placeholder for running backend tests!"
  
@@ -93,47 +93,25 @@ jobs:
     
 
 workflows:
-  # Release image build workflow
-  robustar-workflow-main:
+  robustar-workflow:
     jobs:
       - clone-repo
-      - env-setup-main
+      - env-setup
       - build-frontend:
           requires:
             - clone-repo
-            - env-setup-main
-      - run-frontend-tests
-      - run-backend-tests
-      - build-docker-image:
-          filters:
-            branches:
-              only: main
+            - env-setup
+      - run-frontend-tests:
           requires:
+            - clone-repo
+      - run-backend-tests:
+          requires:
+            - clone-repo
+      - build-docker-image:
+         requires:
             - build-frontend
             - run-frontend-tests
             - run-backend-tests
       - push-docker-image:
           requires:
             - build-docker-image
-
-  # Dev image build workflow
-  robustar-workflow-dev:
-    jobs:
-      - clone-repo
-      - env-setup-dev
-      - build-frontend:
-          requires:
-            - clone-repo
-            - env-setup-dev
-      - run-frontend-tests
-      - run-backend-tests
-      - build-docker-image:
-          requires:
-            - build-frontend
-            - run-frontend-tests
-            - run-backend-tests
-      - push-docker-image:
-          requires:
-            - build-docker-image
-
-
