@@ -201,28 +201,6 @@
                     class="d-flex flex-column transition-fast-in-fast-out primary v-card--reveal"
                     style="height: 100%"
                   >
-<<<<<<< HEAD
-                    <v-icon left>mdi-pencil</v-icon>
-                    ANNOTATE
-                  </v-btn>
-                  <v-btn outlined color="white" width="80%" @click="setCurrentImage(idx, url)">
-                    <v-icon left>mdi-cogs</v-icon>
-                    PREDICT
-                  </v-btn>
-                  <v-btn
-                    v-if="$route.params.split === 'annotated'"
-                    outlined
-                    color="white"
-                    width="80%"
-                    @click="deleteAnnotatedImage(idx, url)"
-                  >
-                    <v-icon left>mdi-cogs</v-icon>
-                    DELETE
-                  </v-btn>
-                </div>
-              </v-expand-transition>
-            </v-img>
-=======
                     <v-btn
                       class="mb-4"
                       outlined
@@ -242,7 +220,6 @@
                 </v-expand-transition>
               </v-img>
             </v-badge>
->>>>>>> dev
           </v-hover>
         </v-col>
       </v-row>
@@ -386,19 +363,11 @@ export default {
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-<<<<<<< HEAD
-    deleteImageSuccess(idx) {
-      this.imageList.splice(idx, 1);
-    },
-    deleteImageFailed() {
-      console.log('Delete image failed');
-=======
     deleteImageSuccess() {
       this.initImageList();
     },
     deleteImageFailed() {
       this.$root.alert('error', 'Image deletion failed');
->>>>>>> dev
     },
     deleteAnnotatedImage(idx, url) {
       APIDeleteEdit(
