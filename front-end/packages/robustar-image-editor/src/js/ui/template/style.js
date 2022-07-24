@@ -109,7 +109,11 @@ export default ({
     .tui-image-editor-container .tui-image-editor-header-logo > img {
         ${biSize}
     }
-    .tui-image-editor-menu use.normal.use-default,
+    .tui-image-editor-menu use.normal.use-default {
+        fill-rule: evenodd;
+        fill: ${menuIconStyle.hover.color};
+        stroke: ${menuIconStyle.hover.color};
+    }
     .tui-image-editor-help-menu use.normal.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.normal.color};
