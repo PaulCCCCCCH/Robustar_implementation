@@ -1,11 +1,47 @@
 version: 2.1
 
 jobs:
-  frontend-test:
+  clone-repo:
     docker:
-      - image: cimg/node:14.17.6
+      - image: cimg/base:stable
     steps:
       - checkout
+      - run:
+          name: Clone Robustar Code Repository
+          command: | 
+            echo "Current working directory: $(pwd)"
+            ls -al
+            echo '^^^^^^^^^^^^^ Files cloned from repo'
+            echo 'Current Branch: $(git branch --show-current)'
+            echo 'Commit: $(git rev-parse HEAD)'
+      - persist_to_workspace:
+          root: .
+          paths:
+            - back-end/*
+
+
+  build-frontend:
+    docker:
+      - image: cimg/node:17.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build Frontend
+          working_directory: ./front-end
+          command: |
+            echo "Files in directory: $(ls)"
+            npx lerna@latest init
+            npx lerna run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - front-end/packages/robustar/dist/*
+
+  run-frontend-tests:
+    docker:
+      - image: cimg/node:17.2
+    steps:
       - run:
           name: Run Frontend Tests
           working_directory: ./front-end
@@ -13,11 +49,10 @@ jobs:
             echo "Files in directory: $(ls)"
             echo "Placeholder for running frontend tests!"
 
-  backend-test:
+  run-backend-tests:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/node:17.2 # Need to use another docker image
     steps:
-      - checkout
       - run:
           name: Run Backend Tests
           working_directory: ./back-end
@@ -25,37 +60,15 @@ jobs:
             echo "Files in directory: $(ls)"
             echo "Placeholder for running backend tests!"
  
-  build-image:
-    docker:
-      - image: cimg/node:14.17.6
-    steps:
-      - checkout # clone github repo
-      - run:
-          name: Display files and git status
-          command: | 
-            echo "Current working directory: $(pwd)"
-            ls -al
-            echo '^^^^^^^^^^^^^ Files cloned from repo'
-            echo 'Current Branch: $(git branch --show-current)'
-            echo 'Commit: $(git rev-parse HEAD)'
-      - run:
-          name: Download dependencies
-          working_directory: ./front-end
-          command: |
-            echo "Files in directory: $(ls)"
-            echo "node version: $(node -v)"
-            echo "npm version: $(npm -v)"
-            npx lerna@latest init
-            npm install
-            npx lerna bootstrap
-            npx lerna run build
 
-      - run:
-          name: Build frontend
-          working_directory: ./front-end
-          command: |
-            ls -al
+  build-and-push-docker-image:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps: 
+      - checkout 
       - setup_remote_docker
+      - attach_workspace:
+          at: .
       - when: # When having a dev build
           condition:
             not:
@@ -66,14 +79,13 @@ jobs:
                 # We have to have this blob of command and repeat it twice because CircleCI does not support sharing variables between steps.
                 # Try using custom executor? 
                 command: |
-                  chmod +x ./scripts/install_pytorch.sh
                   echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
                   source $BASH_ENV
                   echo "Current working directory: $(pwd)"
                   echo "Files in directory: $(ls)"
                   docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
                   echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                  docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG
+                  docker push $IMAGE_NAME:$IMAGE_TAG
 
       - when: # When having a release build
           condition:
@@ -82,22 +94,30 @@ jobs:
             - run:
                 name: Build And Push Docker Image For Release
                 command: | 
-                  chmod +x ./scripts/install_pytorch.sh
                   echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
                   source $BASH_ENV
                   echo "Current working directory: $(pwd)"
                   echo "Files in directory: $(ls)"
                   docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
                   echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                  docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG
+                  docker push $IMAGE_NAME:$IMAGE_TAG
 
 
 workflows:
   robustar-workflow:
     jobs:
-      - frontend-test
-      - backend-test
-      - build-image:
+      - clone-repo
+      - build-frontend:
           requires:
-            - frontend-test
-            - backend-test
+            - clone-repo
+      - run-frontend-tests:
+          requires:
+            - clone-repo
+      - run-backend-tests:
+          requires:
+            - clone-repo
+      - build-and-push-docker-image:
+         requires:
+            - build-frontend
+            - run-frontend-tests
+            - run-backend-tests
