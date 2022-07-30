@@ -1,15 +1,25 @@
-import os.path as osp
+import base64
+import io
 
-from flask import redirect, send_file
+from PIL import Image
+from flask import send_file
+from scipy import rand
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength
 from utils.path_utils import to_unix
 
+import os.path as osp
+
 server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
+
+datasetFileQueue = dataManager.datasetFileQueue
+datasetFileBuffer = dataManager.datasetFileBuffer
+datasetFileQueueLen = dataManager.datasetFileQueueLen
+
 
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
@@ -18,9 +28,9 @@ def get_image_list(split, start, num_per_page):
     try:
         return RResponse.ok(getImagePath(split, image_idx_start, image_idx_end))
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths') 
-    
-  
+        return RResponse.fail('Error retrieving image paths')
+
+
 @app.route('/image/next/<split>/<path:path>')
 def get_next_image(split, path):
     """
@@ -32,7 +42,6 @@ def get_next_image(split, path):
 
     path = to_unix(path)
     return RResponse.ok(getNextImagePath(split, path))
-    
 
 
 @app.route('/image/annotated/<split>/<path:path>')
@@ -45,7 +54,7 @@ def get_annotated(split, path):
     parameters:
       - name: "split"
         in: "path"
-        description: "image split, can be 'train', 'annotated' or 'proposed'. 
+        description: "image split, can be 'train', 'annotated' or 'proposed'.
         required: true
         type: "string"
       - name: "path"
@@ -145,11 +154,28 @@ def get_split_length(split):
 
 @app.route('/dataset/<path:dataset_img_path>')
 def get_dataset_img(dataset_img_path):
+    # dataManager.get_get_image_rq().enqueue(dataset_img_path)
+    # print(1)
+
     normal_path = to_unix(dataset_img_path)
-    if osp.exists(normal_path):
-        return send_file(normal_path)
+    name = normal_path.split('/')[-1]
+
+    if normal_path in datasetFileBuffer:
+        image_binary = datasetFileBuffer[normal_path]
+    elif osp.exists(normal_path):
+        with open(normal_path, "rb") as image_file:
+            image_binary = image_file.read()
+
+        datasetFileQueue.append(normal_path)
+        if len(datasetFileQueue) > datasetFileQueueLen:
+            temp_path = datasetFileQueue.popleft()
+            del datasetFileBuffer[temp_path]
+        datasetFileBuffer[normal_path] = image_binary
     else:
         return RResponse.fail()
+
+    # print(len(datasetFileBuffer))
+    return send_file(io.BytesIO(image_binary), download_name=name)
 
 
 @app.route('/visualize/<path:visualize_img_path>')

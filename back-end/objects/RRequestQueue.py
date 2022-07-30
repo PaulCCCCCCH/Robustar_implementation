@@ -1,45 +1,36 @@
+import collections
 from threading import Lock
-
-
-def with_lock(func):
-    def wrapper(*wargs, **kwargs):
-        RRequestQueue.lock.acquire()
-        res = func(*wargs, **kwargs)
-        RRequestQueue.lock.release()
-        return res
-
-    return wrapper
 
 
 class RRequestQueue:
     lock = Lock()
-    request_queue = []
-    request_limit = 0
+    request_queue = collections.deque()
 
-    def __init__(self, request_limit=20):
+    def __init__(self, request_limit=30):
         self.request_limit = request_limit
 
-    @with_lock
-    def enqueue(self, obj):
-        self.request_queue.append(obj)
+    def enqueue(self, data):
+        self.lock.acquire()
+        self.request_queue.append(data)
+        self.lock.release()
         if self.size() > self.request_limit:
-            self.request_queue.remove(0)
+            self.lock.acquire()
+            self.request_queue.popleft()
+            self.lock.release()
 
-    @with_lock
     def dequeue(self):
         if not self.is_empty():
-            self.request_queue.pop(0)
+            self.lock.acquire()
+            obj = self.request_queue.popleft()
+            self.lock.release()
+            return obj
 
-    @with_lock
-    def front(self):
-        if not self.is_empty():
-            return self.request_queue[0]
-
-    @with_lock
     def size(self):
-        return len(self.request_queue)
+        self.lock.acquire()
+        size = len(self.request_queue)
+        self.lock.release()
+        return size
 
-    @with_lock
     def is_empty(self):
         return self.size() == 0
 
@@ -48,5 +39,5 @@ class RRequestQueue:
 
 
 class GetImageRequestQueue(RRequestQueue):
-    def __init__(self, request_limit):
+    def __init__(self, request_limit=30):
         super().__init__(request_limit)
