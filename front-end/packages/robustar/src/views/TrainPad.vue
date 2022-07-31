@@ -202,10 +202,16 @@ export default {
   },
   methods: {
     trainingSuccess(res) {
+      const getPort = async () => {
+        const config = await fetch("serverUrls.json");
+        return await config.json();
+      }
       console.log(res);
       this.$root.finishProcessing();
       this.$root.alert('success', 'Training started successfully');
-      window.open('http://localhost:'+(await (await fetch("serverUrls.json")).json()).tensorboardPort);
+      getPort.then(port => {
+        window.open('http://localhost:'+port.tensorboardPort)
+      });
     },
     trainingFailed(res) {
       console.log(res);
