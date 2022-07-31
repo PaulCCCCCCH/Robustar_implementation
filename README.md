@@ -97,3 +97,14 @@ docker push paulcccccch/robustar:base-0.1.0
 
 See [backend doc](./back-end/README.md) and [frontend doc](./front-end/README.md) for more details
 
+## Trouble Shooting
+
+### Error: Install pypiwin32 package to enable npipe:// support
+
+If `pip install pypiwin32` doesn't fix this issue, try
+
+```shell
+python <path-to-python-env>\Scripts\pywin32_postinstall.py -install
+```
+
+This would install the version needed.
