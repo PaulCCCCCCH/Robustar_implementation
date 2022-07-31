@@ -23,7 +23,7 @@
           <div style="float: right">
             <v-icon @click="showCount"> mdi-magnify-minus</v-icon>
           </div>
-            <div style="overflow-x: scroll" class="d-flex flex-row align-center">
+            <div style="overflow-y: scroll; height: 400px; width: 400px">
               <div v-for="(url, index) in focusImgUrl" :key="index">
                 <img :src="url" />
               </div>
