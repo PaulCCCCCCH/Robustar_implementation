@@ -19,15 +19,15 @@
         </v-expansion-panel>
 
         <!-- View Model Focus -->
-        <v-expansion-panel v-if="!show">
+        <v-expansion-panel v-if="!show" style="height: 700px">
           <div style="float: right">
             <v-icon @click="showCount"> mdi-magnify-minus</v-icon>
           </div>
-            <div style="overflow-y: scroll; height: 400px; width: 400px">
-              <div v-for="(url, index) in focusImgUrl" :key="index">
-                <img :src="url" />
-              </div>
+          <div style="overflow-y: scroll; height: 100%; width: 400px">
+            <div v-for="(url, index) in focusImgUrl" :key="index">
+              <img :src="url" />
             </div>
+          </div>
         </v-expansion-panel>
         <v-expansion-panel @change="toggle_panel" v-if="show">
           <v-expansion-panel-header>
