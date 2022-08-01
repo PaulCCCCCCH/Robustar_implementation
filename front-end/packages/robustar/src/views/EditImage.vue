@@ -1,6 +1,204 @@
 <template>
-  <div class="d-flex flex-row justify-space-between" style="width: 100%; height: 100%">
-    <ImageEditor ref="editor" :include-ui="useDefaultUI" :options="options"></ImageEditor>
+  <div class="d-flex justify-space-between" style="width: 100%; height: 100%">
+    <div
+      class="d-flex flex-column justify-space-between align-center pt-8"
+      style="width: 100%; height: 100%"
+    >
+      <div class="d-flex">
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              :color="mode === 'zoomIn' ? 'primary' : ''"
+              icon
+              large
+              @click="mode = mode === 'zoomIn' ? '' : 'zoomIn'"
+              v-bind="attrs"
+              v-on="on"
+              ><v-icon>mdi-magnify-plus-outline</v-icon></v-btn
+            >
+          </template>
+          <span>zoom in</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              :color="mode === 'zoomOut' ? 'primary' : ''"
+              icon
+              large
+              class="mx-4"
+              @click="mode = mode === 'zoomOut' ? '' : 'zoomOut'"
+              v-bind="attrs"
+              v-on="on"
+              ><v-icon>mdi-magnify-minus-outline</v-icon></v-btn
+            >
+          </template>
+          <span>zoom out</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              :color="mode === 'move' ? 'primary' : ''"
+              icon
+              large
+              @click="mode = mode === 'move' ? '' : 'move'"
+              v-bind="attrs"
+              v-on="on"
+              ><v-icon>mdi-drag-variant</v-icon></v-btn
+            >
+          </template>
+          <span>move</span>
+        </v-tooltip>
+        <v-divider vertical inset class="mx-8"></v-divider>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
+              ><v-icon>mdi-history</v-icon></v-btn
+            >
+          </template>
+          <span>history</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
+              ><v-icon>mdi-arrow-u-left-top</v-icon></v-btn
+            >
+          </template>
+          <span>undo</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
+              ><v-icon>mdi-arrow-u-right-top</v-icon></v-btn
+            >
+          </template>
+          <span>redo</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon large v-bind="attrs" v-on="on"><v-icon>mdi-cached</v-icon></v-btn>
+          </template>
+          <span>reset</span>
+        </v-tooltip>
+        <v-divider vertical inset class="mx-8"></v-divider>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon large v-bind="attrs" v-on="on"
+              ><v-icon>mdi-trash-can-outline</v-icon></v-btn
+            >
+          </template>
+          <span>delete</span>
+        </v-tooltip>
+      </div>
+      <!-- <v-btn color="success" @click="$refs['editor'].invoke('startDrawingMode', 'ZOOM')"
+        >text</v-btn
+      > -->
+      <ImageEditor
+        ref="editor"
+        :include-ui="useDefaultUI"
+        :options="options"
+        :cursor="cursorIcon"
+        @mousedown="mousedown"
+      ></ImageEditor>
+      <div class="d-flex flex-column align-center" style="width: 100%">
+        <div v-if="mode === 'resize'" style="width: 500px" class="d-flex flex-column align-center">
+          <div class="d-flex align-center mb-2" style="width: 100%">
+            <span class="mr-4 font-weight-medium" style="width: 45px">Width</span>
+            <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+              <template v-slot:append>
+                <div class="d-flex align-center">
+                  <v-text-field
+                    v-model="slider"
+                    class="mt-0 pt-0 mx-2"
+                    hide-details
+                    single-line
+                    outlined
+                    dense
+                    type="number"
+                    style="width: 80px"
+                  ></v-text-field>
+                  <span>px</span>
+                </div>
+              </template>
+            </v-slider>
+          </div>
+          <div class="d-flex align-center" style="width: 100%">
+            <span class="mr-4 font-weight-medium" style="width: 45px">Height</span>
+            <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+              <template v-slot:append>
+                <div class="d-flex align-center">
+                  <v-text-field
+                    v-model="slider"
+                    class="mt-0 pt-0 mx-2"
+                    hide-details
+                    single-line
+                    outlined
+                    dense
+                    type="number"
+                    style="width: 80px"
+                  ></v-text-field>
+                  <span>px</span>
+                </div>
+              </template>
+            </v-slider>
+          </div>
+          <v-checkbox v-model="checkbox" label="Lock Aspect Ratio" hide-details></v-checkbox>
+          <div class="mt-6 mb-8">
+            <v-btn text> <v-icon class="mr-2">mdi-check</v-icon>Apply </v-btn>
+            <v-btn text color="grey"> <v-icon class="mr-2">mdi-close</v-icon>Cancel </v-btn>
+          </div>
+        </div>
+        <div v-if="mode === 'draw'" class="d-flex align-center mb-8" style="width: 500px">
+          <span class="mr-4 font-weight-medium" style="width: 45px">Range</span>
+          <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+            <template v-slot:append>
+              <v-text-field
+                v-model="slider"
+                class="mt-0 pt-0 mx-2"
+                hide-details
+                single-line
+                outlined
+                dense
+                type="number"
+                style="width: 80px"
+              ></v-text-field>
+            </template>
+          </v-slider>
+        </div>
+        <v-sheet
+          class="d-flex justify-center align-center"
+          color="primary"
+          width="100%"
+          height="70"
+        >
+          <v-btn
+            color="white"
+            :text="mode !== 'resize'"
+            large
+            depressed
+            @click="mode = mode === 'resize' ? '' : 'resize'"
+            ><v-icon class="mr-2">mdi-resize</v-icon>Resize</v-btn
+          >
+          <v-btn
+            class="mx-8"
+            color="white"
+            :text="mode !== 'draw'"
+            large
+            @click="mode = mode === 'draw' ? '' : 'draw'"
+            depressed
+            ><v-icon class="mr-2">mdi-draw</v-icon>Draw</v-btn
+          >
+          <v-btn
+            color="white"
+            :text="mode !== 'colorRange'"
+            large
+            depressed
+            @click="mode = mode === 'colorRange' ? '' : 'colorRange'"
+            ><v-icon class="mr-2">mdi-image-filter-center-focus-strong-outline</v-icon>Color
+            Range</v-btn
+          >
+        </v-sheet>
+      </div>
+    </div>
     <Visualizer
       :is-active="image_url !== ''"
       :image_url="image_url"
@@ -33,7 +231,7 @@ export default {
   },
   data() {
     return {
-      useDefaultUI: true,
+      useDefaultUI: false,
       options: {
         // for tui-image-editor component's "options" prop
         cssMaxWidth: 700,
@@ -44,7 +242,30 @@ export default {
       },
       image_url: '',
       split: '',
+      mode: '',
+      zoomLevel: 1,
     };
+  },
+  computed: {
+    cursorIcon() {
+      switch (this.mode) {
+        case 'zoomIn':
+          return 'zoom-in';
+          break;
+        case 'zoomOut':
+          return 'zoom-out';
+          break;
+        case 'move':
+          return 'move';
+          break;
+        case 'colorRange':
+          return 'crosshair';
+          break;
+        default:
+          return 'default';
+          break;
+      }
+    },
   },
   mounted() {
     this.loadImageInfo();
@@ -132,6 +353,30 @@ export default {
       } catch (error) {
         console.log(error);
         this.$root.alert('error', 'Failed to get next image');
+      }
+    },
+    mousedown(event, originPointer) {
+      console.log(originPointer);
+      switch (this.mode) {
+        case 'zoomIn':
+          this.zoomLevel++;
+          this.$refs['editor'].invoke('zoom', {
+            x: originPointer.x,
+            y: originPointer.y,
+            zoomLevel: this.zoomLevel,
+          });
+          break;
+        case 'zoomOut':
+          if (this.zoomLevel == 1) return;
+          this.zoomLevel--;
+          this.$refs['editor'].invoke('zoom', {
+            x: originPointer.x,
+            y: originPointer.y,
+            zoomLevel: this.zoomLevel,
+          });
+          break;
+        default:
+          break;
       }
     },
   },
