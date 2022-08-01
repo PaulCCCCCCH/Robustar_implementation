@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; max-width: 30vw">
-    <v-sheet v-if="isActive" class="pa-4 sticky-content" color="white" elevation="1">
+    <v-sheet v-if="isActive" class="pa-4 sticky-content overflow-auto" color="white" elevation="1">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -220,7 +220,7 @@ export default {
 .sticky-content {
   position: sticky;
   top: 65px;
-  height: 95vh;
+  height: 94vh;
   z-index: 9;
   background-color: white;
 }

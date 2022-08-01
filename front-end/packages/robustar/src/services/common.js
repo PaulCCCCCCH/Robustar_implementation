@@ -46,6 +46,14 @@ const validateStatus = (status) => [200, 201].includes(status);
  * @param {string} route
  */
 export const postRequest = async (data, route) => {
+  // try {
+  //   const res = await axios.post(`/api${route}`, data, { validateStatus: validateStatus });
+  //   successHandler()
+  //   return Promise.resolve(res);
+  // } catch (error) {
+  //   failHandler(error);
+  //   return Promise.reject(error);
+  // }
   return axios.post(`/api${route}`, data, { validateStatus: validateStatus });
 };
 
