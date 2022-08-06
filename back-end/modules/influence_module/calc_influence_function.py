@@ -321,7 +321,6 @@ def calc_influence_single(model, train_loader, test_loader, test_id_num, gpu,
     influences = []
     max_influence_dict = {}
     for i in range(train_dataset_size):
-        print(i)
         z, t = train_loader.dataset[i]
         z = train_loader.collate_fn([z])
         t = train_loader.collate_fn([t])
@@ -399,15 +398,13 @@ def get_dataset_sample_ids_per_class(class_id, num_samples, test_loader,
     return sample_list
 
 
-def get_dataset_sample_ids(num_samples, test_loader, num_classes=None,
-                           start_index=0):
+def get_dataset_sample_ids(num_samples, test_loader, start_index=0):
     """Gets the first num_sample indices of all classes starting from
     start_index per class. Returns a list and a dict containing the indicies.
 
     Arguments:
         num_samples: int, number of samples of each class to return
         test_loader: DataLoader, can load the test dataset
-        num_classes: int, number of classes contained in the dataset
         start_index: int, means after which x occourance to add an index
             to the list of indicies. E.g. if =3, then it would add the
             4th occourance of an item with the label class_nr to the list.
@@ -440,20 +437,11 @@ def calc_img_wise(config, model, train_loader, test_loader):
     influences_meta = copy.deepcopy(config)
     test_sample_num = config['test_sample_num']
     test_start_index = config['test_start_index']
+    test_end_index = config['test_end_index']
     outdir = Path(config['outdir'])
     outdir.mkdir(exist_ok=True, parents=True)
 
-    # If calculating the influence for a subset of the whole dataset,
-    # calculate it evenly for the same number of samples from all classes.
-    # `test_start_index` is `False` when it hasn't been set by the user. It can
-    # also be set to `0`.
-    if test_sample_num and test_start_index is not False:
-        test_dataset_iter_len = test_sample_num * config['num_classes']
-        _, sample_list = get_dataset_sample_ids(test_sample_num, test_loader,
-                                                config['num_classes'],
-                                                test_start_index)
-    else:
-        test_dataset_iter_len = len(test_loader.dataset)
+    test_dataset_iter_len = len(test_loader.dataset)
 
     # Set up logging and save the metadata conf file
     logging.info(f"Running on: {test_sample_num} images per class.")
@@ -468,18 +456,9 @@ def calc_img_wise(config, model, train_loader, test_loader):
     max_influence_dicts = {}
     # Main loop for calculating the influence function one test sample per
     # iteration.
-    for j in range(test_dataset_iter_len):
+    for i in range(test_start_index, test_end_index):
         # If we calculate evenly per class, choose the test img indicies
         # from the sample_list instead
-        if test_sample_num and test_start_index:
-            if j >= len(sample_list):
-                logging.warn("ERROR: the test sample id is out of index of the"
-                             " defined test set. Jumping to next test sample.")
-                next
-            i = sample_list[j]
-        else:
-            i = j
-
         start_time = time.time()
         max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
             model, train_loader, test_loader, test_id_num=i, gpu=config['gpu'],
@@ -512,7 +491,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
                                               f"_last-i_{i}.json")
         save_json(max_influence_dicts, max_influences_path)
 
-        display_progress("Test samples processed: ", j, test_dataset_iter_len)
+        display_progress("Test samples processed: ", i, test_dataset_iter_len)
 
     logging.info(f"The results for this run are:")
     logging.info("Influences: ")

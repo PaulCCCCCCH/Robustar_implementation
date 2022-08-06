@@ -2,9 +2,8 @@ module.exports = {
   devServer: {
     // disableHostCheck: true,
     host: 'localhost',
-    port: 8080,
+    port: process.env.VUE_APP_DEV_PORT,
     open: true,
-    hotOnly: true,
     overlay: {
       warnings: false,
       errors: false,
