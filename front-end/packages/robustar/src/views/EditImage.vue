@@ -1,93 +1,126 @@
 <template>
   <div class="d-flex justify-space-between" style="width: 100%; height: 100%">
     <div
-      class="d-flex flex-column justify-space-between align-center pt-8"
+      class="d-flex flex-column justify-space-between align-center pt-12"
       style="width: 100%; height: 100%"
     >
-      <div class="d-flex">
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              :color="mode === 'zoomIn' ? 'primary' : ''"
-              icon
-              large
-              @click="mode = mode === 'zoomIn' ? '' : 'zoomIn'"
-              v-bind="attrs"
-              v-on="on"
-              ><v-icon>mdi-magnify-plus-outline</v-icon></v-btn
-            >
-          </template>
-          <span>zoom in</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              :color="mode === 'zoomOut' ? 'primary' : ''"
-              icon
-              large
-              class="mx-4"
-              @click="mode = mode === 'zoomOut' ? '' : 'zoomOut'"
-              v-bind="attrs"
-              v-on="on"
-              ><v-icon>mdi-magnify-minus-outline</v-icon></v-btn
-            >
-          </template>
-          <span>zoom out</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              :color="mode === 'move' ? 'primary' : ''"
-              icon
-              large
-              @click="mode = mode === 'move' ? '' : 'move'"
-              v-bind="attrs"
-              v-on="on"
-              ><v-icon>mdi-drag-variant</v-icon></v-btn
-            >
-          </template>
-          <span>move</span>
-        </v-tooltip>
-        <v-divider vertical inset class="mx-8"></v-divider>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
-              ><v-icon>mdi-history</v-icon></v-btn
-            >
-          </template>
-          <span>history</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
-              ><v-icon>mdi-arrow-u-left-top</v-icon></v-btn
-            >
-          </template>
-          <span>undo</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
-              ><v-icon>mdi-arrow-u-right-top</v-icon></v-btn
-            >
-          </template>
-          <span>redo</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon large v-bind="attrs" v-on="on"><v-icon>mdi-cached</v-icon></v-btn>
-          </template>
-          <span>reset</span>
-        </v-tooltip>
-        <v-divider vertical inset class="mx-8"></v-divider>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon large v-bind="attrs" v-on="on"
-              ><v-icon>mdi-trash-can-outline</v-icon></v-btn
-            >
-          </template>
-          <span>delete</span>
-        </v-tooltip>
+      <div>
+        <div class="d-flex justify-center mb-8">
+          <v-btn depressed color="warning" class="mr-4" @click="sendEdit">Send Edit</v-btn>
+          <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
+          <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
+          <v-btn depressed @click="autoEdit">Auto Edit</v-btn>
+        </div>
+        <div class="d-flex">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                :color="mode === 'zoomIn' ? 'primary' : ''"
+                icon
+                large
+                @click="mode = mode === 'zoomIn' ? '' : 'zoomIn'"
+                v-bind="attrs"
+                v-on="on"
+                ><v-icon>mdi-magnify-plus-outline</v-icon></v-btn
+              >
+            </template>
+            <span>zoom in</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                :color="mode === 'zoomOut' ? 'primary' : ''"
+                icon
+                large
+                class="mx-4"
+                @click="mode = mode === 'zoomOut' ? '' : 'zoomOut'"
+                v-bind="attrs"
+                v-on="on"
+                ><v-icon>mdi-magnify-minus-outline</v-icon></v-btn
+              >
+            </template>
+            <span>zoom out</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                :color="mode === 'move' ? 'primary' : ''"
+                icon
+                large
+                @click="
+                  mode = mode === 'move' ? '' : 'move';
+                  $refs['editor'].toggleMove();
+                "
+                v-bind="attrs"
+                v-on="on"
+                ><v-icon>mdi-drag-variant</v-icon></v-btn
+              >
+            </template>
+            <span>move</span>
+          </v-tooltip>
+          <v-divider vertical inset class="mx-8"></v-divider>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
+                ><v-icon>mdi-history</v-icon></v-btn
+              >
+            </template>
+            <span>history</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                large
+                class="mr-4"
+                v-bind="attrs"
+                v-on="on"
+                @click="$refs['editor'].invoke('undo')"
+                ><v-icon>mdi-arrow-u-left-top</v-icon></v-btn
+              >
+            </template>
+            <span>undo</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                large
+                class="mr-4"
+                v-bind="attrs"
+                v-on="on"
+                @click="$refs['editor'].invoke('redo')"
+                ><v-icon>mdi-arrow-u-right-top</v-icon></v-btn
+              >
+            </template>
+            <span>redo</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon large v-bind="attrs" v-on="on" @click="$refs['editor'].reset()"
+                ><v-icon>mdi-cached</v-icon></v-btn
+              >
+            </template>
+            <span>reset</span>
+          </v-tooltip>
+          <v-divider vertical inset class="mx-8"></v-divider>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                large
+                v-bind="attrs"
+                v-on="on"
+                @click="
+                  $refs['editor'].invoke('removeActiveObject');
+                  $refs['editor'].invoke('clearObjects');
+                "
+                ><v-icon>mdi-trash-can-outline</v-icon></v-btn
+              >
+            </template>
+            <span>delete</span>
+          </v-tooltip>
+        </div>
       </div>
       <!-- <v-btn color="success" @click="$refs['editor'].invoke('startDrawingMode', 'ZOOM')"
         >text</v-btn
@@ -251,19 +284,14 @@ export default {
       switch (this.mode) {
         case 'zoomIn':
           return 'zoom-in';
-          break;
         case 'zoomOut':
           return 'zoom-out';
-          break;
         case 'move':
           return 'move';
-          break;
         case 'colorRange':
           return 'crosshair';
-          break;
         default:
           return 'default';
-          break;
       }
     },
   },
@@ -298,7 +326,7 @@ export default {
           // to get the next image
           sessionStorage.setItem('split', 'annotated');
           sessionStorage.setItem('image_url', edit_url);
-          this.$refs.editor.initInstance();
+          this.$refs.editor.reset();
           this.$root.finishProcessing();
           this.$root.alert('success', 'Previous annotation loaded');
         }
@@ -316,7 +344,7 @@ export default {
         // to get the next image
         sessionStorage.setItem('image_url', proposed_url);
         sessionStorage.setItem('split', 'proposed');
-        this.$refs.editor.initInstance();
+        this.$refs.editor.reset();
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
@@ -326,7 +354,7 @@ export default {
       }
     },
     adjustImageSize() {
-      this.$refs.editor.invoke('resize', { width: 500, height: 500 });
+      this.$refs.editor.resize({ width: 500, height: 500 });
     },
     async sendEdit(image_base64) {
       this.$root.startProcessing(
@@ -348,7 +376,7 @@ export default {
       try {
         const res = await APIGetNextImage(this.split, this.image_url);
         sessionStorage.setItem('image_url', res.data.data);
-        this.$refs.editor.initInstance();
+        this.$refs.editor.reset();
         this.loadImageInfo();
       } catch (error) {
         console.log(error);

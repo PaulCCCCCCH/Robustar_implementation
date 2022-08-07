@@ -199,8 +199,10 @@ export default {
           this._graphics.zoomOut();
         },
         hand: () => {
-          this.ui.offZoomInButtonStatus();
-          this.ui.toggleZoomButtonStatus('hand');
+          if (this.ui) {
+            this.ui.offZoomInButtonStatus();
+            this.ui.toggleZoomButtonStatus('hand');
+          }
           this.deactivateAll();
           toggleHandMode();
         },
