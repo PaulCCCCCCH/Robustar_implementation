@@ -181,11 +181,24 @@
           </div>
         </div>
         <div v-if="mode === 'draw'" class="d-flex align-center mb-8" style="width: 500px">
-          <span class="mr-4 font-weight-medium" style="width: 45px">Range</span>
-          <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+          <span class="mr-4 font-weight-medium" style="width: 100px">Brush Width</span>
+          <v-slider
+            v-model="brushWidth"
+            class="align-center"
+            max="100"
+            min="1"
+            hide-details
+            @change="
+              (width) =>
+                $refs['editor'].invoke('setBrush', {
+                  width,
+                  color: 'FFFFFF',
+                })
+            "
+          >
             <template v-slot:append>
               <v-text-field
-                v-model="slider"
+                v-model="brushWidth"
                 class="mt-0 pt-0 mx-2"
                 hide-details
                 single-line
@@ -193,6 +206,13 @@
                 dense
                 type="number"
                 style="width: 80px"
+                @change="
+                  (width) =>
+                    $refs['editor'].invoke('setBrush', {
+                      width,
+                      color: 'FFFFFF',
+                    })
+                "
               ></v-text-field>
             </template>
           </v-slider>
@@ -216,7 +236,7 @@
             color="white"
             :text="mode !== 'draw'"
             large
-            @click="mode = mode === 'draw' ? '' : 'draw'"
+            @click="toggleDraw"
             depressed
             ><v-icon class="mr-2">mdi-draw</v-icon>Draw</v-btn
           >
@@ -225,7 +245,7 @@
             :text="mode !== 'colorRange'"
             large
             depressed
-            @click="mode = mode === 'colorRange' ? '' : 'colorRange'"
+            @click="toggleColorRange"
             ><v-icon class="mr-2">mdi-image-filter-center-focus-strong-outline</v-icon>Color
             Range</v-btn
           >
@@ -277,6 +297,7 @@ export default {
       split: '',
       mode: '',
       zoomLevel: 1,
+      brushWidth: 10,
     };
   },
   computed: {
@@ -405,6 +426,28 @@ export default {
           break;
         default:
           break;
+      }
+    },
+    toggleDraw() {
+      if (this.mode === 'draw') {
+        this.mode = '';
+        this.$refs['editor'].invoke('stopDrawingMode');
+      } else {
+        this.mode = 'draw';
+        this.$refs['editor'].invoke('startDrawingMode', 'FREE_DRAWING');
+        this.$refs['editor'].invoke('setBrush', {
+          width: this.brushWidth,
+          color: 'FFFFFF',
+        });
+      }
+    },
+    toggleColorRange() {
+      if (this.mode === 'colorRange') {
+        this.mode = '';
+        this.$refs['editor'].invoke('stopDrawingMode');
+      } else {
+        this.mode = 'colorRange';
+        this.$refs['editor'].invoke('startDrawingMode', 'COLOR_RANGE_DRAWING');
       }
     },
   },
