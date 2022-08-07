@@ -186,20 +186,11 @@ def get_split_length(split):
     return RResponse.ok(response)
 
 
-# change @ 08/2022
 @app.route('/dataset/<path:dataset_img_path>')
 def get_dataset_img(dataset_img_path):
     normal_path = to_unix(dataset_img_path)
-    name = normal_path.split('/')[-1]
-
     if osp.exists(normal_path):
-        with open(normal_path, "rb") as image_file:
-            image_binary = image_file.read()
-
-        print(image_binary)
-        print(type(image_binary))
-
-        return send_file(io.BytesIO(image_binary), download_name=name)
+        return send_file(normal_path)
     else:
         return RResponse.fail()
 
