@@ -38,18 +38,13 @@ In `front-end` directory, run ` lerna run build `.
 ---
 Then, return back to root directory and run (be aware of the `.` at the end).
 ```
-docker build --build-arg VCUDA=<cuda version> .
+docker build --build-arg VCUDA=<cuda version> -t <user_id>/<repo>:<version> .
 ```
 where `<cuda version>` is chosen from `cpu`, `9.2`, `10.2`, `11.1` and `11.3`.
 
----
-Adjust the tag of the docker image with
-```
-docker tag <image_id> <user_id>/<repo>:<version>
-```
 For example
 ```
-docker tag 79c0ee730d9d paulcccccch/robustar:cuda11.3-0.1.0-beta
+docker build --build-arg VCUDA=11.3 -t paulcccccch/robustar:cuda11.3-0.1.0-beta .
 ```
 
 ---
@@ -66,18 +61,13 @@ docker push paulcccccch/robustar:cuda11.3-0.1.0-beta
 In `docker-base` directory, run 
 
 ```
-docker build .
+docker build . -t <user_id>/<repo>:<version>
 ``` 
 
----
+For example,
 
-Then adjust the tag with
 ```
-docker tag <image_id> <user_id>/<repo>:<version>
-```
-For example, 
-```
-docker tag 79c0ee730d9d paulcccccch/robustar:base-0.1.0
+docker build . -t paulcccccch/robustar-base:base-0.2.0
 ```
 
 ----
@@ -88,9 +78,8 @@ docker push <user_id>/<repo>:<version>
 ```
 For example, 
 ```
-docker push paulcccccch/robustar:base-0.1.0
+docker push paulcccccch/robustar-base:base-0.2.0
 ```
-
 
 
 ## Dev setup 

@@ -15,9 +15,11 @@ python -m pytest
 
 # Robustar
 
-https://hub.docker.com/r/cdonglin/robustar
+https://hub.docker.com/repository/docker/paulcccccch/robustar
 
-[Google Drive](https://drive.google.com/drive/folders/1QOP1UGJu2c0OZvTEGZ6FvlbaaiV7ROYb?usp=sharing) 
+[Sample dataset](https://drive.google.com/file/d/1DTaPnWV91C9VXZ9JOBz7hoDxfyUXBpUv/view?usp=sharing)
+
+[Sample dataset and config Folder (Google Drive)](https://drive.google.com/drive/u/1/folders/16z0qYdQSF6t5j8ve5BoA_yB7AX90ZdZH) 
 
 
 # Notes
@@ -37,6 +39,7 @@ Robustar reads from the following directories (absolute path, i.e. `Robustar2` f
 - `/robustar2/user-edit.json` for user edit.
 - `/robustar2/configs.json` for server configs. You directly may copy `configs.json` in the repository over.
 
-You can download our example dataset [here](https://drive.google.com/file/d/1DTaPnWV91C9VXZ9JOBz7hoDxfyUXBpUv/view?usp=sharing)
+You can download our example folder [here](https://drive.google.com/drive/u/1/folders/16z0qYdQSF6t5j8ve5BoA_yB7AX90ZdZH)
+Or use `pip install gdown` and `gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-`
 
 
