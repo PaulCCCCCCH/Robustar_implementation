@@ -1,16 +1,8 @@
 <template>
-  <!-- <div class="d-flex flex-column justify-center align-center" style="width: 100%; height: 100%"> -->
   <div
     class="tui-image-editor d-flex justify-center align-center"
-    style="width: 224px; height: 224px; position: relative"
-  >
-    <!-- mask for cursor -->
-    <div
-      :style="{ cursor: cursor }"
-      style="position: absolute; top: 0; left: 0; z-index: 9999; width: 224px; height: 224px"
-    ></div>
-  </div>
-  <!-- </div> -->
+    :style="{ width: width + 'px', height: height + 'px' }"
+  ></div>
 </template>
 
 <script>
@@ -57,19 +49,36 @@ export default {
   data() {
     return {
       editorInstance: null,
+      width: 300,
+      height: 300,
     };
+  },
+  watch: {
+    cursor: function () {
+      if (this.editorInstance) {
+        this.editorInstance.changeCursor(this.cursor);
+      }
+    },
   },
   mounted() {
     this.initInstance();
   },
   destroyed() {
-    Object.keys(this.$listeners).forEach((eventName) => {
-      this.editorInstance.off(eventName);
-    });
-    this.editorInstance.destroy();
-    this.editorInstance = null;
+    this._clearAll();
   },
   methods: {
+    reset() {
+      this._clearAll();
+      this.initInstance();
+    },
+    resize({ width, height }) {
+      this.width = width;
+      this.height = height;
+      this.invoke('resize', { width, height });
+    },
+    toggleMove() {
+      this.editorInstance.getActions().main.hand();
+    },
     initInstance() {
       let options = editorDefaultOptions;
       if (this.includeUi) {
@@ -79,14 +88,11 @@ export default {
       this.editorInstance = new ImageEditor('.tui-image-editor', options);
       if (!this.includeUi) {
         const { path, name } = getImage();
-        this.editorInstance.loadImageFromURL(path, name);
+        this.editorInstance.loadImageFromURL(path, name).then(() => {
+          this.editorInstance.clearUndoStack();
+        });
       }
-      this.addEventListener();
-    },
-    addEventListener() {
-      Object.keys(this.$listeners).forEach((eventName) => {
-        this.editorInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
-      });
+      this._addEventListener();
     },
     getRootElement() {
       return this.$refs.tuiImageEditor;
@@ -96,7 +102,7 @@ export default {
       if (this.editorInstance[methodName]) {
         result = this.editorInstance[methodName](...args);
       } else if (methodName.indexOf('.') > -1) {
-        const func = this.getMethod(this.editorInstance, methodName);
+        const func = this._getMethod(this.editorInstance, methodName);
 
         if (typeof func === 'function') {
           result = func(...args);
@@ -105,8 +111,20 @@ export default {
 
       return result;
     },
-    getMethod(instance, methodName) {
-      const { first, rest } = this.parseDotMethodName(methodName);
+    _clearAll() {
+      Object.keys(this.$listeners).forEach((eventName) => {
+        this.editorInstance.off(eventName);
+      });
+      this.editorInstance.destroy();
+      this.editorInstance = null;
+    },
+    _addEventListener() {
+      Object.keys(this.$listeners).forEach((eventName) => {
+        this.editorInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
+      });
+    },
+    _getMethod(instance, methodName) {
+      const { first, rest } = this._parseDotMethodName(methodName);
       const isInstance = instance.constructor.name !== 'Object';
       const type = typeof instance[first];
       let obj;
@@ -118,12 +136,12 @@ export default {
       }
 
       if (rest.length > 0) {
-        return this.getMethod(obj, rest);
+        return this._getMethod(obj, rest);
       }
 
       return obj;
     },
-    parseDotMethodName(methodName) {
+    _parseDotMethodName(methodName) {
       const firstDotIdx = methodName.indexOf('.');
       let firstMethodName = methodName;
       let restMethodName = '';
@@ -142,7 +160,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .tui-image-editor-range-wrap .range {
   color: black !important;
 }
