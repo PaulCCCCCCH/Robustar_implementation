@@ -1,17 +1,13 @@
 import base64
-import io
+import os.path as osp
 
 import magic
-from PIL import Image
 from flask import send_file
-from scipy import rand
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength
 from utils.path_utils import to_unix
-
-import os.path as osp
 
 server = RServer.getServer()
 app = server.getFlaskBluePrint()
@@ -22,7 +18,6 @@ datasetFileBuffer = dataManager.datasetFileBuffer
 datasetFileQueueLen = dataManager.datasetFileQueueLen
 
 
-# change @ 08/2022: return image path -> return image data
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
     image_idx_start = num_per_page * start
@@ -35,7 +30,6 @@ def get_image_list(split, start, num_per_page):
         return RResponse.fail('Error retrieving image paths')
 
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
-    # print(ls_image_path_data)
 
     return RResponse.ok(ls_image_path_data)
 
@@ -60,7 +54,6 @@ def get_img_data(dataset_img_path):
             datasetFileBuffer[normal_path] = image_data
 
         return image_data
-
     else:
         raise Exception
 
