@@ -67,7 +67,8 @@ jobs:
                 # Try using custom executor? 
                 command: |
                   chmod +x ./scripts/install_pytorch.sh
-                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${CIRCLE_BRANCH}_$(git rev-parse --short HEAD)' >> $BASH_ENV
+                  echo 'export BRANCH_CLEANED=${CIRCLE_BRANCH/\//_}' >> $BASH_ENV
+                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${BRANCH_CLEANED}_$(git rev-parse --short HEAD)' >> $BASH_ENV
                   source $BASH_ENV
                   echo "Current working directory: $(pwd)"
                   echo "Files in directory: $(ls)"
