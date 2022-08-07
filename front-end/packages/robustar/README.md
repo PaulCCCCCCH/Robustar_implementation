@@ -27,10 +27,16 @@ Developed with `Vue2`
     npm run serve
 ```
 
-## Test
+## Test With browser
 
 ```
     npx cypress open
+```
+
+## Automated test
+
+```
+    npx cypress run
 ```
 
 ## TODO List

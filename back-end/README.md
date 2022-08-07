@@ -7,6 +7,11 @@ pip install -r requirements.txt
 python server.py
 ```
 
+# Run test cases
+```
+python -m pytest
+```
+
 
 # Robustar
 

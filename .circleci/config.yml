@@ -1,29 +1,20 @@
 version: 2.1
 
 jobs:
-  frontend-test:
-    docker:
-      - image: cimg/node:14.17.6
-    steps:
-      - checkout
-      - run:
-          name: Run Frontend Tests
-          working_directory: ./front-end
-          command: | # Placeholder her
-            echo "Files in directory: $(ls)"
-            echo "Placeholder for running frontend tests!"
-
   backend-test:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.9.12
     steps:
       - checkout
       - run:
           name: Run Backend Tests
           working_directory: ./back-end
           command: | # Placeholder here
-            echo "Files in directory: $(ls)"
-            echo "Placeholder for running backend tests!"
+            # echo "Files in directory: $(ls)"
+            # pip install pytest
+            # pip install -r requirements.txt
+            # pip install protobuf==3.20.* 
+            # python -m pytest 
  
   build-image:
     docker:
@@ -49,6 +40,20 @@ jobs:
             npm install
             npx lerna bootstrap
             npx lerna run build
+
+      - run:
+          name: End-to-end tests
+          working_directory: ./front-end
+          command: |
+            echo "Files in directory: $(ls)"
+            npm install --save-dev cypress 
+            npx lerna run serve:main &
+            sudo apt-get install -y python3.9
+            echo "$(python3 --version)"
+            echo "$(pip3 --version)"
+            pip install ../back-end/requirements.txt
+            python3 ../back-end/server.py
+            npx cypress run
 
       - run:
           name: Build frontend
@@ -96,9 +101,7 @@ jobs:
 workflows:
   robustar-workflow:
     jobs:
-      - frontend-test
       - backend-test
       - build-image:
           requires:
-            - frontend-test
             - backend-test
