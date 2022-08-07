@@ -30,10 +30,9 @@ def get_image_list(split, start, num_per_page):
 
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
+        ls_image_data = [get_img_data(image_path) for image_path in ls_image_path]
     except Exception as e:
         return RResponse.fail('Error retrieving image paths')
-
-    ls_image_data = [get_img_data(image_path) for image_path in ls_image_path]
 
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
     # print(ls_image_path_data)
@@ -49,8 +48,7 @@ def get_img_data(dataset_img_path):
             image_data = datasetFileBuffer[normal_path]
         else:
             with open(normal_path, "rb") as image_file:
-                image_binary = image_file.read()
-                image_base64 = base64.b64encode(image_binary).decode()
+                image_base64 = base64.b64encode(image_file.read()).decode()
             image_mime = magic.from_file(normal_path, mime=True)
 
             image_data = 'data:' + image_mime + ";base64," + image_base64
@@ -60,12 +58,11 @@ def get_img_data(dataset_img_path):
                 temp_path = datasetFileQueue.popleft()
                 del datasetFileBuffer[temp_path]
             datasetFileBuffer[normal_path] = image_data
-    else:
-        return RResponse.fail()
 
-    # print(len(datasetFileBuffer))
-    # print(image_data)
-    return image_data
+        return image_data
+
+    else:
+        raise Exception
 
 
 @app.route('/image/next/<split>/<path:path>')
@@ -190,28 +187,21 @@ def get_split_length(split):
 
 
 # change @ 08/2022
-# @app.route('/dataset/<path:dataset_img_path>')
-# def get_dataset_img(dataset_img_path):
-#     normal_path = to_unix(dataset_img_path)
-#     name = normal_path.split('/')[-1]
-#
-#     if osp.exists(normal_path):
-#         if normal_path in datasetFileBuffer:
-#             image_binary = datasetFileBuffer[normal_path]
-#         else:
-#             with open(normal_path, "rb") as image_file:
-#                 image_binary = image_file.read()
-#
-#             datasetFileQueue.append(normal_path)
-#             if len(datasetFileQueue) > datasetFileQueueLen:
-#                 temp_path = datasetFileQueue.popleft()
-#                 del datasetFileBuffer[temp_path]
-#             datasetFileBuffer[normal_path] = image_binary
-#     else:
-#         return RResponse.fail()
-#
-#     # print(len(datasetFileBuffer))
-#     return send_file(io.BytesIO(image_binary), download_name=name)
+@app.route('/dataset/<path:dataset_img_path>')
+def get_dataset_img(dataset_img_path):
+    normal_path = to_unix(dataset_img_path)
+    name = normal_path.split('/')[-1]
+
+    if osp.exists(normal_path):
+        with open(normal_path, "rb") as image_file:
+            image_binary = image_file.read()
+
+        print(image_binary)
+        print(type(image_binary))
+
+        return send_file(io.BytesIO(image_binary), download_name=name)
+    else:
+        return RResponse.fail()
 
 
 @app.route('/visualize/<path:visualize_img_path>')
