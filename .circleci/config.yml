@@ -1,36 +1,13 @@
 version: 2.1
 
 jobs:
-  backend-test:
-    docker:
-      - image: cimg/python:3.9.12
-    steps:
-      - checkout
-      - run:
-          name: Run Backend Tests
-          working_directory: ./back-end
-          command: | # Placeholder here
-            echo "Files in directory: $(ls)"
-            # Install backend test env
-            pip install pytest
-            pip install -r requirements.txt
-            pip install protobuf==3.20.* 
-            # Get test dataset
-            pip install gdown
-            gdown ${TEST_DATA_URL} 
-            unzip ${TEST_DATA_FILENAME}
-            mkdir /Robustar2
-            cp -r ./Robustar2/* /Robustar2/
-            # Test
-            python -m pytest 
- 
   build-image:
     docker:
       - image: cimg/python:3.9.12-node
     steps:
-      - checkout # clone github repo
+      - checkout
       - run:
-          name: Display files and git status
+          name: Display status
           command: | 
             echo "Current working directory: $(pwd)"
             echo "$(python3 --version)"
@@ -42,7 +19,7 @@ jobs:
             echo 'Current Branch: $(git branch --show-current)'
             echo 'Commit: $(git rev-parse HEAD)'
       - run:
-          name: Download dependencies
+          name: Download frontend dependencies and build
           working_directory: ./front-end
           command: |
             echo "Files in directory: $(ls)"
@@ -51,6 +28,32 @@ jobs:
             npx lerna bootstrap
             npx lerna run build
 
+      - run:
+          name: Download dataset
+          working_directory: ./backend
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install gdown
+            gdown ${TEST_DATA_URL} 
+            unzip ${TEST_DATA_FILENAME}
+            mkdir /Robustar2
+            sudo cp -r ./Robustar2/* /Robustar2/
+ 
+      - run:
+          name: Install backend test dependencies
+          working_directory: ./backend
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install pytest
+            pip install -r requirements.txt
+            pip install protobuf==3.20.* 
+
+      - run:
+          name: Run backend tests
+          working_directory: ./back-end
+          command: |
+            echo "Files in directory: $(ls)"
+            python -m pytest 
       - run:
           name: End-to-end tests
           working_directory: ./front-end
@@ -62,12 +65,6 @@ jobs:
             # Run frontend
             npx lerna run serve:main &
             pip install ../back-end/requirements.txt
-            # Get test dataset
-            pip install gdown
-            gdown ${TEST_DATA_URL} 
-            unzip ${TEST_DATA_FILENAME}
-            mkdir /Robustar2
-            cp -r ./Robustar2/* /Robustar2/
             # Run backend
             python3 ../back-end/server.py &
             # Sleep for a while before running tests
@@ -120,7 +117,4 @@ jobs:
 workflows:
   robustar-workflow:
     jobs:
-      - backend-test
-      - build-image:
-          requires:
-            - backend-test
+      - build-image
