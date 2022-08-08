@@ -9,8 +9,9 @@ from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
 from utils.path_utils import to_unix
-
 from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
+
+import argparse
 
 
 def precheck():
@@ -40,8 +41,8 @@ def precheck():
 
     check_num_classes_consistency()
 
-def start_server():
-    baseDir = to_unix(osp.join('/', 'Robustar2'))
+def start_server(basedir):
+    baseDir = to_unix(osp.join(basedir, 'Robustar2'))
     datasetDir = to_unix(osp.join(baseDir, 'dataset'))
     ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
     dbPath = to_unix(osp.join(baseDir, 'data.db'))
@@ -97,9 +98,17 @@ def start_server():
     # Check file state consistency
     precheck()
 
+def get_args():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--basedir', default="/", help='base directory prefix for data folder (default: /)')
+
+    args = parser.parse_args()
+    return args
+
 
 if __name__ == "__main__":
-    start_server()
+    args = get_args()
+    start_server(args.basedir)
 
     # Start server
     RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

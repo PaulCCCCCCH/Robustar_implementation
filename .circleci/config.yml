@@ -28,48 +28,46 @@ jobs:
             npx lerna bootstrap
             npx lerna run build
 
-      - run:
-          name: Download dataset
-          working_directory: ./backend
-          command: |
-            echo "Files in directory: $(ls)"
-            pip install gdown
-            gdown ${TEST_DATA_URL} 
-            unzip ${TEST_DATA_FILENAME}
-            mkdir /Robustar2
-            sudo cp -r ./Robustar2/* /Robustar2/
+      # - run:
+      #     name: Download dataset
+      #     working_directory: ./back-end
+      #     command: |
+      #       echo "Files in directory: $(ls)"
+      #       pip install gdown
+      #       gdown ${TEST_DATA_URL} 
+      #       unzip ${TEST_DATA_FILENAME}
  
-      - run:
-          name: Install backend test dependencies
-          working_directory: ./backend
-          command: |
-            echo "Files in directory: $(ls)"
-            pip install pytest
-            pip install -r requirements.txt
-            pip install protobuf==3.20.* 
+      # - run:
+      #     name: Install backend test dependencies
+      #     working_directory: ./backend
+      #     command: |
+      #       echo "Files in directory: $(ls)"
+      #       pip install pytest
+      #       pip install -r requirements.txt
+      #       pip install protobuf==3.20.* 
 
-      - run:
-          name: Run backend tests
-          working_directory: ./back-end
-          command: |
-            echo "Files in directory: $(ls)"
-            python -m pytest 
-      - run:
-          name: End-to-end tests
-          working_directory: ./front-end
-          command: |
-            echo "Files in directory: $(ls)"
-            # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
-            npm install --save-dev cypress 
-            RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-            # Run frontend
-            npx lerna run serve:main &
-            pip install ../back-end/requirements.txt
-            # Run backend
-            python3 ../back-end/server.py &
-            # Sleep for a while before running tests
-            sleep 10
-            npx cypress run
+      # - run:
+      #     name: Run backend tests
+      #     working_directory: ./back-end
+      #     command: |
+      #       echo "Files in directory: $(ls)"
+      #       python -m pytest 
+      # - run:
+      #     name: End-to-end tests
+      #     working_directory: ./front-end
+      #     command: |
+      #       echo "Files in directory: $(ls)"
+      #       # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
+      #       npm install --save-dev cypress 
+      #       RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+      #       # Run frontend
+      #       npx lerna run serve:main &
+      #       pip install ../back-end/requirements.txt
+      #       # Run backend
+      #       python3 ../back-end/server.py &
+      #       # Sleep for a while before running tests
+      #       sleep 10
+      #       npx cypress run
 
       - run:
           name: Build frontend
