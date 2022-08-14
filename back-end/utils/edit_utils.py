@@ -3,6 +3,7 @@ from sklearn import datasets
 from objects.RServer import RServer
 from io import BytesIO
 from utils.path_utils import get_paired_path
+from utils.image_utils import refreshImgData
 import shutil
 import threading
 from objects.RTask import RTask, TaskType
@@ -48,6 +49,8 @@ def save_edit(split, image_path, image_data, image_height, image_width):
 
         dataManager.pairedset.save_annotated_image(train_img_path, image_data, image_height, image_width)
         dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
+        refreshImgData(paired_img_path)
+        
 
 
 def propose_edit(split, image_path, return_image=False):

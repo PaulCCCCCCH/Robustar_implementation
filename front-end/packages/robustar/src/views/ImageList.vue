@@ -152,7 +152,7 @@
         <!-- 6 images per row -->
         <v-col
           v-for="(url_and_binary, idx) in imageList"
-          :key="url_and_binary"
+          :key="url_and_binary[0]"
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
@@ -212,7 +212,12 @@
                       <v-icon>mdi-pencil</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                     </v-btn>
-                    <v-btn outlined color="white" width="80%" @click="setCurrentImage(url_and_binary[0])">
+                    <v-btn
+                      outlined
+                      color="white"
+                      width="80%"
+                      @click="setCurrentImage(url_and_binary[0])"
+                    >
                       <v-icon>mdi-cogs</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                     </v-btn>
