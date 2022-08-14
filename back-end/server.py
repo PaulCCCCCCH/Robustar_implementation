@@ -1,15 +1,12 @@
 from torch._C import _valgrind_toggle_and_dump_stats
 import torchvision.datasets as dset
 import json
-import os
 import os.path as osp
-from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
 from utils.path_utils import to_unix
-from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
 
 import argparse
 
@@ -42,7 +39,7 @@ def precheck():
     check_num_classes_consistency()
 
 def start_server(basedir):
-    baseDir = to_unix(osp.join(basedir, 'Robustar2'))
+    baseDir = to_unix(basedir)
     datasetDir = to_unix(osp.join(baseDir, 'dataset'))
     ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
     dbPath = to_unix(osp.join(baseDir, 'data.db'))
@@ -100,7 +97,7 @@ def start_server(basedir):
 
 def get_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--basedir', default="/", help='base directory prefix for data folder (default: /)')
+    parser.add_argument('--basedir', default="/Robustar2", help='path to base directory for data folder (default: /Robustar2)')
 
     args = parser.parse_args()
     return args
