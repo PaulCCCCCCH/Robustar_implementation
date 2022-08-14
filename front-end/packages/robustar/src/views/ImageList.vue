@@ -409,7 +409,8 @@ export default {
         this.$nextTick(() => {
           this.imageList = [];
           list.forEach((imagePath) => {
-            this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            // this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            this.imageList.push(imagePath);
           });
         });
         this.isLoadingImages = false;

@@ -136,11 +136,11 @@
         <div v-if="mode === 'resize'" style="width: 500px" class="d-flex flex-column align-center">
           <div class="d-flex align-center mb-2" style="width: 100%">
             <span class="mr-4 font-weight-medium" style="width: 45px">Width</span>
-            <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+            <v-slider v-model="tempWidth" class="align-center" max="1000" min="30" hide-details>
               <template v-slot:append>
                 <div class="d-flex align-center">
                   <v-text-field
-                    v-model="slider"
+                    v-model="tempWidth"
                     class="mt-0 pt-0 mx-2"
                     hide-details
                     single-line
@@ -156,11 +156,11 @@
           </div>
           <div class="d-flex align-center" style="width: 100%">
             <span class="mr-4 font-weight-medium" style="width: 45px">Height</span>
-            <v-slider v-model="slider" class="align-center" :max="max" :min="min" hide-details>
+            <v-slider v-model="tempHeight" class="align-center" max="1000" min="30" hide-details>
               <template v-slot:append>
                 <div class="d-flex align-center">
                   <v-text-field
-                    v-model="slider"
+                    v-model="tempHeight"
                     class="mt-0 pt-0 mx-2"
                     hide-details
                     single-line
@@ -174,10 +174,28 @@
               </template>
             </v-slider>
           </div>
-          <v-checkbox v-model="checkbox" label="Lock Aspect Ratio" hide-details></v-checkbox>
+          <v-checkbox v-model="lockAspectRatio" label="Lock Aspect Ratio" hide-details></v-checkbox>
           <div class="mt-6 mb-8">
-            <v-btn text> <v-icon class="mr-2">mdi-check</v-icon>Apply </v-btn>
-            <v-btn text color="grey"> <v-icon class="mr-2">mdi-close</v-icon>Cancel </v-btn>
+            <v-btn
+              text
+              @click="
+                imageWidth = tempWidth;
+                imageHeight = tempHeight;
+                mode = '';
+              "
+            >
+              <v-icon class="mr-2">mdi-check</v-icon>Apply
+            </v-btn>
+            <v-btn
+              text
+              color="grey"
+              @click="
+                $refs.editor.resize({ width: imageWidth, height: imageHeight });
+                mode = '';
+              "
+            >
+              <v-icon class="mr-2">mdi-close</v-icon>Cancel
+            </v-btn>
           </div>
         </div>
         <div v-if="mode === 'draw'" class="d-flex align-center mb-8" style="width: 500px">
@@ -223,12 +241,7 @@
           width="100%"
           height="70"
         >
-          <v-btn
-            color="white"
-            :text="mode !== 'resize'"
-            large
-            depressed
-            @click="mode = mode === 'resize' ? '' : 'resize'"
+          <v-btn color="white" :text="mode !== 'resize'" large depressed @click="toggleResize"
             ><v-icon class="mr-2">mdi-resize</v-icon>Resize</v-btn
           >
           <v-btn
@@ -298,6 +311,11 @@ export default {
       mode: '',
       zoomLevel: 1,
       brushWidth: 10,
+      imageWidth: 224,
+      tempWidth: 224,
+      imageHeight: 224,
+      tempHeight: 224,
+      lockAspectRatio: false,
     };
   },
   computed: {
@@ -313,6 +331,28 @@ export default {
           return 'crosshair';
         default:
           return 'default';
+      }
+    },
+  },
+  watch: {
+    tempWidth() {
+      if (this.mode === 'resize') {
+        if (this.lockAspectRatio) {
+          this.tempHeight = this.tempWidth;
+        }
+        setTimeout(() => {
+          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
+        }, 0);
+      }
+    },
+    tempHeight() {
+      if (this.mode === 'resize') {
+        if (this.lockAspectRatio) {
+          this.tempWidth = this.tempHeight;
+        }
+        setTimeout(() => {
+          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
+        }, 0);
       }
     },
   },
@@ -375,7 +415,10 @@ export default {
       }
     },
     adjustImageSize() {
+      this.imageWidth = 500;
+      this.imageHeight = 500;
       this.$refs.editor.resize({ width: 500, height: 500 });
+      // this.$refs['editor'].invoke('resizeCanvasDimension', { width: 500, height: 500 });
     },
     async sendEdit(image_base64) {
       this.$root.startProcessing(
@@ -428,6 +471,15 @@ export default {
           break;
       }
     },
+    toggleResize() {
+      if (this.mode === 'resize') {
+        this.mode = '';
+      } else {
+        this.mode = 'resize';
+        this.tempWidth = this.imageWidth;
+        this.tempHeight = this.imageHeight;
+      }
+    },
     toggleDraw() {
       if (this.mode === 'draw') {
         this.mode = '';
@@ -439,6 +491,7 @@ export default {
           width: this.brushWidth,
           color: 'FFFFFF',
         });
+        this.$refs['editor'].invoke('changeSelectableAll', true);
       }
     },
     toggleColorRange() {
