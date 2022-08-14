@@ -68,9 +68,9 @@ def get_paired_path(img_path, prev_root, paired_root):
     return re.sub(prev_root, paired_root, img_path)
 
 
-def to_unix(path):
-    return join('/', path.replace('\\', '/'))
-
+def to_unix(path: str):
+    pClean = path.replace('\\', '/')
+    return pClean if path.startswith('./') else join('/', pClean)
 
 
 if __name__ == '__main__':
