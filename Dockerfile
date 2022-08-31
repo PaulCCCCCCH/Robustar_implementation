@@ -1,4 +1,4 @@
-FROM paulcccccch/robustar:base-0.1.0
+FROM paulcccccch/robustar-base:base-0.2.0
 # Default VCUDA is 11.1
 ARG VCUDA=11.1 
 COPY . /Robustar2/
