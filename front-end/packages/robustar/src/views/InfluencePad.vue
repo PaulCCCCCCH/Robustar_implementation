@@ -81,6 +81,17 @@ export default {
       },
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      const { startIdx, endIdx } = vm.$route.params;
+      if (startIdx) {
+        vm.configs.test_sample_start_idx = startIdx;
+      }
+      if (endIdx) {
+        vm.configs.test_sample_end_idx = endIdx;
+      }
+    });
+  },
   methods: {
     start_calculation() {
       if (!this.$refs.form.validate()) {

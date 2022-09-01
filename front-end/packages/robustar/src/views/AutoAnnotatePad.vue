@@ -85,6 +85,17 @@ export default {
       },
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      const { startIdx, endIdx } = vm.$route.params;
+      if (startIdx) {
+        vm.configs.start_idx_to_gen = startIdx;
+      }
+      if (endIdx) {
+        vm.configs.end_idx_to_gen = endIdx;
+      }
+    });
+  },
   methods: {
     annotateSuccess(res) {
       console.log(res);

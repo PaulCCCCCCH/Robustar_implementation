@@ -4,28 +4,36 @@
       <br />
       <h1 data-test="home-page-welcome-msg">Start your exploration!</h1>
       <br /><br />
-      <div class="d-flex flex-wrap justify-space-around">
-        <div class="feature-item" v-for="(item, i) in items" :key="i">
-          <v-list-item
-            :data-test="`home-${item.text}-entrance`"
-            :to="{ path: '/' + item.link }"
-            class="d-flex align-start"
+      <v-hover>
+        <div class="d-flex flex-wrap justify-space-around">
+          <div
+            class="feature-item"
+            v-for="(item, i) in items"
+            :key="i"
+            @mouseover="hoverIdx = i"
+            @mouseout="hoverIdx = -1"
           >
-            <div>
-              <v-list-item-icon>
-                <v-icon v-text="item.icon"></v-icon>
-              </v-list-item-icon>
-            </div>
-            <div>
-              <v-list-item-content
-                class="font-weight-medium"
-                v-text="item.text"
-              ></v-list-item-content>
-              <v-list-item-content v-text="item.explain"></v-list-item-content>
-            </div>
-          </v-list-item>
+            <v-list-item
+              :data-test="`home-${item.text}-entrance`"
+              :to="{ path: '/' + item.link }"
+              class="d-flex align-start"
+            >
+              <div>
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+              </div>
+              <div :class="{ hoverbg: i == hoverIdx }">
+                <v-list-item-content
+                  class="font-weight-medium"
+                  v-text="item.text"
+                ></v-list-item-content>
+                <v-list-item-content v-text="item.explain"></v-list-item-content>
+              </div>
+            </v-list-item>
+          </div>
         </div>
-      </div>
+      </v-hover>
     </div>
   </div>
 </template>
@@ -64,6 +72,7 @@ export default {
           explain: 'The users can use the drawing tools to brush out the superficial pixels',
         },
       ],
+      hoverIdx: -1,
     };
   },
   methods: {
@@ -75,7 +84,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .feature-item {
   height: auto;
@@ -88,5 +96,8 @@ export default {
 }
 .container {
   text-align: center;
+}
+.hoverbg {
+  color: #1976d2;
 }
 </style>

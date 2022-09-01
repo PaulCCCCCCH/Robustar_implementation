@@ -257,7 +257,7 @@ class REvalImageFolder(RImageFolder):
         paths = [to_unix(record[0]) for record in records]
 
         # 1. update db with the result
-        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), [correct for _ in paths])
+        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), [(correct,) for _ in paths])
 
         # 2. update buffer
         buffer.extend(records)
