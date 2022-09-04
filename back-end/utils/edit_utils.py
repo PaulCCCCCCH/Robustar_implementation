@@ -76,15 +76,18 @@ def propose_edit(split, image_path, return_image=False):
     return proposed_path, pil_image
         
 
-def start_auto_annotate(split, num_to_gen):
+def start_auto_annotate(split, start: int, end: int):
     if split != 'train': raise NotImplementedError('Auto annotation only supported for train split')
-    num_to_gen = min(num_to_gen, len(dataManager.trainset))
 
-    def auto_annotate_thread(split, num_to_gen):
-        task = RTask(TaskType.AutoAnnotate, num_to_gen)
+    # -1 means annotate till the end
+    if end == -1: end = len(dataManager.trainset)
+    end = min(end, len(dataManager.trainset))
+
+    def auto_annotate_thread(split, start, end):
+        task = RTask(TaskType.AutoAnnotate, end - start)
         starttime = time.time()
 
-        for train_path in dataManager.trainset.get_image_list(None, num_to_gen):
+        for train_path in dataManager.trainset.get_image_list(start, end):
             # Propose edit for this image
             proposed_image_path, pil_image = propose_edit(split, train_path, True)
 
@@ -100,6 +103,6 @@ def start_auto_annotate(split, num_to_gen):
         task.exit()
 
 
-    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
+    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
     test_thread.start()
 

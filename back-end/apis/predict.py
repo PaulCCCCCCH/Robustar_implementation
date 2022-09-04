@@ -188,7 +188,8 @@ def calculate_influence():
             configs:
               type: object
               example: {
-                test_sample_num: 2,
+                test_sample_start_idx: 2,
+                test_sample_end_idx: 5,
                 r_averaging: 10
               }
     responses:
@@ -209,9 +210,10 @@ def calculate_influence():
     json_data = request.get_json()
     configs = json_data['configs']
     calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper,
-        dataManager,
-        test_sample_num=int(configs['test_sample_num']),
+        modelWrapper, 
+        dataManager, 
+        start_idx=int(configs['test_sample_start_idx']),
+        end_idx=int(configs['test_sample_end_idx']),
         r_averaging=int(configs['r_averaging'])
     )
     calcInfluenceThread.start()

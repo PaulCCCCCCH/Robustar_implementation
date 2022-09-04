@@ -14,8 +14,8 @@ const successCode = [200, 201];
 const handleResult = (res, success, failed) => {
   if (successCode.includes(res.status)) {
     if (res.data.code == -1) {
-      console.log(res.data.msg)
-    } else{
+      console.log(res.data.msg);
+    } else {
       success(res);
     }
   } else {

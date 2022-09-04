@@ -38,64 +38,65 @@ def app():
 def _set_up():
     base_dir = to_unix(osp.join('/', 'Robustar2'))
 
-    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    # paired_path = to_unix(osp.join(dataset_dir, 'paired'))
-    # if osp.exists(paired_path):
-    #     print("cleanup > delete " + paired_path)
-    #     for sub_folder in os.listdir(paired_path):
-    #         sub_folder_root = to_unix(osp.join(paired_path, sub_folder))
-    #         # print("cleanup >> delete " + sub_folder_root)
-    #         for image in os.listdir(sub_folder_root):
-    #             image_root = to_unix(osp.join(sub_folder_root, image))
-    #             if os.path.isfile(image_root):
-    #                 # print("cleanup >>> delete " + image_root)
-    #                 os.remove(image_root)
-    #         os.rmdir(sub_folder_root)
-    #     os.rmdir(paired_path)
-    #
+    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    paired_path = to_unix(osp.join(dataset_dir, 'paired'))
+    if osp.exists(paired_path):
+        print("cleanup > delete " + paired_path)
+        for sub_folder in os.listdir(paired_path):
+            sub_folder_root = to_unix(osp.join(paired_path, sub_folder))
+            # print("cleanup >> delete " + sub_folder_root)
+            for image in os.listdir(sub_folder_root):
+                image_root = to_unix(osp.join(sub_folder_root, image))
+                if os.path.isfile(image_root):
+                    # print("cleanup >>> delete " + image_root)
+                    os.remove(image_root)
+            os.rmdir(sub_folder_root)
+        os.rmdir(paired_path)
+
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # if osp.exists(db_path):
     #     print("cleanup > delete " + db_path)
     #     os.remove(db_path)
 
-    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    os.rename(dataset_dir, dataset_dir_original)
-    os.mkdir(dataset_dir)
-
-    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
-    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
-    os.rename(proposed_dir, proposed_dir_original)
-    os.mkdir(proposed_dir)
-
-    visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
-    visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
-    os.rename(visualize_images_dir, visualize_images_dir_original)
-    os.mkdir(visualize_images_dir)
-
-    db_path = to_unix(osp.join(base_dir, 'data.db'))
-    db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
-    os.rename(db_path, db_path_original)
-    open(db_path, 'a').close()
+    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    # os.rename(dataset_dir, dataset_dir_original)
+    # os.mkdir(dataset_dir)
+    #
+    # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    # os.rename(proposed_dir, proposed_dir_original)
+    # os.mkdir(proposed_dir)
+    #
+    # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
+    # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
+    # os.rename(visualize_images_dir, visualize_images_dir_original)
+    # os.mkdir(visualize_images_dir)
+    #
+    # db_path = to_unix(osp.join(base_dir, 'data.db'))
+    # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
+    # os.rename(db_path, db_path_original)
+    # open(db_path, 'a').close()
 
 
 def _clean_up():
-    base_dir = to_unix(osp.join('/', 'Robustar2'))
-
-    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    os.rmdir(dataset_dir)
-    os.rename(dataset_dir_original, dataset_dir)
-
-    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
-    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
-    os.rmdir(proposed_dir)
-    os.rename(proposed_dir_original, proposed_dir)
-
-    visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
-    visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
-    os.rmdir(visualize_images_dir)
-    os.rename(visualize_images_dir_original, visualize_images_dir)
+    pass
+    # base_dir = to_unix(osp.join('/', 'Robustar2'))
+    #
+    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    # os.rmdir(dataset_dir)
+    # os.rename(dataset_dir_original, dataset_dir)
+    #
+    # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    # os.rmdir(proposed_dir)
+    # os.rename(proposed_dir_original, proposed_dir)
+    #
+    # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
+    # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
+    # os.rmdir(visualize_images_dir)
+    # os.rename(visualize_images_dir_original, visualize_images_dir)
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
@@ -104,10 +105,6 @@ def _clean_up():
 @pytest.fixture()
 def client(app):
     yield app.test_client()
-
-
-# TODO: annotate 图片 逐像素位的检查
-# TODO: test training
 
 
 # Reserve 10 photos for each category in trainset and 10 photos for each category in testset to save time
