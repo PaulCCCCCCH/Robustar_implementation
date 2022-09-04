@@ -400,8 +400,8 @@ class RAnnotationFolder(RImageFolder):
         db_delete_all(self.db_conn, self.table_name)
 
         # 2. create new paired folder
-        os.remove(self.root) 
-        self._init_root_dir()
+        # No need to explicitly do this, just let paired images be there.
+        # If records in db are removed, they are not going to be used anyway.
 
         # 3. empty the buffers
         self._init_buffers()

@@ -77,7 +77,6 @@ describe('This is testing visualizer', () => {
   });
 
   it('Test single page panel expansion/closing', () => {
-    cy.getBySel('model-prediction').click().wait(500);
     cy.getBySel('model-prediction-sheet').should('be.visible');
     cy.getBySel('model-focus').click();
     cy.getBySel('model-focus-panel').should('be.visible');
