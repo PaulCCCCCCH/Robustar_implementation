@@ -47,26 +47,24 @@ jobs:
             pip install protobuf==3.20.* 
 
       - run:
-          name: Run backend tests
-          working_directory: ./back-end
-          command: |
-            echo "Files in directory: $(ls)"
-            python -m pytest ./tests/test_app.py --basedir "./Robustar2"
-      - run:
           name: End-to-end tests
           working_directory: ./front-end
           command: |
             echo "Files in directory: $(ls)"
             # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
             npm install --save-dev cypress 
-            RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+            sudo apt-get update
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
             # Run frontend
             npx lerna run serve:main &
-            pip install ../back-end/requirements.txt
+            pip install -r ../back-end/requirements.txt
             # Run backend
-            python3 ../back-end/server.py --basedir ./Robustar2 &
+            cd ../back-end
+            python3 server.py --basedir ./Robustar2 &
             # Sleep for a while before running tests
             sleep 10
+            # Run frontend tests
+            cd ../front-end
             npx cypress run
 
       - run:
