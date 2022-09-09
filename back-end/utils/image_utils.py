@@ -25,9 +25,6 @@ def getImagePath(split, start=None, end=None):
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
-    # # If already buffered, just return
-    # if image_url in datasetFileBuffer:
-    #     return datasetFileBuffer[image_url]
     if split == 'validation_correct':
         return dataManager.validationset.get_record(correct=True, start=start, end=end)
     if split == 'validation_incorrect':

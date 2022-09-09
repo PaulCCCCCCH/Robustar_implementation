@@ -50,7 +50,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.15.4"
+    "@babel/runtime-corejs3": "^7.15.4",
+    "cypress-real-events": "^1.7.0"
   },
   "scripts": {
     "init:lerna": "lerna bootstrap",

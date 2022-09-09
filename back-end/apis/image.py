@@ -1,6 +1,8 @@
+import base64
 import os.path as osp
 
-from flask import redirect, send_file
+import magic
+from flask import send_file
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
@@ -11,16 +13,51 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
+datasetFileQueue = dataManager.datasetFileQueue
+datasetFileBuffer = dataManager.datasetFileBuffer
+datasetFileQueueLen = dataManager.datasetFileQueueLen
+
+
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
     image_idx_start = num_per_page * start
     image_idx_end = num_per_page * (start + 1)
+
     try:
-        return RResponse.ok(getImagePath(split, image_idx_start, image_idx_end))
+        ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
+        ls_image_data = [get_img_data(image_path) for image_path in ls_image_path]
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths') 
-    
-  
+        return RResponse.fail('Error retrieving image paths')
+
+    ls_image_path_data = list(zip(ls_image_path, ls_image_data))
+
+    return RResponse.ok(ls_image_path_data)
+
+
+def get_img_data(dataset_img_path):
+    normal_path = to_unix(dataset_img_path)
+
+    if osp.exists(normal_path):
+        if normal_path in datasetFileBuffer:
+            image_data = datasetFileBuffer[normal_path]
+        else:
+            with open(normal_path, "rb") as image_file:
+                image_base64 = base64.b64encode(image_file.read()).decode()
+            image_mime = magic.from_file(normal_path, mime=True)
+
+            image_data = 'data:' + image_mime + ";base64," + image_base64
+
+            datasetFileQueue.append(normal_path)
+            if len(datasetFileQueue) > datasetFileQueueLen:
+                temp_path = datasetFileQueue.popleft()
+                del datasetFileBuffer[temp_path]
+            datasetFileBuffer[normal_path] = image_data
+
+        return image_data
+    else:
+        raise Exception
+
+
 @app.route('/image/next/<split>/<path:path>')
 def get_next_image(split, path):
     """
@@ -32,7 +69,6 @@ def get_next_image(split, path):
 
     path = to_unix(path)
     return RResponse.ok(getNextImagePath(split, path))
-    
 
 
 @app.route('/image/annotated/<split>/<path:path>')
@@ -45,7 +81,7 @@ def get_annotated(split, path):
     parameters:
       - name: "split"
         in: "path"
-        description: "image split, can be 'train', 'annotated' or 'proposed'. 
+        description: "image split, can be 'train', 'annotated' or 'proposed'.
         required: true
         type: "string"
       - name: "path"

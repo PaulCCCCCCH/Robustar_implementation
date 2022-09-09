@@ -69,6 +69,10 @@ def api_delete_edit(split, path):
     dataManager.pairedset.remove_image(path)
     return RResponse.ok("Success!")
 
+@app.route('/edit/clear', methods=['DELETE'])
+def api_clear_edit():
+    dataManager.pairedset.clear_images()
+    return RResponse.ok("Success!")
 
 @app.route('/propose/<split>/<path:path>')
 def api_propose_edit(split, path):

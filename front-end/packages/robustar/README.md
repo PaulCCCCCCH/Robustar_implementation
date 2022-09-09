@@ -29,11 +29,13 @@ Developed with `Vue2`
 
 ## Test With browser
 
+Make sure you are under `front-end` directory. Run selected test cases with a UI:
+
 ```
     npx cypress open
 ```
 
-## Automated test
+Run all test cases without a UI:
 
 ```
     npx cypress run

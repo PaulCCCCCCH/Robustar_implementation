@@ -100,6 +100,6 @@ def start_auto_annotate(split, start: int, end: int):
         task.exit()
 
 
-    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
-    test_thread.start()
+    auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
+    auto_annotate_thread.start()
 

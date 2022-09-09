@@ -86,6 +86,7 @@
               class="mr-8"
               outlined
               @change="resetImageList"
+              data-test="image-list-input-num-per-page"
             >
             </v-select>
             <v-select
@@ -96,6 +97,16 @@
               @change="setImageSize"
             >
             </v-select>
+
+            <v-btn
+              depressed
+              color="primary"
+              @click="clearAnnotatedImage"
+              data-test="image-list-btn-clear-annotated-imgs"
+              v-if="$route.params.split === 'annotated'"
+            >
+              DELETE ALL
+            </v-btn>
           </div>
         </v-sheet>
 
@@ -151,19 +162,20 @@
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
         <v-col
-          v-for="(url, idx) in imageList"
-          :key="url"
+          v-for="(url_and_binary, idx) in imageList"
+          :key="url_and_binary[0]"
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
-          <div class="d-flex align-right">
+          <div class="d-flex align-right" data-test="image-list-div-img">
             <v-btn
               v-if="$route.params.split === 'annotated'"
               color="secondary"
               class="mr-n1 mb-n1 mx-auto"
               icon
               small
-              @click="deleteAnnotatedImage(idx, url)"
+              :data-test="`image-list-btn-remove-annotated-img-${idx}`"
+              @click="deleteAnnotatedImage(idx, url_and_binary[0])"
             >
               <v-icon color="red">mdi-close-box</v-icon>
             </v-btn>
@@ -183,7 +195,7 @@
               style="width: 100%; height: 100%"
             >
               <v-img
-                :src="url"
+                :src="url_and_binary[1]"
                 alt="invalid image URL"
                 aspect-ratio="1"
                 :data-test="`image-list-img-${idx}`"
@@ -206,13 +218,19 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="gotoImage(url, 'EditImage')"
+                      @click="gotoImage(url_and_binary[0], 'EditImage')"
                       :data-test="`image-list-btn-edit-image-${idx}`"
                     >
                       <v-icon>mdi-pencil</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                     </v-btn>
-                    <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
+                    <v-btn
+                      outlined
+                      color="white"
+                      width="80%"
+                      @click="setCurrentImage(url_and_binary[0])"
+                      :data-test="`image-list-btn-predict-image-${idx}`"
+                    >
                       <v-icon>mdi-cogs</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                     </v-btn>
@@ -238,8 +256,8 @@
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
-import { APIDeleteEdit } from '@/services/edit';
+import { getPageNumber } from '@/utils/imageUtils';
+import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
@@ -373,9 +391,12 @@ export default {
       APIDeleteEdit(
         this.split,
         getImageUrlFromFullUrl(url),
-        () => this.deleteImageSuccess(idx),
+        () => this.deleteImageSuccess(),
         this.deleteImageFailed
       );
+    },
+    clearAnnotatedImage() {
+      APIClearEdit(() => this.deleteImageSuccess(), this.deleteImageFailed);
     },
     gotoImage(url, componentName) {
       this.setCurrentImage(getImageUrlFromFullUrl(url));
@@ -412,8 +433,11 @@ export default {
           const list = res.data.data;
           this.$nextTick(() => {
             this.imageList = [];
+            // list.forEach((imagePath) => {
+            //   this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            // });
             list.forEach((imagePath) => {
-              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+              this.imageList.push(imagePath);
             });
           });
         },

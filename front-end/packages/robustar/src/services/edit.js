@@ -36,3 +36,7 @@ export const APIStartAutoAnnotate = (split, data, success, failed) => {
 export const APIDeleteEdit = (split, image_url, success, failed) => {
   deleteRequest(`/edit/${split}/${image_url}`, success, failed);
 };
+
+export const APIClearEdit = (success, failed) => {
+  deleteRequest(`/edit/clear`, success, failed);
+};
