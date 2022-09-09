@@ -17,11 +17,11 @@ import time
 #     # assert server.dataManager
 #     # assert RServer.getModelWrapper()
 
-
 @pytest.fixture()
-def app():
-    _cleanup()
-    start_server()
+def app(request):
+    basedir = request.config.getoption("basedir")
+    _cleanup(basedir)
+    start_server(basedir)
     server = RServer.getServer()
     app = server.getFlaskApp()
     app.config['TESTING'] = True
@@ -33,8 +33,8 @@ def server():
     server = RServer.getServer()
     return server
 
-def _cleanup():
-    base_dir = osp.join('/', 'Robustar2').replace('\\', '/')
+def _cleanup(basedir):
+    base_dir = basedir.replace('\\', '/')
     dataset_dir = osp.join(base_dir, 'dataset').replace('\\', '/')
     test_correct_root = osp.join(dataset_dir, 'test_correct.txt').replace('\\', '/')
     test_incorrect_root = osp.join(dataset_dir, 'test_incorrect.txt').replace('\\', '/')
@@ -180,13 +180,13 @@ class TestImage:
         assert rv['code'] == -1
         assert rv['msg'] == 'Image with given id not exist'
 
-    def test_image_success(self, client):
+    def test_image_success(self, client, server):
         response = client.get("/image/train/2", follow_redirects=True)
         assert len(response.history) == 1  # Check that there was one redirect response
-        assert response.request.path == "/dataset/Robustar2/dataset/train/bird/10.JPEG"
+        assert response.request.path == osp.join("/dataset", server.baseDir, "dataset/train/bird/10.JPEG")
         response = client.get("/image/test/2", follow_redirects=True)
         assert len(response.history) == 1
-        assert response.request.path == "/dataset/Robustar2/dataset/test/bird/10.JPEG"
+        assert response.request.path == osp.join("/dataset", server.baseDir, "dataset/test/bird/10.JPEG")
         # TODO: test other <split>s
 
     # TODO: GET /image/get-annotated/<image_id>
@@ -227,16 +227,16 @@ class TestPredict:
         assert rv['msg'] == 'Image with given id not exist'
         # TODO: test other <split>s (?)
 
-    def test_predict_success(self, client):
+    def test_predict_success(self, client, server):
         rv = client.get("/predict/train/1").get_json()
         assert rv['code'] == 0
         data = rv['data']
         assert len(data[0]) == 9
         assert len(data[1]) == 9
-        assert data[2] == ["/Robustar2/visualize_images/train_1_0.png",
-                           "/Robustar2/visualize_images/train_1_1.png",
-                           "/Robustar2/visualize_images/train_1_2.png",
-                           "/Robustar2/visualize_images/train_1_3.png"]
+        assert data[2] == [osp.join(server.baseDir, "visualize_images/train_1_0.png"),
+                            osp.join(server.baseDir, "visualize_images/train_1_1.png"),
+                            osp.join(server.baseDir, "visualize_images/train_1_2.png"),
+                            osp.join(server.baseDir, "visualize_images/train_1_3.png")]
 
 # TODO: annotate 图片 逐像素位的检查
 # TODO: test training
@@ -253,14 +253,14 @@ class TestTrain:
             'configs': {
                             'model_name': 'my-test-model',
                             'weight': '',
-                            'train_path': '/Robustar2/dataset/train-2',
-                            'test_path': '/Robustar2/dataset/test-2',
+                            'train_path': osp.join(server.baseDir, 'dataset/train-2'),
+                            'test_path': osp.join(server.baseDir, '/dataset/test-2'),
                             'class_path': './model/cifar-class.txt',
                             'port': '8000',
-                            'save_dir': '/Robustar2/checkpoints',
+                            'save_dir': osp.join(server.baseDir, 'checkpoints'),
                             'use_paired_train': False,
                             'mixture': 'random_pure',
-                            'paired_data_path': '/Robustar2/dataset/paired',
+                            'paired_data_path': osp.join(server.baseDir, 'dataset/paired'),
                             'auto_save_model': True,
                             'batch_size': '128',
                             'shuffle': True,

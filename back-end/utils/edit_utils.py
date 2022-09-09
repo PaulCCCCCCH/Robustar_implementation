@@ -1,9 +1,6 @@
 from PIL import Image
-from sklearn import datasets
 from objects.RServer import RServer
 from io import BytesIO
-from utils.path_utils import get_paired_path
-import shutil
 import threading
 from objects.RTask import RTask, TaskType
 import time

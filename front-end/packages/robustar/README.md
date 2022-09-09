@@ -27,7 +27,7 @@ Developed with `Vue2`
     npm run serve
 ```
 
-## Test
+## Test With browser
 
 Make sure you are under `front-end` directory. Run selected test cases with a UI:
 
