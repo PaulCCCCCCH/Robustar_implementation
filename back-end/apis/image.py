@@ -1,7 +1,7 @@
 import base64
 import os.path as osp
 
-import magic
+import mimetypes
 from flask import send_file
 
 from objects.RResponse import RResponse
@@ -43,7 +43,7 @@ def get_img_data(dataset_img_path):
         else:
             with open(normal_path, "rb") as image_file:
                 image_base64 = base64.b64encode(image_file.read()).decode()
-            image_mime = magic.from_file(normal_path, mime=True)
+            image_mime = mimetypes.guess_type(normal_path)[0]
 
             image_data = 'data:' + image_mime + ";base64," + image_base64
 
