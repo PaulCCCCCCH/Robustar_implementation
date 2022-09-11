@@ -250,7 +250,7 @@ import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 import pDebounce from 'p-debounce';
 
-const APIGetImageListDebounced = pDebounce(APIGetImageList, 300);
+const APIGetImageListDebounced = pDebounce(APIGetImageList, 0);
 
 export default {
   name: 'ImageList',
