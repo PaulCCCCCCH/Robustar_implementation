@@ -1,25 +1,13 @@
 import { getRequest, postRequest } from './common';
 
-/**
- * @param {function} success success callback function
- * @param {function} fail fail callback function
- */
-export const APIPredict = (split, image_url, success, failed) => {
-  getRequest(`/predict/${split}/${image_url}`, success, failed);
+export const APIPredict = async (split, image_url) => {
+  return getRequest(`/predict/${split}/${image_url}`);
 };
 
-/**
- * @param {function} success success callback function
- * @param {function} fail fail callback function
- */
-export const APIGetInfluenceImages = (split, imageId, success, failed) => {
-  getRequest(`/influence/${split}/${imageId}`, success, failed);
+export const APIGetInfluenceImages = async (split, imageId) => {
+  return getRequest(`/influence/${split}/${imageId}`);
 };
 
-/**
- * @param {function} success success callback function
- * @param {function} fail fail callback function
- */
-export const APICalculateInfluence = (configs, success, failed) => {
-  postRequest(configs, '/influence', success, failed);
+export const APICalculateInfluence = async (configs) => {
+  return postRequest(configs, '/influence');
 };

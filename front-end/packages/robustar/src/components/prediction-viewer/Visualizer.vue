@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; max-width: 30vw">
-    <v-sheet v-if="isActive" class="pa-4 sticky-content" color="white" elevation="1">
+    <v-sheet v-if="isActive" class="pa-4 sticky-content overflow-auto" color="white" elevation="1">
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -124,24 +124,24 @@ export default {
         this.get_proposed_edit(this.split, this.image_url);
       }
     },
-    get_proposed_edit(split, image_url) {
-      const success = (response) => {
-        if (response.data.code == -1) {
+    async get_proposed_edit(split, image_url) {
+      try {
+        const res = await APIGetProposedEdit(split, image_url);
+        if (res.data.code === -1) {
           this.proposedEditUrl = '';
           return;
         }
-        const proposedPath = response.data.data;
+        const proposedPath = res.data.data;
         this.proposedEditUrl = `${configs.imagePathServerUrl}/${proposedPath}`;
-      };
-      const failed = (err) => {
-        console.log(err);
-      };
-      APIGetProposedEdit(split, image_url, success, failed);
+      } catch (error) {
+        console.log(error);
+      }
     },
-    view_prediction(split, image_url) {
-      const success = (response) => {
+    async view_prediction(split, image_url) {
+      try {
+        const res = await APIPredict(split, image_url);
         let cap = 10;
-        let responseData = response.data.data;
+        let responseData = res.data.data;
         let temp_buffer = responseData[0].map((e, i) => {
           return [e, responseData[1][i]];
         });
@@ -161,36 +161,30 @@ export default {
         for (let i = 0; i < 4; i++) {
           this.focusImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
         }
-      };
-      const failed = (err) => {
-        console.log(err);
-        alert('Server error. Check console.');
-      };
-      APIPredict(split, image_url, success, failed);
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Server error. Check console.');
+      }
     },
 
-    get_influence(split, image_url) {
-      const success = (response) => {
+    async get_influence(split, image_url) {
+      try {
+        const res = await APIGetInfluenceImages(split, image_url);
         // If influence not predicted:
-        if (response.data.code == -1) {
+        if (res.data.code == -1) {
           this.influImgUrl = [];
           return;
         }
-
-        const responseData = response.data.data;
+        const responseData = res.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
           this.influImgUrl.push(`${configs.imagePathServerUrl}/${url}`);
         }
-      };
-
-      const failed = (err) => {
-        console.log(err);
-      };
-
-      APIGetInfluenceImages(split, image_url, success, failed);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     toggle_panel() {
@@ -226,7 +220,7 @@ export default {
 .sticky-content {
   position: sticky;
   top: 65px;
-  height: 95vh;
+  height: 94vh;
   z-index: 9;
   background-color: white;
 }
