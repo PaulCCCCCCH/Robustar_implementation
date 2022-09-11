@@ -1,10 +1,8 @@
 import os.path as osp
-
-from flask import redirect, send_file
-
+from flask import send_file
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength
+from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
@@ -12,18 +10,22 @@ app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
 
+
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
     image_idx_start = num_per_page * start
     image_idx_end = num_per_page * (start + 1)
+
     try:
-        image_path = getImagePath(split, image_idx_start, image_idx_end)
-        if len(image_path) == 0:
-            return RResponse.fail('Error retrieving image paths - cannot get image idx [{}, {})'
-                                  .format(image_idx_start, image_idx_end))
-        return RResponse.ok(image_path)
+        ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
+        ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths - {}'.format(str(e)))
+        return RResponse.fail('Error retrieving image paths')
+
+    ls_image_path_data = list(zip(ls_image_path, ls_image_data))
+
+    return RResponse.ok(ls_image_path_data)
+
 
 
 @app.route('/image/next/<split>/<path:path>')
@@ -33,14 +35,10 @@ def get_next_image(split, path):
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
     if split not in ['train', 'annotated', 'proposed']:
-        return RResponse.fail('Split {} not supported'.format(split))
+        raise NotImplementedError
 
     path = to_unix(path)
-    next_image_path = getNextImagePath(split, path)
-    if next_image_path is None:
-        return RResponse.fail('Invalid image path {}'.format(path))
-
-    return RResponse.ok(next_image_path)
+    return RResponse.ok(getNextImagePath(split, path))
 
 
 @app.route('/image/annotated/<split>/<path:path>')
@@ -53,7 +51,7 @@ def get_annotated(split, path):
     parameters:
       - name: "split"
         in: "path"
-        description: "image split, can be 'train', 'annotated' or 'proposed'. 
+        description: "image split, can be 'train', 'annotated' or 'proposed'.
         required: true
         type: "string"
       - name: "path"

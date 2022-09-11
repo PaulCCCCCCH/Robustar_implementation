@@ -151,8 +151,8 @@
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
         <v-col
-          v-for="(url, idx) in imageList"
-          :key="url"
+          v-for="(url_and_binary, idx) in imageList"
+          :key="url_and_binary[0]"
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
@@ -163,7 +163,7 @@
               class="mr-n1 mb-n1 mx-auto"
               icon
               small
-              @click="deleteAnnotatedImage(idx, url)"
+              @click="deleteAnnotatedImage(idx, url_and_binary[0])"
             >
               <v-icon color="red">mdi-close-box</v-icon>
             </v-btn>
@@ -183,7 +183,7 @@
               style="width: 100%; height: 100%"
             >
               <v-img
-                :src="url"
+                :src="url_and_binary[1]"
                 alt="invalid image URL"
                 aspect-ratio="1"
                 :data-test="`image-list-img-${idx}`"
@@ -206,13 +206,18 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="gotoImage(url, 'EditImage')"
+                      @click="gotoImage(url_and_binary[0], 'EditImage')"
                       :data-test="`image-list-btn-edit-image-${idx}`"
                     >
                       <v-icon>mdi-pencil</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                     </v-btn>
-                    <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
+                    <v-btn
+                      outlined
+                      color="white"
+                      width="80%"
+                      @click="setCurrentImage(url_and_binary[0])"
+                    >
                       <v-icon>mdi-cogs</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                     </v-btn>
@@ -412,8 +417,11 @@ export default {
           const list = res.data.data;
           this.$nextTick(() => {
             this.imageList = [];
+            // list.forEach((imagePath) => {
+            //   this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            // });
             list.forEach((imagePath) => {
-              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+              this.imageList.push(imagePath);
             });
           });
         },
