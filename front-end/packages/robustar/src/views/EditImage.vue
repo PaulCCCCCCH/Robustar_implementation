@@ -302,9 +302,9 @@ export default {
         // for tui-image-editor component's "options" prop
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
-        apiSendEdit: this.sendEdit.bind(this),
-        apiLoadEdit: this.loadEdit.bind(this),
-        apiAutoEdit: this.autoEdit.bind(this),
+        // apiSendEdit: this.sendEdit.bind(this),
+        // apiLoadEdit: this.loadEdit.bind(this),
+        // apiAutoEdit: this.autoEdit.bind(this),
       },
       image_url: '',
       split: '',
@@ -387,7 +387,7 @@ export default {
           // to get the next image
           sessionStorage.setItem('split', 'annotated');
           sessionStorage.setItem('image_url', edit_url);
-          this.$refs.editor.reset();
+          this._reset();
           this.$root.finishProcessing();
           this.$root.alert('success', 'Previous annotation loaded');
         }
@@ -405,7 +405,7 @@ export default {
         // to get the next image
         sessionStorage.setItem('image_url', proposed_url);
         sessionStorage.setItem('split', 'proposed');
-        this.$refs.editor.reset();
+        this._reset();
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
@@ -420,7 +420,7 @@ export default {
       this.$refs.editor.resize({ width: 500, height: 500 });
       // this.$refs['editor'].invoke('resizeCanvasDimension', { width: 500, height: 500 });
     },
-    async sendEdit(image_base64) {
+    async sendEdit() {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
@@ -429,6 +429,7 @@ export default {
       const image_width = sessionStorage.getItem('image_width');
       const split = sessionStorage.getItem('split');
       try {
+        const image_base64 = this.$refs['editor'].invoke('toDataURL');
         await APISendEdit({ split, image_url, image_height, image_width, image_base64 });
         this.$root.finishProcessing();
         this.$root.alert('success', 'Sending succeeded');
@@ -440,7 +441,7 @@ export default {
       try {
         const res = await APIGetNextImage(this.split, this.image_url);
         sessionStorage.setItem('image_url', res.data.data);
-        this.$refs.editor.reset();
+        this._reset();
         this.loadImageInfo();
       } catch (error) {
         console.log(error);
@@ -502,6 +503,19 @@ export default {
         this.mode = 'colorRange';
         this.$refs['editor'].invoke('startDrawingMode', 'COLOR_RANGE_DRAWING');
       }
+    },
+    _reset() {
+      this.$refs.editor.reset();
+      Object.assign(this, {
+        mode: '',
+        zoomLevel: 1,
+        brushWidth: 10,
+        imageWidth: 224,
+        tempWidth: 224,
+        imageHeight: 224,
+        tempHeight: 224,
+        lockAspectRatio: false,
+      });
     },
   },
 };
