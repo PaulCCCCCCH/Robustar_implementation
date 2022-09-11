@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="tuiImageEditor"
     class="tui-image-editor d-flex justify-center align-center"
     :style="{ width: width + 'px', height: height + 'px' }"
   ></div>
