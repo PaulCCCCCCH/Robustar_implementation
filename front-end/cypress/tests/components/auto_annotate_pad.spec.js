@@ -1,7 +1,6 @@
 describe('Auto Annotate Pad', () => {
   afterEach(() => {
-    cy.contains('Inspect Data').click();
-    cy.contains('Annotated Data').click();
+    cy.visit('http://localhost:8080/#/image-list/annotated');
     cy.getBySel('image-list-btn-clear-annotated-imgs').click();
     cy.wait(500);
   });
@@ -12,56 +11,55 @@ describe('Auto Annotate Pad', () => {
 
   it('Test Annotated Images url', () => {
     cy.getBySel('auto-annotate-start-index').clear().type('1');
-    cy.getBySel('auto-annotate-end-index').clear().type('5');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
-    cy.wait(10000);
+    cy.getBySel('auto-annotate-end-index').clear().type('3');
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.wait(20000);
     cy.contains('Inspect Data').click();
     cy.contains('Annotated Data').click();
     cy.url().should('include', '/image-list/annotated');
-    cy.getBySel('image-list-div-img').should('have.length', 4);
-    cy.getBySel('image-list-img-2').trigger('mouseenter');
-    cy.getBySel('image-list-btn-edit-image-2').click();
+    cy.getBySel('image-list-div-img').should('have.length', 2);
+    cy.getBySel('image-list-img-1').trigger('mouseenter');
+    cy.clickBySel('image-list-btn-edit-image-1');
     cy.checkSessionStorage('split', 'annotated');
   });
 
   it('Delete the Only One Task', () => {
-    cy.getBySel('header-toggle-tasks-panel').click();
+    cy.clickBySel('header-toggle-tasks-panel');
     cy.getBySel('auto-annotate-end-index').clear().type('500');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
-    cy.getBySel('task-panel-stop-task').click();
+    cy.clickBySel('task-panel-stop-task');
     cy.get('p').should('have.text', 'No task is running now.');
   });
 
   it('Test Input Zero', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('0');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.get('p').should('have.text', 'No task is running now.');
   });
 
   it('Test Input Zero Before Integer', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('006').click();
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
-
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.getBySel('task-panel-progress-linear').should('contain', '6');
-    cy.wait(10000);
+    cy.clickBySel('task-panel-stop-task');
   });
 
   it('Test Input Big Integer', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('9999');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
     cy.getBySel('task-panel-progress-linear').should('contain', '9000');
-    cy.getBySel('task-panel-stop-task').click();
+    cy.clickBySel('task-panel-stop-task');
   });
 
   it('Test Input Floating Point Number', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('9.9');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.get('p').should('have.text', 'No task is running now.');
   });
 

@@ -1,22 +1,16 @@
 describe('Annotation Pad (Image Editor)', () => {
   before(() => {
-    cy.visit('/');
-    cy.contains('Inspect Data').click();
-    cy.contains('Annotated Data').click();
-    cy.getBySel('image-list-btn-clear-annotated-imgs').click();
-    cy.wait(500);
+    cy.visit('http://localhost:8080/#/image-list/annotated');
+    cy.clickBySel('image-list-btn-clear-annotated-imgs');
   });
 
   beforeEach(() => {
-    cy.visit('image-list/train');
+    cy.visit('http://localhost:8080/#/image-list/train');
   });
 
   after(() => {
-    cy.visit('/');
-    cy.contains('Inspect Data').click();
-    cy.contains('Annotated Data').click();
-    cy.getBySel('image-list-btn-clear-annotated-imgs').click();
-    cy.wait(500);
+    cy.visit('http://localhost:8080/#/image-list/annotated');
+    cy.clickBySel('image-list-btn-clear-annotated-imgs');
   });
 
   it('Enables editing images in training set', () => {

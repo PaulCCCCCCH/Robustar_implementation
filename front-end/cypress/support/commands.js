@@ -33,6 +33,11 @@ Cypress.Commands.add('getBySel', (selector, ...args) => {
   return cy.get(`[data-test=${selector}]`, ...args);
 });
 
+Cypress.Commands.add('clickBySel', (selector, ...args) => {
+  cy.get(`[data-test=${selector}]`, ...args).click();
+  cy.wait(500);
+});
+
 Cypress.Commands.add('getBySelLike', (selector, ...args) => {
   return cy.get(`[data-test*=${selector}]`, ...args);
 });
