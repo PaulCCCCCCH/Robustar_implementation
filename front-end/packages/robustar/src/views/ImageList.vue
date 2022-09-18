@@ -261,6 +261,9 @@ import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
+import pDebounce from 'p-debounce';
+
+const APIGetImageListDebounced = pDebounce(APIGetImageList, 0);
 
 export default {
   name: 'ImageList',
@@ -269,6 +272,7 @@ export default {
   },
   data() {
     return {
+      isLoadingImages: false,
       showExtraSettings: false,
       imageIdxSelection: 'start',
       imageStartIdx: 0,
@@ -341,20 +345,18 @@ export default {
     updateSplit() {
       this.split = this.$route.params.split;
     },
-    initImageList() {
-      APIGetSplitLength(
-        this.split,
-        (res) => {
-          this.splitLength = res.data.data;
-          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
-          this.getClassNames();
-          this.loadImages();
-        },
-        (err) => {
-          this.$root.alert('error', 'Image list initialization failed');
-          this.imageList = [];
-        }
-      );
+    async initImageList() {
+      try {
+        const res = await APIGetSplitLength(this.split);
+        this.splitLength = res.data.data;
+        this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+        this.getClassNames();
+        this.loadImages();
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Image list initialization failed');
+        this.imageList = [];
+      }
     },
     resetImageList() {
       this.currentPage = 0;
@@ -363,26 +365,28 @@ export default {
       this.selectedClass = 0;
       this.initImageList();
     },
-    getClassNames() {
-      APIGetClassNames(
-        this.split,
-        (res) => {
-          this.classStartIdx = res.data.data;
-          this.classNames = Object.keys(this.classStartIdx);
-        },
-        (err) => {
-          this.$root.alert('error', 'Fetching class names failed');
-          this.imageList = [];
-        }
-      );
+    async getClassNames() {
+      try {
+        const res = await APIGetClassNames(this.split);
+        this.classStartIdx = res.data.data;
+        this.classNames = Object.keys(this.classStartIdx);
+      } catch (error) {
+        this.$root.alert('error', 'Fetching class names failed');
+        this.imageList = [];
+      }
     },
     setCurrentImage(url) {
       this.image_url = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-    deleteImageSuccess() {
-      this.initImageList();
+    async deleteAnnotatedImage(idx, url) {
+      try {
+        await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
+        this.initImageList();
+      } catch (error) {
+        this.$root.alert('error', 'Image deletion failed');
+      }
     },
     deleteImageFailed() {
       this.$root.alert('error', 'Image deletion failed');
@@ -424,25 +428,25 @@ export default {
       this.imagePerPage = this.imagePerPageOptions[1];
       this.resetImageList();
     },
-    loadImages() {
-      APIGetImageList(
-        this.split,
-        this.currentPage,
-        this.imagePerPage,
-        (res) => {
-          const list = res.data.data;
-          this.$nextTick(() => {
-            this.imageList = [];
-            list.forEach((imagePath) => {
-              this.imageList.push(imagePath);
-            });
-          });
-        },
-        (err) => {
-          this.$root.alert('error', 'Loading images failed');
+    async loadImages() {
+      this.isLoadingImages = true;
+      try {
+        const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
+        const list = res.data.data;
+        this.$nextTick(() => {
           this.imageList = [];
-        }
-      );
+          list.forEach((imagePath) => {
+            // this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            this.imageList.push(imagePath);
+          });
+        });
+        this.isLoadingImages = false;
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Loading images failed');
+        this.imageList = [];
+        this.isLoadingImages = false;
+      }
     },
     selectImage(idx) {
       if (this.showExtraSettings) {

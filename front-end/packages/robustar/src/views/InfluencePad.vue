@@ -93,30 +93,24 @@ export default {
     });
   },
   methods: {
-    start_calculation() {
+    async start_calculation() {
       if (!this.$refs.form.validate()) {
         return;
       }
       this.$root.startProcessing('The influence is being calculated. Please wait...');
-      const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
-        console.log(response);
+      try {
+        const res = await APICalculateInfluence({
+          configs: this.configs,
+        });
+        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Influence calculation succeeded');
-      };
-      const failed = (err) => {
-        console.log(err);
+      } catch (error) {
+        console.log(error);
         alert('Server error. Check console.');
         this.$root.finishProcessing();
         this.$root.alert('error', 'Influence calculation failed');
-      };
-      APICalculateInfluence(
-        {
-          configs: this.configs,
-        },
-        success,
-        failed
-      );
+      }
     },
   },
 };

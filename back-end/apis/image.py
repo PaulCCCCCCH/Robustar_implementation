@@ -1,22 +1,16 @@
-import base64
 import os.path as osp
-
 import mimetypes
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
-
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength
+from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
-datasetFileQueue = dataManager.datasetFileQueue
-datasetFileBuffer = dataManager.datasetFileBuffer
-datasetFileQueueLen = dataManager.datasetFileQueueLen
 
 
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
@@ -26,7 +20,7 @@ def get_image_list(split, start, num_per_page):
 
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
-        ls_image_data = [get_img_data(image_path) for image_path in ls_image_path]
+        ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
     except Exception as e:
         return RResponse.fail('Error retrieving image paths')
 
@@ -35,8 +29,6 @@ def get_image_list(split, start, num_per_page):
     return RResponse.ok(ls_image_path_data)
 
 
-def get_img_data(dataset_img_path):
-    normal_path = to_unix(dataset_img_path)
 
     if osp.exists(normal_path):
         if normal_path in datasetFileBuffer:
