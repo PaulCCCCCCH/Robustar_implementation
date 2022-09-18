@@ -3,7 +3,7 @@ import os.path as osp
 from objects.RServer import RServer
 from utils.path_utils import to_unix
 import base64
-import magic
+import mimetypes
 
 
 dataManager = RServer.getDataManager()
@@ -103,7 +103,7 @@ def refreshImgData(dataset_img_path):
     normal_path = to_unix(dataset_img_path)
     with open(normal_path, "rb") as image_file:
         image_base64 = base64.b64encode(image_file.read()).decode()
-    image_mime = magic.from_file(normal_path, mime=True)
+    image_mime = mimetypes.guess_type(normal_path)[0]
 
     image_data = 'data:' + image_mime + ";base64," + image_base64
 

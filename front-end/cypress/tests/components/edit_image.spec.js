@@ -21,7 +21,7 @@ describe('Annotation Pad (Image Editor)', () => {
     cy.wait(1000);
     const strs = ['1.JPEG', '10.JPEG', '100.JPEG'];
     Cypress._.times(3, (index) => {
-      cy.get('.tui-image-editor-send-edit-btn').click();
+      cy.getBySel('tui-image-editor-send-edit-btn').click();
       cy.wait(1000);
       cy.get('.tui-image-editor').should('exist');
       cy.checkSessionStorageSubString('image_url', strs[index]);
@@ -40,7 +40,7 @@ describe('Annotation Pad (Image Editor)', () => {
 
     cy.wait(1000);
     Cypress._.times(3, (index) => {
-      cy.get('.tui-image-editor-send-edit-btn').click();
+      cy.getBySel('tui-image-editor-send-edit-btn').click();
       cy.wait(1000);
       cy.checkSessionStorageSubString('image_url', strs[index]);
     });

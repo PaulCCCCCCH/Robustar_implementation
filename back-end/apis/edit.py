@@ -57,7 +57,6 @@ def api_user_edit(split):
 
     path = to_unix(path)
     json_data = request.get_json()
-    print(json_data)
     encoded_string = json_data['image'].split(',')[1]
     decoded = base64.b64decode(encoded_string)
 

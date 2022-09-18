@@ -1,5 +1,9 @@
 const { _ } = Cypress;
-describe('This is testing visualizer', () => {
+describe('Visualizer', () => {
+  before(() => {
+    cy.removeSessionStorage('visualizer_panels');
+  });
+
   beforeEach(() => {
     cy.visit('image-list/train').wait(500);
     cy.getBySel('image-list-img-0').trigger('mouseenter').wait(500);
@@ -77,35 +81,18 @@ describe('This is testing visualizer', () => {
   });
 
   it('Test single page panel expansion/closing', () => {
-    cy.getBySel('model-prediction-sheet').should('be.visible');
     cy.getBySel('model-focus').click();
     cy.getBySel('model-focus-panel').should('be.visible');
-    cy.getBySel('influence-images').click();
-    cy.getBySel('influence-images-panel').should('be.visible');
-    cy.getBySel('influence-images').click();
-    cy.getBySel('influence-images-panel').should('not.visible');
-    cy.getBySel('proposed-annotation').click();
-    cy.getBySel('proposed-annotation-panel').should('be.visible');
+  });
 
-    it('Test the expansion/closing of panels during image conversion', () => {
-      cy.getBySel('image-list-img-1').trigger('mouseenter');
-      cy.getBySel('image-list-btn-predict-image-1').click();
+  it('Test the expansion/closing of panels during image conversion', () => {
+    cy.getBySel('model-prediction-sheet').should('be.visible');
+  });
 
-      cy.getBySel('model-prediction-sheet').should('be.visible');
-      cy.getBySel('model-focus-panel').should('be.visible');
-      cy.getBySel('influence-images-panel').should('not.visible');
-      cy.getBySel('proposed-annotation-panel').should('be.visible');
-    });
-
-    it('Test the expansion/closing of panels during page conversion', () => {
-      cy.visit('image-list/test');
-      cy.getBySel('image-list-img-1').trigger('mouseenter');
-      cy.getBySel('image-list-btn-predict-image-1').click();
-
-      cy.getBySel('model-prediction-sheet').should('be.visible');
-      cy.getBySel('model-focus-panel').should('be.visible');
-      cy.getBySel('influence-images-panel').should('not.visible');
-      cy.getBySel('proposed-annotation-panel').should('be.visible');
-    });
+  it('Test the expansion/closing of panels during page conversion', () => {
+    cy.visit('image-list/test').wait(500);
+    cy.getBySel('image-list-img-0').trigger('mouseenter').wait(500);
+    cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
+    cy.getBySel('model-focus-panel').should('be.visible');
   });
 });

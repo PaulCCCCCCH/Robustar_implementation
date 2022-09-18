@@ -52,3 +52,7 @@ Cypress.Commands.add('checkSessionStorageSubString', (key, val) => {
     .invoke({ timeout: 5000 }, 'getItem', key)
     .should('contain', val);
 });
+
+Cypress.Commands.add('removeSessionStorage', (key) => {
+  cy.window().its('sessionStorage').invoke({ timeout: 5000 }, 'removeItem', key);
+});

@@ -1,4 +1,4 @@
-describe('Image List (Image Editor)', () => {
+describe('Image List', () => {
   beforeEach(() => {});
 
   it('Navigates through training data', () => {
@@ -50,9 +50,6 @@ describe('Image List (Image Editor)', () => {
         cy.getBySel('image-list-img-1').trigger('mouseenter');
         cy.getBySel('image-list-btn-edit-image-1').click();
         cy.checkSessionStorage('split', 'train');
-        cy.wait(300);
-        cy.go('back');
-        cy.wait(300);
       });
   });
 

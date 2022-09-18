@@ -391,14 +391,6 @@ export default {
     deleteImageFailed() {
       this.$root.alert('error', 'Image deletion failed');
     },
-    deleteAnnotatedImage(idx, url) {
-      APIDeleteEdit(
-        this.split,
-        getImageUrlFromFullUrl(url),
-        () => this.deleteImageSuccess(),
-        this.deleteImageFailed
-      );
-    },
     clearAnnotatedImage() {
       APIClearEdit(() => this.deleteImageSuccess(), this.deleteImageFailed);
     },
