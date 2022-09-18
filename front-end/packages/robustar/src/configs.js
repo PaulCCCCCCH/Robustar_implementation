@@ -4,4 +4,5 @@ export const configs = {
   imageServerUrl: `${process.env.VUE_APP_BASE_URL}/image`,
   imagePathServerUrl: `${process.env.VUE_APP_BASE_URL}/dataset`,
   dataBaseDir: '/Robustar2',
+  imagePathParamName: 'image_url',
 };

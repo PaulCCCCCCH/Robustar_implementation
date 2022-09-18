@@ -1,3 +1,4 @@
+import { configs } from '../configs';
 import { postRequest, getRequest, deleteRequest } from './common';
 
 /**
@@ -22,11 +23,11 @@ export const APISendEdit = (
     image_height,
     image_width,
   };
-  postRequest(data, `/edit/${split}/${image_url}`, success, failed);
+  postRequest(data, `/edit/${split}?${configs.imagePathParamName}=${image_url}`, success, failed);
 };
 
 export const APIGetProposedEdit = (split, image_url, success, failed) => {
-  getRequest(`/propose/${split}/${image_url}`, success, failed);
+  getRequest(`/propose/${split}?${configs.imagePathParamName}=${image_url}`, success, failed);
 };
 
 export const APIStartAutoAnnotate = (split, data, success, failed) => {
@@ -34,7 +35,7 @@ export const APIStartAutoAnnotate = (split, data, success, failed) => {
 };
 
 export const APIDeleteEdit = (split, image_url, success, failed) => {
-  deleteRequest(`/edit/${split}/${image_url}`, success, failed);
+  deleteRequest(`/edit/${split}?${configs.imagePathParamName}=${image_url}`, success, failed);
 };
 
 export const APIClearEdit = (success, failed) => {

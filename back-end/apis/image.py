@@ -2,7 +2,8 @@ import base64
 import os.path as osp
 
 import mimetypes
-from flask import send_file
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
+from flask import send_file, request
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
@@ -58,8 +59,8 @@ def get_img_data(dataset_img_path):
         raise Exception
 
 
-@app.route('/image/next/<split>/<path:path>')
-def get_next_image(split, path):
+@app.route('/image/next/<split>')
+def get_next_image(split):
     """
     Gets next image path given current image split and path.
     Only supports 'train', 'annotated' and 'proposed' splits.
@@ -67,12 +68,13 @@ def get_next_image(split, path):
     if split not in ['train', 'annotated', 'proposed']:
         raise NotImplementedError
 
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
     return RResponse.ok(getNextImagePath(split, path))
 
 
-@app.route('/image/annotated/<split>/<path:path>')
-def get_annotated(split, path):
+@app.route('/image/annotated/<split>')
+def get_annotated(split):
     """
     Gets paired image path corresponding to given training path, if exists
     ---
@@ -104,6 +106,7 @@ def get_annotated(split, path):
               type: string
               example: Success
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
     if split == 'annotated':
         paired_path = path
@@ -179,15 +182,17 @@ def get_split_length(split):
     return RResponse.ok(response)
 
 
-@app.route('/dataset/<path:dataset_img_path>')
-def get_dataset_img(dataset_img_path):
-    normal_path = to_unix(dataset_img_path)
+@app.route('/dataset')
+def get_dataset_img():
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    normal_path = to_unix(path)
     if osp.exists(normal_path):
         return send_file(normal_path)
     else:
         return RResponse.fail()
 
 
-@app.route('/visualize/<path:visualize_img_path>')
-def get_influence_img(visualize_img_path):
+@app.route('/visualize')
+def get_influence_img():
+    visualize_img_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     return send_file(to_unix(visualize_img_path))

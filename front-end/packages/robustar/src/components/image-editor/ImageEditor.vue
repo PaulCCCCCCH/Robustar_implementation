@@ -57,7 +57,9 @@ export default {
         options = Object.assign(includeUIOptions, this.options);
       }
       options.includeUI.loadImage = {
-        path: `${configs.imagePathServerUrl}/${sessionStorage.getItem('image_url')}`,
+        path: `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${sessionStorage.getItem(
+          'image_url'
+        )}`,
         name: sessionStorage.getItem('image_url'),
       };
       this.editorInstance = new ImageEditor(this.$refs.tuiImageEditor, options);

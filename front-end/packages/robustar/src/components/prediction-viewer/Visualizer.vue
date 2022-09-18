@@ -152,7 +152,7 @@ export default {
           return;
         }
         const proposedPath = response.data.data;
-        this.proposedEditUrl = `${configs.imagePathServerUrl}/${proposedPath}`;
+        this.proposedEditUrl = `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${proposedPath}`;
       };
       const failed = (err) => {
         console.log(err);
@@ -180,7 +180,9 @@ export default {
         ];
         this.focusImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          this.focusImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
+          this.focusImgUrl.push(
+            `${configs.serverUrl}/visualize?${configs.imagePathParamName}=${responseData[2][i]}`
+          );
         }
       };
       const failed = (err) => {
@@ -203,7 +205,9 @@ export default {
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
-          this.influImgUrl.push(`${configs.imagePathServerUrl}/${url}`);
+          this.influImgUrl.push(
+            `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`
+          );
         }
       };
 

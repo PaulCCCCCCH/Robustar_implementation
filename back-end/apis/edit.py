@@ -1,3 +1,4 @@
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
@@ -9,8 +10,8 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
-@app.route('/edit/<split>/<path:path>', methods=['POST'])
-def api_user_edit(split, path):
+@app.route('/edit/<split>', methods=['POST'])
+def api_user_edit(split):
     """
     Save user's edit for an image
     ---
@@ -48,6 +49,8 @@ def api_user_edit(split, path):
       200:
         description: edit success
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
         return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
@@ -64,8 +67,9 @@ def api_user_edit(split, path):
 
     return RResponse.ok("Success!")
 
-@app.route('/edit/<split>/<path:path>', methods=['DELETE'])
-def api_delete_edit(split, path):
+@app.route('/edit/<split>', methods=['DELETE'])
+def api_delete_edit(split):
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     dataManager.pairedset.remove_image(path)
     return RResponse.ok("Success!")
 
@@ -74,8 +78,8 @@ def api_clear_edit():
     dataManager.pairedset.clear_images()
     return RResponse.ok("Success!")
 
-@app.route('/propose/<split>/<path:path>')
-def api_propose_edit(split, path):
+@app.route('/propose/<split>')
+def api_propose_edit(split):
     """
     Get edited image proposed by auto annotator
 
@@ -91,6 +95,7 @@ def api_propose_edit(split, path):
         proposed image path that can be placed in <img> tag with proper 
         server url as prefix
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
     proposed_image_path = ""
     if split not in ['annotated', 'train']:
@@ -115,10 +120,9 @@ def api_auto_annotate(split):
 
     json_data = request.get_json()
 
-    start_idx_to_gen = int(json_data['start_idx_to_gen'])
-    end_idx_to_gen = int(json_data['end_idx_to_gen'])
-
     try:
+        start_idx_to_gen = int(json_data['start_idx_to_gen'])
+        end_idx_to_gen = int(json_data['end_idx_to_gen'])
         start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
         return RResponse.fail('auto annotation failed')

@@ -1,4 +1,5 @@
 import { getRequest } from './common';
+import { configs } from '../configs';
 
 export const APIGetImageList = (split, start, num_per_page, success, failed) => {
   getRequest(`/image/list/${split}/${start}/${num_per_page}`, success, failed);
@@ -29,7 +30,11 @@ export const APIGetClassNames = (split, success, failed) => {
  * @param {function} fail fail callback function
  */
 export const APIGetAnnotated = (split, image_url, success, failed) => {
-  getRequest(`/image/annotated/${split}/${image_url}`, success, failed);
+  getRequest(
+    `/image/annotated/${split}?${configs.imagePathParamName}=${image_url}`,
+    success,
+    failed
+  );
 };
 
 /**
@@ -39,5 +44,5 @@ export const APIGetAnnotated = (split, image_url, success, failed) => {
  * @param {function} failed
  */
 export const APIGetNextImage = (split, image_url, success, failed) => {
-  getRequest(`/image/next/${split}/${image_url}`, success, failed);
+  getRequest(`/image/next/${split}?${configs.imagePathParamName}=${image_url}`, success, failed);
 };
