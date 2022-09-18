@@ -72,6 +72,10 @@ def to_unix(path: str):
     pClean = path.replace('\\', '/')
     return pClean if path.startswith('./') else join('/', pClean)
 
+def to_absolute(cwd: str, path: str):
+    if path.startswith('/'): return path
+    if path.startswith('./'): return join(cwd, path[2:])
+    return join(cwd, path)
 
 if __name__ == '__main__':
     assert replace_folder('/Robustar2/dataset/train', 'paired') == '/Robustar2/dataset/paired'

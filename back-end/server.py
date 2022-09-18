@@ -1,12 +1,13 @@
-from torch._C import _valgrind_toggle_and_dump_stats
+from email.mime import base
 import torchvision.datasets as dset
 import json
 import os.path as osp
+import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
-from utils.path_utils import to_unix
+from utils.path_utils import to_unix, to_absolute
 
 import argparse
 
@@ -105,7 +106,12 @@ def get_args():
 
 if __name__ == "__main__":
     args = get_args()
-    start_server(args.basedir)
+
+    # Get basedir
+    basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
+    print("Current working directory is {}".format(os.getcwd()))
+    print("Absolute basedir is {}".format(basedir))
+    start_server(basedir)
 
     # Start server
     RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

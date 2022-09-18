@@ -41,9 +41,9 @@ describe('Auto Annotate Pad', () => {
 
   it('Test Input Zero Before Integer', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
-    cy.getBySel('auto-annotate-end-index').clear().type('006').click();
+    cy.getBySel('auto-annotate-end-index').clear().type('0999').click();
     cy.clickBySel('auto-annotate-pad-start-auto-annotation');
-    cy.getBySel('task-panel-progress-linear').should('contain', '6');
+    cy.getBySel('task-panel-progress-linear').should('contain', '999');
     cy.clickBySel('task-panel-stop-task');
   });
 
