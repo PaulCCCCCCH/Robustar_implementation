@@ -1,10 +1,7 @@
 from PIL import Image
-from sklearn import datasets
 from objects.RServer import RServer
 from io import BytesIO
-from utils.path_utils import get_paired_path
 from utils.image_utils import refreshImgData
-import shutil
 import threading
 from objects.RTask import RTask, TaskType
 import time
@@ -106,6 +103,6 @@ def start_auto_annotate(split, start: int, end: int):
         task.exit()
 
 
-    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
-    test_thread.start()
+    auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
+    auto_annotate_thread.start()
 

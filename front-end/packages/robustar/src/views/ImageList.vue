@@ -86,6 +86,7 @@
               class="mr-8"
               outlined
               @change="resetImageList"
+              data-test="image-list-input-num-per-page"
             >
             </v-select>
             <v-select
@@ -96,6 +97,16 @@
               @change="setImageSize"
             >
             </v-select>
+
+            <v-btn
+              depressed
+              color="primary"
+              @click="clearAnnotatedImage"
+              data-test="image-list-btn-clear-annotated-imgs"
+              v-if="$route.params.split === 'annotated'"
+            >
+              DELETE ALL
+            </v-btn>
           </div>
         </v-sheet>
 
@@ -156,13 +167,14 @@
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
-          <div class="d-flex align-right">
+          <div class="d-flex align-right" data-test="image-list-div-img">
             <v-btn
               v-if="$route.params.split === 'annotated'"
               color="secondary"
               class="mr-n1 mb-n1 mx-auto"
               icon
               small
+              :data-test="`image-list-btn-remove-annotated-img-${idx}`"
               @click="deleteAnnotatedImage(idx, url_and_binary[0])"
             >
               <v-icon color="red">mdi-close-box</v-icon>
@@ -217,6 +229,7 @@
                       color="white"
                       width="80%"
                       @click="setCurrentImage(url_and_binary[0])"
+                      :data-test="`image-list-btn-predict-image-${idx}`"
                     >
                       <v-icon>mdi-cogs</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
@@ -244,7 +257,7 @@
 <script>
 import { configs } from '@/configs.js';
 import { getPageNumber } from '@/utils/imageUtils';
-import { APIDeleteEdit } from '@/services/edit';
+import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
@@ -374,6 +387,12 @@ export default {
       } catch (error) {
         this.$root.alert('error', 'Image deletion failed');
       }
+    },
+    deleteImageFailed() {
+      this.$root.alert('error', 'Image deletion failed');
+    },
+    clearAnnotatedImage() {
+      APIClearEdit(() => this.deleteImageSuccess(), this.deleteImageFailed);
     },
     gotoImage(url, componentName) {
       this.setCurrentImage(getImageUrlFromFullUrl(url));

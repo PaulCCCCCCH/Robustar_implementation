@@ -13,7 +13,7 @@ import { configs } from '@/configs.js';
 import whiteTheme from './white-theme.js';
 
 const getImage = () => ({
-  path: `${configs.imagePathServerUrl}/${sessionStorage.getItem('image_url')}`,
+  path: `${configs.imagePathServerUrl}?image_url=${sessionStorage.getItem('image_url')}`,
   name: sessionStorage.getItem('image_url'),
 });
 

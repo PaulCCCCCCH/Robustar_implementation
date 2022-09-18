@@ -6,7 +6,14 @@
     >
       <div>
         <div class="d-flex justify-center mb-8">
-          <v-btn depressed color="warning" class="mr-4" @click="sendEdit">Send Edit</v-btn>
+          <v-btn
+            depressed
+            color="warning"
+            class="mr-4"
+            @click="sendEdit"
+            data-test="tui-image-editor-send-edit-btn"
+            >Send Edit</v-btn
+          >
           <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
           <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
           <v-btn depressed @click="autoEdit">Auto Edit</v-btn>
@@ -302,9 +309,6 @@ export default {
         // for tui-image-editor component's "options" prop
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
-        // apiSendEdit: this.sendEdit.bind(this),
-        // apiLoadEdit: this.loadEdit.bind(this),
-        // apiAutoEdit: this.autoEdit.bind(this),
       },
       image_url: '',
       split: '',
@@ -372,12 +376,7 @@ export default {
     async loadEdit() {
       this.$root.startProcessing('Loading previous annotation. Please wait...');
       try {
-        const res = await APIGetAnnotated(
-          this.split,
-          this.image_url,
-          this.loadEditSuccess,
-          this.loadEditFailed
-        );
+        const res = await APIGetAnnotated(this.split, this.image_url);
         const edit_url = res.data.data;
         if (!edit_url) {
           this.$root.finishProcessing();
@@ -449,7 +448,6 @@ export default {
       }
     },
     mousedown(event, originPointer) {
-      console.log(originPointer);
       switch (this.mode) {
         case 'zoomIn':
           this.zoomLevel++;

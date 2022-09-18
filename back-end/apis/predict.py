@@ -1,6 +1,7 @@
 from flask import request
 
 from modules.visualize_module.visualize.visual import visualize
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
@@ -15,8 +16,8 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>/<path:image_path>')
-def predict(split, image_path):
+@app.route('/predict/<split>')
+def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
     ---
@@ -82,6 +83,7 @@ def predict(split, image_path):
 
     # e.g.  train/10, test/300
     visualize_root = dataManager.visualize_root
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
 
     if image_path in predictBuffer:
@@ -134,8 +136,8 @@ def predict(split, image_path):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/<split>/<path:image_path>')
-def get_influence(split, image_path):
+@app.route('/influence/<split>')
+def get_influence(split):
     """
      Gets the influence for an image specified by its id
     ---
@@ -168,6 +170,7 @@ def get_influence(split, image_path):
               example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
     if image_path in influence_dict:
         return RResponse.ok(influence_dict[image_path], 'Success')

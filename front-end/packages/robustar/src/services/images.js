@@ -1,4 +1,5 @@
 import { getRequest } from './common';
+import { configs } from '../configs';
 
 export const APIGetImageList = async (split, start, num_per_page) => {
   return getRequest(`/image/list/${split}/${start}/${num_per_page}`);
@@ -23,7 +24,7 @@ export const APIGetClassNames = async (split) => {
  * @param {string} image_url
  */
 export const APIGetAnnotated = async (split, image_url) => {
-  return getRequest(`/image/annotated/${split}/${image_url}`);
+  return getRequest(`/image/annotated/${split}?${configs.imagePathParamName}=${image_url}`);
 };
 
 /**
@@ -31,5 +32,5 @@ export const APIGetAnnotated = async (split, image_url) => {
  * @param {string} image_url
  */
 export const APIGetNextImage = async (split, image_url) => {
-  return getRequest(`/image/next/${split}/${image_url}`);
+  return getRequest(`/image/next/${split}?${configs.imagePathParamName}=${image_url}`);
 };
