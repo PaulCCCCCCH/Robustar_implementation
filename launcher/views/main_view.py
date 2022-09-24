@@ -20,7 +20,6 @@ class MainView(QWidget):
         self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
-        self.ui.configFileButton.clicked.connect(self.ctrl.setMConfigFile)
         self.ui.loadProfileButton.clicked.connect(self.ctrl.loadProfile)
         self.ui.saveProfileButton.clicked.connect(self.ctrl.saveProfile)
         self.ui.startServerButton.clicked.connect(self.ctrl.startServer)

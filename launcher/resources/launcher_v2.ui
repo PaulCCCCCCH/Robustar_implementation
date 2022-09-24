@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>850</height>
+    <height>1020</height>
    </rect>
   </property>
   <property name="font">
@@ -42,7 +42,7 @@ QPushButton:hover {
      <x>0</x>
      <y>0</y>
      <width>1001</width>
-     <height>841</height>
+     <height>1001</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,11">
@@ -116,7 +116,7 @@ QPushButton:hover {
            <x>0</x>
            <y>0</y>
            <width>161</width>
-           <height>771</height>
+           <height>901</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="buttonLayout" stretch="1,1,1,1,1,2">
@@ -479,7 +479,7 @@ QPushButton:hover {
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3,2">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="9,5">
         <property name="topMargin">
          <number>0</number>
         </property>
@@ -509,20 +509,32 @@ QPushButton:hover {
              <rect>
               <x>20</x>
               <y>10</y>
-              <width>771</width>
-              <height>411</height>
+              <width>761</width>
+              <height>531</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,3">
+                <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0">
                  <property name="spacing">
                   <number>0</number>
                  </property>
                  <item>
                   <widget class="QGroupBox" name="dockerGroupBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>118</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -540,8 +552,8 @@ QPushButton:hover {
                      <rect>
                       <x>10</x>
                       <y>20</y>
-                      <width>361</width>
-                      <height>131</height>
+                      <width>362</width>
+                      <height>91</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -549,6 +561,18 @@ QPushButton:hover {
                       <layout class="QHBoxLayout" name="horizontalLayout_8">
                        <item>
                         <widget class="QLabel" name="label_8">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>174</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
                          <property name="font">
                           <font>
                            <family>Arial</family>
@@ -559,7 +583,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Docker Container Name</string>
+                          <string>Container Name</string>
                          </property>
                         </widget>
                        </item>
@@ -609,6 +633,12 @@ QPushButton:hover {
                       <layout class="QHBoxLayout" name="horizontalLayout_5">
                        <item>
                         <widget class="QLabel" name="label_3">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="font">
                           <font>
                            <family>Arial</family>
@@ -619,7 +649,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Docker Image Version</string>
+                          <string>Image Version</string>
                          </property>
                         </widget>
                        </item>
@@ -647,19 +677,19 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="currentText">
-                          <string>cuda11.1-0.0.1-beta</string>
+                          <string>cpu-0.0.1-beta</string>
                          </property>
                          <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
                          <item>
                           <property name="text">
-                           <string>cuda11.1-0.0.1-beta</string>
+                           <string>cpu-0.0.1-beta</string>
                           </property>
                          </item>
                          <item>
                           <property name="text">
-                           <string>cpu-0.0.1-beta</string>
+                           <string>cuda11.1-0.0.1-beta</string>
                           </property>
                          </item>
                         </widget>
@@ -672,6 +702,12 @@ QPushButton:hover {
                  </item>
                  <item>
                   <widget class="QGroupBox" name="portGroupBox">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>188</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -690,7 +726,7 @@ QPushButton:hover {
                       <x>10</x>
                       <y>20</y>
                       <width>361</width>
-                      <height>211</height>
+                      <height>161</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -708,7 +744,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Website Port</string>
+                          <string>Website</string>
                          </property>
                         </widget>
                        </item>
@@ -762,7 +798,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Backend Port</string>
+                          <string>Backend</string>
                          </property>
                         </widget>
                        </item>
@@ -816,7 +852,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Tensorboard Port</string>
+                          <string>Tensorboard</string>
                          </property>
                         </widget>
                        </item>
@@ -860,12 +896,14 @@ QPushButton:hover {
                    </widget>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_4" stretch="4">
                  <item>
-                  <widget class="QGroupBox" name="pathGroupBox">
+                  <widget class="QGroupBox" name="dataGroupBox">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>282</height>
+                    </size>
+                   </property>
                    <property name="font">
                     <font>
                      <family>Arial</family>
@@ -876,7 +914,7 @@ QPushButton:hover {
                     </font>
                    </property>
                    <property name="title">
-                    <string>Path</string>
+                    <string>Data</string>
                    </property>
                    <widget class="QWidget" name="layoutWidget">
                     <property name="geometry">
@@ -884,10 +922,13 @@ QPushButton:hover {
                       <x>10</x>
                       <y>20</y>
                       <width>361</width>
-                      <height>371</height>
+                      <height>191</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_7">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,0,0">
                        <property name="leftMargin">
@@ -895,9 +936,15 @@ QPushButton:hover {
                        </property>
                        <item>
                         <widget class="QLabel" name="label_6">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
-                           <width>140</width>
+                           <width>16777215</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -911,7 +958,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Train Set Path</string>
+                          <string>Train Set</string>
                          </property>
                         </widget>
                        </item>
@@ -925,13 +972,13 @@ QPushButton:hover {
                          </property>
                          <property name="minimumSize">
                           <size>
-                           <width>175</width>
+                           <width>0</width>
                            <height>0</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
-                           <width>104</width>
+                           <width>175</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -993,11 +1040,20 @@ QPushButton:hover {
                      </item>
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_17">
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
                        <item>
                         <widget class="QLabel" name="label_13">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
-                           <width>140</width>
+                           <width>16777215</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -1011,7 +1067,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Test Set Path</string>
+                          <string>Test Set</string>
                          </property>
                         </widget>
                        </item>
@@ -1019,13 +1075,13 @@ QPushButton:hover {
                         <widget class="QLineEdit" name="testPathDisplay">
                          <property name="minimumSize">
                           <size>
-                           <width>175</width>
+                           <width>0</width>
                            <height>0</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
-                           <width>175</width>
+                           <width>180</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -1083,9 +1139,15 @@ QPushButton:hover {
                       <layout class="QHBoxLayout" name="horizontalLayout_18">
                        <item>
                         <widget class="QLabel" name="label_14">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
-                           <width>140</width>
+                           <width>16777215</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -1099,7 +1161,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Check Point Path</string>
+                          <string>Checkpoint</string>
                          </property>
                         </widget>
                        </item>
@@ -1107,7 +1169,7 @@ QPushButton:hover {
                         <widget class="QLineEdit" name="checkPointPathDisplay">
                          <property name="maximumSize">
                           <size>
-                           <width>175</width>
+                           <width>180</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -1165,9 +1227,15 @@ QPushButton:hover {
                       <layout class="QHBoxLayout" name="horizontalLayout_19">
                        <item>
                         <widget class="QLabel" name="label_15">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
-                           <width>140</width>
+                           <width>16777215</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -1181,7 +1249,7 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Influence Result Path</string>
+                          <string>Influence Result</string>
                          </property>
                         </widget>
                        </item>
@@ -1243,16 +1311,54 @@ QPushButton:hover {
                        </item>
                       </layout>
                      </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+                 <item>
+                  <widget class="QGroupBox" name="dockerGroupBox_2">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>8</pointsize>
+                     <weight>50</weight>
+                     <italic>false</italic>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="title">
+                    <string>Model</string>
+                   </property>
+                   <widget class="QWidget" name="layoutWidget_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>20</y>
+                      <width>361</width>
+                      <height>491</height>
+                     </rect>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_9">
                      <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0,0,0">
+                      <layout class="QHBoxLayout" name="horizontalLayout_7">
                        <item>
-                        <widget class="QLabel" name="label_9">
-                         <property name="maximumSize">
-                          <size>
-                           <width>140</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
+                        <widget class="QLabel" name="label_4">
                          <property name="font">
                           <font>
                            <family>Arial</family>
@@ -1263,23 +1369,17 @@ QPushButton:hover {
                           </font>
                          </property>
                          <property name="text">
-                          <string>Config File Path</string>
+                          <string>Architecture</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="configFileDisplay">
+                        <widget class="QComboBox" name="archComboBox">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>104</width>
-                           <height>0</height>
-                          </size>
                          </property>
                          <property name="maximumSize">
                           <size>
@@ -1296,19 +1396,137 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
-                         <property name="mouseTracking">
-                          <bool>true</bool>
+                         <property name="currentText">
+                          <string>resnet-18</string>
                          </property>
-                         <property name="text">
+                         <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
-                         <property name="readOnly">
-                          <bool>false</bool>
+                         <item>
+                          <property name="text">
+                           <string>resnet-18</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>resnet-34</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>resnet-50</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>resnet-101</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>resnet-152</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>resnet-18-32x32</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>mobilenet-v2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>alexnet</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_4">
+                       <item>
+                        <widget class="QLabel" name="label_9">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Pretrained</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="configFileButton">
+                        <widget class="QCheckBox" name="pretrainedCheckBox">
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <item>
+                        <widget class="QLabel" name="label_16">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Weight File</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="weightFileDisplay">
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="weightFileButton">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                            <horstretch>0</horstretch>
@@ -1338,6 +1556,430 @@ QPushButton:hover {
                          </property>
                          <property name="text">
                           <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_21">
+                       <item>
+                        <widget class="QLabel" name="label_19">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Device</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="deviceInput">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>cpu</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_23">
+                       <item>
+                        <widget class="QLabel" name="label_20">
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Shuffle</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="shuffleCheckBox">
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_24">
+                       <item>
+                        <widget class="QLabel" name="label_21">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Batch Size</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="batchSizeInput">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_25">
+                       <item>
+                        <widget class="QLabel" name="label_22">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Worker Number</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="workerNumberInput">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_26">
+                       <item>
+                        <widget class="QLabel" name="label_23">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Image Size</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="imgSizeInput">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_27">
+                       <item>
+                        <widget class="QLabel" name="label_24">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Image Padding</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="paddingComboBox">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="currentText">
+                          <string>short side</string>
+                         </property>
+                         <property name="placeholderText" stdset="0">
+                          <string/>
+                         </property>
+                         <item>
+                          <property name="text">
+                           <string>short side</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>none</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_28">
+                       <item>
+                        <widget class="QLabel" name="label_25">
+                         <property name="minimumSize">
+                          <size>
+                           <width>174</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Class Number</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="classNumberInput">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>175</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Arial</family>
+                           <pointsize>8</pointsize>
+                           <weight>50</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
                          </property>
                         </widget>
                        </item>
@@ -1492,10 +2134,10 @@ QPushButton:hover {
            <widget class="QTextBrowser" name="promptBrowser">
             <property name="geometry">
              <rect>
-              <x>-1</x>
-              <y>-1</y>
-              <width>821</width>
-              <height>301</height>
+              <x>0</x>
+              <y>0</y>
+              <width>801</width>
+              <height>311</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -1510,10 +2152,10 @@ QPushButton:hover {
            <widget class="QTextBrowser" name="detailBrowser">
             <property name="geometry">
              <rect>
-              <x>-1</x>
-              <y>-1</y>
-              <width>821</width>
-              <height>291</height>
+              <x>0</x>
+              <y>0</y>
+              <width>801</width>
+              <height>311</height>
              </rect>
             </property>
            </widget>
@@ -1525,10 +2167,10 @@ QPushButton:hover {
            <widget class="QTextBrowser" name="logBrowser">
             <property name="geometry">
              <rect>
-              <x>-1</x>
-              <y>-1</y>
-              <width>821</width>
-              <height>291</height>
+              <x>0</x>
+              <y>0</y>
+              <width>801</width>
+              <height>311</height>
              </rect>
             </property>
            </widget>
