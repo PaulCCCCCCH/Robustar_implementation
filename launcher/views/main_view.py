@@ -22,10 +22,10 @@ class MainView(QWidget):
         self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
 
         self.ui.archComboBox.currentIndexChanged.connect(self.ctrl.setMArch)
-        self.ui.pretrainedCheckbox.stateChanged.connect(self.ctrl.setMPretrained)
+        self.ui.pretrainedCheckBox.stateChanged.connect(self.ctrl.setMPretrained)
         self.ui.weightFileButton.clicked.connect(self.ctrl.setMWeightFile)
         self.ui.deviceInput.textEdited.connect(self.ctrl.setMDevice)
-        self.ui.shuffleCheckbox.stateChanged.connect(self.ctrl.setMPretrained)
+        self.ui.shuffleCheckBox.stateChanged.connect(self.ctrl.setMPretrained)
         self.ui.batchSizeInput.textEdited.connect(self.ctrl.setMBatchSize)
         self.ui.workerNumberInput.textEdited.connect(self.ctrl.setMWorkerNumber)
         self.ui.imgSizeInput.textEdited.connect(self.ctrl.setMImgSize)

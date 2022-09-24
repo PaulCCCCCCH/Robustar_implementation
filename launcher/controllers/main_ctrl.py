@@ -72,11 +72,44 @@ class MainController(QObject):
         if path:
             self.model.influencePath = path
 
-    def setMConfigFile(self):
-        path, _ = QFileDialog.getOpenFileName(self.mainView, "Choose Config File", self.model.cwd, "JSON Files (*.json);;All Files (*)")
+    def setMArch(self):
+        self.model.modelArch = self.mainView.ui.archComboBox.currentText()
+
+    def setMPretrained(self):
+        if self.mainView.ui.pretrainedCheckBox.isChecked():
+            self.model.pretrained = 'True'
+        else:
+            self.model.pretrained = 'False'
+
+    def setMWeightFile(self):
+        path, _ = QFileDialog.getOpenFileName(self.mainView, "Choose Weight File", self.model.cwd, "pt/pth Files (*.pt *.pth);;All Files (*)")
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.configFile = path
+            self.model.weightFile = path
+
+    def setMDevice(self):
+        self.model.device = self.mainView.ui.deviceInput.text()
+
+    def setMShuffle(self):
+        if self.mainView.ui.shuffleCheckBox.isChecked():
+            self.model.shuffle = 'True'
+        else:
+            self.model.shuffle = 'False'
+
+    def setMBatchSize(self):
+        self.model.batchSize = self.mainView.ui.batchSizeInput.text()
+
+    def setMWorkerNumber(self):
+        self.model.workerNumber = self.mainView.ui.workerNumberInput.text()
+
+    def setMImgSize(self):
+        self.model.imgSize = self.mainView.ui.imgSizeInput.text()
+
+    def setMPadding(self):
+        self.model.padding = self.mainView.ui.paddingComboBox.currentText()
+
+    def setMClassNumber(self):
+        self.model.classNumber = self.mainView.ui.classNumberInput.text()
 
     def loadProfile(self):
         path, _ = QFileDialog.getOpenFileName(self.mainView, "Load Profile", self.model.cwd, "JSON Files (*.json);;All Files (*)")
@@ -116,11 +149,6 @@ class MainController(QObject):
         t.start()
 
 
-
-
-
-
-
     # Slot functions to change the view
     def setVContainerName(self, val):
         self.mainView.ui.nameInput.setText(val)
@@ -149,8 +177,41 @@ class MainController(QObject):
     def setVInfluencePath(self, val):
         self.mainView.ui.influencePathDisplay.setText(val)
 
-    def setVConfigFile(self, val):
-        self.mainView.ui.configFileDisplay.setText(val)
+    def setVModelArch(self, val):
+        self.mainView.ui.archComboBox.setCurrentText(val)
+
+    def setVPretrained(self, val):
+        if val == 'True':
+            self.mainView.ui.pretrainedCheckBox.setChecked(True)
+        else:
+            self.mainView.ui.pretrainedCheckBox.setChecked(False)
+
+    def setVWeightFile(self, val):
+        self.mainView.ui.weightFileDisplay.setText(val)
+
+    def setVDevice(self, val):
+        self.mainView.ui.deviceInput.setText(val)
+
+    def setVShuffle(self, val):
+        if val == 'True':
+            self.mainView.ui.shuffleCheckBox.setChecked(True)
+        else:
+            self.mainView.ui.shuffleCheckBox.setChecked(False)
+
+    def setVBatchSize(self, val):
+        self.mainView.ui.batchSizeInput.setText(val)
+
+    def setVWorkerNumber(self, val):
+        self.mainView.ui.workerNumberInput.setText(val)
+
+    def setVImgSize(self, val):
+        self.mainView.ui.imgSizeInput.setText(val)
+
+    def setVPadding(self, val):
+        self.mainView.ui.paddingComboBox.setCurrentText(val)
+
+    def setVClassNumber(self, val):
+        self.mainView.ui.classNumberInput.setText(val)
 
 
     # Other control functions

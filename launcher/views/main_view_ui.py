@@ -696,6 +696,30 @@ class Ui_RobustarLauncher(object):
 
         self.verticalLayout_9.addLayout(self.horizontalLayout_25)
 
+        self.horizontalLayout_28 = QHBoxLayout()
+        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
+        self.label_25 = QLabel(self.layoutWidget_2)
+        self.label_25.setObjectName(u"label_25")
+        self.label_25.setMinimumSize(QSize(174, 0))
+        self.label_25.setFont(font)
+
+        self.horizontalLayout_28.addWidget(self.label_25)
+
+        self.classNumberInput = QLineEdit(self.layoutWidget_2)
+        self.classNumberInput.setObjectName(u"classNumberInput")
+        sizePolicy1.setHeightForWidth(self.classNumberInput.sizePolicy().hasHeightForWidth())
+        self.classNumberInput.setSizePolicy(sizePolicy1)
+        self.classNumberInput.setMinimumSize(QSize(0, 20))
+        self.classNumberInput.setMaximumSize(QSize(175, 16777215))
+        self.classNumberInput.setFont(font)
+        self.classNumberInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.classNumberInput.setClearButtonEnabled(True)
+
+        self.horizontalLayout_28.addWidget(self.classNumberInput)
+
+
+        self.verticalLayout_9.addLayout(self.horizontalLayout_28)
+
         self.horizontalLayout_26 = QHBoxLayout()
         self.horizontalLayout_26.setObjectName(u"horizontalLayout_26")
         self.label_23 = QLabel(self.layoutWidget_2)
@@ -742,30 +766,6 @@ class Ui_RobustarLauncher(object):
 
 
         self.verticalLayout_9.addLayout(self.horizontalLayout_27)
-
-        self.horizontalLayout_28 = QHBoxLayout()
-        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
-        self.label_25 = QLabel(self.layoutWidget_2)
-        self.label_25.setObjectName(u"label_25")
-        self.label_25.setMinimumSize(QSize(174, 0))
-        self.label_25.setFont(font)
-
-        self.horizontalLayout_28.addWidget(self.label_25)
-
-        self.classNumberInput = QLineEdit(self.layoutWidget_2)
-        self.classNumberInput.setObjectName(u"classNumberInput")
-        sizePolicy1.setHeightForWidth(self.classNumberInput.sizePolicy().hasHeightForWidth())
-        self.classNumberInput.setSizePolicy(sizePolicy1)
-        self.classNumberInput.setMinimumSize(QSize(0, 20))
-        self.classNumberInput.setMaximumSize(QSize(175, 16777215))
-        self.classNumberInput.setFont(font)
-        self.classNumberInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.classNumberInput.setClearButtonEnabled(True)
-
-        self.horizontalLayout_28.addWidget(self.classNumberInput)
-
-
-        self.verticalLayout_9.addLayout(self.horizontalLayout_28)
 
 
         self.verticalLayout_4.addWidget(self.dockerGroupBox_2)
@@ -937,6 +937,8 @@ class Ui_RobustarLauncher(object):
         self.batchSizeInput.setText("")
         self.label_22.setText(QCoreApplication.translate("RobustarLauncher", u"Worker Number", None))
         self.workerNumberInput.setText("")
+        self.label_25.setText(QCoreApplication.translate("RobustarLauncher", u"Class Number", None))
+        self.classNumberInput.setText("")
         self.label_23.setText(QCoreApplication.translate("RobustarLauncher", u"Image Size", None))
         self.imgSizeInput.setText("")
         self.label_24.setText(QCoreApplication.translate("RobustarLauncher", u"Image Padding", None))
@@ -945,8 +947,6 @@ class Ui_RobustarLauncher(object):
 
         self.paddingComboBox.setCurrentText(QCoreApplication.translate("RobustarLauncher", u"short side", None))
         self.paddingComboBox.setProperty("placeholderText", "")
-        self.label_25.setText(QCoreApplication.translate("RobustarLauncher", u"Class Number", None))
-        self.classNumberInput.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.createTab), QCoreApplication.translate("RobustarLauncher", u"Create", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("RobustarLauncher", u"Exited", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("RobustarLauncher", u"Created", None))
