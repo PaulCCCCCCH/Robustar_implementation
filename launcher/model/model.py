@@ -12,8 +12,16 @@ class Model(QObject):
     checkPointPathChanged = Signal(str)
     influencePathChanged = Signal(str)
     configFileChanged = Signal(str)
-
-
+    modelArchChanged = Signal(str)
+    pretrainedChanged = Signal(str)
+    weightFileChanged = Signal(str)
+    deviceChanged = Signal(str)
+    shuffleChanged = Signal(str)
+    batchSizeChanged = Signal(str)
+    workerNumberChanged = Signal(str)
+    imgSizeChanged = Signal(str)
+    paddingChanged = Signal(str)
+    classNumberChanged = Signal(str)
 
     def __init__(self, ctrl):
         super().__init__()
@@ -31,7 +39,16 @@ class Model(QObject):
             'testPath': '',
             'checkPointPath': '',
             'influencePath': '',
-            'configFile': ''
+            'modelArch': '',
+            'pretrained': 'False',
+            'weightFile': '',
+            'device': 'cpu',
+            'shuffle': 'False',
+            'batchSize': '',
+            'workerNumber': '',
+            'imgSize': '',
+            'padding': 'short side',
+            'classNumber': ''
         }
 
         # Root path of the path choosing window
@@ -53,7 +70,6 @@ class Model(QObject):
         self.madeOnCreateTab = False
 
 
-
         # Match the corresponding signals to slots in controllers
         self.containerNameChanged.connect(self.ctrl.setVContainerName)
         self.imageVersionChanged.connect(self.ctrl.setVImageVersion)
@@ -64,11 +80,16 @@ class Model(QObject):
         self.testPathChanged.connect(self.ctrl.setVTestPath)
         self.checkPointPathChanged.connect(self.ctrl.setVCheckPointPath)
         self.influencePathChanged.connect(self.ctrl.setVInfluencePath)
-        self.configFileChanged.connect(self.ctrl.setVConfigFile)
-
-
-
-
+        self.modelArchChanged.connect(self.ctrl.setVModelArch)
+        self.pretrainedChanged.connect(self.ctrl.setVPretrained)
+        self.weightFileChanged.connect(self.ctrl.setVWeightFile)
+        self.deviceChanged.connect(self.ctrl.setVDevice)
+        self.shuffleChanged.connect(self.ctrl.setVShuffle)
+        self.batchSizeChanged.connect(self.ctrl.setVBatchSize)
+        self.workerNumberChanged.connect(self.ctrl.setVWorkerNumber)
+        self.imgSizeChanged.connect(self.ctrl.setVImgSize)
+        self.paddingChanged.connect(self.ctrl.setVPadding)
+        self.classNumberChanged.connect(self.ctrl.setVClassNumber)
 
     @property
     def containerName(self):
@@ -152,13 +173,94 @@ class Model(QObject):
         self.influencePathChanged.emit(val)
 
     @property
-    def configFile(self):
-        return self._profile['configFilePath']
+    def modelArch(self):
+        return self._profile['modelArch']
 
-    @configFile.setter
-    def configFile(self, val):
-        self._profile['configFile'] = val
-        self.configFileChanged.emit(val)
+    @modelArch.setter
+    def modelArch(self, val):
+        self._profile['modelArch'] = val
+        self.modelArchChanged.emit(val)
+
+    @property
+    def pretrained(self):
+        return self._profile['pretrained']
+
+    @pretrained.setter
+    def pretrained(self, val):
+        self._profile['pretrained'] = val
+        self.pretrainedChanged.emit(val)
+
+    @property
+    def weightFile(self):
+        return self._profile['weightFile']
+
+    @weightFile.setter
+    def weightFile(self, val):
+        self._profile['weightFile'] = val
+        self.weightFileChanged.emit(val)
+
+    @property
+    def device(self):
+        return self._profile['device']
+
+    @device.setter
+    def device(self, val):
+        self._profile['device'] = val
+        self.deviceChanged.emit(val)
+
+    @property
+    def shuffle(self):
+        return self._profile['shuffle']
+
+    @shuffle.setter
+    def shuffle(self, val):
+        self._profile['shuffle'] = val
+        self.shuffleChanged.emit(val)
+
+    @property
+    def batchSize(self):
+        return self._profile['batchSize']
+
+    @batchSize.setter
+    def batchSize(self, val):
+        self._profile['batchSize'] = val
+        self.batchSizeChanged.emit(val)
+
+    @property
+    def workerNumber(self):
+        return self._profile['workerNumber']
+
+    @workerNumber.setter
+    def workerNumber(self, val):
+        self._profile['workerNumber'] = val
+        self.workerNumberChanged.emit(val)
+
+    @property
+    def imgSize(self):
+        return self._profile['imgSize']
+
+    @imgSize.setter
+    def imgSize(self, val):
+        self._profile['imgSize'] = val
+        self.imgSizeChanged.emit(val)
+
+    @property
+    def padding(self):
+        return self._profile['padding']
+
+    @padding.setter
+    def padding(self, val):
+        self._profile['padding'] = val
+        self.paddingChanged.emit(val)
+
+    @property
+    def classNumber(self):
+        return self._profile['classNumber']
+
+    @classNumber.setter
+    def classNumber(self, val):
+        self._profile['classNumber'] = val
+        self.classNumberChanged.emit(val)
 
     @property
     def profile(self):
@@ -175,4 +277,14 @@ class Model(QObject):
         self.testPath = val['testPath']
         self.checkPointPath = val['checkPointPath']
         self.influencePath = val['influencePath']
-        self.configFile = val['configFile']
+        self.modelArch = val['modelArch']
+        self.pretrained = val['pretrained']
+        self.weightFile = val['weightFile']
+        self.device = val['device']
+        self.shuffle = val['shuffle']
+        self.batchSize = val['batchSize']
+        self.workerNumber = val['workerNumber']
+        self.imgSize = val['imgSize']
+        self.padding = val['padding']
+        self.classNumber = val['classNumber']
+

@@ -20,6 +20,18 @@ class MainView(QWidget):
         self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
+
+        self.ui.archComboBox.currentIndexChanged.connect(self.ctrl.setMArch)
+        self.ui.pretrainedCheckbox.stateChanged.connect(self.ctrl.setMPretrained)
+        self.ui.weightFileButton.clicked.connect(self.ctrl.setMWeightFile)
+        self.ui.deviceInput.textEdited.connect(self.ctrl.setMDevice)
+        self.ui.shuffleCheckbox.stateChanged.connect(self.ctrl.setMPretrained)
+        self.ui.batchSizeInput.textEdited.connect(self.ctrl.setMBatchSize)
+        self.ui.workerNumberInput.textEdited.connect(self.ctrl.setMWorkerNumber)
+        self.ui.imgSizeInput.textEdited.connect(self.ctrl.setMImgSize)
+        self.ui.paddingComboBox.currentIndexChanged.connect(self.ctrl.setMPadding)
+        self.ui.classNumberInput.textEdited.connect(self.ctrl.setMClassNumber)
+
         self.ui.loadProfileButton.clicked.connect(self.ctrl.loadProfile)
         self.ui.saveProfileButton.clicked.connect(self.ctrl.saveProfile)
         self.ui.startServerButton.clicked.connect(self.ctrl.startServer)
