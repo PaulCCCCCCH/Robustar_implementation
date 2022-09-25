@@ -76,6 +76,7 @@ export default {
       this.width = width;
       this.height = height;
       this.invoke('resize', { width, height });
+      this.invoke('resizeCanvasDimension', { width, height });
     },
     toggleMove() {
       this.editorInstance.getActions().main.hand();

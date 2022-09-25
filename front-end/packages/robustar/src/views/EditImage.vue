@@ -359,6 +359,11 @@ export default {
         }, 0);
       }
     },
+    mode(newValue, oldValue) {
+      if (oldValue === 'draw' || oldValue === 'colorRange') {
+        this.$refs['editor'].invoke('stopDrawingMode');
+      }
+    },
   },
   mounted() {
     this.loadImageInfo();
