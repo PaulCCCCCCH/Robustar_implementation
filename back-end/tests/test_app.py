@@ -10,18 +10,17 @@ from server import start_server
 from utils.path_utils import to_unix
 
 
-def test_valid_app_and_server():
-    start_server()
-    server = RServer.getServer()
-    assert server
-    assert server.getFlaskApp()
-
+# def test_valid_app_and_server():
+#     start_server()
+#     server = RServer.getServer()
+#     assert server
+#     assert server.getFlaskApp()
 
 @pytest.fixture()
-def app():
-    _set_up()
-
-    start_server()
+def app(request):
+    basedir = request.config.getoption("basedir")
+    _cleanup(basedir)
+    start_server(basedir)
     server = RServer.getServer()
     app = server.getFlaskApp()
 
@@ -31,28 +30,42 @@ def app():
 
     _clean_up()
 
-    # data_manager = server.getDataManager()
-    # db_conn = data_manager.get_db_conn()
-    # db_conn.close()  # TODO: [test] problematic, fail to use command line `pythom -m pytest`
-
-
-def _set_up():
-    base_dir = to_unix(osp.join('/', 'Robustar2'))
-
-    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    paired_path = to_unix(osp.join(dataset_dir, 'paired'))
-    if osp.exists(paired_path):
-        print("cleanup > delete " + paired_path)
-        for sub_folder in os.listdir(paired_path):
-            sub_folder_root = to_unix(osp.join(paired_path, sub_folder))
-            # print("cleanup >> delete " + sub_folder_root)
-            for image in os.listdir(sub_folder_root):
-                image_root = to_unix(osp.join(sub_folder_root, image))
+def _cleanup(basedir):
+    base_dir = basedir.replace('\\', '/')
+    dataset_dir = osp.join(base_dir, 'dataset').replace('\\', '/')
+    test_correct_root = osp.join(dataset_dir, 'test_correct.txt').replace('\\', '/')
+    test_incorrect_root = osp.join(dataset_dir, 'test_incorrect.txt').replace('\\', '/')
+    validation_correct_root = osp.join(dataset_dir, 'validation_correct.txt').replace('\\', '/')
+    validation_incorrect_root = osp.join(dataset_dir, 'validation_incorrect.txt').replace('\\', '/')
+    annotated_root = osp.join(dataset_dir, 'annotated.txt').replace('\\', '/')
+    paired_root = osp.join(dataset_dir, 'paired').replace('\\', '/')
+    if osp.exists(test_correct_root):
+        print("cleanup > delete " + test_correct_root)
+        os.remove(test_correct_root)
+    if osp.exists(test_incorrect_root):
+        print("cleanup > delete " + test_incorrect_root)
+        os.remove(test_incorrect_root)
+    if osp.exists(validation_correct_root):
+        print("cleanup > delete " + validation_correct_root)
+        os.remove(validation_correct_root)
+    if osp.exists(validation_incorrect_root):
+        print("cleanup > delete " + validation_incorrect_root)
+        os.remove(validation_incorrect_root)
+    if osp.exists(annotated_root):
+        print("cleanup > delete " + annotated_root)
+        os.remove(annotated_root)
+    if osp.exists(paired_root):
+        print("cleanup > delete " + paired_root)
+        for subfolder in os.listdir(paired_root):
+            subfolder_root = osp.join(paired_root, subfolder).replace('\\', '/')
+            print("cleanup >> delete " + subfolder_root)
+            for image in os.listdir(subfolder_root):
+                image_root = osp.join(subfolder_root, image).replace('\\', '/')
                 if os.path.isfile(image_root):
                     # print("cleanup >>> delete " + image_root)
                     os.remove(image_root)
-            os.rmdir(sub_folder_root)
-        os.rmdir(paired_path)
+            os.rmdir(subfolder_root)
+        os.rmdir(paired_root)
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # if osp.exists(db_path):
@@ -179,3 +192,4 @@ def client(app):
 #             # Compare each item in them
 #             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
 #                 assert torch.equal(key_item_1[1], key_item_2[1])
+

@@ -6,17 +6,22 @@ import { isUndefined, extend, forEach, filter } from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import { rejectMessages, componentNames } from '@/consts';
-import Mask from '@/extension/mask';
-import Sharpen from '@/extension/sharpen';
-import Emboss from '@/extension/emboss';
-import ColorFilter from '@/extension/colorFilter';
+// import Mask from '@/extension/mask';
+// import Sharpen from '@/extension/sharpen';
+// import Emboss from '@/extension/emboss';
+// import ColorFilter from '@/extension/colorFilter';
 
-const { filters } = fabric.Image;
+// const { filters } = fabric.Image;
 
-filters.Mask = Mask;
-filters.Sharpen = Sharpen;
-filters.Emboss = Emboss;
-filters.ColorFilter = ColorFilter;
+// filters.Mask = Mask;
+// filters.Sharpen = Sharpen;
+// filters.Emboss = Emboss;
+// filters.ColorFilter = ColorFilter;
+
+// use WebGL as backend
+fabric.textureSize = 4096;
+fabric.isWebglSupported(fabric.textureSize);
+fabric.filterBackend = new fabric.WebglFilterBackend();
 
 /**
  * Filter
@@ -126,11 +131,11 @@ class Filter extends Component {
         imgFilter[key] = value;
       }
     });
-    forEach(imgFilter.options, (value, key) => {
-      if (!isUndefined(options[key])) {
-        imgFilter.options[key] = options[key];
-      }
-    });
+    // forEach(imgFilter.options, (value, key) => {
+    //   if (!isUndefined(options[key])) {
+    //     imgFilter.options[key] = options[key];
+    //   }
+    // });
   }
 
   /**
@@ -140,7 +145,7 @@ class Filter extends Component {
    * @private
    */
   _apply(sourceImg, callback) {
-    sourceImg.filters.push();
+    // sourceImg.filters.push();
     const result = sourceImg.applyFilters();
     if (result) {
       callback();

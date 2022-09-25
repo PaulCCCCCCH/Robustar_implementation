@@ -1,5 +1,7 @@
 import os.path as osp
-from flask import send_file
+import mimetypes
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
+from flask import send_file, request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
@@ -23,7 +25,6 @@ def get_image_list(split, start, num_per_page):
             return RResponse.fail('Error retrieving image paths - cannot get image idx [{}, {})'
                                   .format(image_idx_start, image_idx_end))
     except Exception as e:
-        print(111)
         return RResponse.fail('Error retrieving image paths - {}'.format(str(e)))
 
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
@@ -32,8 +33,29 @@ def get_image_list(split, start, num_per_page):
 
 
 
-@app.route('/image/next/<split>/<path:path>')
-def get_next_image(split, path):
+    if osp.exists(normal_path):
+        if normal_path in datasetFileBuffer:
+            image_data = datasetFileBuffer[normal_path]
+        else:
+            with open(normal_path, "rb") as image_file:
+                image_base64 = base64.b64encode(image_file.read()).decode()
+            image_mime = mimetypes.guess_type(normal_path)[0]
+
+            image_data = 'data:' + image_mime + ";base64," + image_base64
+
+            datasetFileQueue.append(normal_path)
+            if len(datasetFileQueue) > datasetFileQueueLen:
+                temp_path = datasetFileQueue.popleft()
+                del datasetFileBuffer[temp_path]
+            datasetFileBuffer[normal_path] = image_data
+
+        return image_data
+    else:
+        raise Exception
+
+
+@app.route('/image/next/<split>')
+def get_next_image(split):
     """
     Gets next image path given current image split and path.
     Only supports 'train', 'annotated' and 'proposed' splits.
@@ -41,6 +63,7 @@ def get_next_image(split, path):
     if split not in ['train', 'annotated', 'proposed']:
         return RResponse.fail('Split {} not supported'.format(split))
 
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
     next_image_path = getNextImagePath(split, path)
     if next_image_path is None:
@@ -48,8 +71,8 @@ def get_next_image(split, path):
 
     return RResponse.ok(next_image_path)
 
-@app.route('/image/annotated/<split>/<path:path>')
-def get_annotated(split, path):
+@app.route('/image/annotated/<split>')
+def get_annotated(split):
     """
     Gets paired image path corresponding to given training path, if exists
     ---
@@ -81,6 +104,7 @@ def get_annotated(split, path):
               type: string
               example: Success
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
     if split == 'annotated':
         paired_path = path
@@ -156,15 +180,17 @@ def get_split_length(split):
     return RResponse.ok(response)
 
 
-@app.route('/dataset/<path:dataset_img_path>')
-def get_dataset_img(dataset_img_path):
-    normal_path = to_unix(dataset_img_path)
+@app.route('/dataset')
+def get_dataset_img():
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    normal_path = to_unix(path)
     if osp.exists(normal_path):
         return send_file(normal_path)
     else:
         return RResponse.fail()
 
 
-@app.route('/visualize/<path:visualize_img_path>')
-def get_influence_img(visualize_img_path):
+@app.route('/visualize')
+def get_influence_img():
+    visualize_img_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     return send_file(to_unix(visualize_img_path))

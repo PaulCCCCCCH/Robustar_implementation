@@ -27,25 +27,20 @@ export default {
     return {};
   },
   methods: {
-    testingSuccess(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Testing succeeded');
-    },
-    testingFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Testing failed');
-    },
-    start_testing(split) {
+    async start_testing(split) {
       this.$root.startProcessing('The test is going on. Please wait...');
-      APIStartTest(
-        {
-          split: split,
-        },
-        this.testingSuccess,
-        this.testingFailed
-      );
+      try {
+        const res = await APIStartTest({
+          split,
+        });
+        console.log(res);
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Testing succeeded');
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Testing failed');
+      }
     },
   },
 };

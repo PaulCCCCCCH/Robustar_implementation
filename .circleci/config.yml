@@ -1,54 +1,73 @@
 version: 2.1
 
 jobs:
-  frontend-test:
-    docker:
-      - image: cimg/node:14.17.6
-    steps:
-      - checkout
-      - run:
-          name: Run Frontend Tests
-          working_directory: ./front-end
-          command: | # Placeholder her
-            echo "Files in directory: $(ls)"
-            echo "Placeholder for running frontend tests!"
-
-  backend-test:
-    docker:
-      - image: cimg/python:3.10.5
-    steps:
-      - checkout
-      - run:
-          name: Run Backend Tests
-          working_directory: ./back-end
-          command: | # Placeholder here
-            echo "Files in directory: $(ls)"
-            echo "Placeholder for running backend tests!"
- 
   build-image:
     docker:
-      - image: cimg/node:14.17.6
+      - image: cimg/python:3.9.12-node
     steps:
-      - checkout # clone github repo
+      - checkout
       - run:
-          name: Display files and git status
+          name: Display status
           command: | 
             echo "Current working directory: $(pwd)"
+            echo "$(python3 --version)"
+            echo "$(pip3 --version)"
+            echo "node version: $(node -v)"
+            echo "npm version: $(npm -v)"
             ls -al
             echo '^^^^^^^^^^^^^ Files cloned from repo'
             echo 'Current Branch: $(git branch --show-current)'
             echo 'Commit: $(git rev-parse HEAD)'
       - run:
-          name: Download dependencies
+          name: Download frontend dependencies and build
           working_directory: ./front-end
           command: |
             echo "Files in directory: $(ls)"
-            echo "node version: $(node -v)"
-            echo "npm version: $(npm -v)"
             npx lerna@latest init
             npm install
             npx lerna bootstrap
             npx lerna run build
+
+      - run:
+          name: Download dataset
+          working_directory: ./back-end
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install gdown
+            gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-
+            unzip Robustar2.zip
+            echo "Files in directory"
+            ls ./Robustar2
+ 
+      - run:
+          name: Install backend test dependencies
+          working_directory: ./back-end
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install pytest
+            pip install -r requirements.txt
+            pip install protobuf==3.20.* 
+
+      - run:
+          name: End-to-end tests
+          working_directory: ./front-end
+          command: |
+            echo "Files in directory: $(ls)"
+            # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
+            npm install --save-dev cypress 
+            sudo apt-get update
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+            # Run frontend
+            npx lerna run serve:main &
+            pip install -r ../back-end/requirements.txt
+            # Run backend
+            cd ../back-end
+            python3 server.py --basedir ./Robustar2 &
+            # Sleep for a while before running tests
+            sleep 10
+            # Run frontend tests
+            cd ../front-end
+            npx cypress run
 
       - run:
           name: Build frontend
@@ -96,9 +115,4 @@ jobs:
 workflows:
   robustar-workflow:
     jobs:
-      - frontend-test
-      - backend-test
-      - build-image:
-          requires:
-            - frontend-test
-            - backend-test
+      - build-image
