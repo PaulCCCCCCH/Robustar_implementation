@@ -2,6 +2,7 @@ import docker
 import json
 import os
 import re
+import uuid
 
 from PySide2.QtCore import QObject
 from threading import Thread
@@ -68,16 +69,29 @@ class DockerController(QObject):
     def startNewServer(self):
         image = 'paulcccccch/robustar:' + self.model.profile['imageVersion']
 
-        configFile = self.model.profile['configFile']
-        f = open(configFile)
-        config = json.load(f)
-        device = config['device']
+        # save backend relevant configs in a json file
+        config = {
+            'model_arch': self.model.modelArch,
+            'pre_trained': True if self.model.pretrained == 'True' else False,
+            'weight_to_load': self.model.weightFile,
+            'device': self.model.device,
+            'shuffle': True if self.model.shuffle == 'True' else False,
+            'batch_size': int(self.model.batchSize),
+            'num_workers': int(self.model.workerNumber),
+            'image_size': int(self.model.imgSize),
+            'image_padding': self.model.padding,
+            'num_classes': int(self.model.classNumber),
+        }
+        fileName = f'config_{uuid.uuid4().hex}.json'
+        with open(fileName, 'w') as f:
+            f.write(json.dumps(config))
+        configFile = os.path.join(os.getcwd(), fileName)
 
         try:
-            if 'cuda' in image and 'cuda' in device:
-                self.startNewCudaServer(image)
-            elif 'cpu' in image and 'cpu' in device:
-                self.startNewCpuServer(image)
+            if 'cuda' in image and 'cuda' in self.model.device:
+                self.startNewCudaServer(image, configFile)
+            elif 'cpu' in image and 'cpu' in self.model.device:
+                self.startNewCpuServer(image, configFile)
             else:
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                                            "The image version doesn't match the device. Fail to create the container")
@@ -103,7 +117,7 @@ class DockerController(QObject):
                 self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
 
-    def startNewCpuServer(self, image):
+    def startNewCpuServer(self, image, configFile):
         self.model.container = self.client.containers.run(
             image,
             detach=True,
@@ -130,10 +144,10 @@ class DockerController(QObject):
                     type='bind'),
             ],
             volumes=[
-                getSystemPath(self.model.profile['configFile']) + ':/Robustar2/configs.json']
+                getSystemPath(configFile) + ':/Robustar2/configs.json']
         )
 
-    def startNewCudaServer(self, image):
+    def startNewCudaServer(self, image, configFile):
         self.model.container = self.client.containers.run(
             image,
             detach=True,
@@ -160,7 +174,7 @@ class DockerController(QObject):
                     type='bind'),
             ],
             volumes=[
-                self.model.profile['configFile'] + ':/Robustar2/configs.json'],
+                configFile + ':/Robustar2/configs.json'],
 
             # Set the device_requests parm
             device_requests=[
