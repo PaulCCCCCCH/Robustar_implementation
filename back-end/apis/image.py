@@ -19,8 +19,12 @@ def get_image_list(split, start, num_per_page):
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
+        if len(ls_image_path) == 0:
+            return RResponse.fail('Error retrieving image paths - cannot get image idx [{}, {})'
+                                  .format(image_idx_start, image_idx_end))
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths')
+        print(111)
+        return RResponse.fail('Error retrieving image paths - {}'.format(str(e)))
 
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
 
@@ -35,11 +39,14 @@ def get_next_image(split, path):
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
     if split not in ['train', 'annotated', 'proposed']:
-        raise NotImplementedError
+        return RResponse.fail('Split {} not supported'.format(split))
 
     path = to_unix(path)
-    return RResponse.ok(getNextImagePath(split, path))
+    next_image_path = getNextImagePath(split, path)
+    if next_image_path is None:
+        return RResponse.fail('Invalid image path {}'.format(path))
 
+    return RResponse.ok(next_image_path)
 
 @app.route('/image/annotated/<split>/<path:path>')
 def get_annotated(split, path):

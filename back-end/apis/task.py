@@ -9,5 +9,8 @@ app = RServer.getServer().getFlaskBluePrint()
 def stop_task(tid):
     tid = int(tid)
     print(tid)
-    RTask.exit_task(tid)
-    return RResponse.ok(f"Task({tid}) has been stopped.")
+    try:
+        RTask.exit_task(tid)
+    except ValueError as e:
+        return RResponse.fail(f"Task({tid}) not in list")
+    return RResponse.ok(f"Task({tid}) has been stopped")

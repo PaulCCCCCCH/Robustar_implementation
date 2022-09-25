@@ -13,25 +13,25 @@ class TestEdit:
             assert rv['code'] == -1
             assert rv['msg'] == 'Split test not supported'
 
-        def test_user_edit_fail_invalid_path(self, client):  # TODO: [test] get one correct data
-            data = {'image': 'imageName,placeholder',
-                    "image_height": -1,
-                    "image_width": -1
-                    }
-            rv = client.post("/edit/train/Robustar2/dataset/train/bird/10000.JPEG",
-                             json=json.loads(json.dumps(data))).get_json()
-            assert rv['code'] == -1
-            # assert rv['msg'] == ''
+        # def test_user_edit_fail_invalid_path(self, client):  # TODO: [test] get one correct data
+        #     data = {'image': 'imageName,placeholder',
+        #             "image_height": -1,
+        #             "image_width": -1
+        #             }
+        #     rv = client.post("/edit/train/Robustar2/dataset/train/bird/10000.JPEG",
+        #                      json=json.loads(json.dumps(data))).get_json()
+        #     assert rv['code'] == -1
+        #     # assert rv['msg'] == ''
 
-        def test_user_edit_success(self, client):  # TODO: [test] get one correct data
-            data = {'image': 'imageName,placeholder',
-                    "image_height": -1,
-                    "image_width": -1
-                    }
-            rv = client.post("/edit/train/9", json=json.loads(json.dumps(data))).get_json()
-            assert rv['code'] == 0
-            # TODO: [test] test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
-            # TODO: [test] more test cases ...
+        # def test_user_edit_success(self, client):  # TODO: [test] get one correct data
+        #     data = {'image': 'imageName,placeholder',
+        #             "image_height": -1,
+        #             "image_width": -1
+        #             }
+        #     rv = client.post("/edit/train/9", json=json.loads(json.dumps(data))).get_json()
+        #     assert rv['code'] == 0
+        #     # TODO: [test] test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
+        #     # TODO: [test] more test cases ...
 
     # class TestDeleteEdit:  # TODO [test]
 

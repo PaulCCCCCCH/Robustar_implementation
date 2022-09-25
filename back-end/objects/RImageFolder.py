@@ -297,7 +297,7 @@ class REvalImageFolder(RImageFolder):
     def _populate_buffers(self):
         db_data = db_select_all(self.db_conn, self.table_name)
         # database and sample data must contain same number of images
-        assert(len(db_data) == len(self.samples)) 
+        # assert(len(db_data) == len(self.samples)) # TODO: for test use
 
         for (imgpath, label), (path, classified) in zip(self.imgs, db_data):
             # paths must be in the same order, i.e., folder and database 

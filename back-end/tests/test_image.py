@@ -21,43 +21,43 @@ class TestImage:
         def test_get_image_list_success(self, client):
             # image index 0 - 3
             rv = client.get("/image/list/train/0/4").get_json()
-            assert rv['data'] == ['/Robustar2/dataset/train/bird/0.JPEG',
-                                  '/Robustar2/dataset/train/bird/1.JPEG',
-                                  '/Robustar2/dataset/train/bird/10.JPEG',
-                                  '/Robustar2/dataset/train/bird/100.JPEG']
+            assert rv['data'][0][0] == '/Robustar2/dataset/train/bird/0.JPEG'
+            assert rv['data'][1][0] == '/Robustar2/dataset/train/bird/1.JPEG'
+            assert rv['data'][2][0] == '/Robustar2/dataset/train/bird/10.JPEG'
+            assert rv['data'][3][0] == '/Robustar2/dataset/train/bird/100.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 3000 - 3005
             rv = client.get("/image/list/train/500/6").get_json()
-            assert rv['data'] == ['/Robustar2/dataset/train/dog/0.JPEG',
-                                  '/Robustar2/dataset/train/dog/1.JPEG',
-                                  '/Robustar2/dataset/train/dog/10.JPEG',
-                                  '/Robustar2/dataset/train/dog/100.JPEG',
-                                  '/Robustar2/dataset/train/dog/101.JPEG',
-                                  '/Robustar2/dataset/train/dog/102.JPEG']
+            assert rv['data'][0][0] == '/Robustar2/dataset/train/dog/0.JPEG'
+            assert rv['data'][1][0] == '/Robustar2/dataset/train/dog/1.JPEG'
+            assert rv['data'][2][0] == '/Robustar2/dataset/train/dog/10.JPEG'
+            assert rv['data'][3][0] == '/Robustar2/dataset/train/dog/100.JPEG'
+            assert rv['data'][4][0] == '/Robustar2/dataset/train/dog/101.JPEG'
+            assert rv['data'][5][0] == '/Robustar2/dataset/train/dog/102.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 8990 - 8999 (last 10)
             rv = client.get("/image/list/train/899/10").get_json()
-            assert rv['data'] == ['/Robustar2/dataset/train/turtle/990.JPEG',
-                                  '/Robustar2/dataset/train/turtle/991.JPEG',
-                                  '/Robustar2/dataset/train/turtle/992.JPEG',
-                                  '/Robustar2/dataset/train/turtle/993.JPEG',
-                                  '/Robustar2/dataset/train/turtle/994.JPEG',
-                                  '/Robustar2/dataset/train/turtle/995.JPEG',
-                                  '/Robustar2/dataset/train/turtle/996.JPEG',
-                                  '/Robustar2/dataset/train/turtle/997.JPEG',
-                                  '/Robustar2/dataset/train/turtle/998.JPEG',
-                                  '/Robustar2/dataset/train/turtle/999.JPEG']
+            assert rv['data'][0][0] == '/Robustar2/dataset/train/turtle/990.JPEG'
+            assert rv['data'][1][0] == '/Robustar2/dataset/train/turtle/991.JPEG'
+            assert rv['data'][2][0] == '/Robustar2/dataset/train/turtle/992.JPEG'
+            assert rv['data'][3][0] == '/Robustar2/dataset/train/turtle/993.JPEG'
+            assert rv['data'][4][0] == '/Robustar2/dataset/train/turtle/994.JPEG'
+            assert rv['data'][5][0] == '/Robustar2/dataset/train/turtle/995.JPEG'
+            assert rv['data'][6][0] == '/Robustar2/dataset/train/turtle/996.JPEG'
+            assert rv['data'][7][0] == '/Robustar2/dataset/train/turtle/997.JPEG'
+            assert rv['data'][8][0] == '/Robustar2/dataset/train/turtle/998.JPEG'
+            assert rv['data'][9][0] == '/Robustar2/dataset/train/turtle/999.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 8995 - (8999) - 9001 (2 of 7 out of upper-bound)
             rv = client.get("/image/list/train/1285/7").get_json()
-            assert rv['data'] == ['/Robustar2/dataset/train/turtle/995.JPEG',
-                                  '/Robustar2/dataset/train/turtle/996.JPEG',
-                                  '/Robustar2/dataset/train/turtle/997.JPEG',
-                                  '/Robustar2/dataset/train/turtle/998.JPEG',
-                                  '/Robustar2/dataset/train/turtle/999.JPEG']
+            assert rv['data'][0][0] == '/Robustar2/dataset/train/turtle/995.JPEG'
+            assert rv['data'][1][0] == '/Robustar2/dataset/train/turtle/996.JPEG'
+            assert rv['data'][2][0] == '/Robustar2/dataset/train/turtle/997.JPEG'
+            assert rv['data'][3][0] == '/Robustar2/dataset/train/turtle/998.JPEG'
+            assert rv['data'][4][0] == '/Robustar2/dataset/train/turtle/999.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # TODO: [test] other splits - needs other test methods
