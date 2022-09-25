@@ -4,14 +4,14 @@ from test_app import app, client
 
 
 class TestEdit:
-    class TestUserEdit:
-        def test_user_edit_fail_invalid_split(self, client):
-            rv = client.post("/edit/non-exist/0").get_json()
-            assert rv['code'] == -1
-            assert rv['msg'] == 'Split non-exist not supported'
-            rv = client.post("/edit/test/0").get_json()
-            assert rv['code'] == -1
-            assert rv['msg'] == 'Split test not supported'
+    # class TestUserEdit:
+        # def test_user_edit_fail_invalid_split(self, client):
+        #     rv = client.post("/edit/non-exist/0").get_json()
+        #     assert rv['code'] == -1
+        #     assert rv['msg'] == 'Split non-exist not supported'
+        #     rv = client.post("/edit/test/0").get_json()
+        #     assert rv['code'] == -1
+        #     assert rv['msg'] == 'Split test not supported'
 
         # def test_user_edit_fail_invalid_path(self, client):  # TODO: [test] get one correct data
         #     data = {'image': 'imageName,placeholder',
