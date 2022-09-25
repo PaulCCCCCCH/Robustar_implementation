@@ -31,7 +31,7 @@ class Model(QObject):
         # Profile of the createTab
         self._profile = {
             'containerName': 'robustar',
-            'imageVersion': 'cuda11.1-0.1.0-beta',
+            'imageVersion': 'cpu-0.0.1-beta',
             'websitePort': '8000',
             'backendPort': '6848',
             'tensorboardPort': '6006',
