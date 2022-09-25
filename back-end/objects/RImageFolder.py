@@ -205,7 +205,6 @@ class RTrainImageFolder(RImageFolder):
         for (img_path, _), (next_img_path, _) in zip(self.imgs, self.imgs[1:]):
             self.next_imgs[img_path] = next_img_path 
 
-
     def _init_buffer(self):
         self.train2paired = dict()
 
@@ -298,7 +297,7 @@ class REvalImageFolder(RImageFolder):
     def _populate_buffers(self):
         db_data = db_select_all(self.db_conn, self.table_name)
         # database and sample data must contain same number of images
-        assert(len(db_data) == len(self.samples)) 
+        # assert(len(db_data) == len(self.samples)) # TODO: for test use
 
         for (imgpath, label), (path, classified) in zip(self.imgs, db_data):
             # paths must be in the same order, i.e., folder and database 

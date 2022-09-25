@@ -1,6 +1,7 @@
 from os.path import normpath, join
 import re
 
+
 def create_empty_paired_image(path):
     with open(path, 'wb') as f:
         pass
@@ -72,6 +73,7 @@ def to_unix(path: str):
     pClean = path.replace('\\', '/')
     return pClean if path.startswith('./') else join('/', pClean)
 
+
 def to_absolute(cwd: str, path: str):
     if path.startswith('/'): return path
     if path.startswith('./'): return join(cwd, path[2:])
@@ -85,5 +87,6 @@ if __name__ == '__main__':
                            ) == '/Robustar2/dataset/paired/1/2134.jpg'
 
     print(split_path('/Robustar2/dataset/train/0/2134.jpg'))
-    assert split_path('/Robustar2/dataset/train/0/2134.jpg') == ('/Robustar2/dataset/train/0', '2134.jpg')
+    assert split_path('/Robustar2/dataset/train/0/2134.jpg') == (
+    '/Robustar2/dataset/train/0', '2134.jpg')
     print('passed')
