@@ -3,7 +3,6 @@ import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
 import VueSocketIO from 'vue-socket.io';
-// import SocketIO from 'socket.io-client';
 import { configs } from '@/configs.js';
 
 Vue.config.productionTip = false;
@@ -12,7 +11,7 @@ Vue.use(
   new VueSocketIO({
     debug: false,
     // connection: SocketIO(configs.serverUrl, { transports: ['websocket'] }),
-    connection: configs.serverUrl,
+    connection: configs.socketUrl,
     // extraHeaders: { 'Access-Control-Allow-Origin': '*' },
     // options: { transports: ['websocket'] },
   })

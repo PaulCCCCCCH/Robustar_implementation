@@ -47,6 +47,7 @@ jobs:
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
+            
 
       - run:
           name: End-to-end tests
