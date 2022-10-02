@@ -1,40 +1,37 @@
-import pytest
-
-from objects.RModelWrapper import RModelWrapper
-from objects.RServer import RServer
-from server import start_server
-
 import os
 import os.path as osp
-import torch
-import time
+import shutil
+import threading
 
-# start_server()
+import pytest
+
+from objects.RServer import RServer
+from server import start_server
+from utils.path_utils import to_unix
+
+
 # def test_valid_app_and_server():
+#     start_server()
 #     server = RServer.getServer()
 #     assert server
 #     assert server.getFlaskApp()
-#     # assert server.dataManager
-#     # assert RServer.getModelWrapper()
-
 
 @pytest.fixture()
-def app():
-    _cleanup()
-    start_server()
+def app(request):
+    basedir = request.config.getoption("basedir")
+    _cleanup(basedir)
+    start_server(basedir)
     server = RServer.getServer()
     app = server.getFlaskApp()
+
     app.config['TESTING'] = True
     yield app
     app.config['TESTING'] = False
 
-@pytest.fixture()
-def server():
-    server = RServer.getServer()
-    return server
+    _clean_up()
 
-def _cleanup():
-    base_dir = osp.join('/', 'Robustar2').replace('\\', '/')
+def _cleanup(basedir):
+    base_dir = basedir.replace('\\', '/')
     dataset_dir = osp.join(base_dir, 'dataset').replace('\\', '/')
     test_correct_root = osp.join(dataset_dir, 'test_correct.txt').replace('\\', '/')
     test_incorrect_root = osp.join(dataset_dir, 'test_incorrect.txt').replace('\\', '/')
@@ -70,235 +67,129 @@ def _cleanup():
             os.rmdir(subfolder_root)
         os.rmdir(paired_root)
 
+    # db_path = to_unix(osp.join(base_dir, 'data.db'))
+    # if osp.exists(db_path):
+    #     print("cleanup > delete " + db_path)
+    #     os.remove(db_path)
+
+    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    # os.rename(dataset_dir, dataset_dir_original)
+    # os.mkdir(dataset_dir)
+    # test_dir = to_unix(osp.join(dataset_dir, 'test'))
+    # test_dir_original = to_unix(osp.join(dataset_dir_original, 'test'))
+    # os.mkdir(test_dir)
+    # dog_dir = to_unix(osp.join(test_dir, 'dog'))
+    # dog_dir_original = to_unix(osp.join(test_dir_original, 'dog'))
+    # os.mkdir(dog_dir)
+    # for i in range(10):
+    #     dog_img = to_unix(osp.join(dog_dir, str(i) + '.JPEG'))
+    #     dog_img_original = to_unix(osp.join(dog_dir_original, str(i) + '.JPEG'))
+    #     shutil.copyfile(dog_img_original, dog_img)
+
+    # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    # os.rename(proposed_dir, proposed_dir_original)
+    # os.mkdir(proposed_dir)
+    #
+    # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
+    # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
+    # os.rename(visualize_images_dir, visualize_images_dir_original)
+    # os.mkdir(visualize_images_dir)
+    #
+    # db_path = to_unix(osp.join(base_dir, 'data.db'))
+    # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
+    # os.rename(db_path, db_path_original)
+    # open(db_path, 'a').close()
+
+
+def _clean_up():
+    pass
+
+    # base_dir = to_unix(osp.join('/', 'Robustar2'))
+    #
+    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    # os.rmdir(dataset_dir)
+    # os.rename(dataset_dir_original, dataset_dir)
+
+    # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    # os.rmdir(proposed_dir)
+    # os.rename(proposed_dir_original, proposed_dir)
+    #
+    # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
+    # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
+    # os.rmdir(visualize_images_dir)
+    # os.rename(visualize_images_dir_original, visualize_images_dir)
+
+    # db_path = to_unix(osp.join(base_dir, 'data.db'))
+    # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
+
 
 @pytest.fixture()
 def client(app):
-    return app.test_client()
-
-
-# @pytest.fixture()
-# def runner(app):
-#     return app.test_cli_runner()
-
-
-class TestConfig:
-    def test_config_success(self, client):
-        rv = client.get("/config").get_json()
-        assert rv['code'] == 0
-        assert rv['data'] == {
-            "weight_to_load": "resnet-18.pth",
-            "model_arch": "resnet-18-32x32",
-            "device": "cpu",
-            "pre_trained": False,
-            "batch_size": 16,
-            "shuffle": True,
-            "num_workers": 8,
-            "image_size": 32,
-            "image_padding": "none",
-            "num_classes": 9
-        }
-
-
-class TestEdit:
-    def test_edit_fail_invalid_split(self, client):
-        rv = client.post("/edit/test/0").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Split test not supported! Currently we only support editing the `train` or `annotated` ' \
-                            'splits!'
-
-    def test_edit_fail_image_id_out_of_bound(self, client): # TODO: pass the test
-        rv = client.post("/edit/train/100000").get_json()  # TODO: error in `apis/edit.py` file line 67
-        assert rv['code'] == -1
-        # assert rv['msg'] == ''
-        rv = client.post("/edit/annotate/100000").get_json()
-        assert rv['code'] == -1
-        # assert rv['msg'] == ''
-
-    def test_edit_success(self, client): # TODO: pass the test
-        rv = client.post("/edit/train/9").get_json()  # TODO: error in `apis/edit.py` file line 67
-        assert rv['code'] == 0
-        # TODO: test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
-        # TODO: more test cases ...
-
-    def test_propose_fail_invalid_split(self, client):
-        rv = client.get("/propose/test/0").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Cannot propose edit to a wrong split'
-
-    def test_propose_fail_image_id_out_of_bound(self, client):  # TODO: pass the test
-        rv = client.get("/propose/train/100000").get_json()
-        assert rv['code'] == -1
-        # assert rv['msg'] == ''
-        rv = client.get("/propose/annotate/100000").get_json()
-        assert rv['code'] == -1
-        # assert rv['msg'] == ''
-
-    def test_propose_success(self, client):
-        rv = client.get("/propose/train/9").get_json()
-        assert rv['code'] == 0
-        # TODO: test `bird/106.JPEG annotated, first row of /Robustar2/annotated.txt is 10`
-        # TODO: more test cases ...
-
-    def test_auto_annotate_success(self, client):
-        assert True  # TODO: test not implemented
-
-    # TODO: tests on auto_annotate not implemented
-
-
-class TestImage:
-    def test_image_fail_invalid_split(self, client):
-        rv = client.get("/image/non-exist/0").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Split not supported'
-
-    def test_image_fail_image_id_out_of_bound(self, client):
-        rv = client.get("/image/train/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/annotated/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/validation/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/proposed/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/test/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/validation_correct/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/validation_incorrect/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/test_correct/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        rv = client.get("/image/test_incorrect/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-
-    def test_image_success(self, client):
-        response = client.get("/image/train/2", follow_redirects=True)
-        assert len(response.history) == 1  # Check that there was one redirect response
-        assert response.request.path == "/dataset/Robustar2/dataset/train/bird/10.JPEG"
-        response = client.get("/image/test/2", follow_redirects=True)
-        assert len(response.history) == 1
-        assert response.request.path == "/dataset/Robustar2/dataset/test/bird/10.JPEG"
-        # TODO: test other <split>s
-
-    # TODO: GET /image/get-annotated/<image_id>
-
-    def test_class_length_fail_invalid_split(self, client):
-        rv = client.get("/image/class/non-exist").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Split not supported'
-
-    def test_class_length_success(self, client):
-        rv = client.get("/image/class/train").get_json()
-        assert rv['code'] == 0
-        assert rv['data'] == {'bird': 0, 'cat': 1000, 'crab': 2000, 'dog': 3000, 'fish': 4000, 'frog': 5000,
-                              'insect': 6000, 'primate': 7000, 'turtle': 8000}
-        # TODO: test other <split>s
-
-    def test_split_length_fail_invalid_split(self, client):
-        rv = client.get("/image/non-exist").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Split not supported'
-
-    def test_split_length_success(self, client):
-        rv = client.get("/image/train").get_json()
-        assert rv['code'] == 0
-        assert rv['data'] == 9000
-        # TODO: test other <split>s
-
-
-class TestPredict:
-    def test_predict_fail_invalid_split(self, client):
-        rv = client.get("/predict/non-exist/0").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Split not supported'
-
-    def test_predict_fail_image_id_out_of_bound(self, client):
-        rv = client.get("/predict/train/100000").get_json()
-        assert rv['code'] == -1
-        assert rv['msg'] == 'Image with given id not exist'
-        # TODO: test other <split>s (?)
-
-    def test_predict_success(self, client):
-        rv = client.get("/predict/train/1").get_json()
-        assert rv['code'] == 0
-        data = rv['data']
-        assert len(data[0]) == 9
-        assert len(data[1]) == 9
-        assert data[2] == ["/Robustar2/visualize_images/train_1_0.png",
-                           "/Robustar2/visualize_images/train_1_1.png",
-                           "/Robustar2/visualize_images/train_1_2.png",
-                           "/Robustar2/visualize_images/train_1_3.png"]
-
-# TODO: annotate 图片 逐像素位的检查
-# TODO: test training
+    yield app.test_client()
 
 
 # Reserve 10 photos for each category in trainset and 10 photos for each category in testset to save time
-class TestTrain:
-    # Test if the model is loaded correctly at weight level
-    def test_load_model_correctness(self, client, server):
-        assert server.getModelsWeights() == {}
+# class TestTrain:
+#     # Test if the model is loaded correctly at weight level
+#     def test_load_model_correctness(self, client, server):
+#         assert server.getModelsWeights() == {}
+#
+#         data = {
+#             'info': 'placeholder',
+#             'configs': {
+#                 'model_name': 'my-test-model',
+#                 'weight': '',
+#                 'train_path': '/Robustar2/dataset/train-2',
+#                 'test_path': '/Robustar2/dataset/test-2',
+#                 'class_path': './model/cifar-class.txt',
+#                 'port': '8000',
+#                 'save_dir': '/Robustar2/checkpoints',
+#                 'use_paired_train': False,
+#                 'mixture': 'random_pure',
+#                 'paired_data_path': '/Robustar2/dataset/paired',
+#                 'auto_save_model': True,
+#                 'batch_size': '128',
+#                 'shuffle': True,
+#                 'learn_rate': 0.1,
+#                 'pgd': 'no PGD',
+#                 'paired_train_reg_coeff': 0.001,
+#                 'image_size': 32,
+#                 'epoch': 2,
+#                 'thread': 8,
+#                 'pretrain': False,
+#                 'user_edit_buffering': False,
+#                 'save_every': 1
+#             }
+#         }
+#
+#         rv = client.post("/train", json=data).get_json()
+#         assert rv['code'] == 0
+#         assert rv['data'] == 'Training started!'
+#         assert rv['msg'] == 'Success'
+#
+#         # Wait for the training
+#         time.sleep(25)
+#
+#         # Compare model weights saved in local path and in memory
+#         for name, weight in server.getModelsWeights().items():
+#             # Get the model weights saved in local path
+#             model_arch = server.getServerConfigs()['model_arch']
+#             net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
+#             device = server.getServerConfigs()['device']
+#             pre_trained = server.getServerConfigs()['pre_trained']
+#             num_classes = server.getServerConfigs()['num_classes']
+#             modelWrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
+#             modelLoaded = modelWrapper.model
+#             weightLoaded = modelLoaded.state_dict()
+#
+#             # Get the model weights saved in memory
+#             weightInMem = server.getModelsWeights()[name]
+#
+#             # Compare each item in them
+#             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
+#                 assert torch.equal(key_item_1[1], key_item_2[1])
 
-        data = {
-            'info': 'placeholder',
-            'configs': {
-                            'model_name': 'my-test-model',
-                            'weight': '',
-                            'train_path': '/Robustar2/dataset/train-2',
-                            'test_path': '/Robustar2/dataset/test-2',
-                            'class_path': './model/cifar-class.txt',
-                            'port': '8000',
-                            'save_dir': '/Robustar2/checkpoints',
-                            'use_paired_train': False,
-                            'mixture': 'random_pure',
-                            'paired_data_path': '/Robustar2/dataset/paired',
-                            'auto_save_model': True,
-                            'batch_size': '128',
-                            'shuffle': True,
-                            'learn_rate': 0.1,
-                            'pgd': 'no PGD',
-                            'paired_train_reg_coeff': 0.001,
-                            'image_size': 32,
-                            'epoch': 2,
-                            'thread': 8,
-                            'pretrain': False,
-                            'user_edit_buffering': False,
-                            'save_every': 1
-            }
-        }
-
-        rv = client.post("/train", json=data).get_json()
-        assert rv['code'] == 0
-        assert rv['data'] == 'Training started!'
-        assert rv['msg'] == 'Success'
-
-        # Wait for the training
-        time.sleep(25)
-
-        # Compare model weights saved in local path and in memory
-        for name, weight in server.getModelsWeights().items():
-            # Get the model weights saved in local path
-            model_arch = server.getServerConfigs()['model_arch']
-            net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
-            device = server.getServerConfigs()['device']
-            pre_trained = server.getServerConfigs()['pre_trained']
-            num_classes = server.getServerConfigs()['num_classes']
-            modelWrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
-            modelLoaded = modelWrapper.model
-            weightLoaded = modelLoaded.state_dict()
-
-            # Get the model weights saved in memory
-            weightInMem = server.getModelsWeights()[name]
-
-            # Compare each item in them
-            for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
-                assert torch.equal(key_item_1[1], key_item_2[1])

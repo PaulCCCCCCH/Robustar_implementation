@@ -1,16 +1,15 @@
-from torch._C import _valgrind_toggle_and_dump_stats
+from email.mime import base
 import torchvision.datasets as dset
 import json
-import os
 import os.path as osp
-from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
+import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
-from utils.path_utils import to_unix
+from utils.path_utils import to_unix, to_absolute
 
-from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
+import argparse
 
 
 def precheck():
@@ -40,8 +39,8 @@ def precheck():
 
     check_num_classes_consistency()
 
-def start_server():
-    baseDir = to_unix(osp.join('/', 'Robustar2'))
+def start_server(basedir):
+    baseDir = to_unix(basedir)
     datasetDir = to_unix(osp.join(baseDir, 'dataset'))
     ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
     dbPath = to_unix(osp.join(baseDir, 'data.db'))
@@ -97,9 +96,22 @@ def start_server():
     # Check file state consistency
     precheck()
 
+def get_args():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--basedir', default="/Robustar2", help='path to base directory for data folder (default: /Robustar2)')
+
+    args = parser.parse_args()
+    return args
+
 
 if __name__ == "__main__":
-    start_server()
+    args = get_args()
+
+    # Get basedir
+    basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
+    print("Current working directory is {}".format(os.getcwd()))
+    print("Absolute basedir is {}".format(basedir))
+    start_server(basedir)
 
     # Start server
     RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

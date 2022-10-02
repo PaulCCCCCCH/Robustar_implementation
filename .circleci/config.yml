@@ -1,0 +1,119 @@
+version: 2.1
+
+jobs:
+  build-image:
+    docker:
+      - image: cimg/python:3.9.12-node
+    steps:
+      - checkout
+      - run:
+          name: Display status
+          command: | 
+            echo "Current working directory: $(pwd)"
+            echo "$(python3 --version)"
+            echo "$(pip3 --version)"
+            echo "node version: $(node -v)"
+            echo "npm version: $(npm -v)"
+            ls -al
+            echo '^^^^^^^^^^^^^ Files cloned from repo'
+            echo 'Current Branch: $(git branch --show-current)'
+            echo 'Commit: $(git rev-parse HEAD)'
+      - run:
+          name: Download frontend dependencies and build
+          working_directory: ./front-end
+          command: |
+            echo "Files in directory: $(ls)"
+            npx lerna@latest init
+            npm install
+            npx lerna bootstrap
+            npx lerna run build
+
+      - run:
+          name: Download dataset
+          working_directory: ./back-end
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install gdown
+            gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-
+            unzip Robustar2.zip
+            echo "Files in directory"
+            ls ./Robustar2
+ 
+      - run:
+          name: Install backend test dependencies
+          working_directory: ./back-end
+          command: |
+            echo "Files in directory: $(ls)"
+            pip install pytest
+            pip install -r requirements.txt
+            pip install protobuf==3.20.* 
+            
+
+      - run:
+          name: End-to-end tests
+          working_directory: ./front-end
+          command: |
+            echo "Files in directory: $(ls)"
+            # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
+            npm install --save-dev cypress 
+            sudo apt-get update
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+            # Run frontend
+            npx lerna run serve:main &
+            pip install -r ../back-end/requirements.txt
+            # Run backend
+            cd ../back-end
+            python3 server.py --basedir ./Robustar2 &
+            # Sleep for a while before running tests
+            sleep 10
+            # Run frontend tests
+            cd ../front-end
+            npx cypress run
+
+      - run:
+          name: Build frontend
+          working_directory: ./front-end
+          command: |
+            ls -al
+      - setup_remote_docker
+      - when: # When having a dev build
+          condition:
+            not:
+              equal: [ main, << pipeline.git.branch >> ]          
+          steps:
+            - run: 
+                name: Build And Push Dev Docker Image
+                # We have to have this blob of command and repeat it twice because CircleCI does not support sharing variables between steps.
+                # Try using custom executor? 
+                command: |
+                  chmod +x ./scripts/install_pytorch.sh
+                  echo 'export BRANCH_CLEANED=${CIRCLE_BRANCH/\//_}' >> $BASH_ENV
+                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}_${BRANCH_CLEANED}_$(git rev-parse --short HEAD)' >> $BASH_ENV
+                  source $BASH_ENV
+                  echo "Current working directory: $(pwd)"
+                  echo "Files in directory: $(ls)"
+                  docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
+                  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                  docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG
+
+      - when: # When having a release build
+          condition:
+            equal: [ main, << pipeline.git.branch >> ] 
+          steps:
+            - run:
+                name: Build And Push Docker Image For Release
+                command: | 
+                  chmod +x ./scripts/install_pytorch.sh
+                  echo 'export IMAGE_TAG=${VERSION_MAJOR}.${VERSION_MINOR}.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+                  source $BASH_ENV
+                  echo "Current working directory: $(pwd)"
+                  echo "Files in directory: $(ls)"
+                  docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG --build-arg VCUDA=cpu .
+                  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                  docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO_NAME:$IMAGE_TAG
+
+
+workflows:
+  robustar-workflow:
+    jobs:
+      - build-image

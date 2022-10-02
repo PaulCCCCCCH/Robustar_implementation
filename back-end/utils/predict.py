@@ -31,20 +31,23 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
         imgpath:    Path to the image to be predicted
         imgsize:    Resize (scale) the input image to imgsize*imgsize.
     """
-    image = load_image(imgpath)
-    image = apply_transforms(image,imgsize)
-    image = image.to(modelWrapper.device)
+    try:
+        image = load_image(imgpath)
+        image = apply_transforms(image,imgsize)
+        image = image.to(modelWrapper.device)
 
-    model = modelWrapper.model
+        model = modelWrapper.model
 
-    out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
+        out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
 
-    if argmax:
-        _, predict = torch.max(out_score, 1)
-        return int(predict)
+        if argmax:
+            _, predict = torch.max(out_score, 1)
+            return int(predict)
 
-    out_probs = torch.nn.functional.softmax(out_score, 1)
-    return out_probs
+        out_probs = torch.nn.functional.softmax(out_score, 1)
+        return out_probs
+    except Exception:
+        raise
 
 
 def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging=1):
