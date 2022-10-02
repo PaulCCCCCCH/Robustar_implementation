@@ -15,7 +15,7 @@
       >
         <v-row align="center" justify="center">
           <v-col cols="12" lg="12" align="center" justify="center" v-if="digest.length == 0">
-            <p style="color: gray">No task is running now.</p>
+            <p data-test="task-center-p-no-task" style="color: gray">No task is running now.</p>
           </v-col>
         </v-row>
         <!-- <v-row v-for="(item, index) in digest" align="center" justify="center" :key="item[0]"> -->

@@ -424,7 +424,7 @@ export default {
       this.isLoadingImages = true;
       try {
         const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
-        const list = res.data.data;
+        const list = res.data.data || [];
         this.$nextTick(() => {
           this.imageList = [];
           list.forEach((imagePath) => {
