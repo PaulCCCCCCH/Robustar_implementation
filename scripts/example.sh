@@ -13,7 +13,7 @@
 # Running on cpu (For windows users)
 ./robustar.sh \
 -m run \
--a 0.1_fix_nginx-config_25fb602 \
+-a 0.1_fixes_a3e3fe0 \
 -p 8080 \
 -t C:\\Robustar2\\dataset\\train \
 -e C:\\Robustar2\\dataset\\test \
