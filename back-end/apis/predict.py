@@ -1,6 +1,7 @@
 from flask import request
 
 from modules.visualize_module.visualize.visual import visualize
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
@@ -15,8 +16,8 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>/<path:image_path>')
-def predict(split, image_path):
+@app.route('/predict/<split>')
+def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
     ---
@@ -80,28 +81,39 @@ def predict(split, image_path):
               example: Success
     """
 
-    # e.g.  train/10, test/300
+    # get attributes
+    if split in ("train", "annotated"):
+        attribute = dataManager.trainset.classes
+    elif split in ("validation", "validation_correct", "validation_incorrect"):
+        attribute = dataManager.validationset.classes
+    elif split in ("test", "test_correct", "test_incorrect"):
+        attribute = dataManager.testset.classes
+    else:
+        return RResponse.fail("Split not supported")
+
+    # get output object
     visualize_root = dataManager.visualize_root
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
 
     if image_path in predictBuffer:
         output_object = predictBuffer[image_path]
     else:
-        output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
-
+        # get predict results
+        try:
+            output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
+        except Exception as e:
+            return RResponse.fail('Invalid image path {}'.format(image_path))
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
         image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
-
         model = modelWrapper.model
-
         output = visualize(model, image_path, dataManager.image_size, server.configs['device'])
         if len(output) != 4:
-            return RResponse.fail("Invalid number of predict visualize figures. Please check.")
+            return RResponse.fail("[Unexpected] Invalid number of predict visualize figures")
 
         predict_fig_routes = []
-
         for i, fig in enumerate(output):
             predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
             fig.savefig(predict_fig_route)
@@ -110,32 +122,15 @@ def predict(split, image_path):
         output_object = [output_array, predict_fig_routes]
         predictBuffer[image_path] = output_object
 
-    # get attributes
-    if split in ("train", 'annotated'):
-        attribute = dataManager.trainset.classes
-    elif split in ("validation", "validation_correct", "validation_incorrect"):
-        attribute = dataManager.validationset.classes
-    elif split in ("test", "test_correct", "test_incorrect"):
-        attribute = dataManager.testset.classes
-    else:
-        return RResponse.fail("Wrong split. Please check.")
-
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]
     # print(return_value)
 
-    # TODO: Design a good return format here!
     return RResponse.ok(return_value)
 
-    # except Exception as e:
-    #     print(e.args)
-    #     print(e)
-    #     # TODO: And design a good error return as well
-    #     return "0_0_0_0_0_0_0_0_0_0"
 
-
-@app.route('/influence/<split>/<path:image_path>')
-def get_influence(split, image_path):
+@app.route('/influence/<split>')
+def get_influence(split):
     """
      Gets the influence for an image specified by its id
     ---
@@ -168,6 +163,7 @@ def get_influence(split, image_path):
               example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
     if image_path in influence_dict:
         return RResponse.ok(influence_dict[image_path], 'Success')

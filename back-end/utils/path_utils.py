@@ -1,6 +1,7 @@
 from os.path import normpath, join
 import re
 
+
 def create_empty_paired_image(path):
     with open(path, 'wb') as f:
         pass
@@ -68,10 +69,15 @@ def get_paired_path(img_path, prev_root, paired_root):
     return re.sub(prev_root, paired_root, img_path)
 
 
-def to_unix(path):
-    return join('/', path.replace('\\', '/'))
+def to_unix(path: str):
+    pClean = path.replace('\\', '/')
+    return pClean if path.startswith('./') else join('/', pClean)
 
 
+def to_absolute(cwd: str, path: str):
+    if path.startswith('/'): return path
+    if path.startswith('./'): return join(cwd, path[2:])
+    return join(cwd, path)
 
 if __name__ == '__main__':
     assert replace_folder('/Robustar2/dataset/train', 'paired') == '/Robustar2/dataset/paired'
@@ -81,5 +87,6 @@ if __name__ == '__main__':
                            ) == '/Robustar2/dataset/paired/1/2134.jpg'
 
     print(split_path('/Robustar2/dataset/train/0/2134.jpg'))
-    assert split_path('/Robustar2/dataset/train/0/2134.jpg') == ('/Robustar2/dataset/train/0', '2134.jpg')
+    assert split_path('/Robustar2/dataset/train/0/2134.jpg') == (
+    '/Robustar2/dataset/train/0', '2134.jpg')
     print('passed')
