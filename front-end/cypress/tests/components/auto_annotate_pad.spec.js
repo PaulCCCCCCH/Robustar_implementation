@@ -1,12 +1,16 @@
 describe('Auto Annotate Pad', () => {
-  afterEach(() => {
+  after(() => {
     cy.visit('http://localhost:8080/#/image-list/annotated');
     cy.getBySel('image-list-btn-clear-annotated-imgs').click();
     cy.wait(500);
   });
 
   beforeEach(() => {
+    cy.visit('http://localhost:8080/#/image-list/annotated');
+    cy.getBySel('image-list-btn-clear-annotated-imgs').click();
+    cy.wait(500);
     cy.visit('http://localhost:8080/#/auto-annotate');
+    cy.wait(500);
   });
 
   it('Test Annotated Images url', () => {
