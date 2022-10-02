@@ -68,9 +68,6 @@ function SETUP {
 function RUN {
   docker run --name ${OPT_NAME} -it -d \
     -p 127.0.0.1:${OPT_PORT}:80 \
-    -p 127.0.0.1:6848:8000/tcp \
-    -p 127.0.0.1:6848:8000/udp \
-    -p 127.0.0.1:6006:6006 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
@@ -84,9 +81,6 @@ function RUN {
 function RUN_GPU {
   docker run --name ${OPT_NAME} -it -d \
     -p 127.0.0.1:${OPT_PORT}:80 \
-    -p 127.0.0.1:6848:8000/tcp \
-    -p 127.0.0.1:6848:8000/udp \
-    -p 127.0.0.1:6006:6006 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
