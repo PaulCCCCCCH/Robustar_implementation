@@ -17,12 +17,17 @@ module.exports = {
           '^/api/': '/',
         },
       },
-      '/soc': {
+      '/socket.io': {
         target: process.env.VUE_APP_BASE_URL,
         ws: true,
         changeOrigin: true,
+      },
+      '/tensorboard': {
+        target: process.env.VUE_APP_TENSORBOARD_URL,
+        ws: true,
+        changeOrigin: true,
         pathRewrite: {
-          '^/soc/': '/',
+          '^/tensorboard': '',
         },
       },
     },
