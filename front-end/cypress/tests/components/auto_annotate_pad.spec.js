@@ -14,13 +14,13 @@ describe('Auto Annotate Pad', () => {
   });
 
   it('Test Annotated Images url', () => {
-    cy.getBySel('auto-annotate-start-index').clear().type('1');
-    cy.getBySel('auto-annotate-end-index').clear().type('3');
+    cy.getBySel('auto-annotate-start-index').clear().type('21');
+    cy.getBySel('auto-annotate-end-index').clear().type('23');
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
 
     // This will wait for max 120 seconds until the task is finished
-    cy.get('task-panel-stop-task'); // Wait until task pops up
+    cy.wait(4000);
     cy.get('[data-test=task-center-p-no-task]', { timeout: 120 * 1000 });
 
     cy.contains('Inspect Data').click();
@@ -54,6 +54,7 @@ describe('Auto Annotate Pad', () => {
     cy.clickBySel('auto-annotate-pad-start-auto-annotation');
     cy.getBySel('task-panel-progress-linear').should('contain', '999');
     cy.clickBySel('task-panel-stop-task');
+    cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
   it('Test Input Big Integer', () => {
@@ -63,6 +64,7 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
     cy.getBySel('task-panel-progress-linear').should('contain', '9000');
     cy.clickBySel('task-panel-stop-task');
+    cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
   it('Test Input Floating Point Number', () => {

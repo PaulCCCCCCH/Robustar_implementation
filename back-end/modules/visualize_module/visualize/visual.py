@@ -18,6 +18,7 @@ def visualize(mymodel, imgpath, imgsize, device):
     _, predict = torch.max(modeloutput, 1)
     use_gpu = device != 'cpu'
     images = backprop.visualize(image, predict, guided=True, return_image=True, use_gpu=use_gpu)
+    backprop.unregister_hooks()
 
     return images
 
