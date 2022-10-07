@@ -87,6 +87,16 @@ class DockerController(QObject):
             f.write(json.dumps(config))
         configFile = os.path.join(os.getcwd(), fileName)
 
+        # Store the (container - config file) matching
+        if not os.path.exists('./config_record.json'):
+            matchDict = {}
+        else:
+            with open('./config_record.json', 'r') as f:
+                matchDict = json.load(f)
+        with open('./config_record.json', 'w') as f:
+            matchDict[self.model.profile['containerName']] = fileName
+            json.dump(matchDict, f)
+
         try:
             if 'cuda' in image and 'cuda' in self.model.device:
                 self.startNewCudaServer(image, configFile)
@@ -95,6 +105,12 @@ class DockerController(QObject):
             else:
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                                            "The image version doesn't match the device. Fail to create the container")
+                with open('./config_record.json', 'r') as f:
+                    matchDict = json.load(f)
+                with open('./config_record.json', 'w') as f:
+                    fileName = matchDict.pop(self.model.profile['containerName'])
+                    os.remove(fileName)
+                    json.dump(matchDict, f)
                 return
 
             self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Running {}'.format(self.model.tempVer))
@@ -115,6 +131,12 @@ class DockerController(QObject):
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                             'Unexpected error encountered. See more in <i>Details</i> page')
                 self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+                with open('./config_record.json', 'r') as f:
+                    matchDict = json.load(f)
+                with open('./config_record.json', 'w') as f:
+                    fileName = matchDict.pop(self.model.profile['containerName'])
+                    os.remove(fileName)
+                    json.dump(matchDict, f)
 
 
     def startNewCpuServer(self, image, configFile):
@@ -194,7 +216,7 @@ class DockerController(QObject):
             elif self.model.container.status == 'created':
                 self.model.container.start()
                 self.mainCtrl.updateSucView()
-                self.mainCtrl.removeItem(self.mainView.ui.exitedListWidget, self.model.tempName)
+                self.mainCtrl.removeItem(self.mainView.ui.createdListWidget, self.model.tempName)
 
                 self.printLog(self.model.container)
 
@@ -235,9 +257,9 @@ class DockerController(QObject):
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                                            'Illegal container status encountered')
         except docker.errors.APIError as apiError:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
-                                           'Unexpected error encountered. See more in <i>Details</i> page')
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                                       'Unexpected error encountered. See more in <i>Details</i> page')
+            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
     def deleteServer(self):
         if(self.getSelection()):
@@ -254,13 +276,19 @@ class DockerController(QObject):
                 elif (self.model.container.status == 'exited'):
                     self.mainCtrl.removeItem(self.mainView.ui.exitedListWidget, self.model.tempName)
 
+                with open('./config_record.json', 'r') as f:
+                    matchDict = json.load(f)
+                with open('./config_record.json', 'w') as f:
+                    fileName = matchDict.pop(self.model.tempName)
+                    os.remove(fileName)
+                    json.dump(matchDict, f)
             else:
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                                            'Illegal container status encountered')
         except docker.errors.APIError as apiError:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
-                                           'Unexpected error encountered. See more in <i>Details</i> page')
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                                       'Unexpected error encountered. See more in <i>Details</i> page')
+            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
     def refreshServers(self):
         for listWidget in self.mainView.listWidgets:
