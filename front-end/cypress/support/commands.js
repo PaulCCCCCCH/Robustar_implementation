@@ -33,10 +33,26 @@ Cypress.Commands.add('getBySel', (selector, ...args) => {
   return cy.get(`[data-test=${selector}]`, ...args);
 });
 
+Cypress.Commands.add('clickBySel', (selector, ...args) => {
+  cy.get(`[data-test=${selector}]`, ...args).click();
+  cy.wait(500);
+});
+
 Cypress.Commands.add('getBySelLike', (selector, ...args) => {
   return cy.get(`[data-test*=${selector}]`, ...args);
 });
 
 Cypress.Commands.add('checkSessionStorage', (key, val) => {
-  cy.window().its('sessionStorage').invoke('getItem', key).should('eq', val);
+  cy.window().its('sessionStorage').invoke({ timeout: 5000 }, 'getItem', key).should('eq', val);
+});
+
+Cypress.Commands.add('checkSessionStorageSubString', (key, val) => {
+  cy.window()
+    .its('sessionStorage')
+    .invoke({ timeout: 5000 }, 'getItem', key)
+    .should('contain', val);
+});
+
+Cypress.Commands.add('removeSessionStorage', (key) => {
+  cy.window().its('sessionStorage').invoke({ timeout: 5000 }, 'removeItem', key);
 });

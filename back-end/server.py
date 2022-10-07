@@ -1,15 +1,16 @@
-from torch._C import _valgrind_toggle_and_dump_stats
+from email.mime import base
 import torchvision.datasets as dset
 import json
-import os
 import os.path as osp
-from flask import Flask, render_template, redirect, send_from_directory, request, jsonify, Response
+import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.train import initialize_model
+from utils.path_utils import to_unix, to_absolute
 
-from influence import check_influence, load_influence, get_helpful_list, get_harmful_list, get_influence_list
+import argparse
+
 
 def precheck():
     def check_num_classes_consistency():
@@ -22,33 +23,34 @@ def precheck():
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []
-        if len(trainset.classes)!=classes_num:
+        if len(trainset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Training Set", len(trainset.classes))
             )
-        if len(testset.classes)!=classes_num:
+        if len(testset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Test Set", len(trainset.classes))
             )
-        if len(validationset.classes)!=classes_num:
+        if len(validationset.classes) != classes_num:
             errors.append(
                 error_template.format(classes_num, "Validation Set", len(trainset.classes))
             )
-        assert len(errors)==0, "\n".join(errors)
-    check_num_classes_consistency()
-    
+        assert len(errors) == 0, "\n".join(errors)
 
-if __name__ == "__main__":
-    baseDir = osp.join('/', 'Robustar2').replace('\\', '/')
-    datasetDir = osp.join(baseDir, 'dataset').replace('\\', '/')
-    ckptDir = osp.join(baseDir, 'checkpoints').replace('\\', '/')
+    check_num_classes_consistency()
+
+def start_server(basedir):
+    baseDir = to_unix(basedir)
+    datasetDir = to_unix(osp.join(baseDir, 'dataset'))
+    ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
+    dbPath = to_unix(osp.join(baseDir, 'data.db'))
 
     with open(osp.join(baseDir, 'configs.json')) as jsonfile:
         configs = json.load(jsonfile)
 
     class2labelPath = osp.join(baseDir, 'class2label.json')
     class2labelMapping = {}
-    if os.path.exists(class2labelPath):
+    if osp.exists(class2labelPath):
         try:
             with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
@@ -59,12 +61,12 @@ if __name__ == "__main__":
     else:
         print('Class to label file not found!')
 
-    # Create server 
+    # Create server
 
     # Set data manager
     server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
     dataManager = RDataManager(
-        baseDir, datasetDir, 
+        baseDir, datasetDir, dbPath,
         batch_size=configs['batch_size'], 
         shuffle=configs['shuffle'],
         num_workers=configs['num_workers'],
@@ -82,17 +84,34 @@ if __name__ == "__main__":
     # TODO: model_name and checkpoint hard-coded for now
     checkpoint_name = "u2net.pth"
     annotator = RAutoAnnotator(
-        configs['device'], 
-        checkpoint=osp.join(baseDir, checkpoint_name), 
+        configs['device'],
+        checkpoint=osp.join(baseDir, checkpoint_name),
         model_name="u2net"
-    ) 
+    )
     RServer.setAutoAnnotator(annotator)
 
     # register all api routes
-    import apis 
+    RServer.registerAPIs()
 
     # Check file state consistency
     precheck()
 
+def get_args():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--basedir', default="/Robustar2", help='path to base directory for data folder (default: /Robustar2)')
+
+    args = parser.parse_args()
+    return args
+
+
+if __name__ == "__main__":
+    args = get_args()
+
+    # Get basedir
+    basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
+    print("Current working directory is {}".format(os.getcwd()))
+    print("Absolute basedir is {}".format(basedir))
+    start_server(basedir)
+
     # Start server
-    server.run(port='8000', host='0.0.0.0', debug=False)
+    RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)

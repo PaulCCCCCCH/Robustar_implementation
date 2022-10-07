@@ -17,6 +17,7 @@ const whiteTheme = {
   'loadButton.color': '#222',
   'loadButton.fontFamily': "'Noto Sans', sans-serif",
   'loadButton.fontSize': '12px',
+  'loadButton.marginTop': '10px',
 
   // download button
   'downloadButton.backgroundColor': '#fdba3b',

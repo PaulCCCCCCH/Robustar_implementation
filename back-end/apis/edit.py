@@ -1,20 +1,19 @@
-import shutil
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
 import base64
-from utils.image_utils import get_train_from_annotated, get_annotated_from_train, imageSplitIdToPath, copyImage
 from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
-from utils.path_utils import get_paired_path
+from utils.path_utils import to_unix
 
 server = RServer.getServer()
-app = server.getFlaskApp()
+app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
-@app.route('/edit/<split>/<image_id>', methods=['POST'])
-def api_user_edit(split, image_id):
+@app.route('/edit/<split>', methods=['POST'])
+def api_user_edit(split):
     """
-    Edits the width and size of the image
+    Save user's edit for an image
     ---
     tags:
       - edit
@@ -28,9 +27,9 @@ def api_user_edit(split, image_id):
         description: "name of the split, valid values are 'train' or 'annotated'"
         required: true
         type: "string"
-      - name: "image_id"
+      - name: "path"
         in: "path"
-        description: "ID of the image"
+        description: "If `split` is 'train', then this is the path to the training image. If `split` is `annotated`, then it is the path to annotated image"
         required: true
         type: "integer"
       - in: "body"
@@ -50,14 +49,13 @@ def api_user_edit(split, image_id):
       200:
         description: edit success
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+
     # TODO: Maybe support editing other splits as well? Or not?
-    if split not in ['train', 'annotated']:
-        RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+    if split not in ['train', 'annotated', 'proposed']:
+        return RResponse.fail('Split {} not supported'.format(split))
 
-    if split == 'annotated':
-        image_id = get_train_from_annotated(image_id)
-        split = 'train'
-
+    path = to_unix(path)
     json_data = request.get_json()
     encoded_string = json_data['image'].split(',')[1]
     decoded = base64.b64decode(encoded_string)
@@ -65,13 +63,24 @@ def api_user_edit(split, image_id):
     h = int(json_data['image_height'])
     w = int(json_data['image_width'])
 
-    save_edit(split, image_id, decoded, h, w)
+    save_edit(split, path, decoded, h, w)
 
     return RResponse.ok("Success!")
 
 
-@app.route('/propose/<split>/<image_id>')
-def api_propose_edit(split, image_id):
+@app.route('/edit/<split>', methods=['DELETE'])
+def api_delete_edit(split):
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    dataManager.pairedset.remove_image(path)
+    return RResponse.ok("Success!")
+
+@app.route('/edit/clear', methods=['DELETE'])
+def api_clear_edit():
+    dataManager.pairedset.clear_images()
+    return RResponse.ok("Success!")
+
+@app.route('/propose/<split>')
+def api_propose_edit(split):
     """
     Get edited image proposed by auto annotator
 
@@ -87,19 +96,17 @@ def api_propose_edit(split, image_id):
         proposed image path that can be placed in <img> tag with proper 
         server url as prefix
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
-    proposed_image_id = ""
+    proposed_image_path = ""
     if split not in ['annotated', 'train']:
         print("Cannot propose edit to a wrong split")
-        return RResponse.ok(proposed_image_id)
+        return RResponse.ok(proposed_image_path)
 
-    if split == 'annotated':
-        split = 'train'
-        image_id = get_train_from_annotated(image_id)
+    path = to_unix(path)
+    proposed_image_path, _ = propose_edit(split, path)
 
-    proposed_image_id = propose_edit(split, image_id)
-
-    return RResponse.ok(proposed_image_id)
+    return RResponse.ok(proposed_image_path)
 
 
 @app.route('/auto-annotate/<split>', methods=['POST'])
@@ -108,20 +115,21 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
-
+        return RResponse.fail(
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
 
     json_data = request.get_json()
-    num_to_gen = int(json_data['num_to_gen'])
+
     try:
-      start_auto_annotate(split, num_to_gen)
+        start_idx_to_gen = int(json_data['start_idx_to_gen'])
+        end_idx_to_gen = int(json_data['end_idx_to_gen'])
+        start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
-      RResponse.fail('auto annotation failed')
+        return RResponse.fail('auto annotation failed')
 
     return RResponse.ok('success')
-      
 
-    
 
 if __name__ == '__main__':
     print(RServer)

@@ -1,21 +1,14 @@
-from numpy.lib.polynomial import roots
-import torchvision
-from matplotlib import pyplot as plt
 from flask import request
 
 from modules.visualize_module.visualize.visual import visualize
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
-from flask import jsonify
-from utils.image_utils import imageURLToPath
-from os import path as osp
-from utils.predict import convert_predict_to_array, CalcInfluenceThread
-from utils.image_utils import imageURLToPath
-import json
-from utils.predict import get_image_prediction
+from utils.path_utils import to_unix
+from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
@@ -23,24 +16,24 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>/<image_id>')
-def predict(split, image_id):
+@app.route('/predict/<split>')
+def predict(split):
     """
-    Gets the prediction path of the image specified by its id
+    Gets the prediction path of the image specified by its split and path
     ---
     tags:
       - predict
     parameters:
       - name: "split"
         in: "path"
-        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        description: "name of the split, valid values are 'train', 'test' or 'validation'"
         required: true
         type: "string"
-      - name: "image_id"
+      - name: "path"
         in: "path"
-        description: "the index of the image within the dataset"
+        description: "the path to the image to be predicted"
         required: true
-        type: "integer"
+        type: "string"
     responses:
       200:
         description: a list of [attribute, output_array, predict_fig_routes]
@@ -88,68 +81,58 @@ def predict(split, image_id):
               example: Success
     """
 
-    # e.g.  train/10, test/300
-    imageURL = "{}/{}".format(split, image_id)
-    visualize_root = dataManager.visualize_root
-
-    if imageURL in predictBuffer:
-        output_object = predictBuffer[imageURL]
-    else:
-        # get output array from prediction
-        datasetImgPath = imageURLToPath(imageURL)
-
-        # try:
-        imgPath = osp.join(server.baseDir, datasetImgPath).replace('\\', '/')
-
-        output = get_image_prediction(modelWrapper, imgPath, dataManager.image_size, argmax=False)
-
-        output_array = convert_predict_to_array(output.cpu().detach().numpy())
-
-        # get visualize images
-        image_name = imageURL.replace('.', '_').replace('/', '_').replace('\\', '_')
-
-        model = modelWrapper.model
-
-        output = visualize(model, imgPath, dataManager.image_size, server.configs['device'])
-        if len(output) != 4:
-            return RResponse.fail("Invalid number of predict visualize figures. Please check.")
-
-        predict_fig_routes = []
-
-        for i, fig in enumerate(output):
-            predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
-            fig.savefig(predict_fig_route)
-            predict_fig_routes.append(predict_fig_route)
-
-        predictBuffer[imageURL] = [output_array, predict_fig_routes]
-        output_object = [output_array, predict_fig_routes]
-
     # get attributes
-    if split in ("train", 'annotated'):
+    if split in ("train", "annotated"):
         attribute = dataManager.trainset.classes
     elif split in ("validation", "validation_correct", "validation_incorrect"):
         attribute = dataManager.validationset.classes
     elif split in ("test", "test_correct", "test_incorrect"):
         attribute = dataManager.testset.classes
     else:
-        RResponse.fail("Wrong split. Please check.")
+        return RResponse.fail("Split not supported")
+
+    # get output object
+    visualize_root = dataManager.visualize_root
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    image_path = to_unix(image_path)
+
+    if image_path in predictBuffer:
+        output_object = predictBuffer[image_path]
+    else:
+        # get predict results
+        try:
+            modelWrapper.lock.acquire()
+            output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
+        except Exception as e:
+            return RResponse.fail('Invalid image path {}'.format(image_path))
+        finally:
+            modelWrapper.lock.release()
+        output_array = convert_predict_to_array(output.cpu().detach().numpy())
+
+        # get visualize images
+        image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
+        output = visualize(modelWrapper, image_path, dataManager.image_size, server.configs['device'])
+        if len(output) != 4:
+            return RResponse.fail("[Unexpected] Invalid number of predict visualize figures")
+
+        predict_fig_routes = []
+        for i, fig in enumerate(output):
+            predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
+            fig.savefig(predict_fig_route)
+            predict_fig_routes.append(predict_fig_route)
+
+        output_object = [output_array, predict_fig_routes]
+        predictBuffer[image_path] = output_object
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]
     # print(return_value)
 
-    # TODO: Design a good return format here!
     return RResponse.ok(return_value)
 
-    # except Exception as e:
-    #     print(e.args)
-    #     print(e)
-    #     # TODO: And design a good error return as well
-    #     return "0_0_0_0_0_0_0_0_0_0"
 
-
-@app.route('/influence/<split>/<image_id>')
-def get_influence(split, image_id):
+@app.route('/influence/<split>')
+def get_influence(split):
     """
      Gets the influence for an image specified by its id
     ---
@@ -158,14 +141,14 @@ def get_influence(split, image_id):
     parameters:
       - name: "split"
         in: "path"
-        description: "name of the split, valid values are 'train', 'test' or 'dev'"
+        description: "name of the split, valid values are 'train', 'test' or 'validation'"
         required: true
         type: "string"
-      - name: "image_id"
+      - name: "image_path"
         in: "path"
-        description: "the index of the image within the dataset"
+        description: "the path to the image"
         required: true
-        type: "integer"
+        type: "string"
     responses:
       200:
         description: path of influence images, or influence not found or calculated
@@ -182,9 +165,10 @@ def get_influence(split, image_id):
               example: Image is not found or influence for that image is not calculated
     """
     influence_dict = dataManager.get_influence_dict()
-    target_img_path = imageURLToPath('{}/{}'.format(split, image_id))  
-    if target_img_path in influence_dict:
-        return RResponse.ok(influence_dict[target_img_path], 'Success')
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    image_path = to_unix(image_path)
+    if image_path in influence_dict:
+        return RResponse.ok(influence_dict[image_path], 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
 
 
@@ -209,7 +193,8 @@ def calculate_influence():
             configs:
               type: object
               example: {
-                test_sample_num: 2,
+                test_sample_start_idx: 2,
+                test_sample_end_idx: 5,
                 r_averaging: 10
               }
     responses:
@@ -232,7 +217,8 @@ def calculate_influence():
     calcInfluenceThread = CalcInfluenceThread(
         modelWrapper, 
         dataManager, 
-        test_sample_num=int(configs['test_sample_num']),
+        start_idx=int(configs['test_sample_start_idx']),
+        end_idx=int(configs['test_sample_end_idx']),
         r_averaging=int(configs['r_averaging'])
     )
     calcInfluenceThread.start()

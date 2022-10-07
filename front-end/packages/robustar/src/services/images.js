@@ -1,48 +1,36 @@
 import { getRequest } from './common';
+import { configs } from '../configs';
 
-/**
- * @param {string} split
- * @param {function} success success callback function
- * @param {function} fail fail callback function
- */
-export const APIGetSplitLength = (split, success, failed) => {
-  getRequest(`/image/${split}`, success, failed);
+export const APIGetImageList = async (split, start, num_per_page) => {
+  return getRequest(`/image/list/${split}/${start}/${num_per_page}`);
 };
 
 /**
  * @param {string} split
- * @param {function} success success callback function
- * @param {function} fail fail callback function
  */
-export const APIGetClassNames = (split, success, failed) => {
-  getRequest(`/image/class/${split}`, success, failed);
+export const APIGetSplitLength = async (split) => {
+  return getRequest(`/image/${split}`);
 };
 
 /**
- * @param {string} image_id
- * @param {function} success success callback function
- * @param {function} fail fail callback function
+ * @param {string} split
  */
-export const APIGetAnnotated = (image_id, success, failed) => {
-  getRequest(`/image/get-annotated/${image_id}`, success, failed);
+export const APIGetClassNames = async (split) => {
+  return getRequest(`/image/class/${split}`);
 };
 
 /**
- * FIXME: Just an example. Not currently used.
- * @param {string} dataset either 'train' or 'test'
- * @param {int} startFrom the id of the first image in the page
- * @param {function} success success callback function
- * @param {function} fail fail callback function
+ * @param {string} split
+ * @param {string} image_url
  */
-export const APIGetImagesInPage = (dataset, startFrom, success, failed) => {
-  getRequest(`/${dataset}/${startFrom}`, success, failed);
+export const APIGetAnnotated = async (split, image_url) => {
+  return getRequest(`/image/annotated/${split}?${configs.imagePathParamName}=${image_url}`);
 };
 
 /**
- * FIXME: Just an example. Not currently used.
- * @param {string} dataset either 'train' or 'test'
- * @param {int} imageId the id of the image to retrieve
+ * @param {string} split
+ * @param {string} image_url
  */
-export const APIGetImage = (dataset, imageId, success, failed) => {
-  getRequest(`/${dataset}/${imageId}`, success, failed);
+export const APIGetNextImage = async (split, image_url) => {
+  return getRequest(`/image/next/${split}?${configs.imagePathParamName}=${image_url}`);
 };

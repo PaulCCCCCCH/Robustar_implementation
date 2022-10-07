@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function getTorchCPU {
-    python3.7 -m pip install \
+    python3.9 -m pip install \
     torch==1.9.1 \
     torchvision==0.10.1 \
     torchattacks==3.1.0 \

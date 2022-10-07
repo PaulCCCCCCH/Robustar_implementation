@@ -145,6 +145,7 @@
 
 <script>
 import { APIStartTrain, APIStopTrain } from '@/services/train';
+import { configs } from '@/configs.js';
 export default {
   name: 'TrainPad',
   data() {
@@ -174,17 +175,17 @@ export default {
         model_name: 'my-test-model',
         // weight: "/Robustar2/checkpoint_images",
         weight: '',
-        train_path: '/Robustar2/dataset/train',
-        test_path: '/Robustar2/dataset/test',
+        train_path: `${configs.dataBaseDir}/dataset/train`,
+        test_path: `${configs.dataBaseDir}/dataset/test`,
         class_path: './model/cifar-class.txt',
         port: '8000',
-        save_dir: '/Robustar2/checkpoints',
+        save_dir: `${configs.dataBaseDir}/checkpoints`,
         use_paired_train: false,
         mixture: 'random_pure',
         user_edit_buffering: false,
 
         // Selection for the following not implemented
-        paired_data_path: '/Robustar2/dataset/paired',
+        paired_data_path: `${configs.dataBaseDir}/dataset/paired`,
         device: 'cuda',
         auto_save_model: true,
         save_every: 5,
@@ -201,38 +202,32 @@ export default {
     };
   },
   methods: {
-    trainingSuccess(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Training started successfully');
-      window.open('http://localhost:6006');
-    },
-    trainingFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Training failed');
-    },
-    startTraining() {
+    async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
-      APIStartTrain(
-        {
+      try {
+        const res = await APIStartTrain({
           configs: this.configs,
           info: 'placeholder',
-        },
-        this.trainingSuccess,
-        this.trainingFailed
-      );
+        });
+        console.log(res);
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Training started successfully');
+        window.open(configs.tensorboardUrl);
+      } catch (error) {
+        console.log(error);
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Training failed');
+      }
     },
-    stopSuccess(res) {
-      console.log(res);
-      alert('Successfully stop training');
-    },
-    stopFailed(res) {
-      console.log(res);
-      alert('Failed to stop training');
-    },
-    stopTraining() {
-      APIStopTrain(this.stopSuccess, this.stopFailed);
+    async stopTraining() {
+      try {
+        const res = await APIStopTrain();
+        console.log(res);
+        this.$root.alert('success', 'Successfully stop training');
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Failed to stop training');
+      }
     },
   },
 };

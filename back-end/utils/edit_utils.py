@@ -1,86 +1,99 @@
 from PIL import Image
 from objects.RServer import RServer
 from io import BytesIO
-from utils.image_utils import imageURLToPath, imageSplitIdToPath
-from utils.path_utils import get_paired_path
-import shutil
+from utils.image_utils import refreshImgData
 import threading
 from objects.RTask import RTask, TaskType
 import time
 
 server = RServer.getServer()
-app = server.getFlaskApp()
 dataManager = server.getDataManager()
 
-def update_annotated_list(image_id):
-    if int(image_id) in dataManager.annotatedInvBuffer:
-        save_idx = dataManager.annotatedInvBuffer[int(image_id)]
+
+def get_train_and_paired_path(split, image_path):
+    if split == 'train':
+        train_img_path = image_path
+        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
+    elif split == 'annotated':
+        paired_img_path = image_path
+        train_img_path = dataManager.pairedset.convert_paired_path_to_train(paired_img_path)
+    elif split == 'proposed':
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(image_path)
+        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
     else:
-        save_idx = len(dataManager.annotatedBuffer)
-        dataManager.annotatedInvBuffer[int(image_id)] = save_idx
-    dataManager.annotatedBuffer[save_idx] = int(image_id)
+        raise NotImplementedError('Getting train-paired pair only works for `train`, `annotated` and `proposed` splits')
 
-    dataManager.dump_annotated_list() # TODO: Change this to SQLite
+    return train_img_path, paired_img_path
 
 
-
-def save_edit(split, image_id, image_data, image_height, image_width):
+def save_edit(split, image_path, image_data, image_height, image_width):
     """
     Save edited image as png in paired data folder.
+    If 'split' is 'train', image_path should point to the training image.
+    If 'split' is 'annotated', image_path should point to the annotated image.
+    If 'split' is 'proposed', image_path should point to the proposed image.
     The file name will still end with `JPEG` extension.
     """
 
-    with Image.open(BytesIO(image_data)) as img:
-    
-        img_path = imageURLToPath('{}/{}'.format(split, image_id))
+    train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
 
-        paired_img_path = get_paired_path(img_path, dataManager.train_root, dataManager.paired_root)
+    with Image.open(BytesIO(image_data)) as img:
 
         to_save = img.resize((image_width, image_height))
         # to_save = to_save.convert('RGB') # image comming from canvas is RGBA
 
         to_save.save(paired_img_path, format='png')
 
-        update_annotated_list(image_id)
-
-
-
-def propose_edit(split, image_id):
-    """
-    propose an annotation for image with split and image_id 
-    split can only be 'train' and '
-    """
-
-    image_url = '{}/{}'.format(split, image_id)
-    proposedAnnotationBuffer = dataManager.proposedAnnotationBuffer
-
-    if int(image_id) not in proposedAnnotationBuffer:
-        image_path = imageURLToPath(image_url)
-        pil_image = server.getAutoAnnotator().annotate_single(image_path, dataManager.image_size)
-        # image_name = image_url.replace('.', '_').replace('/', '_').replace('\\', '_')
-        proposed_image_path = get_paired_path(image_path, dataManager.train_root, dataManager.proposed_annotation_root)
-        # proposed_image_path = osp.join(dataManager.proposed_annotation_root, image_name) + '.jpg'
-        pil_image.save(proposed_image_path, format='png')
-        proposedAnnotationBuffer.add(int(image_id))
-
-    proposed_image_id = int(image_id)
-    return proposed_image_id
+        dataManager.pairedset.save_annotated_image(train_img_path, image_data, image_height, image_width)
+        dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
+        refreshImgData(paired_img_path)
         
 
-def start_auto_annotate(split, num_to_gen):
-    num_to_gen = min(num_to_gen, len(dataManager.trainset))
 
-    def auto_annotate_thread(split, num_to_gen):
-        task = RTask(TaskType.AutoAnnotate, num_to_gen)
+def propose_edit(split, image_path, return_image=False):
+    """
+    Propose an annotation for an training image specified by image_path and return the path to the proposed image
+    """
+
+    if split == 'train':
+        train_img_path = image_path
+        proposed_path = dataManager.proposedset.convert_train_path_to_paired(train_img_path)
+    elif split == 'annotated':
+        proposed_path = image_path
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(proposed_path)
+    else:
+        raise NotImplementedError("We can only propose an edit for 'train' or `annotated` split")
+
+    if not dataManager.proposedset.is_annotated(train_img_path):
+        pil_image = server.getAutoAnnotator().annotate_single(train_img_path, dataManager.image_size)
+        dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
+    else:
+        if return_image:
+            pil_image = Image.open(proposed_path)
+        else:
+            pil_image = None
+
+    return proposed_path, pil_image
+        
+
+def start_auto_annotate(split, start: int, end: int):
+    if split != 'train': raise NotImplementedError('Auto annotation only supported for train split')
+
+    # -1 means annotate till the end
+    if end == -1: end = len(dataManager.trainset)
+    end = min(end, len(dataManager.trainset))
+
+    def auto_annotate_thread(split, start, end):
+        task = RTask(TaskType.AutoAnnotate, end - start)
         starttime = time.time()
 
-        for image_id in range(num_to_gen):
-            proposed_image_id = propose_edit(split, image_id)
-            proposed_image_path = imageSplitIdToPath('proposed', proposed_image_id)
-            paired_img_path = get_paired_path(proposed_image_path, dataManager.proposed_annotation_root, dataManager.paired_root)
-            print("Copying from {} to {}".format(proposed_image_path, paired_img_path))
-            shutil.copy(proposed_image_path, paired_img_path)
-            update_annotated_list(image_id)
+        for train_path in dataManager.trainset.get_image_list(start, end):
+            # Propose edit for this image
+            proposed_image_path, pil_image = propose_edit(split, train_path, True)
+
+            # Save the image to paired data folder
+            dataManager.pairedset.save_annotated_image(train_path, pil_image)
+
             task_update_res = task.update()
             if not task_update_res:
                 endtime = time.time()
@@ -90,6 +103,6 @@ def start_auto_annotate(split, num_to_gen):
         # task.exit()
 
 
-    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, num_to_gen))
-    test_thread.start()
+    auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
+    auto_annotate_thread.start()
 

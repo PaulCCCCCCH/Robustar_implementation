@@ -5,8 +5,6 @@ import modules.influence_module as ptif
 import threading
 from objects.RDataManager import RDataManager
 import pickle
-from utils.image_utils import imageURLToPath
-
 
 
 # Turns prediction results into array
@@ -33,23 +31,26 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
         imgpath:    Path to the image to be predicted
         imgsize:    Resize (scale) the input image to imgsize*imgsize.
     """
-    image = load_image(imgpath)
-    image = apply_transforms(image,imgsize)
-    image = image.to(modelWrapper.device)
+    try:
+        image = load_image(imgpath)
+        image = apply_transforms(image,imgsize)
+        image = image.to(modelWrapper.device)
 
-    model = modelWrapper.model
+        model = modelWrapper.model
 
-    out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
+        out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
 
-    if argmax:
-        _, predict = torch.max(out_score, 1)
-        return int(predict)
+        if argmax:
+            _, predict = torch.max(out_score, 1)
+            return int(predict)
 
-    out_probs = torch.nn.functional.softmax(out_score, 1)
-    return out_probs
+        out_probs = torch.nn.functional.softmax(out_score, 1)
+        return out_probs
+    except Exception:
+        raise
 
 
-def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, test_sample_num=1, r_averaging=1):
+def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging=1):
     """
     Calculate the influence function for the model.
 
@@ -67,9 +68,16 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, te
     trainloader = dataManager.trainloader
     testloader = dataManager.testloader
 
+    if end_idx == -1:
+        end_idx = len(testloader.dataset)
+    else:
+        end_idx = min(len(testloader.dataset), end_idx)
+
     config = ptif.get_default_config()
     config['gpu'] = -1 if modelWrapper.device == 'cpu' else 0
-    config['test_sample_num'] = test_sample_num
+    config['test_start_index'] = start_idx
+    config['test_end_index'] = end_idx 
+    config['test_sample_num'] = end_idx - start_idx
     config['r_averaging'] = r_averaging
     config['recursion_depth'] = int(len(trainloader.dataset) / config['r_averaging'])
     ptif.init_logging('logfile.log')
@@ -114,13 +122,14 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, te
 
     
 class CalcInfluenceThread(threading.Thread):
-    def __init__(self, modelWrapper:RModelWrapper, dataManager:RDataManager, test_sample_num, r_averaging):
+    def __init__(self, modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging):
         super(CalcInfluenceThread, self).__init__()
         self.modelWrapper = modelWrapper
         self.dataManager = dataManager
-        self.test_sample_num= test_sample_num
+        self.start_idx = start_idx
+        self.end_idx = end_idx
         self.r_averaging = r_averaging
         self.stop = True
 
     def run(self):
-        calculate_influence(self.modelWrapper, self.dataManager, self.test_sample_num, self.r_averaging)
+        calculate_influence(self.modelWrapper, self.dataManager, self.start_idx, self.end_idx, self.r_averaging)

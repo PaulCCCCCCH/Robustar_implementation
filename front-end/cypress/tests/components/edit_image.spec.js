@@ -1,53 +1,48 @@
 describe('Annotation Pad (Image Editor)', () => {
-  beforeEach(() => {});
-
-  it('Goes to the page for the target', () => {
-    cy.contains('Class Name').click({ force: true });
-    cy.contains('cat').click();
-    cy.contains('GOTO CLASS').click();
-
-    cy.getBySel('image-list-input-page-number').as('page-num').should('have.value', 125);
-    cy.getBySel('image-list-btn-next-page').as('next-page').click();
-    cy.get('@next-page').click();
-    cy.get('@page-num').should('have.value', 127);
-
-    cy.get('@page-num').type('9999');
-    cy.contains('GOTO PAGE').click();
-
-    cy.get('@page-num').should('have.value', 1124);
-
-    cy.getBySel('image-list-img-1').trigger('mouseenter');
-    cy.getBySel('image-list-btn-edit-image-1').click();
-    cy.checkSessionStorage('split', 'train');
-    // cy.checkSessionStorage('annotated', '0')
-
-    cy.wait(1000);
-    cy.get('.tui-image-editor-send-edit-btn').click();
-    cy.wait(1000);
-    cy.get('.tui-image-editor-send-edit-btn').click();
-    cy.wait(1000);
-    cy.get('.tui-image-editor-send-edit-btn').click();
-    cy.wait(1000);
-
+  before(() => {
     cy.visit('http://localhost:8080/#/image-list/annotated');
-    // cy.getBySel("image-list-div-all-imgs").children().should('have.length', 3)
+    cy.clickBySel('image-list-btn-clear-annotated-imgs');
+  });
 
-    cy.visit('http://localhost:8080/#/auto-annotate');
-    cy.getBySel('auto-annotate-input-sample-per-class').type('5');
-
-    cy.contains('START AUTO ANNOTATION').click();
-    cy.wait(10000);
-
-    cy.visit('http://localhost:8080/#/image-list/annotated');
-    cy.getBySel('image-list-div-all-imgs').children().should('have.length', 8);
-
+  beforeEach(() => {
     cy.visit('http://localhost:8080/#/image-list/train');
-    cy.getBySel('image-list-img-1').trigger('mouseenter');
-    cy.wait(1000);
-    cy.getBySel('image-list-btn-edit-image-1').click();
-    cy.wait(1000);
+  });
 
+  after(() => {
     cy.visit('http://localhost:8080/#/image-list/annotated');
-    cy.getBySel('image-list-div-all-imgs').children().should('have.length', 8);
+    cy.clickBySel('image-list-btn-clear-annotated-imgs');
+  });
+
+  it('Enables editing images in training set', () => {
+    cy.getBySel('image-list-img-0').trigger('mouseenter');
+    cy.getBySel('image-list-btn-edit-image-0').click();
+    cy.checkSessionStorage('split', 'train');
+
+    cy.wait(1000);
+    const strs = ['1.JPEG', '10.JPEG', '100.JPEG'];
+    Cypress._.times(3, (index) => {
+      cy.getBySel('tui-image-editor-send-edit-btn').click();
+      cy.wait(1000);
+      cy.get('.tui-image-editor').should('exist');
+      cy.checkSessionStorageSubString('image_url', strs[index]);
+    });
+  });
+
+  it('Enables editing images in annotated set', () => {
+    const strs = ['1.JPEG', '10.JPEG', '0.JPEG'];
+    cy.visit('image-list/annotated');
+
+    cy.getBySel('image-list-div-img').should('have.length', 3);
+
+    cy.getBySel('image-list-img-0').trigger('mouseenter');
+    cy.getBySel('image-list-btn-edit-image-0').click();
+    cy.checkSessionStorage('split', 'annotated');
+
+    cy.wait(1000);
+    Cypress._.times(3, (index) => {
+      cy.getBySel('tui-image-editor-send-edit-btn').click();
+      cy.wait(1000);
+      cy.checkSessionStorageSubString('image_url', strs[index]);
+    });
   });
 });

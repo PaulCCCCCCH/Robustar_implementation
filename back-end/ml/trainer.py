@@ -3,6 +3,9 @@ import time
 from torchattacks import PGD
 import os
 from objects.RTask import RTask, TaskType
+from objects.RServer import RServer
+import copy
+import multiprocessing
 
 
 class Trainer():
@@ -42,75 +45,74 @@ class Trainer():
     def _save_net(self, name):
         if not os.path.exists(self.save_dir):
             os.mkdir(self.save_dir)
-        torch.save(self.net.state_dict(), os.path.join(
-            self.save_dir, name))
-   
+        torch.save(self.net.state_dict(), os.path.join(self.save_dir, name))
 
-    def save_net_acc(self, acc):
-        name_str = os.path.join(self.save_dir, self.name + "_" + str(float(acc))[:4])
-        self._save_net(name_str)
+        # Save the model to the Rserver instance
+        dict_in_mem = copy.deepcopy(self.net.state_dict())
+
+        RServer.addModelWeight(name, dict_in_mem)
 
     def save_net_best(self):
-        name_str = os.path.join(self.save_dir, self.name + "_best")
+        name_str = self.name + "_best"
         self._save_net(name_str)
 
     def save_net_epoch(self, epoch):
-        name_str = os.path.join(self.save_dir, self.name + "_" + epoch)
+        name_str = self.name + "_" + str(epoch)
         self._save_net(name_str)
 
-    def get_correct(self):
-        correct_result = []
-        incorrect_result = []
-
-        loader = self.testloader
-        torch.no_grad()
-        total = 0
-        self.net.eval()
-
-        # trainer.testloader.dataset.dataset.samples[0]
-
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
-
-            _, predicted = torch.max(outputs.data, 1)
-
-            # 将正确和错误的文件名存起来
-            for i in range(len(labels)):
-                fileName = loader.dataset.dataset.samples[total+i]
-                if labels[i] == predicted[i]:
-                    correct_result.append(fileName)
-                else:
-                    incorrect_result.append(fileName)
-
-            total += labels.size(0)
-        torch.cuda.empty_cache()
-        return correct_result, incorrect_result
-
-    def get_test_result(self):
-        result = []
-
-        loader = self.testloader
-        torch.no_grad()
-        self.net.eval()
-
-        # trainer.testloader.dataset.dataset.samples[0]
-
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
-
-            _, predicted = torch.max(outputs.data, 1)
-
-            for i in range(len(labels)):
-                result.append([labels[i].cpu().numpy().tolist(), predicted[i].cpu(
-                ).numpy().tolist(), outputs.data[i].cpu().numpy().tolist()])
-        torch.cuda.empty_cache()
-        return result
+    # def get_correct(self):
+    #     correct_result = []
+    #     incorrect_result = []
+    #
+    #     loader = self.testloader
+    #     torch.no_grad()
+    #     total = 0
+    #     self.net.eval()
+    #
+    #     # trainer.testloader.dataset.dataset.samples[0]
+    #
+    #     # for data in loader:
+    #     for data in self.storeLoader(loader):
+    #         images, labels = data
+    #         images, labels = images.to(self.device), labels.to(self.device)
+    #         outputs = self.net(images)
+    #
+    #         _, predicted = torch.max(outputs.data, 1)
+    #
+    #         # 将正确和错误的文件名存起来
+    #         for i in range(len(labels)):
+    #             fileName = loader.dataset.dataset.samples[total+i]
+    #             if labels[i] == predicted[i]:
+    #                 correct_result.append(fileName)
+    #             else:
+    #                 incorrect_result.append(fileName)
+    #
+    #         total += labels.size(0)
+    #     torch.cuda.empty_cache()
+    #     return correct_result, incorrect_result
+    #
+    # def get_test_result(self):
+    #     result = []
+    #
+    #     loader = self.testloader
+    #     torch.no_grad()
+    #     self.net.eval()
+    #
+    #     # trainer.testloader.dataset.dataset.samples[0]
+    #
+    #     # for data in loader:
+    #     for data in self.storeLoader(loader):
+    #         images, labels = data
+    #         images, labels = images.to(self.device), labels.to(self.device)
+    #         outputs = self.net(images)
+    #
+    #         _, predicted = torch.max(outputs.data, 1)
+    #
+    #         for i in range(len(labels)):
+    #             result.append([labels[i].cpu().numpy().tolist(), predicted[i].cpu(
+    #             ).numpy().tolist(), outputs.data[i].cpu().numpy().tolist()])
+    #     torch.cuda.empty_cache()
+    #     return result
 
     def print_accuracy(self):
         loader = self.testloader
@@ -162,6 +164,7 @@ class Trainer():
 
         for epoch in range(epoch):
             print('\nEpoch: %d' % (epoch + 1))
+            sepoch = time.time()
             self.net.train()
             sum_loss = 0.0
             correct = 0.0
@@ -170,7 +173,6 @@ class Trainer():
             # storeLoader(loader)
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
-
                 if self.use_paired_train:
                     inputs, labels = data[0]
                     paired_inputs, _ = data[1]
@@ -233,14 +235,19 @@ class Trainer():
 
             # save_net(net)
             print("Epoch Finish!")
+            eepoch = time.time()
+            print("Time consumption in training epoch:{} {}".format(epoch + 1, eepoch - sepoch))
             torch.cuda.empty_cache()
+            sepoch = time.time()
             current_acc = self.print_accuracy()
+            eepoch = time.time()
+            print("Time consumption in testing epoch:{} {}".format(epoch + 1, eepoch - sepoch))
             torch.cuda.empty_cache()
             if current_acc > best:
                 if auto_save:
                     self.save_net_best()
                 best = current_acc
-            if epoch % self.save_every == 0:
+            if (epoch + 1) % self.save_every == 0:
                 self.save_net_epoch(epoch)
 
         endtime = time.time()
@@ -249,3 +256,12 @@ class Trainer():
 
         # task exit
         # task.exit()
+
+        # Stop updating the tensorboard
+        self.stop_tb_process()
+
+    def set_tb_process(self, process):
+        self.tb_process = process
+
+    def stop_tb_process(self):
+        self.tb_process.terminate()

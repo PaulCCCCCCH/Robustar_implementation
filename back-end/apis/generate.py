@@ -2,7 +2,7 @@ from objects.RServer import RServer
 from flask import request
 from utils.generate import generate_paired_data
 
-app = RServer.getServer().getFlaskApp()
+app = RServer.getServer().getFlaskBluePrint()
 
 
 # Not used by current version

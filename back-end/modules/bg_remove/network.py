@@ -51,7 +51,7 @@ class U2NET:
             print("Loading a U2NETp model (4 mb) with lower quality but fast processing.")
             net = self.U2NETP_DEEP()
         else:
-            raise NotImplemented("Unknown u2net model!")
+            raise NotImplementedError("Unknown u2net model!")
 
         try:
             if device == 'cpu':

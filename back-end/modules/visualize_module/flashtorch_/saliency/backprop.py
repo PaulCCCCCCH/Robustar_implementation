@@ -38,6 +38,7 @@ class Backprop:
         self.model = model
         self.model.eval()
         self.gradients = None
+        self.handles = []
         self._register_conv_hook()
 
     def calculate_gradients(self,
@@ -226,7 +227,7 @@ class Backprop:
         for _, module in self.model.named_modules():
             if isinstance(module, nn.modules.conv.Conv2d) and \
                     module.in_channels == 3:
-                module.register_backward_hook(_record_gradients)
+                self.handles.append(module.register_backward_hook(_record_gradients))
                 break
 
     def _register_relu_hooks(self):
@@ -241,5 +242,10 @@ class Backprop:
 
         for _, module in self.model.named_modules():
             if isinstance(module, nn.ReLU):
-                module.register_forward_hook(_record_output)
-                module.register_backward_hook(_clip_gradients)
+                self.handles.append(module.register_forward_hook(_record_output))
+                self.handles.append(module.register_backward_hook(_clip_gradients))
+
+    def unregister_hooks(self):
+        for handle in self.handles:
+            handle.remove()
+        self.handles = []

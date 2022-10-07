@@ -4,7 +4,7 @@
     <SideBar></SideBar>
 
     <v-main class="page-content">
-      <TaskPanel :style="{visibility:isTaskspanelHidden?'hidden':'visible'}"></TaskPanel>
+      <TaskPanel :style="{ visibility: isTaskspanelHidden ? 'hidden' : 'visible' }"></TaskPanel>
       <Notification></Notification>
       <router-view />
     </v-main>

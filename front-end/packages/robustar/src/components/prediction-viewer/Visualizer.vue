@@ -1,6 +1,12 @@
 <template>
-  <div class="d-flex" style="height: 100%; max-width: 40%">
-    <v-sheet v-if="isActive" class="pa-4" color="white" elevation="1">
+  <div style="height: 100%; max-width: 30vw">
+    <v-sheet
+      v-if="isActive"
+      class="pa-4 sticky-content overflow-auto"
+      color="white"
+      elevation="1"
+      data-test="visualizer-sheet"
+    >
       <v-btn class="mb-4" icon @click="closeVisualizer">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -8,47 +14,62 @@
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
         <v-expansion-panel @click="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-prediction">
             Model Prediction
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <div class="d-flex justify-center align-center">
-              <PredView :dataArr="predDataArr" :config="predViewConfig" />
+              <PredView
+                :dataArr="predDataArr"
+                :config="predViewConfig"
+                data-test="model-prediction-sheet"
+              />
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Model Focus -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-focus">
             Model Focus
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <FocusView :focusImgUrl="focusImgUrl" />
+            <FocusView :focusImgUrl="focusImgUrl" data-test="model-focus-panel" />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Influence -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="influence-images">
             Influence Images
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <InfluView :influImgUrl="influImgUrl" />
+            <InfluView :influImgUrl="influImgUrl" data-test="influence-images-panel" />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <!-- View Proposed Annotation -->
         <v-expansion-panel @change="toggle_panel">
-          <v-expansion-panel-header expand-icon="mdi-menu-down">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="proposed-annotation">
             Proposed annotation
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <ProposedEditView :proposedEditUrl="proposedEditUrl" />
+            <ProposedEditView
+              :proposedEditUrl="proposedEditUrl"
+              data-test="proposed-annotation-panel"
+            />
           </v-expansion-panel-content>
         </v-expansion-panel> </v-expansion-panels
     ></v-sheet>
-    <v-btn v-else class="float-button" color="secondary" outlined large @click="openVisualizer">
+    <v-btn
+      v-else
+      class="float-button"
+      color="secondary"
+      outlined
+      large
+      @click="openVisualizer"
+      data-test="visualizer-btn"
+    >
       <v-icon left>mdi-eye</v-icon>VISUALIZER
     </v-btn>
   </div>
@@ -74,7 +95,7 @@ export default {
       type: String,
       default: () => '',
     },
-    image_id: {
+    image_url: {
       type: String,
       default: () => '',
     },
@@ -102,7 +123,7 @@ export default {
     };
   },
   watch: {
-    image_id: function () {
+    image_url: function () {
       this.get_visualize_data();
     },
     split: function () {
@@ -114,37 +135,34 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
-    if (this.split === 'annotated') {
-      this.split = 'train';
-    }
     this.get_visualize_data();
   },
   methods: {
     get_visualize_data() {
-      if (this.split && this.image_id) {
-        this.view_prediction(this.split, this.image_id);
-        this.get_influence(this.split, this.image_id);
-        this.get_proposed_edit(this.split, this.image_id);
+      if (this.split && this.image_url) {
+        this.view_prediction(this.split, this.image_url);
+        this.get_influence(this.split, this.image_url);
+        this.get_proposed_edit(this.split, this.image_url);
       }
     },
-    get_proposed_edit(split, image_id) {
-      const success = (response) => {
-        if (response.data.code == -1) {
+    async get_proposed_edit(split, image_url) {
+      try {
+        const res = await APIGetProposedEdit(split, image_url);
+        if (res.data.code === -1) {
           this.proposedEditUrl = '';
           return;
         }
-        const proposedId = response.data.data;
-        this.proposedEditUrl = `${configs.imageServerUrl}/proposed/${proposedId}`;
-      };
-      const failed = (err) => {
-        console.log(err);
-      };
-      APIGetProposedEdit(split, image_id, success, failed);
+        const proposedPath = res.data.data;
+        this.proposedEditUrl = `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${proposedPath}`;
+      } catch (error) {
+        console.log(error);
+      }
     },
-    view_prediction(split, image_id) {
-      const success = (response) => {
+    async view_prediction(split, image_url) {
+      try {
+        const res = await APIPredict(split, image_url);
         let cap = 10;
-        let responseData = response.data.data;
+        let responseData = res.data.data;
         let temp_buffer = responseData[0].map((e, i) => {
           return [e, responseData[1][i]];
         });
@@ -162,39 +180,36 @@ export default {
         ];
         this.focusImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          this.focusImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
+          this.focusImgUrl.push(
+            `${configs.serverUrl}/visualize?${configs.imagePathParamName}=${responseData[2][i]}`
+          );
         }
-      };
-      const failed = (err) => {
-        console.log(err);
-        alert('Server error. Check console.');
-      };
-      APIPredict(split, image_id, success, failed);
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Server error. Check console.');
+      }
     },
 
-    get_influence(split, imageId) {
-      const success = (response) => {
+    async get_influence(split, image_url) {
+      try {
+        const res = await APIGetInfluenceImages(split, image_url);
         // If influence not predicted:
-        if (response.data.code == -1) {
+        if (res.data.code == -1) {
           this.influImgUrl = [];
           return;
         }
-        console.log(response);
-
-        const responseData = response.data.data;
+        const responseData = res.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, image_url]
           const url = responseData[i][1];
-          this.influImgUrl.push(`${configs.imageServerUrl}/${url}`);
+          this.influImgUrl.push(
+            `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`
+          );
         }
-      };
-
-      const failed = (err) => {
-        console.log(err);
-      };
-
-      APIGetInfluenceImages(split, imageId, success, failed);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     toggle_panel() {
@@ -225,5 +240,13 @@ export default {
 .float-button:hover {
   transform: translate(0, -50%);
   transition: 0.3s;
+}
+
+.sticky-content {
+  position: sticky;
+  top: 65px;
+  height: 94vh;
+  z-index: 9;
+  background-color: white;
 }
 </style>
