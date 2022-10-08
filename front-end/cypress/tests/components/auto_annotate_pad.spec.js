@@ -20,8 +20,8 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
 
     // This will wait for max 120 seconds until the task is finished
-    cy.wait(4000);
-    cy.get('[data-test=task-center-p-no-task]', { timeout: 120 * 1000 });
+    cy.get('[data-test=task-panel-task-done]', { timeout: 120 * 1000 }).click();
+    cy.get('[data-test=task-center-p-no-task]');
 
     cy.contains('Inspect Data').click();
     cy.contains('Annotated Data').click();

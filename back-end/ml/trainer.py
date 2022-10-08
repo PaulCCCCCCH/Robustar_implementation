@@ -255,7 +255,7 @@ class Trainer():
 
 
         # task exit
-        task.exit()
+        # task.exit()
 
         # Stop updating the tensorboard
         self.stop_tb_process()

@@ -21,7 +21,20 @@
         <!-- <v-row v-for="(item, index) in digest" align="center" justify="center" :key="item[0]"> -->
         <v-row v-for="(item, index) in digest" align="center" justify="center" :key="index">
           <v-col cols="12" lg="1" align="center" justify="center" data-test="task-panel-item-name">
-            <v-btn color="red" icon @click="stopTask(item[4])" data-test="task-panel-stop-task"
+            <v-btn
+              v-if="item[5]"
+              color="green"
+              icon
+              @click="stopTask(item[4])"
+              data-test="task-panel-task-done"
+              ><v-icon>mdi-checkbox-marked</v-icon></v-btn
+            >
+            <v-btn
+              v-else
+              color="red"
+              icon
+              @click="stopTask(item[4])"
+              data-test="task-panel-stop-task"
               ><v-icon>mdi-minus-box</v-icon></v-btn
             >
           </v-col>
