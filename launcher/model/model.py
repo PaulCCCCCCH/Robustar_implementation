@@ -4,9 +4,7 @@ class Model(QObject):
     # Custom signals
     containerNameChanged = Signal(str)
     imageVersionChanged = Signal(str)
-    websitePortChanged = Signal(str)
-    backendPortChanged = Signal(str)
-    tensorboardPortChanged = Signal(str)
+    portChanged = Signal(str)
     trainPathChanged = Signal(str)
     testPathChanged = Signal(str)
     checkPointPathChanged = Signal(str)
@@ -32,9 +30,7 @@ class Model(QObject):
         self._profile = {
             'containerName': 'robustar',
             'imageVersion': 'cpu-0.0.1-beta',
-            'websitePort': '8000',
-            'backendPort': '6848',
-            'tensorboardPort': '6006',
+            'port': '8000',
             'trainPath': '',
             'testPath': '',
             'checkPointPath': '',
@@ -64,7 +60,7 @@ class Model(QObject):
         self.tempVer = ''
 
         # Website port of the container to be operated on
-        self.tempWPort = ''
+        self.tempPort = ''
 
         # Boolean to record if the instruction is made on createTab
         self.madeOnCreateTab = False
@@ -73,9 +69,7 @@ class Model(QObject):
         # Match the corresponding signals to slots in controllers
         self.containerNameChanged.connect(self.ctrl.setVContainerName)
         self.imageVersionChanged.connect(self.ctrl.setVImageVersion)
-        self.websitePortChanged.connect(self.ctrl.setVWebsitePort)
-        self.backendPortChanged.connect(self.ctrl.setVBackendPort)
-        self.tensorboardPortChanged.connect(self.ctrl.setVTensorboardPort)
+        self.portChanged.connect(self.ctrl.setVPort)
         self.trainPathChanged.connect(self.ctrl.setVTrainPath)
         self.testPathChanged.connect(self.ctrl.setVTestPath)
         self.checkPointPathChanged.connect(self.ctrl.setVCheckPointPath)
@@ -110,31 +104,13 @@ class Model(QObject):
         self.imageVersionChanged.emit(val)
 
     @property
-    def websitePort(self):
-        return self._profile['websitePort']
+    def port(self):
+        return self._profile['port']
 
-    @websitePort.setter
-    def websitePort(self, val):
-        self._profile['websitePort'] = val
-        self.websitePortChanged.emit(val)
-
-    @property
-    def backendPort(self):
-        return self._profile['backendPort']
-
-    @backendPort.setter
-    def backendPort(self, val):
-        self._profile['backendPort'] = val
-        self.backendPortChanged.emit(val)
-
-    @property
-    def tensorboardPort(self):
-        return self._profile['tensorboardPort']
-
-    @tensorboardPort.setter
-    def tensorboardPort(self, val):
-        self._profile['tensorboardPort'] = val
-        self.tensorboardPortChanged.emit(val)
+    @port.setter
+    def port(self, val):
+        self._profile['port'] = val
+        self.portChanged.emit(val)
 
     @property
     def trainPath(self):
@@ -270,9 +246,7 @@ class Model(QObject):
     def profile(self, val):
         self.containerName = val['containerName']
         self.imageVersion = val['imageVersion']
-        self.websitePort = val['websitePort']
-        self.backendPort = val['backendPort']
-        self.tensorboardPort = val['tensorboardPort']
+        self.port = val['port']
         self.trainPath = val['trainPath']
         self.testPath = val['testPath']
         self.checkPointPath = val['checkPointPath']

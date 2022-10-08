@@ -25,7 +25,7 @@ class DockerController(QObject):
             self.model.tempName = self.model.profile['containerName']
             if(forStart == True):
                 self.model.tempVer = self.model.profile['imageVersion']
-                self.model.tempWPort = self.model.profile['websitePort']
+                self.model.tempPort = self.model.profile['port']
             return self.getContainerByName(self.model.tempName, forStart=forStart)
         else:
             self.model.madeOnCreateTab = False
@@ -146,7 +146,7 @@ class DockerController(QObject):
             name=self.model.profile['containerName'],
             ports={
                 '80/tcp': (
-                    '127.0.0.1', int(self.model.profile['websitePort'])),
+                    '127.0.0.1', int(self.model.profile['port'])),
                 '8000/tcp': ('127.0.0.1', 6848),
                 '6006/tcp': ('127.0.0.1', 6006),
             },
@@ -176,7 +176,7 @@ class DockerController(QObject):
             name=self.model.profile['containerName'],
             ports={
                 '80/tcp': (
-                    '127.0.0.1', int(self.model.profile['websitePort'])),
+                    '127.0.0.1', int(self.model.profile['port'])),
                 '8000/tcp': ('127.0.0.1', 6848),
                 '6006/tcp': ('127.0.0.1', 6006),
             },

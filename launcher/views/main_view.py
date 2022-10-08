@@ -13,9 +13,7 @@ class MainView(QWidget):
         # Match the corresponding signals to slots in controllers
         self.ui.nameInput.textEdited.connect(self.ctrl.setMContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.ctrl.setMImageVersion)
-        self.ui.websitePortInput.textEdited.connect(self.ctrl.setMWebsitePort)
-        self.ui.backendPortInput.textEdited.connect(self.ctrl.setMBackendPort)
-        self.ui.tensorboardPortInput.textEdited.connect(self.ctrl.setMTensorboardPort)
+        self.ui.portInput.textEdited.connect(self.ctrl.setMPort)
         self.ui.trainPathButton.clicked.connect(self.ctrl.setMTrainPath)
         self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
         self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)

@@ -39,8 +39,8 @@ class MainController(QObject):
     def setMImageVersion(self):
         self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
 
-    def setMWebsitePort(self):
-        self.model.websitePort = self.mainView.ui.websitePortInput.text()
+    def setMPort(self):
+        self.model.port = self.mainView.ui.portInput.text()
 
     def setMBackendPort(self):
         self.model.backendPort = self.mainView.ui.backendPortInput.text()
@@ -156,8 +156,8 @@ class MainController(QObject):
     def setVImageVersion(self, val):
         self.mainView.ui.versionComboBox.setCurrentText(val)
 
-    def setVWebsitePort(self, val):
-        self.mainView.ui.websitePortInput.setText(val)
+    def setVPort(self, val):
+        self.mainView.ui.portInput.setText(val)
 
     def setVBackendPort(self, val):
         self.mainView.ui.backendPortInput.setText(val)
@@ -261,7 +261,7 @@ class MainController(QObject):
     def updateSucView(self):
         self.printMessage(self.mainView.ui.promptBrowser,
                                     '{} is available at http://localhost:{}'.format(self.model.tempName,
-                                                                                    self.model.tempWPort))
+                                                                                    self.model.tempPort))
         self.addItem(self.mainView.ui.runningListWidget, self.model.tempName)
 
 
