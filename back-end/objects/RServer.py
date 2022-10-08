@@ -1,7 +1,6 @@
 from .RDataManager import RDataManager
 from flask import Flask, Blueprint
 from flasgger import Swagger
-import os.path as osp
 from flask_socketio import SocketIO
 
 

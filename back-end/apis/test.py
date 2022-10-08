@@ -48,6 +48,8 @@ def start_testing():
 
     json_data = request.get_json()
     split = json_data['split']
+    if (split not in ['validation', 'test']):
+        return RResponse.fail("Wrong split chosen for test", -1)
     # print(split)
 
     test_thread = start_test(split)
