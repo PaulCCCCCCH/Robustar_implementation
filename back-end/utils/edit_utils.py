@@ -82,6 +82,7 @@ def start_auto_annotate(split, start: int, end: int):
     # -1 means annotate till the end
     if end == -1: end = len(dataManager.trainset)
     end = min(end, len(dataManager.trainset))
+    if start == end: return
 
     def auto_annotate_thread(split, start, end):
         task = RTask(TaskType.AutoAnnotate, end - start)

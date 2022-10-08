@@ -122,11 +122,14 @@ def api_auto_annotate(split):
     json_data = request.get_json()
 
     try:
+        if (not str(json_data['start_idx_to_gen']).isnumeric()) \
+          or (not str(json_data['end_idx_to_gen']).isnumeric()): 
+            raise Exception("Bad input indices")
         start_idx_to_gen = int(json_data['start_idx_to_gen'])
         end_idx_to_gen = int(json_data['end_idx_to_gen'])
         start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
-        return RResponse.fail('auto annotation failed')
+        return RResponse.fail('Auto annotation failed: ' + str(e))
 
     return RResponse.ok('success')
 
