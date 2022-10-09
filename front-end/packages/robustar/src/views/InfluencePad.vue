@@ -41,7 +41,6 @@
           hint="Number of iterations of which to take the avg.
             of the h_estimate calculation; recursion_depth = len(train_data) / r."
           required
-          @blur="r_averaging_updated"
         ></v-text-field>
 
         <v-divider class="mt-4 mb-8"></v-divider>
@@ -57,7 +56,6 @@
 
 <script>
 import { APICalculateInfluence } from '@/services/predict';
-import { configs } from '@/configs.js';
 export default {
   name: 'InfluencePad',
   data() {
@@ -80,7 +78,6 @@ export default {
         test_sample_start_idx: 0,
         test_sample_end_idx: 9,
         r_averaging: 1,
-        is_batch: true,
       },
     };
   },
@@ -95,37 +92,25 @@ export default {
       }
     });
   },
-  mounted() {
-    this.configs.r_averaging = sessionStorage.getItem('r_averaging') || configs.defaultRAveraging;
-  },
   methods: {
-    r_averaging_updated() {
-      sessionStorage.setItem('r_averaging', this.configs.r_averaging) 
-    },
-    start_calculation() {
+    async start_calculation() {
       if (!this.$refs.form.validate()) {
         return;
       }
       this.$root.startProcessing('The influence is being calculated. Please wait...');
-      const success = (response) => {
-        // TODO: Error handling according to the code returned from the server
-        console.log(response);
+      try {
+        const res = await APICalculateInfluence({
+          configs: this.configs,
+        });
+        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Influence calculation succeeded');
-      };
-      const failed = (err) => {
-        console.log(err);
+      } catch (error) {
+        console.log(error);
         alert('Server error. Check console.');
         this.$root.finishProcessing();
         this.$root.alert('error', 'Influence calculation failed');
-      };
-      APICalculateInfluence(
-        {
-          configs: this.configs,
-        },
-        success,
-        failed
-      );
+      }
     },
   },
 };

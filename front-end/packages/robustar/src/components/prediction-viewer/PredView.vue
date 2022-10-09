@@ -39,7 +39,7 @@
             'px) translateX(-50%)',
         }"
       >
-        <ul>
+        <ul data-test="table">
           <li v-for="(item, index) in dataArr[1]" :key="index">
             <div
               :style="{
@@ -55,6 +55,7 @@
               {{ dataArr[0][index] }}
             </div>
             <div
+              :data-test="`item-${index}`"
               class="box"
               :title="item"
               :class="item >= 0 ? 'box-pos' : 'box-neg'"

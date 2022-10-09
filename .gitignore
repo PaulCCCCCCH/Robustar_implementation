@@ -32,3 +32,5 @@ launcher/build/*
 *.sln
 *.sw?
 *.pyc
+
+docker-test/test-data

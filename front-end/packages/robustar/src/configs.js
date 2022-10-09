@@ -3,6 +3,6 @@ export const configs = {
   serverUrl: `${process.env.VUE_APP_BASE_URL}`,
   imageServerUrl: `${process.env.VUE_APP_BASE_URL}/image`,
   imagePathServerUrl: `${process.env.VUE_APP_BASE_URL}/dataset`,
-
-  defaultRAveraging: 1,
+  dataBaseDir: '/Robustar2',
+  imagePathParamName: 'image_url',
 };

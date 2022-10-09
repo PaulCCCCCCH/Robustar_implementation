@@ -1,6 +1,10 @@
 from os.path import normpath
+import os.path as osp
 from objects.RServer import RServer
-from utils.edit_utils import get_train_and_paired_path
+from utils.path_utils import to_unix
+import base64
+import mimetypes
+
 
 dataManager = RServer.getDataManager()
 
@@ -14,6 +18,10 @@ proposedset = dataManager.proposedset
 
 datasetFileBuffer = dataManager.datasetFileBuffer
 
+datasetFileQueue = dataManager.datasetFileQueue
+datasetFileBuffer = dataManager.datasetFileBuffer
+datasetFileQueueLen = dataManager.datasetFileQueueLen
+
 
 def getImagePath(split, start=None, end=None):
     """
@@ -25,9 +33,6 @@ def getImagePath(split, start=None, end=None):
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
 
-    # # If already buffered, just return
-    # if image_url in datasetFileBuffer:
-    #     return datasetFileBuffer[image_url]
     if split == 'validation_correct':
         return dataManager.validationset.get_record(correct=True, start=start, end=end)
     if split == 'validation_incorrect':
@@ -80,6 +85,33 @@ def getClassStart(split):
         class_starts[class_ls[i]] = num
 
     return class_starts
+
+
+def getImgData(dataset_img_path):
+    normal_path = to_unix(dataset_img_path)
+
+    if osp.exists(normal_path):
+        if normal_path not in datasetFileBuffer:
+            refreshImgData(normal_path)
+        image_data = datasetFileBuffer[normal_path]
+        return image_data
+    else:
+        raise Exception
+
+
+def refreshImgData(dataset_img_path):
+    normal_path = to_unix(dataset_img_path)
+    with open(normal_path, "rb") as image_file:
+        image_base64 = base64.b64encode(image_file.read()).decode()
+    image_mime = mimetypes.guess_type(normal_path)[0]
+
+    image_data = 'data:' + image_mime + ";base64," + image_base64
+
+    datasetFileQueue.append(normal_path)
+    if len(datasetFileQueue) > datasetFileQueueLen:
+        temp_path = datasetFileQueue.popleft()
+        del datasetFileBuffer[temp_path]
+    datasetFileBuffer[normal_path] = image_data
 
 
 def binarySearchLeftBorder(ls, target: int):

@@ -1,3 +1,4 @@
+import collections
 from genericpath import exists
 import imp
 import pickle
@@ -9,7 +10,6 @@ from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
 from .RImageFolder import RImageFolder, RAnnotationFolder, REvalImageFolder, RTrainImageFolder
-from .RBuffer import RInfluenceBuffer
 from PIL import Image
 import torchvision.transforms.functional as transF
 
@@ -39,8 +39,22 @@ class RDataManager:
         self._init_transforms()
         self._init_data_records()
 
-    
-    def get_influence_buffer(self) -> RInfluenceBuffer:
+
+    def reload_influence_dict(self):
+        if osp.exists(self.influence_file_path):
+            print("Loading influence dictionary!")
+            with open(self.influence_file_path, 'rb') as f:
+                try:
+                    # TODO: Check image_url -> image_path consistency here!
+                    self.influenceBuffer = pickle.load(f)
+                except Exception as e:
+                    print("Influence function file not read because it is contaminated. \
+                    Please delete it manually and start the server again!")
+
+        else:
+            print("No influence dictionary found!")
+
+    def get_influence_dict(self):
         return self.influenceBuffer
 
     def _init_transforms(self):
@@ -62,19 +76,19 @@ class RDataManager:
             print("DB already existed. Skipping initialization.")
             # TODO: May need to check for concurrency issues.
             self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
-            self.db_cursor = self.db_conn.cursor() 
+            self.db_cursor = self.db_conn.cursor()
             return
 
         print("DB file not found. Initializing db...")
         from utils.db import get_init_schema_str
         self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
-        self.db_cursor = self.db_conn.cursor() 
+        self.db_cursor = self.db_conn.cursor()
         self.db_cursor.executescript(get_init_schema_str())
 
         # Iterate through folders to construct database
 
         self.db_conn.commit()
-        
+
 
     def _init_paths(self):
         self.test_root = to_unix(osp.join(self.data_root, "test"))
@@ -103,21 +117,25 @@ class RDataManager:
 
         self._init_folders()
 
+        self.datasetFileQueue = collections.deque()
+        self.datasetFileQueueLen = 1000
         self.datasetFileBuffer = {}
+
         self.predictBuffer = {}
-        self.influenceBuffer = RInfluenceBuffer(self.db_conn)
+        self.influenceBuffer = {}
 
         self.proposedAnnotationBuffer = set() # saves (train image id)
 
-        self.proposedset: RAnnotationFolder = RAnnotationFolder(self.proposed_annotation_root, self.train_root, 
-                    split='proposed', db_conn=self.db_conn, transform=self.transforms) 
+        self.proposedset: RAnnotationFolder = RAnnotationFolder(self.proposed_annotation_root, self.train_root,
+                    split='proposed', db_conn=self.db_conn, transform=self.transforms)
         ## TODO: Commented this line out for now, because if the user changed the training set, 
         ## The cache will be wrong, and the user has to manually delete the annotated folder, which
         ## is not nice. Add this back when we have the option to quickly clean all cache folders.
         # self.get_proposed_list()
 
+        self.reload_influence_dict()
         # self.pairedset = torchvision.datasets.ImageFolder(self.paired_root, transform=self.transforms)
-        self.pairedset: RAnnotationFolder = RAnnotationFolder(self.paired_root, self.train_root, 
+        self.pairedset: RAnnotationFolder = RAnnotationFolder(self.paired_root, self.train_root,
                     split='annotated', db_conn=self.db_conn, transform=self.transforms)
         # self.pairedloader = torch.utils.data.DataLoader(
             # self.pairedloader, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -139,7 +157,7 @@ class RDataManager:
             self._init_paired_folder()
         if not osp.exists(self.proposed_annotation_root) or not os.listdir(self.proposed_annotation_root):
             self._init_proposed_folder()
-            
+
     def _init_paired_folder(self):
         # Initializes paired folder. Ignores files that already exists
         self._init_mirror_dir(self.train_root, self.trainset, self.paired_root)

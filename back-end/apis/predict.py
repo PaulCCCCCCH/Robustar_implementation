@@ -1,22 +1,23 @@
 from flask import request
-import threading
+
 from modules.visualize_module.visualize.visual import visualize
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from utils.path_utils import to_unix
-from utils.predict import convert_predict_to_array, get_image_prediction, calculate_influence
+from utils.predict import convert_predict_to_array, CalcInfluenceThread, get_image_prediction
 
 app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
-dataManager = server.getDataManager()
+dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>/<path:image_path>')
-def predict(split, image_path):
+@app.route('/predict/<split>')
+def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
     ---
@@ -82,6 +83,7 @@ def predict(split, image_path):
 
     # e.g.  train/10, test/300
     visualize_root = dataManager.visualize_root
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
 
     if image_path in predictBuffer:
@@ -134,8 +136,8 @@ def predict(split, image_path):
     #     return "0_0_0_0_0_0_0_0_0_0"
 
 
-@app.route('/influence/list/<split>/<path:image_path>')
-def get_influence_list(split, image_path):
+@app.route('/influence/<split>')
+def get_influence(split):
     """
      Gets the influence for an image specified by its id
     ---
@@ -167,15 +169,16 @@ def get_influence_list(split, image_path):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
-    influence_dict = dataManager.get_influence_buffer()
+    influence_dict = dataManager.get_influence_dict()
+    image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
-    if influence_dict.contains(image_path):
-        return RResponse.ok(influence_dict.get(image_path), 'Success')
+    if image_path in influence_dict:
+        return RResponse.ok(influence_dict[image_path], 'Success')
     return RResponse.fail('Image is not found or influence for that image is not calculated')
 
 
 @app.route('/influence', methods=['POST'])
-def api_calculate_influence():
+def calculate_influence():
     """
     Calculates the influence for the test set
     ---
@@ -198,7 +201,6 @@ def api_calculate_influence():
                 test_sample_start_idx: 2,
                 test_sample_end_idx: 5,
                 r_averaging: 10
-                is_batch: true
               }
     responses:
       200:
@@ -217,25 +219,12 @@ def api_calculate_influence():
     """
     json_data = request.get_json()
     configs = json_data['configs']
-
-    if 'is_batch' in configs and configs['is_batch']:
-      start = int(configs['test_sample_start_idx'])
-      end = int(configs['test_sample_end_idx'])
-
-    else:
-      start = dataManager.testset.get_idx_from_path(configs['instance_path'])
-      end = start + 1
-
-
-    print("Calculating influence from {} to {}".format(start, end))
-    calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
-      modelWrapper, 
-      dataManager,  
-      start,
-      end,
-      int(configs['r_averaging']),
-    ))
-
+    calcInfluenceThread = CalcInfluenceThread(
+        modelWrapper, 
+        dataManager, 
+        start_idx=int(configs['test_sample_start_idx']),
+        end_idx=int(configs['test_sample_end_idx']),
+        r_averaging=int(configs['r_averaging'])
+    )
     calcInfluenceThread.start()
-
     return RResponse.ok({}, "Influence calculation started!")
