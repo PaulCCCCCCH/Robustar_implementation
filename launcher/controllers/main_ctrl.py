@@ -4,6 +4,7 @@ import json
 import time
 
 from PySide2.QtCore import QObject, Qt
+from PySide2 import QtGui
 from PySide2.QtWidgets import QFileDialog
 from threading import Thread
 

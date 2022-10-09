@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../.designer/doc/logo_short.png</normaloff>../../../../.designer/doc/logo_short.png</iconset>
+    <normaloff>../../doc/logo_short.png</normaloff>../../doc/logo_short.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{font: 8pt &quot;Arial&quot;}
@@ -69,7 +69,7 @@ QPushButton:hover {
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap>../../../../.designer/doc/logo_long.png</pixmap>
+         <pixmap>../../doc/logo_long.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -516,9 +516,15 @@ QPushButton:hover {
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>9</number>
+               </property>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0">
                  <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -529,10 +535,16 @@ QPushButton:hover {
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>169</height>
+                    </size>
+                   </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>118</height>
+                     <height>168</height>
                     </size>
                    </property>
                    <property name="font">
@@ -553,7 +565,7 @@ QPushButton:hover {
                       <x>10</x>
                       <y>20</y>
                       <width>362</width>
-                      <height>91</height>
+                      <height>141</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -696,40 +708,6 @@ QPushButton:hover {
                        </item>
                       </layout>
                      </item>
-                    </layout>
-                   </widget>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="portGroupBox">
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>188</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <family>Arial</family>
-                     <pointsize>8</pointsize>
-                     <weight>50</weight>
-                     <italic>false</italic>
-                     <bold>false</bold>
-                    </font>
-                   </property>
-                   <property name="title">
-                    <string>Port</string>
-                   </property>
-                   <widget class="QWidget" name="layoutWidget">
-                    <property name="geometry">
-                     <rect>
-                      <x>10</x>
-                      <y>20</y>
-                      <width>361</width>
-                      <height>161</height>
-                     </rect>
-                    </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_5">
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_9">
                        <item>
@@ -789,11 +767,33 @@ QPushButton:hover {
                   </widget>
                  </item>
                  <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Maximum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>132</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
                   <widget class="QGroupBox" name="dataGroupBox">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>282</height>
+                     <height>232</height>
                     </size>
                    </property>
                    <property name="font">
@@ -819,7 +819,7 @@ QPushButton:hover {
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_7">
                      <property name="spacing">
-                      <number>0</number>
+                      <number>9</number>
                      </property>
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,0,0">
