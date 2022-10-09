@@ -146,9 +146,7 @@ class DockerController(QObject):
             name=self.model.profile['containerName'],
             ports={
                 '80/tcp': (
-                    '127.0.0.1', int(self.model.profile['port'])),
-                '8000/tcp': ('127.0.0.1', 6848),
-                '6006/tcp': ('127.0.0.1', 6006),
+                    '127.0.0.1', int(self.model.profile['port']))
             },
             mounts=[
                 docker.types.Mount(target='/Robustar2/dataset/train',
@@ -176,9 +174,7 @@ class DockerController(QObject):
             name=self.model.profile['containerName'],
             ports={
                 '80/tcp': (
-                    '127.0.0.1', int(self.model.profile['port'])),
-                '8000/tcp': ('127.0.0.1', 6848),
-                '6006/tcp': ('127.0.0.1', 6006),
+                    '127.0.0.1', int(self.model.profile['port']))
             },
             mounts=[
                 docker.types.Mount(target='/Robustar2/dataset/train',
