@@ -229,19 +229,22 @@ class Ui_RobustarLauncher(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(9)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(-1, 0, -1, -1)
         self.dockerGroupBox = QGroupBox(self.horizontalLayoutWidget_7)
         self.dockerGroupBox.setObjectName(u"dockerGroupBox")
         sizePolicy.setHeightForWidth(self.dockerGroupBox.sizePolicy().hasHeightForWidth())
         self.dockerGroupBox.setSizePolicy(sizePolicy)
-        self.dockerGroupBox.setMaximumSize(QSize(16777215, 118))
+        self.dockerGroupBox.setMinimumSize(QSize(0, 169))
+        self.dockerGroupBox.setMaximumSize(QSize(16777215, 168))
         self.dockerGroupBox.setFont(font)
         self.layoutWidget2 = QWidget(self.dockerGroupBox)
         self.layoutWidget2.setObjectName(u"layoutWidget2")
-        self.layoutWidget2.setGeometry(QRect(10, 20, 362, 91))
+        self.layoutWidget2.setGeometry(QRect(10, 20, 362, 141))
         self.verticalLayout_6 = QVBoxLayout(self.layoutWidget2)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
@@ -293,103 +296,51 @@ class Ui_RobustarLauncher(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_5)
 
-
-        self.verticalLayout_3.addWidget(self.dockerGroupBox)
-
-        self.portGroupBox = QGroupBox(self.horizontalLayoutWidget_7)
-        self.portGroupBox.setObjectName(u"portGroupBox")
-        self.portGroupBox.setMaximumSize(QSize(16777215, 188))
-        self.portGroupBox.setFont(font)
-        self.layoutWidget3 = QWidget(self.portGroupBox)
-        self.layoutWidget3.setObjectName(u"layoutWidget3")
-        self.layoutWidget3.setGeometry(QRect(10, 20, 361, 161))
-        self.verticalLayout_5 = QVBoxLayout(self.layoutWidget3)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.label_7 = QLabel(self.layoutWidget3)
+        self.label_7 = QLabel(self.layoutWidget2)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setFont(font)
 
         self.horizontalLayout_9.addWidget(self.label_7)
 
-        self.websitePortInput = QLineEdit(self.layoutWidget3)
-        self.websitePortInput.setObjectName(u"websitePortInput")
-        sizePolicy1.setHeightForWidth(self.websitePortInput.sizePolicy().hasHeightForWidth())
-        self.websitePortInput.setSizePolicy(sizePolicy1)
-        self.websitePortInput.setMaximumSize(QSize(175, 16777215))
-        self.websitePortInput.setFont(font)
-        self.websitePortInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.websitePortInput.setClearButtonEnabled(True)
+        self.portInput = QLineEdit(self.layoutWidget2)
+        self.portInput.setObjectName(u"portInput")
+        sizePolicy1.setHeightForWidth(self.portInput.sizePolicy().hasHeightForWidth())
+        self.portInput.setSizePolicy(sizePolicy1)
+        self.portInput.setMaximumSize(QSize(175, 16777215))
+        self.portInput.setFont(font)
+        self.portInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.portInput.setClearButtonEnabled(True)
 
-        self.horizontalLayout_9.addWidget(self.websitePortInput)
-
-
-        self.verticalLayout_5.addLayout(self.horizontalLayout_9)
-
-        self.horizontalLayout_12 = QHBoxLayout()
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.label_11 = QLabel(self.layoutWidget3)
-        self.label_11.setObjectName(u"label_11")
-        self.label_11.setFont(font)
-
-        self.horizontalLayout_12.addWidget(self.label_11)
-
-        self.backendPortInput = QLineEdit(self.layoutWidget3)
-        self.backendPortInput.setObjectName(u"backendPortInput")
-        sizePolicy1.setHeightForWidth(self.backendPortInput.sizePolicy().hasHeightForWidth())
-        self.backendPortInput.setSizePolicy(sizePolicy1)
-        self.backendPortInput.setMaximumSize(QSize(175, 16777215))
-        self.backendPortInput.setFont(font)
-        self.backendPortInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.backendPortInput.setClearButtonEnabled(True)
-
-        self.horizontalLayout_12.addWidget(self.backendPortInput)
+        self.horizontalLayout_9.addWidget(self.portInput)
 
 
-        self.verticalLayout_5.addLayout(self.horizontalLayout_12)
-
-        self.horizontalLayout_13 = QHBoxLayout()
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.label_12 = QLabel(self.layoutWidget3)
-        self.label_12.setObjectName(u"label_12")
-        self.label_12.setFont(font)
-
-        self.horizontalLayout_13.addWidget(self.label_12)
-
-        self.tensorboardPortInput = QLineEdit(self.layoutWidget3)
-        self.tensorboardPortInput.setObjectName(u"tensorboardPortInput")
-        sizePolicy1.setHeightForWidth(self.tensorboardPortInput.sizePolicy().hasHeightForWidth())
-        self.tensorboardPortInput.setSizePolicy(sizePolicy1)
-        self.tensorboardPortInput.setMaximumSize(QSize(175, 16777215))
-        self.tensorboardPortInput.setFont(font)
-        self.tensorboardPortInput.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.tensorboardPortInput.setClearButtonEnabled(True)
-
-        self.horizontalLayout_13.addWidget(self.tensorboardPortInput)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_9)
 
 
-        self.verticalLayout_5.addLayout(self.horizontalLayout_13)
+        self.verticalLayout_3.addWidget(self.dockerGroupBox)
 
+        self.verticalSpacer = QSpacerItem(20, 132, QSizePolicy.Minimum, QSizePolicy.Maximum)
 
-        self.verticalLayout_3.addWidget(self.portGroupBox)
+        self.verticalLayout_3.addItem(self.verticalSpacer)
 
         self.dataGroupBox = QGroupBox(self.horizontalLayoutWidget_7)
         self.dataGroupBox.setObjectName(u"dataGroupBox")
-        self.dataGroupBox.setMaximumSize(QSize(16777215, 282))
+        self.dataGroupBox.setMinimumSize(QSize(0, 0))
+        self.dataGroupBox.setMaximumSize(QSize(16777215, 232))
         self.dataGroupBox.setFont(font)
-        self.layoutWidget4 = QWidget(self.dataGroupBox)
-        self.layoutWidget4.setObjectName(u"layoutWidget4")
-        self.layoutWidget4.setGeometry(QRect(10, 20, 361, 191))
-        self.verticalLayout_7 = QVBoxLayout(self.layoutWidget4)
-        self.verticalLayout_7.setSpacing(0)
+        self.layoutWidget3 = QWidget(self.dataGroupBox)
+        self.layoutWidget3.setObjectName(u"layoutWidget3")
+        self.layoutWidget3.setGeometry(QRect(10, 20, 361, 191))
+        self.verticalLayout_7 = QVBoxLayout(self.layoutWidget3)
+        self.verticalLayout_7.setSpacing(9)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_16 = QHBoxLayout()
         self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
         self.horizontalLayout_16.setContentsMargins(0, -1, -1, -1)
-        self.label_6 = QLabel(self.layoutWidget4)
+        self.label_6 = QLabel(self.layoutWidget3)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setMinimumSize(QSize(174, 0))
         self.label_6.setMaximumSize(QSize(16777215, 16777215))
@@ -397,7 +348,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_16.addWidget(self.label_6)
 
-        self.trainPathDisplay = QLineEdit(self.layoutWidget4)
+        self.trainPathDisplay = QLineEdit(self.layoutWidget3)
         self.trainPathDisplay.setObjectName(u"trainPathDisplay")
         sizePolicy1.setHeightForWidth(self.trainPathDisplay.sizePolicy().hasHeightForWidth())
         self.trainPathDisplay.setSizePolicy(sizePolicy1)
@@ -409,7 +360,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_16.addWidget(self.trainPathDisplay)
 
-        self.trainPathButton = QPushButton(self.layoutWidget4)
+        self.trainPathButton = QPushButton(self.layoutWidget3)
         self.trainPathButton.setObjectName(u"trainPathButton")
         sizePolicy1.setHeightForWidth(self.trainPathButton.sizePolicy().hasHeightForWidth())
         self.trainPathButton.setSizePolicy(sizePolicy1)
@@ -425,7 +376,7 @@ class Ui_RobustarLauncher(object):
         self.horizontalLayout_17 = QHBoxLayout()
         self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
         self.horizontalLayout_17.setContentsMargins(-1, -1, 0, -1)
-        self.label_13 = QLabel(self.layoutWidget4)
+        self.label_13 = QLabel(self.layoutWidget3)
         self.label_13.setObjectName(u"label_13")
         self.label_13.setMinimumSize(QSize(174, 0))
         self.label_13.setMaximumSize(QSize(16777215, 16777215))
@@ -433,7 +384,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_17.addWidget(self.label_13)
 
-        self.testPathDisplay = QLineEdit(self.layoutWidget4)
+        self.testPathDisplay = QLineEdit(self.layoutWidget3)
         self.testPathDisplay.setObjectName(u"testPathDisplay")
         self.testPathDisplay.setMinimumSize(QSize(0, 0))
         self.testPathDisplay.setMaximumSize(QSize(180, 16777215))
@@ -441,7 +392,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_17.addWidget(self.testPathDisplay)
 
-        self.testPathButton = QPushButton(self.layoutWidget4)
+        self.testPathButton = QPushButton(self.layoutWidget3)
         self.testPathButton.setObjectName(u"testPathButton")
         sizePolicy1.setHeightForWidth(self.testPathButton.sizePolicy().hasHeightForWidth())
         self.testPathButton.setSizePolicy(sizePolicy1)
@@ -456,7 +407,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_18 = QHBoxLayout()
         self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.label_14 = QLabel(self.layoutWidget4)
+        self.label_14 = QLabel(self.layoutWidget3)
         self.label_14.setObjectName(u"label_14")
         self.label_14.setMinimumSize(QSize(174, 0))
         self.label_14.setMaximumSize(QSize(16777215, 16777215))
@@ -464,14 +415,14 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_18.addWidget(self.label_14)
 
-        self.checkPointPathDisplay = QLineEdit(self.layoutWidget4)
+        self.checkPointPathDisplay = QLineEdit(self.layoutWidget3)
         self.checkPointPathDisplay.setObjectName(u"checkPointPathDisplay")
         self.checkPointPathDisplay.setMaximumSize(QSize(180, 16777215))
         self.checkPointPathDisplay.setFont(font)
 
         self.horizontalLayout_18.addWidget(self.checkPointPathDisplay)
 
-        self.checkPointPathButton = QPushButton(self.layoutWidget4)
+        self.checkPointPathButton = QPushButton(self.layoutWidget3)
         self.checkPointPathButton.setObjectName(u"checkPointPathButton")
         sizePolicy1.setHeightForWidth(self.checkPointPathButton.sizePolicy().hasHeightForWidth())
         self.checkPointPathButton.setSizePolicy(sizePolicy1)
@@ -486,7 +437,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_19 = QHBoxLayout()
         self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
-        self.label_15 = QLabel(self.layoutWidget4)
+        self.label_15 = QLabel(self.layoutWidget3)
         self.label_15.setObjectName(u"label_15")
         self.label_15.setMinimumSize(QSize(174, 0))
         self.label_15.setMaximumSize(QSize(16777215, 16777215))
@@ -494,14 +445,14 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_19.addWidget(self.label_15)
 
-        self.influencePathDisplay = QLineEdit(self.layoutWidget4)
+        self.influencePathDisplay = QLineEdit(self.layoutWidget3)
         self.influencePathDisplay.setObjectName(u"influencePathDisplay")
         self.influencePathDisplay.setMaximumSize(QSize(175, 16777215))
         self.influencePathDisplay.setFont(font)
 
         self.horizontalLayout_19.addWidget(self.influencePathDisplay)
 
-        self.influencePathButton = QPushButton(self.layoutWidget4)
+        self.influencePathButton = QPushButton(self.layoutWidget3)
         self.influencePathButton.setObjectName(u"influencePathButton")
         sizePolicy1.setHeightForWidth(self.influencePathButton.sizePolicy().hasHeightForWidth())
         self.influencePathButton.setSizePolicy(sizePolicy1)
@@ -779,15 +730,15 @@ class Ui_RobustarLauncher(object):
         self.tabWidget.addTab(self.createTab, "")
         self.manageTab = QWidget()
         self.manageTab.setObjectName(u"manageTab")
-        self.layoutWidget5 = QWidget(self.manageTab)
-        self.layoutWidget5.setObjectName(u"layoutWidget5")
-        self.layoutWidget5.setGeometry(QRect(20, 10, 771, 401))
-        self.horizontalLayout_20 = QHBoxLayout(self.layoutWidget5)
+        self.layoutWidget4 = QWidget(self.manageTab)
+        self.layoutWidget4.setObjectName(u"layoutWidget4")
+        self.layoutWidget4.setGeometry(QRect(20, 10, 771, 401))
+        self.horizontalLayout_20 = QHBoxLayout(self.layoutWidget4)
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
         self.horizontalLayout_20.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_8 = QVBoxLayout()
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.groupBox_2 = QGroupBox(self.layoutWidget5)
+        self.groupBox_2 = QGroupBox(self.layoutWidget4)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.groupBox_2.setFont(font)
         self.exitedListWidget = QListWidget(self.groupBox_2)
@@ -796,7 +747,7 @@ class Ui_RobustarLauncher(object):
 
         self.verticalLayout_8.addWidget(self.groupBox_2)
 
-        self.groupBox_3 = QGroupBox(self.layoutWidget5)
+        self.groupBox_3 = QGroupBox(self.layoutWidget4)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setFont(font)
         self.createdListWidget = QListWidget(self.groupBox_3)
@@ -810,7 +761,7 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_20.addLayout(self.verticalLayout_8)
 
-        self.groupBox = QGroupBox(self.layoutWidget5)
+        self.groupBox = QGroupBox(self.layoutWidget4)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setFont(font)
         self.runningListWidget = QListWidget(self.groupBox)
@@ -891,13 +842,8 @@ class Ui_RobustarLauncher(object):
 
         self.versionComboBox.setCurrentText(QCoreApplication.translate("RobustarLauncher", u"cpu-0.0.1-beta", None))
         self.versionComboBox.setProperty("placeholderText", "")
-        self.portGroupBox.setTitle(QCoreApplication.translate("RobustarLauncher", u"Port", None))
-        self.label_7.setText(QCoreApplication.translate("RobustarLauncher", u"Website", None))
-        self.websitePortInput.setText(QCoreApplication.translate("RobustarLauncher", u"8000", None))
-        self.label_11.setText(QCoreApplication.translate("RobustarLauncher", u"Backend", None))
-        self.backendPortInput.setText(QCoreApplication.translate("RobustarLauncher", u"6848", None))
-        self.label_12.setText(QCoreApplication.translate("RobustarLauncher", u"Tensorboard", None))
-        self.tensorboardPortInput.setText(QCoreApplication.translate("RobustarLauncher", u"6006", None))
+        self.label_7.setText(QCoreApplication.translate("RobustarLauncher", u"Port", None))
+        self.portInput.setText(QCoreApplication.translate("RobustarLauncher", u"8000", None))
         self.dataGroupBox.setTitle(QCoreApplication.translate("RobustarLauncher", u"Data", None))
         self.label_6.setText(QCoreApplication.translate("RobustarLauncher", u"Train Set", None))
         self.trainPathDisplay.setText("")
