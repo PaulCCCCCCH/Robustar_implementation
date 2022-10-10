@@ -43,16 +43,15 @@ def start_testing():
               type: string
               example: Success
     """
-    # Try to start training thread
-    print("DEBUG: Testing request received! ...")
+    # print("DEBUG: Testing request received! ...")
 
     json_data = request.get_json()
     split = json_data['split']
     # print(split)
 
-    test_thread = start_test(split)
-
-    if not test_thread:
-        return RResponse.fail("Failed", -1)
+    try:
+        start_test(split)
+    except Exception as e:
+        return RResponse.fail(str(e))
 
     return RResponse.ok("Test started!")
