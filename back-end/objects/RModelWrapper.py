@@ -1,11 +1,15 @@
 import torch
 import torchvision
 import os
+from threading import Lock
 
 IMAGENET_OUTPUT_SIZE = 1000
 
 
 class RModelWrapper:
+
+    lock = Lock()
+
     # model=Model("resnet-18-32x32",'./model/weight/resnet18_cifar_model.pth','cpu')
     def __init__(self, network_type, net_path, device, pretrained, num_classes):
         # self.device = torch.device(device)
@@ -56,10 +60,3 @@ class RModelWrapper:
                 path, map_location=self.device))
         else:
             print('weight file not found')
-
-    # Duplicated code
-    # def apply_cuda(self):
-    #     self.device = torch.device(self.device)
-    #     if self.model:
-    #         self.model = self.model.to(self.device)
-    #     return self

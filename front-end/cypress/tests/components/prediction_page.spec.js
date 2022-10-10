@@ -5,8 +5,8 @@ describe('Visualizer', () => {
   });
 
   beforeEach(() => {
-    cy.visit('image-list/train').wait(500);
-    cy.getBySel('image-list-img-0').trigger('mouseenter').wait(500);
+    cy.visit('image-list/train');
+    cy.get('[data-test=image-list-img-0]', { timeout: 120 * 1000 }).trigger('mouseenter');
     cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
   });
 

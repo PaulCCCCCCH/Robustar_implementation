@@ -212,7 +212,7 @@ export default {
         console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Training started successfully');
-        window.open('http://localhost:6006');
+        window.open(configs.tensorboardUrl);
       } catch (error) {
         console.log(error);
         this.$root.finishProcessing();

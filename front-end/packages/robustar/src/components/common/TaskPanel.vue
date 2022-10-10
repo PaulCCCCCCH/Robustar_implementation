@@ -15,13 +15,26 @@
       >
         <v-row align="center" justify="center">
           <v-col cols="12" lg="12" align="center" justify="center" v-if="digest.length == 0">
-            <p style="color: gray">No task is running now.</p>
+            <p data-test="task-center-p-no-task" style="color: gray">No task is running now.</p>
           </v-col>
         </v-row>
         <!-- <v-row v-for="(item, index) in digest" align="center" justify="center" :key="item[0]"> -->
         <v-row v-for="(item, index) in digest" align="center" justify="center" :key="index">
           <v-col cols="12" lg="1" align="center" justify="center" data-test="task-panel-item-name">
-            <v-btn color="red" icon @click="stopTask(item[4])" data-test="task-panel-stop-task"
+            <v-btn
+              v-if="item[5]"
+              color="green"
+              icon
+              @click="stopTask(item[4])"
+              data-test="task-panel-task-done"
+              ><v-icon>mdi-checkbox-marked</v-icon></v-btn
+            >
+            <v-btn
+              v-else
+              color="red"
+              icon
+              @click="stopTask(item[4])"
+              data-test="task-panel-stop-task"
               ><v-icon>mdi-minus-box</v-icon></v-btn
             >
           </v-col>

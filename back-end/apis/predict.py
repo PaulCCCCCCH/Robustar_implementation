@@ -101,15 +101,17 @@ def predict(split):
     else:
         # get predict results
         try:
+            modelWrapper.lock.acquire()
             output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
         except Exception as e:
             return RResponse.fail('Invalid image path {}'.format(image_path))
+        finally:
+            modelWrapper.lock.release()
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
         image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
-        model = modelWrapper.model
-        output = visualize(model, image_path, dataManager.image_size, server.configs['device'])
+        output = visualize(modelWrapper, image_path, dataManager.image_size, server.configs['device'])
         if len(output) != 4:
             return RResponse.fail("[Unexpected] Invalid number of predict visualize figures")
 

@@ -359,10 +359,20 @@ export default {
         }, 0);
       }
     },
+    mode(newValue, oldValue) {
+      if (
+        (oldValue === 'draw' || oldValue === 'colorRange') &&
+        newValue !== 'draw' &&
+        newValue !== 'colorRange'
+      ) {
+        this.$refs['editor'].invoke('stopDrawingMode');
+      }
+    },
   },
   mounted() {
     this.loadImageInfo();
     this.split = this.$route.params.split;
+    this.toggleDraw();
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -514,6 +524,7 @@ export default {
         tempHeight: 224,
         lockAspectRatio: false,
       });
+      this.toggleDraw();
     },
   },
 };

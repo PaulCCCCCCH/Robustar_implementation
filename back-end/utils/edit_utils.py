@@ -82,6 +82,7 @@ def start_auto_annotate(split, start: int, end: int):
     # -1 means annotate till the end
     if end == -1: end = len(dataManager.trainset)
     end = min(end, len(dataManager.trainset))
+    if start == end: return
 
     def auto_annotate_thread(split, start, end):
         task = RTask(TaskType.AutoAnnotate, end - start)
@@ -100,7 +101,7 @@ def start_auto_annotate(split, start: int, end: int):
                 print("Time consumption:", endtime-starttime)
                 print("Auto annotate stopped!")
                 return 
-        task.exit()
+        # task.exit()
 
 
     auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))

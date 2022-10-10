@@ -15,6 +15,7 @@ RUN ["/bin/bash", "-c", "./scripts/install_pytorch.sh -c $VCUDA"]
 ## Host with NGINX: 
 RUN rm -rf /var/www/html
 RUN cp -r /Robustar2/front-end/packages/robustar/dist /var/www/html
+COPY deployment/nginx.conf /etc/nginx/sites-enabled/default
 
 # Start server
 CMD ["/bin/bash", "./scripts/start.sh"]
