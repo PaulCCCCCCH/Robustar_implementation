@@ -9,6 +9,7 @@ from objects.RServer import RServer
 from server import start_server
 from utils.path_utils import to_unix
 
+PARAM_NAME_IMAGE_PATH = "image_url"
 
 # def test_valid_app_and_server():
 #     start_server()

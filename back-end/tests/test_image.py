@@ -1,4 +1,4 @@
-from test_app import app, client
+from test_app import app, client, PARAM_NAME_IMAGE_PATH
 
 
 class TestImage:
@@ -62,48 +62,43 @@ class TestImage:
             assert rv['msg'] == 'Success'
             # TODO: [test] other splits - needs other test methods
 
-    # class TestGetNextImage:
-    #     def test_get_next_image_fail_invalid_split(self, client):
-    #         rv = client.get("/image/next/non-exist/0").get_json()
-    #         assert rv['code'] == -1
-    #         assert rv['msg'] == 'Split non-exist not supported'
-    #         rv = client.get("/image/next/test/0").get_json()
-    #         assert rv['code'] == -1
-    #         assert rv['msg'] == 'Split test not supported'
-    #
-    #     def test_get_next_image_fail_invalid_path(self, client):
-    #         rv = client.get("/image/next/train/Robustar2/dataset/train/bird/10000.JPEG").get_json()
-    #         assert rv['code'] == -1
-    #         assert rv['msg'] == 'Invalid image path /Robustar2/dataset/train/bird/10000.JPEG'
-    #         rv = client.get("/image/next/train/Robustar2/dataset/train/panda/0.JPEG").get_json()
-    #         assert rv['code'] == -1
-    #         assert rv['msg'] == 'Invalid image path /Robustar2/dataset/train/panda/0.JPEG'
-    #         rv = client.get("/image/next/train/Robustar2/dataset/proposed/bird/0.JPEG").get_json()
-    #         assert rv['code'] == -1
-    #         assert rv['msg'] == 'Invalid image path /Robustar2/dataset/proposed/bird/0.JPEG'
-    #         # TODO: [test] annotated and proposed - needs other test methods
-    #         # rv = client.get("/image/next/annotated/100000").get_json()
-    #         # assert rv['code'] == -1
-    #         # assert rv['msg'] == 'Image with given id not exist'
-    #         # rv = client.get("/image/next/proposed/100000").get_json()
-    #         # assert rv['code'] == -1
-    #         # assert rv['msg'] == 'Image with given id not exist'
-    #
-    #     def test_get_next_image_success(self, client):
-    #         rv = client.get("/image/next/train/Robustar2/dataset/train/bird/1.JPEG").get_json()
-    #         assert rv['data'] == '/Robustar2/dataset/train/bird/10.JPEG'
-    #         assert rv['code'] == 0
-    #         assert rv['msg'] == 'Success'
-    #         # TODO: [test] annotated and proposed - needs other test methods
+    class TestGetNextImage:
+        def test_get_next_image_fail_invalid_split(self, client):
+            rv = client.get("/image/next/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0").get_json()
+            assert rv['code'] == -1
+            assert rv['msg'] == 'Split non-exist not supported'
+            rv = client.get("/image/next/test?" + PARAM_NAME_IMAGE_PATH + "=/0").get_json()
+            assert rv['code'] == -1
+            assert rv['msg'] == 'Split test not supported'
 
-            # rv = client.get("/image/next/train/Robustar2/dataset/train/bird/1.JPEG").get_json()
-            # assert rv['data'] == '/Robustar2/dataset/train/bird/10.JPEG'
-            # assert rv['code'] == 0
-            # assert rv['msg'] == 'Success'
-            # rv = client.get("/image/next/train/Robustar2/dataset/train/bird/1.JPEG").get_json()
-            # assert rv['data'] == '/Robustar2/dataset/train/bird/10.JPEG'
-            # assert rv['code'] == 0
-            # assert rv['msg'] == 'Success'
+        def test_get_next_image_fail_invalid_path(self, client):
+            rv = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
+                            "=/Robustar2/dataset/train/bird/10000.JPEG").get_json()
+            assert rv['code'] == -1
+            assert rv['msg'] == 'Invalid image path /Robustar2/dataset/train/bird/10000.JPEG'
+            rv = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
+                            "=/Robustar2/dataset/train/panda/0.JPEG").get_json()
+            assert rv['code'] == -1
+            assert rv['msg'] == 'Invalid image path /Robustar2/dataset/train/panda/0.JPEG'
+            rv = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
+                            "=/Robustar2/dataset/proposed/bird/0.JPEG").get_json()
+            assert rv['code'] == -1
+            assert rv['msg'] == 'Invalid image path /Robustar2/dataset/proposed/bird/0.JPEG'
+            # TODO: [test] annotated and proposed - needs other test methods
+            # rv = client.get("/image/next/annotated/100000").get_json()
+            # assert rv['code'] == -1
+            # assert rv['msg'] == 'Image with given id not exist'
+            # rv = client.get("/image/next/proposed/100000").get_json()
+            # assert rv['code'] == -1
+            # assert rv['msg'] == 'Image with given id not exist'
+
+        def test_get_next_image_success(self, client):
+            rv = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
+                            "=/Robustar2/dataset/train/bird/1.JPEG").get_json()
+            assert rv['data'] == '/Robustar2/dataset/train/bird/10.JPEG'
+            assert rv['code'] == 0
+            assert rv['msg'] == 'Success'
+            # TODO: [test] annotated and proposed - needs other test methods
 
     # class TestGetAnnotated: # TODO [test]
 

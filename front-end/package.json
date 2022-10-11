@@ -51,7 +51,8 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4",
-    "cypress-real-events": "^1.7.0"
+    "cypress-real-events": "^1.7.0",
+    "p-debounce": "^4.0.0"
   },
   "scripts": {
     "init:lerna": "lerna bootstrap",
