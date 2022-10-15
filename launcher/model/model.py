@@ -35,16 +35,16 @@ class Model(QObject):
             'testPath': '',
             'checkPointPath': '',
             'influencePath': '',
-            'modelArch': '',
-            'pretrained': 'False',
-            'weightFile': '',
+            'model_arch': '',
+            'pre_trained': 'False',
+            'weight_to_load': '',
             'device': 'cpu',
             'shuffle': 'False',
-            'batchSize': '',
-            'workerNumber': '',
-            'imgSize': '',
+            'batch_size': '',
+            'num_workers': '',
+            'image_size': '',
             'padding': 'short side',
-            'classNumber': ''
+            'num_classes': ''
         }
 
         # Root path of the path choosing window
@@ -150,29 +150,29 @@ class Model(QObject):
 
     @property
     def modelArch(self):
-        return self._profile['modelArch']
+        return self._profile['model_arch']
 
     @modelArch.setter
     def modelArch(self, val):
-        self._profile['modelArch'] = val
+        self._profile['model_arch'] = val
         self.modelArchChanged.emit(val)
 
     @property
     def pretrained(self):
-        return self._profile['pretrained']
+        return self._profile['pre_trained']
 
     @pretrained.setter
     def pretrained(self, val):
-        self._profile['pretrained'] = val
+        self._profile['pre_trained'] = val
         self.pretrainedChanged.emit(val)
 
     @property
     def weightFile(self):
-        return self._profile['weightFile']
+        return self._profile['weight_to_load']
 
     @weightFile.setter
     def weightFile(self, val):
-        self._profile['weightFile'] = val
+        self._profile['weight_to_load'] = val
         self.weightFileChanged.emit(val)
 
     @property
@@ -195,29 +195,29 @@ class Model(QObject):
 
     @property
     def batchSize(self):
-        return self._profile['batchSize']
+        return self._profile['batch_size']
 
     @batchSize.setter
     def batchSize(self, val):
-        self._profile['batchSize'] = val
+        self._profile['batch_size'] = val
         self.batchSizeChanged.emit(val)
 
     @property
     def workerNumber(self):
-        return self._profile['workerNumber']
+        return self._profile['num_workers']
 
     @workerNumber.setter
     def workerNumber(self, val):
-        self._profile['workerNumber'] = val
+        self._profile['num_workers'] = val
         self.workerNumberChanged.emit(val)
 
     @property
     def imgSize(self):
-        return self._profile['imgSize']
+        return self._profile['image_size']
 
     @imgSize.setter
     def imgSize(self, val):
-        self._profile['imgSize'] = val
+        self._profile['image_size'] = val
         self.imgSizeChanged.emit(val)
 
     @property
@@ -231,11 +231,11 @@ class Model(QObject):
 
     @property
     def classNumber(self):
-        return self._profile['classNumber']
+        return self._profile['num_classes']
 
     @classNumber.setter
     def classNumber(self, val):
-        self._profile['classNumber'] = val
+        self._profile['num_classes'] = val
         self.classNumberChanged.emit(val)
 
     @property
@@ -251,14 +251,14 @@ class Model(QObject):
         self.testPath = val['testPath']
         self.checkPointPath = val['checkPointPath']
         self.influencePath = val['influencePath']
-        self.modelArch = val['modelArch']
-        self.pretrained = val['pretrained']
-        self.weightFile = val['weightFile']
+        self.modelArch = val['model_arch']
+        self.pretrained = val['pre_trained']
+        self.weightFile = val['weight_to_load']
         self.device = val['device']
         self.shuffle = val['shuffle']
-        self.batchSize = val['batchSize']
-        self.workerNumber = val['workerNumber']
-        self.imgSize = val['imgSize']
+        self.batchSize = val['batch_size']
+        self.workerNumber = val['num_workers']
+        self.imgSize = val['image_size']
         self.padding = val['padding']
-        self.classNumber = val['classNumber']
+        self.classNumber = val['num_classes']
 
