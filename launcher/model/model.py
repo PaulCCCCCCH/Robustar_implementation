@@ -29,7 +29,7 @@ class Model(QObject):
         # Profile of the createTab
         self._profile = {
             'containerName': 'robustar',
-            'imageVersion': 'cpu-0.0.1-beta',
+            'imageVersion': '',
             'port': '8000',
             'trainPath': '',
             'testPath': '',

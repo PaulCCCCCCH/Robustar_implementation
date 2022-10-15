@@ -25,6 +25,8 @@ class MainController(QObject):
     def init(self):
         from controllers.docker_ctrl import DockerController
 
+        self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
+
         try:
             self.dockerCtrl = DockerController(self.model, self.mainView, self)
             self.dockerCtrl.refreshServers()
@@ -42,12 +44,6 @@ class MainController(QObject):
 
     def setMPort(self):
         self.model.port = self.mainView.ui.portInput.text()
-
-    def setMBackendPort(self):
-        self.model.backendPort = self.mainView.ui.backendPortInput.text()
-
-    def setMTensorboardPort(self):
-        self.model.tensorboardPort = self.mainView.ui.tensorboardPortInput.text()
 
     def setMTrainPath(self):
         path = QFileDialog.getExistingDirectory(self.mainView, "Choose Train Set Path", self.model.cwd)
@@ -159,12 +155,6 @@ class MainController(QObject):
 
     def setVPort(self, val):
         self.mainView.ui.portInput.setText(val)
-
-    def setVBackendPort(self, val):
-        self.mainView.ui.backendPortInput.setText(val)
-
-    def setVTensorboardPort(self, val):
-        self.mainView.ui.tensorboardPortInput.setText(val)
 
     def setVTrainPath(self, val):
         self.mainView.ui.trainPathDisplay.setText(val)

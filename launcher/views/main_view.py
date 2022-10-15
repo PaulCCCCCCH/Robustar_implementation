@@ -1,3 +1,5 @@
+import requests
+
 from PySide2.QtWidgets import QWidget
 from views.main_view_ui import Ui_RobustarLauncher
 
@@ -9,6 +11,11 @@ class MainView(QWidget):
         self.ctrl = ctrl
         self.ui = Ui_RobustarLauncher()
         self.ui.setupUi(self)
+
+        # Fetch the docker image version and add to the image version combobox
+        res = requests.get('https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024')
+        for item in res.json()['results']:
+            self.ui.versionComboBox.addItem(item['name'])
 
         # Match the corresponding signals to slots in controllers
         self.ui.nameInput.textEdited.connect(self.ctrl.setMContainerName)

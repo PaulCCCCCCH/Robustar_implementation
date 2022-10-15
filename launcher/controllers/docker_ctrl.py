@@ -98,20 +98,20 @@ class DockerController(QObject):
             json.dump(matchDict, f)
 
         try:
-            if 'cuda' in image and 'cuda' in self.model.device:
+            if 'cuda' in self.model.device:
                 self.startNewCudaServer(image, configFile)
-            elif 'cpu' in image and 'cpu' in self.model.device:
+            elif 'cpu' in self.model.device:
                 self.startNewCpuServer(image, configFile)
-            else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
-                                                           "The image version doesn't match the device. Fail to create the container")
-                with open('./config_record.json', 'r') as f:
-                    matchDict = json.load(f)
-                with open('./config_record.json', 'w') as f:
-                    fileName = matchDict.pop(self.model.profile['containerName'])
-                    os.remove(fileName)
-                    json.dump(matchDict, f)
-                return
+            # else:
+            #     self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            #                                                "The image version doesn't match the device. Fail to create the container")
+            #     with open('./config_record.json', 'r') as f:
+            #         matchDict = json.load(f)
+            #     with open('./config_record.json', 'w') as f:
+            #         fileName = matchDict.pop(self.model.profile['containerName'])
+            #         os.remove(fileName)
+            #         json.dump(matchDict, f)
+            #     return
 
             self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Running {}'.format(self.model.tempVer))
             self.mainCtrl.updateSucView()

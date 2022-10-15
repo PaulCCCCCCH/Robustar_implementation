@@ -283,8 +283,6 @@ class Ui_RobustarLauncher(object):
         self.horizontalLayout_5.addWidget(self.label_3)
 
         self.versionComboBox = QComboBox(self.layoutWidget2)
-        self.versionComboBox.addItem("")
-        self.versionComboBox.addItem("")
         self.versionComboBox.setObjectName(u"versionComboBox")
         sizePolicy1.setHeightForWidth(self.versionComboBox.sizePolicy().hasHeightForWidth())
         self.versionComboBox.setSizePolicy(sizePolicy1)
@@ -837,10 +835,6 @@ class Ui_RobustarLauncher(object):
         self.label_8.setText(QCoreApplication.translate("RobustarLauncher", u"Container Name", None))
         self.nameInput.setText(QCoreApplication.translate("RobustarLauncher", u"robustar", None))
         self.label_3.setText(QCoreApplication.translate("RobustarLauncher", u"Image Version", None))
-        self.versionComboBox.setItemText(0, QCoreApplication.translate("RobustarLauncher", u"cpu-0.0.1-beta", None))
-        self.versionComboBox.setItemText(1, QCoreApplication.translate("RobustarLauncher", u"cuda11.1-0.0.1-beta", None))
-
-        self.versionComboBox.setCurrentText(QCoreApplication.translate("RobustarLauncher", u"cpu-0.0.1-beta", None))
         self.versionComboBox.setProperty("placeholderText", "")
         self.label_7.setText(QCoreApplication.translate("RobustarLauncher", u"Port", None))
         self.portInput.setText(QCoreApplication.translate("RobustarLauncher", u"8000", None))

@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../doc/logo_short.png</normaloff>../../doc/logo_short.png</iconset>
+    <normaloff>../../../../doc/logo_short.png</normaloff>../../../../doc/logo_short.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{font: 8pt &quot;Arial&quot;}
@@ -69,7 +69,7 @@ QPushButton:hover {
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap>../../doc/logo_long.png</pixmap>
+         <pixmap>../../../../doc/logo_long.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -688,22 +688,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
-                         <property name="currentText">
-                          <string>cpu-0.0.1-beta</string>
-                         </property>
                          <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
-                         <item>
-                          <property name="text">
-                           <string>cpu-0.0.1-beta</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>cuda11.1-0.0.1-beta</string>
-                          </property>
-                         </item>
                         </widget>
                        </item>
                       </layout>
