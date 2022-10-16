@@ -537,22 +537,15 @@ class Ui_RobustarLauncher(object):
 
         self.horizontalLayout_14.addWidget(self.label_16)
 
-        self.weightFileDisplay = QLineEdit(self.layoutWidget_2)
-        self.weightFileDisplay.setObjectName(u"weightFileDisplay")
-        self.weightFileDisplay.setMaximumSize(QSize(175, 16777215))
-        self.weightFileDisplay.setFont(font)
+        self.weightFileComboBox = QComboBox(self.layoutWidget_2)
+        self.weightFileComboBox.addItem("")
+        self.weightFileComboBox.setObjectName(u"weightFileComboBox")
+        sizePolicy1.setHeightForWidth(self.weightFileComboBox.sizePolicy().hasHeightForWidth())
+        self.weightFileComboBox.setSizePolicy(sizePolicy1)
+        self.weightFileComboBox.setMaximumSize(QSize(175, 16777215))
+        self.weightFileComboBox.setFont(font)
 
-        self.horizontalLayout_14.addWidget(self.weightFileDisplay)
-
-        self.weightFileButton = QPushButton(self.layoutWidget_2)
-        self.weightFileButton.setObjectName(u"weightFileButton")
-        sizePolicy1.setHeightForWidth(self.weightFileButton.sizePolicy().hasHeightForWidth())
-        self.weightFileButton.setSizePolicy(sizePolicy1)
-        self.weightFileButton.setMinimumSize(QSize(28, 0))
-        self.weightFileButton.setMaximumSize(QSize(28, 16777215))
-        self.weightFileButton.setFont(font)
-
-        self.horizontalLayout_14.addWidget(self.weightFileButton)
+        self.horizontalLayout_14.addWidget(self.weightFileComboBox)
 
 
         self.verticalLayout_9.addLayout(self.horizontalLayout_14)
@@ -867,8 +860,9 @@ class Ui_RobustarLauncher(object):
         self.label_9.setText(QCoreApplication.translate("RobustarLauncher", u"Pretrained", None))
         self.pretrainedCheckBox.setText("")
         self.label_16.setText(QCoreApplication.translate("RobustarLauncher", u"Weight File", None))
-        self.weightFileDisplay.setText("")
-        self.weightFileButton.setText(QCoreApplication.translate("RobustarLauncher", u"...", None))
+        self.weightFileComboBox.setItemText(0, QCoreApplication.translate("RobustarLauncher", u"None", None))
+
+        self.weightFileComboBox.setProperty("placeholderText", "")
         self.label_19.setText(QCoreApplication.translate("RobustarLauncher", u"Device", None))
         self.deviceInput.setText(QCoreApplication.translate("RobustarLauncher", u"cpu", None))
         self.label_20.setText(QCoreApplication.translate("RobustarLauncher", u"Shuffle", None))

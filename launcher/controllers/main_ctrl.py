@@ -1,3 +1,4 @@
+import requests
 import docker
 import os
 import json
@@ -25,7 +26,7 @@ class MainController(QObject):
     def init(self):
         from controllers.docker_ctrl import DockerController
 
-        self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
+        self.initImageVersions()
 
         try:
             self.dockerCtrl = DockerController(self.model, self.mainView, self)
@@ -33,8 +34,8 @@ class MainController(QObject):
             self.mainView.show()
         except docker.errors.DockerException:
             self.popupView.show()
-            
-            
+
+
     # Slot functions to change the model
     def setMContainerName(self):
         self.model.containerName = self.mainView.ui.nameInput.text()
@@ -63,6 +64,8 @@ class MainController(QObject):
         if path:
             self.model.checkPointPath = path
 
+        self.initWeightFiles()
+
     def setMInfluencePath(self):
         path = QFileDialog.getExistingDirectory(self.mainView, "Choose Influence Result Path", self.model.cwd)
         self.model.cwd = os.path.dirname(path)
@@ -79,10 +82,7 @@ class MainController(QObject):
             self.model.pretrained = 'False'
 
     def setMWeightFile(self):
-        path, _ = QFileDialog.getOpenFileName(self.mainView, "Choose Weight File", self.model.cwd, "pt/pth Files (*.pt *.pth);;All Files (*)")
-        self.model.cwd = os.path.dirname(path)
-        if path:
-            self.model.weightFile = path
+        self.model.weightFile = self.mainView.ui.weightFileComboBox.currentText()
 
     def setMDevice(self):
         self.model.device = self.mainView.ui.deviceInput.text()
@@ -164,6 +164,7 @@ class MainController(QObject):
 
     def setVCheckPointPath(self, val):
         self.mainView.ui.checkPointPathDisplay.setText(val)
+        self.initWeightFiles()
 
     def setVInfluencePath(self, val):
         self.mainView.ui.influencePathDisplay.setText(val)
@@ -178,7 +179,7 @@ class MainController(QObject):
             self.mainView.ui.pretrainedCheckBox.setChecked(False)
 
     def setVWeightFile(self, val):
-        self.mainView.ui.weightFileDisplay.setText(val)
+        self.mainView.ui.weightFileComboBox.setCurrentText(val)
 
     def setVDevice(self, val):
         self.mainView.ui.deviceInput.setText(val)
@@ -255,7 +256,24 @@ class MainController(QObject):
                                                                                     self.model.tempPort))
         self.addItem(self.mainView.ui.runningListWidget, self.model.tempName)
 
+    # Fetch the docker image versions to add to the image version combobox and initiate model's image version
+    def initImageVersions(self):
+        res = requests.get(
+            'https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024')
+        for item in res.json()['results']:
+            self.mainView.ui.versionComboBox.addItem(item['name'])
+        self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
 
+    # Scan the checkpoint directory to add checkpoint files to the weight file combobox and initiates model's weight file
+    def initWeightFiles(self):
+        self.mainView.ui.weightFileComboBox.clear()
+        self.mainView.ui.weightFileComboBox.addItem('None')
+
+        for file in os.listdir(self.model.checkPointPath):
+            if file.endswith('.pth') or file.endswith('.pt'):
+                self.mainView.ui.weightFileComboBox.addItem(file)
+
+        self.model.weightFile = self.mainView.ui.weightFileComboBox.currentText()
 
 class ServerOperationThread(Thread):
     def __init__(self, target, ctrl):

@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../doc/logo_short.png</normaloff>../../../../doc/logo_short.png</iconset>
+    <normaloff>../../../../../../doc/logo_short.png</normaloff>../../../../../../doc/logo_short.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{font: 8pt &quot;Arial&quot;}
@@ -69,7 +69,7 @@ QPushButton:hover {
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap>../../../../doc/logo_long.png</pixmap>
+         <pixmap>../../../../../../doc/logo_long.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -1383,7 +1383,13 @@ QPushButton:hover {
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="weightFileDisplay">
+                        <widget class="QComboBox" name="weightFileComboBox">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="maximumSize">
                           <size>
                            <width>175</width>
@@ -1399,43 +1405,14 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
-                         <property name="text">
+                         <property name="placeholderText" stdset="0">
                           <string/>
                          </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="weightFileButton">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>28</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>28</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                         <property name="font">
-                          <font>
-                           <family>Arial</family>
-                           <pointsize>8</pointsize>
-                           <weight>50</weight>
-                           <italic>false</italic>
-                           <bold>false</bold>
-                          </font>
-                         </property>
-                         <property name="text">
-                          <string>...</string>
-                         </property>
+                         <item>
+                          <property name="text">
+                           <string>None</string>
+                          </property>
+                         </item>
                         </widget>
                        </item>
                       </layout>

@@ -1,5 +1,3 @@
-import requests
-
 from PySide2.QtWidgets import QWidget
 from views.main_view_ui import Ui_RobustarLauncher
 
@@ -12,11 +10,6 @@ class MainView(QWidget):
         self.ui = Ui_RobustarLauncher()
         self.ui.setupUi(self)
 
-        # Fetch the docker image version and add to the image version combobox
-        res = requests.get('https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024')
-        for item in res.json()['results']:
-            self.ui.versionComboBox.addItem(item['name'])
-
         # Match the corresponding signals to slots in controllers
         self.ui.nameInput.textEdited.connect(self.ctrl.setMContainerName)
         self.ui.versionComboBox.currentIndexChanged.connect(self.ctrl.setMImageVersion)
@@ -28,7 +21,7 @@ class MainView(QWidget):
 
         self.ui.archComboBox.currentIndexChanged.connect(self.ctrl.setMArch)
         self.ui.pretrainedCheckBox.stateChanged.connect(self.ctrl.setMPretrained)
-        self.ui.weightFileButton.clicked.connect(self.ctrl.setMWeightFile)
+        self.ui.weightFileComboBox.currentIndexChanged.connect(self.ctrl.setMWeightFile)
         self.ui.deviceInput.textEdited.connect(self.ctrl.setMDevice)
         self.ui.shuffleCheckBox.stateChanged.connect(self.ctrl.setMPretrained)
         self.ui.batchSizeInput.textEdited.connect(self.ctrl.setMBatchSize)
