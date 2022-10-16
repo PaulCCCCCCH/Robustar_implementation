@@ -53,7 +53,7 @@ def api_user_edit(split):
 
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
-        return RResponse.fail('Split {} not supported'.format(split))
+        RResponse.abort(400, 'Split {} not supported'.format(split))
 
     path = to_unix(path)
     json_data = request.get_json()
@@ -115,7 +115,7 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        return RResponse.fail(
+        return RResponse.abort(400,
             'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
                 split))
 
@@ -129,7 +129,7 @@ def api_auto_annotate(split):
         end_idx_to_gen = int(json_data['end_idx_to_gen'])
         start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
-        return RResponse.fail('Auto annotation failed: ' + str(e))
+        RResponse.abort(500, 'Auto annotation failed: ' + str(e))
 
     return RResponse.ok('success')
 
