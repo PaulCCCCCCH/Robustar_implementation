@@ -53,6 +53,6 @@ def start_testing():
     test_thread = start_test(split)
 
     if not test_thread:
-        return RResponse.fail("Failed", -1)
+        RResponse.abort(500, "Failed to start testing", -1)
 
     return RResponse.ok("Test started!")
