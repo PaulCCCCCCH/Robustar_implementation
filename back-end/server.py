@@ -103,8 +103,7 @@ def get_args():
     args = parser.parse_args()
     return args
 
-
-if __name__ == "__main__":
+def create_app():
     args = get_args()
 
     # Get basedir
@@ -113,5 +112,10 @@ if __name__ == "__main__":
     print("Absolute basedir is {}".format(basedir))
     start_server(basedir)
 
+    return RServer.getServer()
+
+
+
+if __name__ == "__main__":
     # Start server
-    RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)
+    create_app().run(port='8000', host='0.0.0.0', debug=False)
