@@ -2,4 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 cd front-end && prettier --write . && git add .
-cd ../back-end && black . && git add .
+# cd ../back-end && black . && git add .
