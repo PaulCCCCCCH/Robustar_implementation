@@ -7,6 +7,12 @@ pip install -r requirements.txt
 python server.py
 ```
 
+To enable backend formatter for Python, run
+
+```bash
+pip install black
+```
+
 # Run test cases
 ```
 python -m pytest
