@@ -108,9 +108,12 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('success', 'Auto annotation started');
       } catch (error) {
-        console.log(error);
+        console.log(error.response);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Auto annotation failed to start');
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Auto annotation failed to start'
+        );
       }
     },
   },
