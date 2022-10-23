@@ -5,13 +5,15 @@
     "prettier": "2.7.1"
   },
   "scripts": {
-    "prepare": "npm install -g lint-staged && husky install"
+    "prepare": "npm install -g lint-staged && husky install && pip install black"
   },
   "lint-staged": {
     "*.html": "prettier --write --ignore-unknown",
     "*.js": "prettier --write --ignore-unknown",
     "*.css": "prettier --write --ignore-unknown",
     "*.vue": "prettier --write --ignore-unknown",
+    "*.json": "prettier --write --ignore-unknown",
+    "*.md": "prettier --write --ignore-unknown",
     "*.py": "black"
   }
 }
