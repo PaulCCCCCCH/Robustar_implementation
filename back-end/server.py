@@ -100,7 +100,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--basedir', default="/Robustar2", help='path to base directory for data folder (default: /Robustar2)')
 
-    args = parser.parse_args()
+    args = parser.parse_known_args()[0]
     return args
 
 def create_app():
@@ -112,7 +112,7 @@ def create_app():
     print("Absolute basedir is {}".format(basedir))
     start_server(basedir)
 
-    return RServer.getServer()
+    return RServer.getServer().getFlaskApp()
 
 
 

@@ -9,6 +9,7 @@ WORKDIR /Robustar2
 # RUN npm install -g webpack webpack-cli lerna @vue/cli
 
 # Install PyTorch
+RUN python3.9 -m pip install --upgrade --force-reinstall pip
 RUN chmod +x ./scripts/install_pytorch.sh
 RUN ["/bin/bash", "-c", "./scripts/install_pytorch.sh -c $VCUDA"]
 
