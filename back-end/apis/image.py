@@ -21,9 +21,6 @@ def get_image_list(split, start, num_per_page):
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
-        if len(ls_image_path) == 0:
-            RResponse.abort(500, 'Error retrieving image paths - cannot get image idx [{}, {})'
-                                  .format(image_idx_start, image_idx_end))
     except Exception as e:
         RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
 
