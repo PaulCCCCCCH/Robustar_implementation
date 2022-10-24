@@ -206,7 +206,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Server error. Check console.');
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
 

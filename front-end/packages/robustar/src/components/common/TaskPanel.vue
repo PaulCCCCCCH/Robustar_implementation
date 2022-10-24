@@ -98,7 +98,7 @@ export default {
         await APIStopTask(tid);
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Failed to stop task');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to stop task');
       }
     },
   },

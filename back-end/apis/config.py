@@ -46,4 +46,4 @@ def get_config():
         configs = RServer.getServerConfigs()
         return RResponse.ok(configs)
     except:
-        return RResponse.fail("Failed", -1)
+        RResponse.abort(500, "Cannot retrieve server configs", -1) 

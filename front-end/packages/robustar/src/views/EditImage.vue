@@ -402,7 +402,10 @@ export default {
         }
       } catch (error) {
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Failed to load previous annotation');
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Failed to load previous annotation'
+        );
       }
     },
     async autoEdit() {
@@ -420,7 +423,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Failed to auto annotate');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to auto annotate');
       }
     },
     adjustImageSize() {
@@ -445,7 +448,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Sending failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Sending failed');
       }
       try {
         const res = await APIGetNextImage(this.split, this.image_url);
@@ -454,7 +457,7 @@ export default {
         this.loadImageInfo();
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Failed to get next image');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to get next image');
       }
     },
     mousedown(event, originPointer) {
