@@ -32,7 +32,7 @@ export default {
         console.log(res);
         this.configs = res.data.data;
       } catch (error) {
-        console.log(res);
+        this.$root.alert('error', error.response?.data?.detail || '');
         this.configs = undefined;
       }
     },

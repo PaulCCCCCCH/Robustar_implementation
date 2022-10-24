@@ -23,7 +23,7 @@ jobs:
           working_directory: ./front-end
           command: |
             echo "Files in directory: $(ls)"
-            npx lerna@latest init
+            npx lerna@5.6.2 init
             npm install
             npx lerna bootstrap
             npx lerna run build
