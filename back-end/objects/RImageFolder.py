@@ -205,7 +205,6 @@ class RTrainImageFolder(RImageFolder):
         for (img_path, _), (next_img_path, _) in zip(self.imgs, self.imgs[1:]):
             self.next_imgs[img_path] = next_img_path 
 
-
     def _init_buffer(self):
         self.train2paired = dict()
 
@@ -265,7 +264,7 @@ class REvalImageFolder(RImageFolder):
         paths = [to_unix(record[0]) for record in records]
 
         # 1. update db with the result
-        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), [correct for _ in paths])
+        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), [(correct,) for _ in paths])
 
         # 2. update buffer
         buffer.extend(records)
@@ -308,7 +307,7 @@ class REvalImageFolder(RImageFolder):
     def _populate_buffers(self):
         db_data = db_select_all(self.db_conn, self.table_name)
         # database and sample data must contain same number of images
-        assert(len(db_data) == len(self.samples)) 
+        # assert(len(db_data) == len(self.samples)) # TODO: for test use
 
         for (imgpath, label), (path, classified) in zip(self.imgs, db_data):
             # paths must be in the same order, i.e., folder and database 
@@ -410,8 +409,8 @@ class RAnnotationFolder(RImageFolder):
         db_delete_all(self.db_conn, self.table_name)
 
         # 2. create new paired folder
-        os.remove(self.root) 
-        self._init_root_dir()
+        # No need to explicitly do this, just let paired images be there.
+        # If records in db are removed, they are not going to be used anyway.
 
         # 3. empty the buffers
         self._init_buffers()

@@ -1,9 +1,7 @@
 from PIL import Image
-from sklearn import datasets
 from objects.RServer import RServer
 from io import BytesIO
-from utils.path_utils import get_paired_path
-import shutil
+from utils.image_utils import refreshImgData
 import threading
 from objects.RTask import RTask, TaskType
 import time
@@ -48,6 +46,8 @@ def save_edit(split, image_path, image_data, image_height, image_width):
 
         dataManager.pairedset.save_annotated_image(train_img_path, image_data, image_height, image_width)
         dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
+        refreshImgData(paired_img_path)
+        
 
 
 def propose_edit(split, image_path, return_image=False):
@@ -82,6 +82,7 @@ def start_auto_annotate(split, start: int, end: int):
     # -1 means annotate till the end
     if end == -1: end = len(dataManager.trainset)
     end = min(end, len(dataManager.trainset))
+    if start == end: return
 
     def auto_annotate_thread(split, start, end):
         task = RTask(TaskType.AutoAnnotate, end - start)
@@ -100,9 +101,9 @@ def start_auto_annotate(split, start: int, end: int):
                 print("Time consumption:", endtime-starttime)
                 print("Auto annotate stopped!")
                 return 
-        task.exit()
+        # task.exit()
 
 
-    test_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
-    test_thread.start()
+    auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
+    auto_annotate_thread.start()
 

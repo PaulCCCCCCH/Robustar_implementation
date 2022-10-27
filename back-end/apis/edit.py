@@ -1,3 +1,4 @@
+from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
@@ -9,8 +10,8 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
-@app.route('/edit/<split>/<path:path>', methods=['POST'])
-def api_user_edit(split, path):
+@app.route('/edit/<split>', methods=['POST'])
+def api_user_edit(split):
     """
     Save user's edit for an image
     ---
@@ -48,9 +49,11 @@ def api_user_edit(split, path):
       200:
         description: edit success
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
+
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        RResponse.abort(400, 'Split {} not supported'.format(split))
 
     path = to_unix(path)
     json_data = request.get_json()
@@ -64,14 +67,20 @@ def api_user_edit(split, path):
 
     return RResponse.ok("Success!")
 
-@app.route('/edit/<split>/<path:path>', methods=['DELETE'])
-def api_delete_edit(split, path):
+
+@app.route('/edit/<split>', methods=['DELETE'])
+def api_delete_edit(split):
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
     dataManager.pairedset.remove_image(path)
     return RResponse.ok("Success!")
 
+@app.route('/edit/clear', methods=['DELETE'])
+def api_clear_edit():
+    dataManager.pairedset.clear_images()
+    return RResponse.ok("Success!")
 
-@app.route('/propose/<split>/<path:path>')
-def api_propose_edit(split, path):
+@app.route('/propose/<split>')
+def api_propose_edit(split):
     """
     Get edited image proposed by auto annotator
 
@@ -87,12 +96,12 @@ def api_propose_edit(split, path):
         proposed image path that can be placed in <img> tag with proper 
         server url as prefix
     """
+    path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
     proposed_image_path = ""
     if split not in ['annotated', 'train']:
         print("Cannot propose edit to a wrong split")
         return RResponse.ok(proposed_image_path)
-
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
@@ -106,22 +115,24 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
-
+        return RResponse.abort(400,
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
 
     json_data = request.get_json()
 
-    start_idx_to_gen = int(json_data['start_idx_to_gen'])
-    end_idx_to_gen = int(json_data['end_idx_to_gen'])
-
     try:
+        if (not str(json_data['start_idx_to_gen']).isnumeric()) \
+          or (not str(json_data['end_idx_to_gen']).isnumeric()): 
+            raise Exception("Bad input indices")
+        start_idx_to_gen = int(json_data['start_idx_to_gen'])
+        end_idx_to_gen = int(json_data['end_idx_to_gen'])
         start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
-        return RResponse.fail('auto annotation failed')
+        RResponse.abort(500, 'Auto annotation failed: ' + str(e))
 
     return RResponse.ok('success')
 
-    
 
 if __name__ == '__main__':
     print(RServer)

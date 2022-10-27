@@ -113,7 +113,7 @@ class RTask:
         digest = []
         for task in RTask.tasks:
             digest.append((task.get_readable_label(), task.get_percentage(), task.get_finished_task(),
-                           task.get_readable_time(), task.tid))
+                           task.get_readable_time(), task.tid, task.get_done()))
         return digest
 
     def __init__(self, task_type, total):
@@ -171,3 +171,6 @@ class RTask:
 
     def get_readable_time(self):
         return f"{self.elapsed_readable_time}/{self.remaining_readable_time}"
+
+    def get_done(self):
+        return self.n==self.total

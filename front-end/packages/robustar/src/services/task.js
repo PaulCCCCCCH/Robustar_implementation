@@ -1,14 +1,10 @@
-import * as common from './common';
+import { getRequest } from './common';
 
 /**
  * @param {object} configs the training configuration
- * @param {function} success success callback function
- * @param {function} fail fail callback function
  */
-const APIStopTask = (tid, success, failed) => {
+export const APIStopTask = async (tid) => {
   console.log(tid);
   console.log(`/task/stop/${tid}`);
-  common.getRequest(`/task/stop/${tid}`, success, failed);
+  return getRequest(`/task/stop/${tid}`);
 };
-
-export { APIStopTask };

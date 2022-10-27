@@ -26,6 +26,7 @@
           min="0"
           hint="A value of 0 means the beginning of all samples"
           required
+          data-test="auto-annotate-start-index"
         ></v-text-field>
 
         <v-text-field
@@ -38,6 +39,7 @@
           min="-1"
           hint="A value of -1 means the end of all samples"
           required
+          data-test="auto-annotate-end-index"
         ></v-text-field>
 
         <div class="d-flex flex-column align-center my-4">
@@ -45,7 +47,7 @@
             depressed
             color="primary"
             class="mb-4"
-            @click="startAutoAnnotate()"
+            @click="startAutoAnnotate"
             data-test="auto-annotate-pad-start-auto-annotation"
           >
             START AUTO ANNOTATION
@@ -95,27 +97,24 @@ export default {
     });
   },
   methods: {
-    annotateSuccess(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('success', 'Auto annotation started');
-    },
-    annotateFailed(res) {
-      console.log(res);
-      this.$root.finishProcessing();
-      this.$root.alert('error', 'Auto annotation failed to start');
-    },
-    startAutoAnnotate() {
+    async startAutoAnnotate() {
       if (!this.$refs.form.validate()) {
         return;
       }
       this.$root.startProcessing('Starting annotation... Please wait');
-      APIStartAutoAnnotate(
-        this.configs.split,
-        this.configs,
-        this.annotateSuccess,
-        this.annotateFailed
-      );
+      try {
+        const res = await APIStartAutoAnnotate(this.configs.split, this.configs);
+        console.log(res);
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Auto annotation started');
+      } catch (error) {
+        console.log(error.response);
+        this.$root.finishProcessing();
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Auto annotation failed to start'
+        );
+      }
     },
   },
 };

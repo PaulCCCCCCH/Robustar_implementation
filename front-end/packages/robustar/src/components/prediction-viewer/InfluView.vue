@@ -36,7 +36,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.influImgUrlList)
+    console.log(this.influImgUrlList);
     this.r_averaging = sessionStorage.getItem('r_averaging') || configs.defaultRAveraging;
   },
   methods: {

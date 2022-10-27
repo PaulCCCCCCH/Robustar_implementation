@@ -26,16 +26,15 @@ export default {
     };
   },
   methods: {
-    getConfigSuccess(res) {
-      console.log(res);
-      this.configs = res.data.data;
-    },
-    getConfigFailed(res) {
-      console.log(res);
-      this.configs = undefined;
-    },
-    startGettingConfig() {
-      APIGetConfig(this.getConfigSuccess, this.getConfigFailed);
+    async startGettingConfig() {
+      try {
+        const res = await APIGetConfig();
+        console.log(res);
+        this.configs = res.data.data;
+      } catch (error) {
+        this.$root.alert('error', error.response?.data?.detail || '');
+        this.configs = undefined;
+      }
     },
   },
   beforeMount() {

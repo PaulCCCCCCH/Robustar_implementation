@@ -86,6 +86,7 @@
               class="mr-8"
               outlined
               @change="resetImageList"
+              data-test="image-list-input-num-per-page"
             >
             </v-select>
             <v-select
@@ -96,6 +97,16 @@
               @change="setImageSize"
             >
             </v-select>
+
+            <v-btn
+              depressed
+              color="primary"
+              @click="clearAnnotatedImage"
+              data-test="image-list-btn-clear-annotated-imgs"
+              v-if="$route.params.split === 'annotated'"
+            >
+              DELETE ALL
+            </v-btn>
           </div>
         </v-sheet>
 
@@ -151,11 +162,24 @@
       <v-row v-else class="d-flex" style="width: 85%">
         <!-- 6 images per row -->
         <v-col
-          v-for="(url, idx) in imageList"
-          :key="url"
+          v-for="(url_and_binary, idx) in imageList"
+          :key="url_and_binary[0]"
           :cols="imageSizeMap[imageSize]"
           data-test="image-list-div-all-imgs"
         >
+          <div class="d-flex align-right" data-test="image-list-div-img">
+            <v-btn
+              v-if="$route.params.split === 'annotated'"
+              color="secondary"
+              class="mr-n1 mb-n1 mx-auto"
+              icon
+              small
+              :data-test="`image-list-btn-remove-annotated-img-${idx}`"
+              @click="deleteAnnotatedImage(idx, url_and_binary[0])"
+            >
+              <v-icon color="red">mdi-close-box</v-icon>
+            </v-btn>
+          </div>
           <v-hover :disabled="showExtraSettings" v-slot="{ hover }">
             <v-badge
               :value="
@@ -171,7 +195,7 @@
               style="width: 100%; height: 100%"
             >
               <v-img
-                :src="url"
+                :src="url_and_binary[1]"
                 alt="invalid image URL"
                 aspect-ratio="1"
                 :data-test="`image-list-img-${idx}`"
@@ -194,26 +218,21 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="gotoImage(url, 'EditImage')"
+                      @click="gotoImage(url_and_binary[0], 'EditImage')"
                       :data-test="`image-list-btn-edit-image-${idx}`"
                     >
                       <v-icon>mdi-pencil</v-icon>
                       <span v-if="imageSize !== 'extra small'" class="ml-2">ANNOTATE</span>
                     </v-btn>
-                    <v-btn outlined color="white" width="80%" @click="setCurrentImage(url)">
-                      <v-icon>mdi-cogs</v-icon>
-                      <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
-                    </v-btn>
                     <v-btn
-                      v-if="$route.params.split === 'annotated'"
-                      class="mt-4"
                       outlined
                       color="white"
                       width="80%"
-                      @click="deleteAnnotatedImage(idx, url)"
+                      @click="setCurrentImage(url_and_binary[0])"
+                      :data-test="`image-list-btn-predict-image-${idx}`"
                     >
-                      <v-icon>mdi-delete</v-icon>
-                      <span v-if="imageSize !== 'extra small'" class="ml-2">DELETE</span>
+                      <v-icon>mdi-cogs</v-icon>
+                      <span v-if="imageSize !== 'extra small'" class="ml-2">PREDICT</span>
                     </v-btn>
                   </div>
                 </v-expand-transition>
@@ -237,11 +256,14 @@
 
 <script>
 import { configs } from '@/configs.js';
-import { imagePageIdx2Id, getPageNumber } from '@/utils/imageUtils';
-import { APIDeleteEdit } from '@/services/edit';
+import { getPageNumber } from '@/utils/imageUtils';
+import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
 import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
+import pDebounce from 'p-debounce';
+
+const APIGetImageListDebounced = pDebounce(APIGetImageList, 0);
 
 export default {
   name: 'ImageList',
@@ -250,6 +272,7 @@ export default {
   },
   data() {
     return {
+      isLoadingImages: false,
       showExtraSettings: false,
       imageIdxSelection: 'start',
       imageStartIdx: 0,
@@ -322,20 +345,21 @@ export default {
     updateSplit() {
       this.split = this.$route.params.split;
     },
-    initImageList() {
-      APIGetSplitLength(
-        this.split,
-        (res) => {
-          this.splitLength = res.data.data;
-          this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
-          this.getClassNames();
-          this.loadImages();
-        },
-        (err) => {
-          this.$root.alert('error', 'Image list initialization failed');
-          this.imageList = [];
-        }
-      );
+    async initImageList() {
+      try {
+        const res = await APIGetSplitLength(this.split);
+        this.splitLength = res.data.data;
+        this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+        this.getClassNames();
+        this.loadImages();
+      } catch (error) {
+        console.log(error);
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Image list initialization failed'
+        );
+        this.imageList = [];
+      }
     },
     resetImageList() {
       this.currentPage = 0;
@@ -344,37 +368,34 @@ export default {
       this.selectedClass = 0;
       this.initImageList();
     },
-    getClassNames() {
-      APIGetClassNames(
-        this.split,
-        (res) => {
-          this.classStartIdx = res.data.data;
-          this.classNames = Object.keys(this.classStartIdx);
-        },
-        (err) => {
-          this.$root.alert('error', 'Fetching class names failed');
-          this.imageList = [];
-        }
-      );
+    async getClassNames() {
+      try {
+        const res = await APIGetClassNames(this.split);
+        this.classStartIdx = res.data.data;
+        this.classNames = Object.keys(this.classStartIdx);
+      } catch (error) {
+        this.$root.alert('error', error.response?.data?.detail || 'Fetching class names failed');
+        this.imageList = [];
+      }
     },
     setCurrentImage(url) {
       this.image_url = getImageUrlFromFullUrl(url);
       sessionStorage.setItem('split', this.split);
       sessionStorage.setItem('image_url', this.image_url);
     },
-    deleteImageSuccess() {
-      this.initImageList();
+    async deleteAnnotatedImage(idx, url) {
+      try {
+        await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
+        this.initImageList();
+      } catch (error) {
+        this.$root.alert('error', error.response?.data?.detail || 'Image deletion failed');
+      }
     },
     deleteImageFailed() {
       this.$root.alert('error', 'Image deletion failed');
     },
-    deleteAnnotatedImage(idx, url) {
-      APIDeleteEdit(
-        this.split,
-        getImageUrlFromFullUrl(url),
-        () => this.deleteImageSuccess(idx),
-        this.deleteImageFailed
-      );
+    clearAnnotatedImage() {
+      APIClearEdit(() => this.deleteImageSuccess(), this.deleteImageFailed);
     },
     gotoImage(url, componentName) {
       this.setCurrentImage(getImageUrlFromFullUrl(url));
@@ -402,25 +423,25 @@ export default {
       this.imagePerPage = this.imagePerPageOptions[1];
       this.resetImageList();
     },
-    loadImages() {
-      APIGetImageList(
-        this.split,
-        this.currentPage,
-        this.imagePerPage,
-        (res) => {
-          const list = res.data.data;
-          this.$nextTick(() => {
-            this.imageList = [];
-            list.forEach((imagePath) => {
-              this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
-            });
-          });
-        },
-        (err) => {
-          this.$root.alert('error', 'Loading images failed');
+    async loadImages() {
+      this.isLoadingImages = true;
+      try {
+        const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
+        const list = res.data.data || [];
+        this.$nextTick(() => {
           this.imageList = [];
-        }
-      );
+          list.forEach((imagePath) => {
+            // this.imageList.push(`${configs.imagePathServerUrl}${imagePath}`);
+            this.imageList.push(imagePath);
+          });
+        });
+        this.isLoadingImages = false;
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', error.response?.data?.detail || 'Loading images failed');
+        this.imageList = [];
+        this.isLoadingImages = false;
+      }
     },
     selectImage(idx) {
       if (this.showExtraSettings) {

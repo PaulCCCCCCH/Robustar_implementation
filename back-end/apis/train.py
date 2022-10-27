@@ -33,7 +33,7 @@ def stop_training():
     try:
         RTask.exit_tasks_of_type(TaskType.Training)
     except:
-        return RResponse.fail("Failed", -1)
+        RResponse.abort(500, "Failed to stop training", -1)
     
     return RResponse.ok("Training stopped!")
 
@@ -110,7 +110,7 @@ def start_training():
     # Return error message if config is invalid
     check_result = check_configs(configs)
     if check_result != 0:
-        return RResponse.fail("Invalid Configuration!", check_result)
+        RResponse.abort(400, "Invalid Configuration!", check_result)
 
     # Try to start training thread
     print("DEBUG: Training request received! Setting up training...")
@@ -121,8 +121,7 @@ def start_training():
 
     # Return error if training cannot be started
     if not train_thread:
-        print("Failed")
-        return RResponse.fail("Failed", -1)
+        RResponse.abort(500, "Failed to start training thread", -1)
 
     # Training started succesfully!
     print("Training started!")
