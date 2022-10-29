@@ -594,6 +594,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The name of the docker container</string>
+                         </property>
                          <property name="text">
                           <string>Container Name</string>
                          </property>
@@ -660,6 +663,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The version of the docker image of the container</string>
+                         </property>
                          <property name="text">
                           <string>Image Version</string>
                          </property>
@@ -707,6 +713,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The port the docker container forwards to</string>
                          </property>
                          <property name="text">
                           <string>Port</string>
@@ -836,6 +845,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The root path of the train set</string>
+                         </property>
                          <property name="text">
                           <string>Train Set</string>
                          </property>
@@ -945,6 +957,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The root path of the test set</string>
+                         </property>
                          <property name="text">
                           <string>Test Set</string>
                          </property>
@@ -1039,6 +1054,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The root path for all checkpoint files saved by Robustar</string>
+                         </property>
                          <property name="text">
                           <string>Checkpoint</string>
                          </property>
@@ -1126,6 +1144,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The root path for all influence result calculated by Robustar</string>
                          </property>
                          <property name="text">
                           <string>Influence Result</string>
@@ -1247,6 +1268,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The architecture of the model</string>
+                         </property>
                          <property name="text">
                           <string>Architecture</string>
                          </property>
@@ -1344,6 +1368,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Check the box if you want a model with pretrained weights</string>
+                         </property>
                          <property name="text">
                           <string>Pretrained</string>
                          </property>
@@ -1376,6 +1403,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The weight file used to initialize the model. Optional weight files are under the root path of the checkpoint you set</string>
                          </property>
                          <property name="text">
                           <string>Weight File</string>
@@ -1435,6 +1465,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The device on which the model will be created</string>
                          </property>
                          <property name="text">
                           <string>Device</string>
@@ -1496,6 +1529,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>Check the box if you want the train data to be shuffled</string>
+                         </property>
                          <property name="text">
                           <string>Shuffle</string>
                          </property>
@@ -1528,6 +1564,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The batch size of the data</string>
                          </property>
                          <property name="text">
                           <string>Batch Size</string>
@@ -1595,6 +1634,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The number of workers for the data loader</string>
+                         </property>
                          <property name="text">
                           <string>Worker Number</string>
                          </property>
@@ -1660,6 +1702,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The number of classes of the data</string>
                          </property>
                          <property name="text">
                           <string>Class Number</string>
@@ -1727,6 +1772,9 @@ QPushButton:hover {
                            <bold>false</bold>
                           </font>
                          </property>
+                         <property name="toolTip">
+                          <string>The length of side of the input image of the model</string>
+                         </property>
                          <property name="text">
                           <string>Image Size</string>
                          </property>
@@ -1792,6 +1840,9 @@ QPushButton:hover {
                            <italic>false</italic>
                            <bold>false</bold>
                           </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>The mode of padding</string>
                          </property>
                          <property name="text">
                           <string>Image Padding</string>
