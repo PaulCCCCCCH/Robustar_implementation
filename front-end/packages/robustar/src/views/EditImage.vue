@@ -445,7 +445,8 @@ export default {
         // to get the next image
         sessionStorage.setItem('image_url', proposed_url);
         sessionStorage.setItem('split', 'proposed');
-        this._reset();
+        await this.$refs['editor'].loadImageFromURL();
+        this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
