@@ -7,16 +7,27 @@
           class="d-flex flex-column align-center justify-center rounded px-8 mr-4 elevation-2"
           color="white"
         >
-          <div
-            v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
-            style="width: 200px"
-          >
-            <v-select
-              v-model="split"
-              :items="classification"
-              @change="resetImageList"
-              data-test="image-list-select-classification"
-            ></v-select>
+          <div v-if="$route.params.split === 'validation' || $route.params.split === 'test'" style = "height:50px">
+            <v-row no-gutters class="mb-6">
+              <v-select
+                class="pa-2"
+                v-model="split"
+                :items="classification"
+                v-bind:value="classification"
+                @change="resetImageList"
+              ></v-select>
+
+              <v-menu class="pa-2" :close-on-content-click="false" :nudge-width="5" offset-x>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn v-bind="attrs" v-on="on"> SPLIT STATISTICS </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <div>Accuracy: {{ accuarcy.value }}</div>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-row>
           </div>
 
           <!-- Page navigator -->
@@ -258,7 +269,12 @@
 import { configs } from '@/configs.js';
 import { getPageNumber } from '@/utils/imageUtils';
 import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
-import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
+import {
+  APIGetImageList,
+  APIGetSplitLength,
+  APIGetClassifiedSplitLength,
+  APIGetClassNames,
+} from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 import pDebounce from 'p-debounce';
@@ -282,8 +298,12 @@ export default {
       maxPage: 0,
       imageList: [],
       splitLength: 1000,
+      allImageLength: 1000,
+      correctImageLength: 1000,
+      incorrectImageLength: 1000,
       classNames: [],
       classStartIdx: {},
+      testImageList: {},
       selectedClass: 0,
       split: 'test_correct',
       image_url: '',
@@ -303,12 +323,15 @@ export default {
     this.fetchCurrentPage();
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
+    this.initClassifiedtImageList();
   },
   watch: {
     $route() {
       this.updateSplit();
       this.fetchCurrentPage();
       this.initImageList();
+      this.initClassifiedtImageList();
+
       this.image_url = ''; // Reset current image url for visualizaer
     },
     currentPage() {
@@ -324,6 +347,16 @@ export default {
         { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
+    },
+    accuarcy() {
+      const allImageLength = this.testImageList[0];
+      const correctImageLength = this.testImageList[1];
+      const incorrectImageLength = this.testImageList[2];
+
+      // const correct_image_length = this.correct_image.length;
+      // return { value: currect_length };
+      return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
+      // return { value: Math.round((allImageLength) * 100) / 100 };
     },
     hasImages() {
       return this.imageList.length > 0;
@@ -358,12 +391,32 @@ export default {
         this.imageList = [];
       }
     },
+    async initClassifiedtImageList() {
+      try {
+        const res = await APIGetClassifiedSplitLength(this.split);
+        this.testImageList = res.data.data;
+        // this.allSplitLength = res.data.data[0];
+        // this.correctSplitLength = res.data.data[1];
+        // this.incorrectSplitLength = res.data.data[2];
+        // this.maxCorrectPage = getPageNumber(
+        //   Math.max(this.correctSplitLength - 1, 0),
+        //   this.imagePerPage
+        // );
+        // this.getClassNames();
+        // this.loadImages();
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Image list initialization failed');
+        this.imageList = [];
+      }
+    },
     resetImageList() {
       this.currentPage = 0;
       this.classNames = [];
       this.classStartIdx = {};
       this.selectedClass = 0;
       this.initImageList();
+      this.initClassifiedtImageList();
     },
     async getClassNames() {
       try {
@@ -384,6 +437,7 @@ export default {
       try {
         await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
         this.initImageList();
+        this.initClassifiedtImageList();
       } catch (error) {
         this.$root.alert('error', 'Image deletion failed');
       }
@@ -478,3 +532,4 @@ export default {
   z-index: 9;
 }
 </style>
+

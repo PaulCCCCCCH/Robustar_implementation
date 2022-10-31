@@ -4,7 +4,7 @@ from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
+from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData, getClassifiedSplitLength
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
@@ -177,6 +177,40 @@ def get_split_length(split):
     except Exception:
         return RResponse.fail("Split not supported")
 
+    return RResponse.ok(response)
+
+@app.route('/image/classified/<split>', methods = ['GET'])
+def get_classfied_split_length(split):
+    """
+    Gets the length of all/correctly classified/incorrectly classified split lengt
+    ---
+    tags:
+      - image
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split"
+        required: true
+        type: "string"
+    responses:
+      200:
+        description: The length of the split
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: 9468
+            msg:
+              type: string
+              example: Success
+    """
+    try:
+      response = getClassifiedSplitLength(split)
+    except Exception:
+      return RResponse.fail("Split not supported")
     return RResponse.ok(response)
 
 
