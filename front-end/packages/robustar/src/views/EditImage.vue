@@ -66,14 +66,36 @@
             <span>move</span>
           </v-tooltip>
           <v-divider vertical inset class="mx-8"></v-divider>
-          <v-tooltip bottom>
+          <v-menu offset-y bottom auto :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
                 ><v-icon>mdi-history</v-icon></v-btn
               >
             </template>
-            <span>history</span>
-          </v-tooltip>
+            <v-list dense flat>
+              <v-subheader>History</v-subheader>
+              <v-list-item-group
+                :value="stackPointer"
+                @change="_goToOperation"
+                color="primary"
+                mandatory
+              >
+                <v-list-item v-for="(operation, i) in operationStack" :key="i" dense>
+                  <v-list-item-icon>
+                    <v-icon
+                      :color="i > stackPointer ? 'grey lighten-1' : ''"
+                      v-text="operation.icon"
+                    ></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <div :class="i > stackPointer ? 'grey--text' : ''">{{ operation.name }}</div>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -82,7 +104,8 @@
                 class="mr-4"
                 v-bind="attrs"
                 v-on="on"
-                @click="$refs['editor'].invoke('undo')"
+                @click="_undoOperation"
+                :disabled="stackPointer <= 0"
                 ><v-icon>mdi-arrow-u-left-top</v-icon></v-btn
               >
             </template>
@@ -96,7 +119,8 @@
                 class="mr-4"
                 v-bind="attrs"
                 v-on="on"
-                @click="$refs['editor'].invoke('redo')"
+                @click="_redoOperation"
+                :disabled="operationStack.length - 1 <= stackPointer"
                 ><v-icon>mdi-arrow-u-right-top</v-icon></v-btn
               >
             </template>
@@ -104,7 +128,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon large v-bind="attrs" v-on="on" @click="$refs['editor'].reset()"
+              <v-btn icon large v-bind="attrs" v-on="on" @click="_reset"
                 ><v-icon>mdi-cached</v-icon></v-btn
               >
             </template>
@@ -119,8 +143,8 @@
                 v-bind="attrs"
                 v-on="on"
                 @click="
-                  $refs['editor'].invoke('removeActiveObject');
                   $refs['editor'].invoke('clearObjects');
+                  _doOperation('delete', 'mdi-trash-can-outline');
                 "
                 ><v-icon>mdi-trash-can-outline</v-icon></v-btn
               >
@@ -182,7 +206,7 @@
             </v-slider>
           </div>
           <v-checkbox v-model="lockAspectRatio" label="Lock Aspect Ratio" hide-details></v-checkbox>
-          <div class="mt-6 mb-8">
+          <!-- <div class="mt-6 mb-8">
             <v-btn
               text
               @click="
@@ -203,9 +227,9 @@
             >
               <v-icon class="mr-2">mdi-close</v-icon>Cancel
             </v-btn>
-          </div>
+          </div> -->
         </div>
-        <div v-if="mode === 'draw'" class="d-flex align-center mb-8" style="width: 500px">
+        <div v-if="mode === 'draw'" class="d-flex align-center" style="width: 500px">
           <span class="mr-4 font-weight-medium" style="width: 100px">Brush Width</span>
           <v-slider
             v-model="brushWidth"
@@ -243,7 +267,7 @@
           </v-slider>
         </div>
         <v-sheet
-          class="d-flex justify-center align-center"
+          class="d-flex justify-center align-center mt-8"
           color="primary"
           width="100%"
           height="70"
@@ -286,6 +310,12 @@ import ImageEditor from '@/components/image-editor/ImageEditor';
 import { APISendEdit, APIGetProposedEdit } from '@/services/edit';
 import { APIGetAnnotated, APIGetNextImage } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
+import pDebounce from 'p-debounce';
+
+const debouncedResize = pDebounce((ctx, dimension) => {
+  ctx.$refs.editor.resize(dimension);
+  ctx._doOperation('resize', 'mdi-resize');
+}, 200);
 
 /**
  * The implementation for this component is tricky, because after a `loadEdit` or `autoEdit` call
@@ -320,6 +350,8 @@ export default {
       imageHeight: 224,
       tempHeight: 224,
       lockAspectRatio: false,
+      operationStack: [{ name: 'load image', icon: 'mdi-file-image-outline' }],
+      stackPointer: 0,
     };
   },
   computed: {
@@ -344,9 +376,7 @@ export default {
         if (this.lockAspectRatio) {
           this.tempHeight = this.tempWidth;
         }
-        setTimeout(() => {
-          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
-        }, 0);
+        debouncedResize(this, { width: this.tempWidth, height: this.tempHeight });
       }
     },
     tempHeight() {
@@ -354,9 +384,7 @@ export default {
         if (this.lockAspectRatio) {
           this.tempWidth = this.tempHeight;
         }
-        setTimeout(() => {
-          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
-        }, 0);
+        debouncedResize(this, { width: this.tempWidth, height: this.tempHeight });
       }
     },
     mode(newValue, oldValue) {
@@ -417,7 +445,8 @@ export default {
         // to get the next image
         sessionStorage.setItem('image_url', proposed_url);
         sessionStorage.setItem('split', 'proposed');
-        this._reset();
+        await this.$refs['editor'].loadImageFromURL();
+        this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
@@ -427,9 +456,11 @@ export default {
       }
     },
     adjustImageSize() {
-      this.imageWidth = 500;
-      this.imageHeight = 500;
-      this.$refs.editor.resize({ width: 500, height: 500 });
+      // this.imageWidth = 500;
+      // this.imageHeight = 500;
+      this.tempWidth = 500;
+      this.tempHeight = 500;
+      debouncedResize(this, { width: 500, height: 500 });
       // this.$refs['editor'].invoke('resizeCanvasDimension', { width: 500, height: 500 });
     },
     async sendEdit() {
@@ -479,6 +510,12 @@ export default {
             zoomLevel: this.zoomLevel,
           });
           break;
+        case 'draw':
+          this._doOperation('draw', 'mdi-draw');
+          break;
+        case 'colorRange':
+          this._doOperation('color range', 'mdi-image-filter-center-focus-strong-outline');
+          break;
         default:
           break;
       }
@@ -488,8 +525,8 @@ export default {
         this.mode = '';
       } else {
         this.mode = 'resize';
-        this.tempWidth = this.imageWidth;
-        this.tempHeight = this.imageHeight;
+        // this.tempWidth = this.imageWidth;
+        // this.tempHeight = this.imageHeight;
       }
     },
     toggleDraw() {
@@ -515,6 +552,38 @@ export default {
         this.$refs['editor'].invoke('startDrawingMode', 'COLOR_RANGE_DRAWING');
       }
     },
+    _undoOperation() {
+      if (this.stackPointer === 0) return;
+      this.stackPointer--;
+      this.$refs['editor'].invoke('undo');
+    },
+    _redoOperation() {
+      if (this.stackPointer >= this.operationStack.length - 1) return;
+      this.stackPointer++;
+      this.$refs['editor'].invoke('redo');
+    },
+    _doOperation(name, icon) {
+      const delta = this.operationStack.length - 1 - this.stackPointer;
+      if (delta > 0) {
+        this.operationStack = this.operationStack.slice(0, this.stackPointer + 1);
+      }
+      this.operationStack.push({ name, icon });
+      this.stackPointer++;
+      console.log('do');
+    },
+    _goToOperation(pos) {
+      if (pos === this.stackPointer) return;
+      const delta = Math.abs(pos - this.stackPointer);
+      if (pos > this.stackPointer) {
+        for (let i = 1; i <= delta; i++) {
+          setTimeout(this._redoOperation, 0);
+        }
+      } else {
+        for (let i = 1; i <= delta; i++) {
+          setTimeout(this._undoOperation, 0);
+        }
+      }
+    },
     _reset() {
       this.$refs.editor.reset();
       Object.assign(this, {
@@ -526,6 +595,8 @@ export default {
         imageHeight: 224,
         tempHeight: 224,
         lockAspectRatio: false,
+        operationStack: [{ name: 'load image', icon: 'mdi-file-image-outline' }],
+        stackPointer: 0,
       });
       this.toggleDraw();
     },
