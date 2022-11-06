@@ -1,3 +1,5 @@
+import sys
+
 from PySide2.QtWidgets import QDialog
 from PySide2.QtCore import Qt
 from views.popup_view_ui import Ui_Dialog
@@ -10,6 +12,6 @@ class PopupView(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        self.ui.okButton.clicked.connect(exit)
+        self.ui.okButton.clicked.connect(sys.exit)
 
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
