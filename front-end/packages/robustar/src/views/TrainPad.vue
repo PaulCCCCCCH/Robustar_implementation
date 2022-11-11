@@ -212,11 +212,11 @@ export default {
         console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Training started successfully');
-        window.open('http://localhost:6006');
+        window.open(configs.tensorboardUrl);
       } catch (error) {
         console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Training failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Training failed');
       }
     },
     async stopTraining() {
@@ -226,7 +226,7 @@ export default {
         this.$root.alert('success', 'Successfully stop training');
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Failed to stop training');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to stop training');
       }
     },
   },

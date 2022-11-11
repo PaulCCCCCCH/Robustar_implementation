@@ -20,7 +20,7 @@ def fileOpWrapper(fileOp):
     try:
         return RResponse.ok(fileOp())
     except Exception as e:
-        return RResponse.fail(e)
+        RResponse.abort(500, e)
 
 
 @bp.route("/fs/ls/<path>", methods=["GET"])

@@ -76,6 +76,7 @@ export default {
       this.width = width;
       this.height = height;
       this.invoke('resize', { width, height });
+      this.invoke('resizeCanvasDimension', { width, height });
     },
     toggleMove() {
       this.editorInstance.getActions().main.hand();
@@ -94,6 +95,10 @@ export default {
         });
       }
       this._addEventListener();
+    },
+    async loadImageFromURL() {
+      const { path, name } = getImage();
+      await this.editorInstance.loadImageFromURL(path, name);
     },
     getRootElement() {
       return this.$refs.tuiImageEditor;

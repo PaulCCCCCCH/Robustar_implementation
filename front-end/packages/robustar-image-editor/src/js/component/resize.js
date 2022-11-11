@@ -78,20 +78,23 @@ class Resize extends Component {
     if (scaleX !== scaleValues.scaleX || scaleY !== scaleValues.scaleY) {
       canvasImage.set(scaleValues).setCoords();
 
+      // scale the objects (e.g. path) on the image
+      this.getCanvas().forEachObject((object) => {
+        if (!object.cacheLeft) object.cacheLeft = object.left / scaleValues.scaleX;
+        if (!object.cacheTop) object.cacheTop = object.top / scaleValues.scaleY;
+        object.left = object.cacheLeft * scaleValues.scaleX;
+        object.top = object.cacheTop * scaleValues.scaleY;
+        object.scaleX = scaleValues.scaleX;
+        object.scaleY = scaleValues.scaleY;
+        // object.center();
+        object.setCoords();
+        // object.set(scaleValues).setCoords();
+      });
+
       this._dimensions = {
         width: canvasImage.width * canvasImage.scaleX,
         height: canvasImage.height * canvasImage.scaleY,
       };
-
-      // scale the objects (e.g. path) on the image
-      // this.getCanvas().forEachObject((object) => {
-      //   object.left = (object.left / object.scaleX) * scaleValues.scaleX;
-      //   object.top = (object.top / object.scaleY) * scaleValues.scaleY;
-      //   object.scaleX = scaleValues.scaleX / 10;
-      //   object.scaleY = scaleValues.scaleY / 10;
-      //   object.center();
-      //   object.setCoords();
-      // });
     }
 
     this.adjustCanvasDimensionBase();

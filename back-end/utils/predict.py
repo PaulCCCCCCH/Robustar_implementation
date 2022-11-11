@@ -3,11 +3,8 @@ from objects.RModelWrapper import RModelWrapper
 import torch
 import modules.influence_module as ptif
 import threading
-import time
 from objects.RDataManager import RDataManager
-from objects.RTask import RTask, TaskType
 import pickle
-from utils.path_utils import to_unix
 
 
 # Turns prediction results into array
@@ -34,19 +31,23 @@ def get_image_prediction(modelWrapper: RModelWrapper, imgpath: str, imgsize: int
         imgpath:    Path to the image to be predicted
         imgsize:    Resize (scale) the input image to imgsize*imgsize.
     """
-    image = load_image(imgpath)
-    image = apply_transforms(image,imgsize)
-    image = image.to(modelWrapper.device)
+    try:
+        image = load_image(imgpath)
+        image = apply_transforms(image,imgsize)
+        image = image.to(modelWrapper.device)
 
-    model = modelWrapper.model
-    out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
+        model = modelWrapper.model
 
-    if argmax:
-        _, predict = torch.max(out_score, 1)
-        return int(predict)
+        out_score = model(image) # size: (1, num_classes). For imageNet, shape is (1, 10)
 
-    out_probs = torch.nn.functional.softmax(out_score, 1)
-    return out_probs
+        if argmax:
+            _, predict = torch.max(out_score, 1)
+            return int(predict)
+
+        out_probs = torch.nn.functional.softmax(out_score, 1)
+        return out_probs
+    except Exception:
+        raise
 
 
 def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging=1):
@@ -61,51 +62,74 @@ def calculate_influence(modelWrapper:RModelWrapper, dataManager:RDataManager, st
                 influence for the entire dataset.
     """
 
-    task = RTask(TaskType.AutoAnnotate, end_idx - start_idx)
-    starttime = time.time()
-    influence_buffer = dataManager.get_influence_buffer()
+    INFLUENCES_SAVE_PATH = dataManager.influence_file_path
+    influences = {}
 
-    # Force num_workers to be 0 to prevent error
-    testloader = torch.utils.data.DataLoader(
-        dataManager.testset, batch_size=dataManager.batch_size, shuffle=False, num_workers=0)
-    trainloader = torch.utils.data.DataLoader(
-        dataManager.trainset, batch_size=dataManager.batch_size, shuffle=False, num_workers=0)
-
-    # trainloader = dataManager.trainloader
-    # testloader = dataManager.testloader
+    trainloader = dataManager.trainloader
+    testloader = dataManager.testloader
 
     if end_idx == -1:
         end_idx = len(testloader.dataset)
     else:
         end_idx = min(len(testloader.dataset), end_idx)
 
-    gpu = -1 if modelWrapper.device == 'cpu' else 0
-
-    recursion_depth = int(len(trainloader.dataset) / r_averaging)
+    config = ptif.get_default_config()
+    config['gpu'] = -1 if modelWrapper.device == 'cpu' else 0
+    config['test_start_index'] = start_idx
+    config['test_end_index'] = end_idx 
+    config['test_sample_num'] = end_idx - start_idx
+    config['r_averaging'] = r_averaging
+    config['recursion_depth'] = int(len(trainloader.dataset) / config['r_averaging'])
     ptif.init_logging('logfile.log')
 
-    # max_influence_dict is the dictionary containing the four most influential training images for a testing image
-    #   e.g.    
-    #               {
+    # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
+    #   e.g.    {
+    #               "0": {
     #                       "523": 254.1763153076172,
     #                       "719": 221.39866638183594,
     #                       "667": 216.841064453125,
     #                       "653": 214.35723876953125
-    #               }
+    #                      },
+    #               "1":{...},
+    #               ...
+    #           }
 
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
-    for idx in range(start_idx, end_idx):
-        test_path = to_unix(testloader.dataset.samples[idx][0])
-        if not influence_buffer.contains(test_path):
-            max_influence_dict = ptif.calc_img_wise(idx, modelWrapper.model, trainloader, testloader, gpu, recursion_depth, r_averaging) 
-            lst = sorted(list(max_influence_dict.items()), key=lambda p: p[1]) # sort according to influence value
-            lst = [p[0] for p in lst] 
-            influence_buffer.set(test_path, [to_unix(trainloader.dataset.samples[int(train_idx)][0]) for train_idx in lst])
+    max_influence_dicts = ptif.calc_img_wise(config, modelWrapper.model, trainloader, testloader) 
 
-        task_update_res = task.update()
-        if not task_update_res:
-            endtime = time.time()
-            print("Time consumption:", endtime-starttime)
-            print("Influence calculation stopped")
-            return 
+    for key in max_influence_dicts.keys():
+        train_img_paths = []
+
+        testId = "test/" + key
+        test_img_path = imageURLToPath(testId)
+
+        max_influence_dict = max_influence_dicts[key]
+        trainIds = list(max_influence_dict.keys())
+
+        for j in range(4):
+            trainUrl = "train/" + str(trainIds[j])
+            train_img_path = imageURLToPath(trainUrl)
+            # TODO: Stores both image path and image url. 
+            # Adding / removing samples to training set will cause inconsistency
+            # Need to check consistency in data manager when loading.
+            train_img_paths.append((train_img_path, trainUrl)) 
+
+        influences[test_img_path] = train_img_paths
+
+    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
+        pickle.dump(influences, influence_file)
+
+    
+class CalcInfluenceThread(threading.Thread):
+    def __init__(self, modelWrapper:RModelWrapper, dataManager:RDataManager, start_idx, end_idx, r_averaging):
+        super(CalcInfluenceThread, self).__init__()
+        self.modelWrapper = modelWrapper
+        self.dataManager = dataManager
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+        self.r_averaging = r_averaging
+        self.stop = True
+
+    def run(self):
+        calculate_influence(self.modelWrapper, self.dataManager, self.start_idx, self.end_idx, self.r_averaging)

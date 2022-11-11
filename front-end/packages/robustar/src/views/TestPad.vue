@@ -39,7 +39,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Testing failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Testing failed');
       }
     },
   },

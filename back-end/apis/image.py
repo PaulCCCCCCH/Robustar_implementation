@@ -22,7 +22,7 @@ def get_image_list(split, start, num_per_page):
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
     except Exception as e:
-        return RResponse.fail('Error retrieving image paths')
+        RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
 
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
 
@@ -58,12 +58,15 @@ def get_next_image(split):
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
     if split not in ['train', 'annotated', 'proposed']:
-        raise NotImplementedError
+        RResponse.abort(400, 'Split {} not supported'.format(split))
 
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
-    return RResponse.ok(getNextImagePath(split, path))
+    next_image_path = getNextImagePath(split, path)
+    if next_image_path is None:
+        RResponse.abort(400, 'Invalid image path {}'.format(path))
 
+    return RResponse.ok(next_image_path)
 
 @app.route('/image/annotated/<split>')
 def get_annotated(split):
@@ -133,7 +136,7 @@ def get_class_page(split):
     try:
         response = getClassStart(split)
     except Exception:
-        return RResponse.fail("Split not supported")
+        RResponse.abort(400, "Split not supported")
 
     return RResponse.ok(response)
 
@@ -169,7 +172,7 @@ def get_split_length(split):
     try:
         response = getSplitLength(split)
     except Exception:
-        return RResponse.fail("Split not supported")
+        RResponse.abort(400, "Split not supported")
 
     return RResponse.ok(response)
 
@@ -181,7 +184,7 @@ def get_dataset_img():
     if osp.exists(normal_path):
         return send_file(normal_path)
     else:
-        return RResponse.fail()
+        RResponse.abort(500, "Failed to retrieve image")
 
 
 @app.route('/visualize')

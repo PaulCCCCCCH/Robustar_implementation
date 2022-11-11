@@ -354,7 +354,10 @@ export default {
         this.loadImages();
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Image list initialization failed');
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Image list initialization failed'
+        );
         this.imageList = [];
       }
     },
@@ -371,7 +374,7 @@ export default {
         this.classStartIdx = res.data.data;
         this.classNames = Object.keys(this.classStartIdx);
       } catch (error) {
-        this.$root.alert('error', 'Fetching class names failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Fetching class names failed');
         this.imageList = [];
       }
     },
@@ -385,7 +388,7 @@ export default {
         await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
         this.initImageList();
       } catch (error) {
-        this.$root.alert('error', 'Image deletion failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Image deletion failed');
       }
     },
     deleteImageFailed() {
@@ -424,7 +427,7 @@ export default {
       this.isLoadingImages = true;
       try {
         const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
-        const list = res.data.data;
+        const list = res.data.data || [];
         this.$nextTick(() => {
           this.imageList = [];
           list.forEach((imagePath) => {
@@ -435,7 +438,7 @@ export default {
         this.isLoadingImages = false;
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Loading images failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Loading images failed');
         this.imageList = [];
         this.isLoadingImages = false;
       }

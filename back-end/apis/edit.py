@@ -53,7 +53,7 @@ def api_user_edit(split):
 
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
+        RResponse.abort(400, 'Split {} not supported'.format(split))
 
     path = to_unix(path)
     json_data = request.get_json()
@@ -66,6 +66,7 @@ def api_user_edit(split):
     save_edit(split, path, decoded, h, w)
 
     return RResponse.ok("Success!")
+
 
 @app.route('/edit/<split>', methods=['DELETE'])
 def api_delete_edit(split):
@@ -102,7 +103,6 @@ def api_propose_edit(split):
         print("Cannot propose edit to a wrong split")
         return RResponse.ok(proposed_image_path)
 
-
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
 
@@ -115,21 +115,24 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        return RResponse.fail('Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(split))
-
+        return RResponse.abort(400,
+            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                split))
 
     json_data = request.get_json()
 
     try:
+        if (not str(json_data['start_idx_to_gen']).isnumeric()) \
+          or (not str(json_data['end_idx_to_gen']).isnumeric()): 
+            raise Exception("Bad input indices")
         start_idx_to_gen = int(json_data['start_idx_to_gen'])
         end_idx_to_gen = int(json_data['end_idx_to_gen'])
         start_auto_annotate(split, start_idx_to_gen, end_idx_to_gen)
     except Exception as e:
-        return RResponse.fail('auto annotation failed')
+        RResponse.abort(500, 'Auto annotation failed: ' + str(e))
 
     return RResponse.ok('success')
 
-    
 
 if __name__ == '__main__':
     print(RServer)
