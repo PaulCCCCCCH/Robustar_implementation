@@ -52,6 +52,7 @@ def start_testing():
     try:
         start_test(split)
     except Exception as e:
+        RResponse.abort(500, "Failed to start testing" + str(e), -1)
         return RResponse.fail(str(e))
 
     return RResponse.ok("Test started!")

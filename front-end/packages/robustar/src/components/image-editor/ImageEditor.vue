@@ -96,6 +96,10 @@ export default {
       }
       this._addEventListener();
     },
+    async loadImageFromURL() {
+      const { path, name } = getImage();
+      await this.editorInstance.loadImageFromURL(path, name);
+    },
     getRootElement() {
       return this.$refs.tuiImageEditor;
     },

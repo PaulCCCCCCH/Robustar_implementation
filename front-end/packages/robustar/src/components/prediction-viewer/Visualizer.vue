@@ -14,7 +14,7 @@
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
         <v-expansion-panel @click="toggle_panel" v-if="show">
-          <v-expansion-panel-header expand-icon="mdi-menu-down"data-test="model-prediction">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-prediction">
             Model Prediction
           </v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -48,10 +48,9 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <div style="overflow-x: scroll">
-              <FocusView :focusImgUrl="focusImgUrl" data-test="model-focus-panel"  />
+              <FocusView :focusImgUrl="focusImgUrl" data-test="model-focus-panel" />
             </div>
             <v-icon @click="showCount" style="float: right"> mdi-magnify-plus</v-icon>
-
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -207,7 +206,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Server error. Check console.');
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
 
