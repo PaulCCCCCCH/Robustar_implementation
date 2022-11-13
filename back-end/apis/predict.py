@@ -102,7 +102,8 @@ def predict(split):
         # get predict results
         try:
             modelWrapper.lock.acquire()
-            output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
+            output = get_image_prediction(modelWrapper, image_path, dataManager.image_size,
+                                          argmax=False)
         except Exception as e:
             RResponse.abort(400, 'Invalid image path {}'.format(image_path))
         finally:
@@ -111,7 +112,8 @@ def predict(split):
 
         # get visualize images
         image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
-        output = visualize(modelWrapper, image_path, dataManager.image_size, server.configs['device'])
+        output = visualize(modelWrapper, image_path, dataManager.image_size,
+                           server.configs['device'])
         if len(output) != 4:
             RResponse.abort(400, "[Unexpected] Invalid number of predict visualize figures")
 
@@ -167,9 +169,9 @@ def get_influence(split):
     influence_dict = dataManager.get_influence_dict()
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
-    if image_path in influence_dict:
-        return RResponse.ok(influence_dict[image_path], 'Success')
-    return RResponse.fail('Image is not found or influence for that image is not calculated')
+    if image_path not in influence_dict: # [check] 此处由fail改成abort。status code 400bad request和 or 500 internal server error
+        RResponse.abort(400, 'Image is not found or influence for that image is not calculated')
+    return RResponse.ok(influence_dict[image_path], 'Success')
 
 
 @app.route('/influence', methods=['POST'])
@@ -215,8 +217,8 @@ def calculate_influence():
     json_data = request.get_json()
     configs = json_data['configs']
     calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper, 
-        dataManager, 
+        modelWrapper,
+        dataManager,
         start_idx=int(configs['test_sample_start_idx']),
         end_idx=int(configs['test_sample_end_idx']),
         r_averaging=int(configs['r_averaging'])

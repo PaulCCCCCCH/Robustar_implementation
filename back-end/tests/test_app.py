@@ -1,9 +1,10 @@
 import os
 import os.path as osp
 import shutil
-import threading
+import time
 
 import pytest
+from flask import request
 
 from objects.RServer import RServer
 from server import start_server
@@ -11,16 +12,22 @@ from utils.path_utils import to_unix
 
 PARAM_NAME_IMAGE_PATH = "image_url"
 
-# def test_valid_app_and_server():
-#     start_server()
+
+# def test_valid_app_and_server(request):
+#     basedir = request.config.getoption("basedir")
+#     start_server(basedir)
 #     server = RServer.getServer()
 #     assert server
 #     assert server.getFlaskApp()
+#     RServer.getDataManager().get_db_conn().close()
+
 
 @pytest.fixture()
 def app(request):
     basedir = request.config.getoption("basedir")
-    _cleanup(basedir)
+
+    _set_up(basedir)
+
     start_server(basedir)
     server = RServer.getServer()
     app = server.getFlaskApp()
@@ -29,90 +36,109 @@ def app(request):
     yield app
     app.config['TESTING'] = False
 
-    _clean_up()
+    RServer.getDataManager().get_db_conn().close()  # [check] due to unavalability in close_connection() in fs.py
 
-def _cleanup(basedir):
-    base_dir = basedir.replace('\\', '/')
-    dataset_dir = osp.join(base_dir, 'dataset').replace('\\', '/')
-    test_correct_root = osp.join(dataset_dir, 'test_correct.txt').replace('\\', '/')
-    test_incorrect_root = osp.join(dataset_dir, 'test_incorrect.txt').replace('\\', '/')
-    validation_correct_root = osp.join(dataset_dir, 'validation_correct.txt').replace('\\', '/')
-    validation_incorrect_root = osp.join(dataset_dir, 'validation_incorrect.txt').replace('\\', '/')
-    annotated_root = osp.join(dataset_dir, 'annotated.txt').replace('\\', '/')
-    paired_root = osp.join(dataset_dir, 'paired').replace('\\', '/')
-    if osp.exists(test_correct_root):
-        print("cleanup > delete " + test_correct_root)
-        os.remove(test_correct_root)
-    if osp.exists(test_incorrect_root):
-        print("cleanup > delete " + test_incorrect_root)
-        os.remove(test_incorrect_root)
-    if osp.exists(validation_correct_root):
-        print("cleanup > delete " + validation_correct_root)
-        os.remove(validation_correct_root)
-    if osp.exists(validation_incorrect_root):
-        print("cleanup > delete " + validation_incorrect_root)
-        os.remove(validation_incorrect_root)
-    if osp.exists(annotated_root):
-        print("cleanup > delete " + annotated_root)
-        os.remove(annotated_root)
-    if osp.exists(paired_root):
-        print("cleanup > delete " + paired_root)
-        for subfolder in os.listdir(paired_root):
-            subfolder_root = osp.join(paired_root, subfolder).replace('\\', '/')
-            print("cleanup >> delete " + subfolder_root)
-            for image in os.listdir(subfolder_root):
-                image_root = osp.join(subfolder_root, image).replace('\\', '/')
-                if os.path.isfile(image_root):
-                    # print("cleanup >>> delete " + image_root)
-                    os.remove(image_root)
-            os.rmdir(subfolder_root)
-        os.rmdir(paired_root)
+    _clean_up(basedir)
 
-    # db_path = to_unix(osp.join(base_dir, 'data.db'))
-    # if osp.exists(db_path):
-    #     print("cleanup > delete " + db_path)
-    #     os.remove(db_path)
 
-    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    # os.rename(dataset_dir, dataset_dir_original)
-    # os.mkdir(dataset_dir)
-    # test_dir = to_unix(osp.join(dataset_dir, 'test'))
-    # test_dir_original = to_unix(osp.join(dataset_dir_original, 'test'))
-    # os.mkdir(test_dir)
-    # dog_dir = to_unix(osp.join(test_dir, 'dog'))
-    # dog_dir_original = to_unix(osp.join(test_dir_original, 'dog'))
-    # os.mkdir(dog_dir)
-    # for i in range(10):
-    #     dog_img = to_unix(osp.join(dog_dir, str(i) + '.JPEG'))
-    #     dog_img_original = to_unix(osp.join(dog_dir_original, str(i) + '.JPEG'))
-    #     shutil.copyfile(dog_img_original, dog_img)
+def _set_up(basedir):
+    print(os.getcwd())
+    base_dir = to_unix(basedir)
 
-    # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
-    # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
-    # os.rename(proposed_dir, proposed_dir_original)
-    # os.mkdir(proposed_dir)
-    #
+    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    print(dataset_dir)
+    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    os.rename(dataset_dir, dataset_dir_original)
+    os.mkdir(dataset_dir)
+    print("setup > rename " + dataset_dir + " to " + dataset_dir_original)
+    train_dir = to_unix(osp.join(dataset_dir, 'train'))
+    test_dir = to_unix(osp.join(dataset_dir, 'test'))
+    train_dir_original = to_unix(osp.join(dataset_dir_original, 'train'))
+    test_dir_original = to_unix(osp.join(dataset_dir_original, 'test'))
+    os.mkdir(train_dir)
+    os.mkdir(test_dir)
+    for name in os.listdir(train_dir_original):
+        image_dir = to_unix(osp.join(train_dir, name))
+        if len(image_dir.split('.')) > 1:
+            continue
+        os.mkdir(image_dir)
+        image_dir_original = to_unix(osp.join(train_dir_original, name))
+        for i in range(10):
+            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+            shutil.copy2(image_original, image)
+    for name in os.listdir(test_dir_original):
+        image_dir = to_unix(osp.join(test_dir, name))
+        if len(image_dir.split('.')) > 1:
+            continue
+        os.mkdir(image_dir)
+        image_dir_original = to_unix(osp.join(test_dir_original, name))
+        for i in range(10):
+            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+            shutil.copy2(image_original, image)
+    print("setup > copy images into " + dataset_dir)
+
+    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    os.rename(proposed_dir, proposed_dir_original)
+    os.mkdir(proposed_dir)
+    print("setup > rename " + proposed_dir + " to " + proposed_dir_original)
+    for name in os.listdir(proposed_dir_original):
+        image_dir = to_unix(osp.join(proposed_dir, name))
+        os.mkdir(image_dir)
+        image_dir_original = to_unix(osp.join(proposed_dir_original, name))
+        for i in range(10):
+            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+            shutil.copy2(image_original, image)
+    print("setup > copy images into " + proposed_dir)
+
     # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
     # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
     # os.rename(visualize_images_dir, visualize_images_dir_original)
     # os.mkdir(visualize_images_dir)
-    #
+
+    db_path = to_unix(osp.join(base_dir, 'data.db'))
+    if osp.exists(db_path):
+        print("setup > delete " + db_path)
+        os.remove(db_path)
+
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
     # os.rename(db_path, db_path_original)
     # open(db_path, 'a').close()
 
 
-def _clean_up():
-    pass
+def _clean_up(basedir):
+    base_dir = to_unix(basedir)
 
-    # base_dir = to_unix(osp.join('/', 'Robustar2'))
-    #
-    # dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    # dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    # os.rmdir(dataset_dir)
-    # os.rename(dataset_dir_original, dataset_dir)
+    dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
+    for split in os.listdir(dataset_dir):
+        split_dir = to_unix(osp.join(dataset_dir, split))
+        for class_name in os.listdir(split_dir):
+            class_name_dir = to_unix(osp.join(split_dir, class_name))
+            for image_name in os.listdir(class_name_dir):
+                img = to_unix(osp.join(class_name_dir, image_name))
+                os.remove(img)
+            os.rmdir(class_name_dir)
+        os.rmdir(split_dir)
+    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    os.rmdir(dataset_dir)
+    os.rename(dataset_dir_original, dataset_dir)
+    print("cleanup > switch " + dataset_dir_original + " to " + dataset_dir)
+
+    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    for class_name in os.listdir(proposed_dir):
+        class_name_dir = to_unix(osp.join(proposed_dir, class_name))
+        for image_name in os.listdir(class_name_dir):
+            img = to_unix(osp.join(class_name_dir, image_name))
+            os.remove(img)
+        os.rmdir(class_name_dir)
+    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    os.rmdir(proposed_dir)
+    os.rename(proposed_dir_original, proposed_dir)
+    print("cleanup > switch " + proposed_dir_original + " to " + proposed_dir)
 
     # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
     # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
@@ -124,6 +150,11 @@ def _clean_up():
     # os.rmdir(visualize_images_dir)
     # os.rename(visualize_images_dir_original, visualize_images_dir)
 
+    db_path = to_unix(osp.join(base_dir, 'data.db'))
+    if osp.exists(db_path):
+        print("cleanup > delete " + db_path)
+        os.remove(db_path)
+
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
 
@@ -131,7 +162,6 @@ def _clean_up():
 @pytest.fixture()
 def client(app):
     yield app.test_client()
-
 
 # Reserve 10 photos for each category in trainset and 10 photos for each category in testset to save time
 # class TestTrain:
@@ -193,4 +223,3 @@ def client(app):
 #             # Compare each item in them
 #             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):
 #                 assert torch.equal(key_item_1[1], key_item_2[1])
-

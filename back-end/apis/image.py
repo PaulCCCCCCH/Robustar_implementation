@@ -4,13 +4,13 @@ from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
+from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, \
+    getImgData
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
-
 
 
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
@@ -27,8 +27,6 @@ def get_image_list(split, start, num_per_page):
     ls_image_path_data = list(zip(ls_image_path, ls_image_data))
 
     return RResponse.ok(ls_image_path_data)
-
-
 
     if osp.exists(normal_path):
         if normal_path in datasetFileBuffer:
@@ -67,6 +65,7 @@ def get_next_image(split):
         RResponse.abort(400, 'Invalid image path {}'.format(path))
 
     return RResponse.ok(next_image_path)
+
 
 @app.route('/image/annotated/<split>')
 def get_annotated(split):
