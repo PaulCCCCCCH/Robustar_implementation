@@ -35,7 +35,7 @@ class Model(QObject):
             'testPath': '',
             'checkPointPath': '',
             'influencePath': '',
-            'model_arch': '',
+            'model_arch': 'resnet-18',
             'pre_trained': 'False',
             'weight_to_load': '',
             'device': 'cpu',
