@@ -235,12 +235,19 @@ class MainController(QObject):
 
     def checkProfile(self):
         missProfileDict = {'trainPath': 'train set path', 'testPath': 'test set path',
-                          'influencePath': 'influence result path', 'checkPointPath': 'check point path'}
+                          'influencePath': 'influence result path', 'checkPointPath': 'check point path',
+                           'batch_size': 'batch size', 'num_workers': 'worker number',
+                           'num_classes': 'class number', 'image_size': 'image size'}
+        missProfilePrompt = []
 
-        for profileName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath']:
+        for profileName in ['trainPath', 'testPath', 'influencePath', 'checkPointPath', 'batch_size', 'num_workers', 'num_classes', 'image_size']:
             if not self.model.profile[profileName].strip():
-                self.printMessage(self.mainView.ui.promptBrowser, "Please provide {}".format(missProfileDict[profileName]))
-                return 1
+                missProfilePrompt.append(missProfileDict[profileName])
+
+        if len(missProfilePrompt) != 0:
+            self.printMessage(self.mainView.ui.promptBrowser,
+                              "Please provide {}".format(', '.join(missProfilePrompt)))
+            return 1
         return 0
     
     def getItemsFromListWidgets(self):
