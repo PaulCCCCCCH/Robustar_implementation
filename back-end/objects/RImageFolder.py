@@ -248,14 +248,6 @@ class REvalImageFolder(RImageFolder):
         self.buffer_incorrect = []
         self._populate_buffers()
         self._init_next_records()
-        self.init_sample_dict() # maintain a {path: index} mapping
-
-
-    def init_sample_dict(self):
-        self.sample_dict = dict()
-        for idx, (path, _) in enumerate(self.samples):
-            self.sample_dict[path] = idx
-
 
     def add_records(self, records: List[Tuple[str, int]], correct: bool):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
@@ -284,8 +276,6 @@ class REvalImageFolder(RImageFolder):
         next_record = self.next_correct if correct else self.next_incorrect
         return next_record.get(path, None)
 
-    def get_idx_from_path(self, path):
-        return self.sample_dict.get(to_unix(path))
 
     def _init_next_records(self):
         self.next_imgs = dict()
