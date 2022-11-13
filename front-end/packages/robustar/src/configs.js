@@ -1,4 +1,4 @@
-const host = `http://${location.host}`; // e.g., http://localhost:8080
+const host = `http://${window.location.host}`; // e.g., http://localhost:8080
 const apiHost = `${host}/api`;
 
 export const configs = {

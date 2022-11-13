@@ -218,7 +218,7 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="gotoImage(url_and_binary[0], 'EditImage')"
+                      @click="gotoImage(url_and_binary[0], 'ImageAnnotation')"
                       :data-test="`image-list-btn-edit-image-${idx}`"
                     >
                       <v-icon>mdi-pencil</v-icon>

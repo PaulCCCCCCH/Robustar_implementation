@@ -30,8 +30,8 @@ const routes = [
   },
   {
     path: '/edit/:mode',
-    name: 'EditImage',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/EditImage.vue'),
+    name: 'ImageAnnotation',
+    component: () => import(/* webpackChunkName: "about" */ '@/views/ImageAnnotation.vue'),
     props: true,
   },
   {
@@ -52,7 +52,7 @@ const routes = [
   {
     path: '/config',
     name: 'Config',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/Config.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '@/views/Configuration.vue'),
   },
   {
     path: '/auto-annotate',

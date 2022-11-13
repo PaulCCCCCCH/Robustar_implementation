@@ -18,7 +18,7 @@
 <script>
 import { APIGetConfig } from '@/services/config';
 export default {
-  name: 'Config',
+  name: 'Configuration',
   data() {
     return {
       configs: null,
