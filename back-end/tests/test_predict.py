@@ -1,4 +1,5 @@
 from test_app import app, client, PARAM_NAME_IMAGE_PATH
+from objects.RServer import RServer
 
 
 class TestPredict:
@@ -12,16 +13,16 @@ class TestPredict:
 
         def test_predict_fail_invalid_path(self, client):
             response = client.get("/predict/train?" + PARAM_NAME_IMAGE_PATH +
-                            "=/Robustar2/dataset/train/bird/10000.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/10000.JPEG")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Invalid image path /Robustar2/dataset/train/bird/10000.JPEG'
+            assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/train/bird/10000.JPEG'
             # TODO: [test] other splits
 
         def test_predict_success(self, client):
             response = client.get("/predict/train?" + PARAM_NAME_IMAGE_PATH +
-                            "=/Robustar2/dataset/train/bird/1.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/1.JPEG")
             assert response.status_code == 200
             rv = response.get_json()
             assert rv['code'] == 0
@@ -31,10 +32,14 @@ class TestPredict:
             assert len(data[1]) == 9
             assert sum((0 <= x <= 1) for x in data[1]) == 9
             assert data[2] == [
-                '/Robustar2/visualize_images/_Robustar2_dataset_train_bird_1_JPEG_0.png',
-                '/Robustar2/visualize_images/_Robustar2_dataset_train_bird_1_JPEG_1.png',
-                '/Robustar2/visualize_images/_Robustar2_dataset_train_bird_1_JPEG_2.png',
-                '/Robustar2/visualize_images/_Robustar2_dataset_train_bird_1_JPEG_3.png']
+                RServer.getServer().baseDir + '/visualize_images/' +
+                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_0.png',
+                RServer.getServer().baseDir + '/visualize_images/' +
+                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_1.png',
+                RServer.getServer().baseDir + '/visualize_images/' +
+                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_2.png',
+                RServer.getServer().baseDir + '/visualize_images/' +
+                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_3.png']
             # TODO: [test] other splits
 
     class TestGetInfluence:
@@ -43,20 +48,22 @@ class TestPredict:
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Image is not found or influence for that image is not calculated'
+            assert rv[
+                       'detail'] == 'Image is not found or influence for that image is not calculated'
 
         def test_get_influence_fail_invalid_path(self, client):
             response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
-                            "=/Robustar2/dataset/train/bird/10000.JPEG")
+                                  "=" + RServer.getServer().baseDir + "dataset/train/bird/10000.JPEG")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Image is not found or influence for that image is not calculated'
+            assert rv[
+                       'detail'] == 'Image is not found or influence for that image is not calculated'
 
         def test_get_influence_success(self, client):
             assert True
             # response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
-            #                 "=/Robustar2/dataset/train/bird/1.JPEG")
+            #                 "=" + RServer.getServer().baseDir + "/dataset/train/bird/1.JPEG")
             # assert response.status_code == 200
             # rv = response.get_json()
             # assert rv['code'] == -1

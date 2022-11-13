@@ -4,22 +4,12 @@ import shutil
 import time
 
 import pytest
-from flask import request
 
 from objects.RServer import RServer
 from server import start_server
 from utils.path_utils import to_unix
 
 PARAM_NAME_IMAGE_PATH = "image_url"
-
-
-# def test_valid_app_and_server(request):
-#     basedir = request.config.getoption("basedir")
-#     start_server(basedir)
-#     server = RServer.getServer()
-#     assert server
-#     assert server.getFlaskApp()
-#     RServer.getDataManager().get_db_conn().close()
 
 
 @pytest.fixture()
@@ -39,6 +29,13 @@ def app(request):
     RServer.getDataManager().get_db_conn().close()  # [check] due to unavalability in close_connection() in fs.py
 
     _clean_up(basedir)
+
+    # time.sleep(0.5)
+
+
+@pytest.fixture()
+def client(app):
+    yield app.test_client()
 
 
 def _set_up(basedir):
@@ -157,11 +154,6 @@ def _clean_up(basedir):
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
-
-
-@pytest.fixture()
-def client(app):
-    yield app.test_client()
 
 # Reserve 10 photos for each category in trainset and 10 photos for each category in testset to save time
 # class TestTrain:

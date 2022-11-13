@@ -21,32 +21,10 @@ def get_image_list(split, start, num_per_page):
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
+        ls_image_path_data = list(zip(ls_image_path, ls_image_data))
+        return RResponse.ok(ls_image_path_data)
     except Exception as e:
         RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
-
-    ls_image_path_data = list(zip(ls_image_path, ls_image_data))
-
-    return RResponse.ok(ls_image_path_data)
-
-    if osp.exists(normal_path):
-        if normal_path in datasetFileBuffer:
-            image_data = datasetFileBuffer[normal_path]
-        else:
-            with open(normal_path, "rb") as image_file:
-                image_base64 = base64.b64encode(image_file.read()).decode()
-            image_mime = mimetypes.guess_type(normal_path)[0]
-
-            image_data = 'data:' + image_mime + ";base64," + image_base64
-
-            datasetFileQueue.append(normal_path)
-            if len(datasetFileQueue) > datasetFileQueueLen:
-                temp_path = datasetFileQueue.popleft()
-                del datasetFileBuffer[temp_path]
-            datasetFileBuffer[normal_path] = image_data
-
-        return image_data
-    else:
-        raise Exception
 
 
 @app.route('/image/next/<split>')

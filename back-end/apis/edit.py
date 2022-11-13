@@ -10,6 +10,7 @@ server = RServer.getServer()
 app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
+
 @app.route('/edit/<split>', methods=['POST'])
 def api_user_edit(split):
     """
@@ -75,10 +76,12 @@ def api_delete_edit(split):
     dataManager.pairedset.remove_image(path)
     return RResponse.ok("Success!")
 
+
 @app.route('/edit/clear', methods=['DELETE'])
 def api_clear_edit():
     dataManager.pairedset.clear_images()
     return RResponse.ok("Success!")
+
 
 @app.route('/propose/<split>')
 def api_propose_edit(split):
@@ -116,15 +119,15 @@ def api_auto_annotate(split):
     """
 
     if split != 'train':
-        return RResponse.abort(400,
-            'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
-                split))
+        RResponse.abort(400,
+                        'Split {} not supported! Currently we only support editing the `train` or `annotated` splits!'.format(
+                            split))
 
     json_data = request.get_json()
 
     try:
         if (not str(json_data['start_idx_to_gen']).isnumeric()) \
-          or (not str(json_data['end_idx_to_gen']).isnumeric()): 
+                or (not str(json_data['end_idx_to_gen']).isnumeric()):
             raise Exception("Bad input indices")
         start_idx_to_gen = int(json_data['start_idx_to_gen'])
         end_idx_to_gen = int(json_data['end_idx_to_gen'])

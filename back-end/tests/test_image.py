@@ -1,4 +1,5 @@
 from test_app import app, client, PARAM_NAME_IMAGE_PATH
+from objects.RServer import RServer
 
 
 class TestImage:
@@ -29,50 +30,50 @@ class TestImage:
             response = client.get("/image/list/train/0/4")
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['data'][0][0] == '/Robustar2/dataset/train/bird/0.JPEG'
-            assert rv['data'][1][0] == '/Robustar2/dataset/train/bird/1.JPEG'
-            assert rv['data'][2][0] == '/Robustar2/dataset/train/bird/2.JPEG'
-            assert rv['data'][3][0] == '/Robustar2/dataset/train/bird/3.JPEG'
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/train/bird/0.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/train/bird/1.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/train/bird/2.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/bird/3.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 30 - 35
             response = client.get("/image/list/train/5/6")
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['data'][0][0] == '/Robustar2/dataset/train/dog/0.JPEG'
-            assert rv['data'][1][0] == '/Robustar2/dataset/train/dog/1.JPEG'
-            assert rv['data'][2][0] == '/Robustar2/dataset/train/dog/2.JPEG'
-            assert rv['data'][3][0] == '/Robustar2/dataset/train/dog/3.JPEG'
-            assert rv['data'][4][0] == '/Robustar2/dataset/train/dog/4.JPEG'
-            assert rv['data'][5][0] == '/Robustar2/dataset/train/dog/5.JPEG'
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/train/dog/0.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/train/dog/1.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/train/dog/2.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/dog/3.JPEG'
+            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/train/dog/4.JPEG'
+            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/train/dog/5.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 80 - 89 (last 10)
             response = client.get("/image/list/train/8/10")
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['data'][0][0] == '/Robustar2/dataset/train/turtle/0.JPEG'
-            assert rv['data'][1][0] == '/Robustar2/dataset/train/turtle/1.JPEG'
-            assert rv['data'][2][0] == '/Robustar2/dataset/train/turtle/2.JPEG'
-            assert rv['data'][3][0] == '/Robustar2/dataset/train/turtle/3.JPEG'
-            assert rv['data'][4][0] == '/Robustar2/dataset/train/turtle/4.JPEG'
-            assert rv['data'][5][0] == '/Robustar2/dataset/train/turtle/5.JPEG'
-            assert rv['data'][6][0] == '/Robustar2/dataset/train/turtle/6.JPEG'
-            assert rv['data'][7][0] == '/Robustar2/dataset/train/turtle/7.JPEG'
-            assert rv['data'][8][0] == '/Robustar2/dataset/train/turtle/8.JPEG'
-            assert rv['data'][9][0] == '/Robustar2/dataset/train/turtle/9.JPEG'
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/train/turtle/0.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/train/turtle/1.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/train/turtle/2.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/turtle/3.JPEG'
+            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/train/turtle/4.JPEG'
+            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/train/turtle/5.JPEG'
+            assert rv['data'][6][0] == RServer.getServer().baseDir + '/dataset/train/turtle/6.JPEG'
+            assert rv['data'][7][0] == RServer.getServer().baseDir + '/dataset/train/turtle/7.JPEG'
+            assert rv['data'][8][0] == RServer.getServer().baseDir + '/dataset/train/turtle/8.JPEG'
+            assert rv['data'][9][0] == RServer.getServer().baseDir + '/dataset/train/turtle/9.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # image index 84 - (89) - 90 (1 of 7 out of upper-bound)
             response = client.get("/image/list/train/12/7")
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['data'][0][0] == '/Robustar2/dataset/train/turtle/4.JPEG'
-            assert rv['data'][1][0] == '/Robustar2/dataset/train/turtle/5.JPEG'
-            assert rv['data'][2][0] == '/Robustar2/dataset/train/turtle/6.JPEG'
-            assert rv['data'][3][0] == '/Robustar2/dataset/train/turtle/7.JPEG'
-            assert rv['data'][4][0] == '/Robustar2/dataset/train/turtle/8.JPEG'
-            assert rv['data'][5][0] == '/Robustar2/dataset/train/turtle/9.JPEG'
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/train/turtle/4.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/train/turtle/5.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/train/turtle/6.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/turtle/7.JPEG'
+            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/train/turtle/8.JPEG'
+            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/train/turtle/9.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # TODO: [test] other splits - needs other test methods
@@ -92,23 +93,23 @@ class TestImage:
 
         def test_get_next_image_fail_invalid_path(self, client):
             response = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=/Robustar2/dataset/train/bird/10000.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/10000.JPEG")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Invalid image path /Robustar2/dataset/train/bird/10000.JPEG'
+            assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/train/bird/10000.JPEG'
             response = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=/Robustar2/dataset/train/panda/0.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/train/panda/0.JPEG")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Invalid image path /Robustar2/dataset/train/panda/0.JPEG'
+            assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/train/panda/0.JPEG'
             response = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=/Robustar2/dataset/proposed/bird/0.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/proposed/bird/0.JPEG")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Invalid image path /Robustar2/dataset/proposed/bird/0.JPEG'
+            assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/proposed/bird/0.JPEG'
             # TODO: [test] annotated and proposed - needs other test methods
             # rv = client.get("/image/next/annotated/100000").get_json()
             # assert rv['code'] == -1
@@ -119,10 +120,10 @@ class TestImage:
 
         def test_get_next_image_success(self, client):
             response = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
-                            "=/Robustar2/dataset/train/bird/1.JPEG")
+                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/1.JPEG")
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['data'] == '/Robustar2/dataset/train/bird/2.JPEG'
+            assert rv['data'] == RServer.getServer().baseDir + '/dataset/train/bird/2.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # TODO: [test] annotated and proposed - needs other test methods

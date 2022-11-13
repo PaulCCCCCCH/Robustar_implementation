@@ -115,7 +115,7 @@ def predict(split):
         output = visualize(modelWrapper, image_path, dataManager.image_size,
                            server.configs['device'])
         if len(output) != 4:
-            RResponse.abort(400, "[Unexpected] Invalid number of predict visualize figures")
+            RResponse.abort(500, "[Unexpected] Invalid number of predict visualize figures")
 
         predict_fig_routes = []
         for i, fig in enumerate(output):
@@ -169,7 +169,7 @@ def get_influence(split):
     influence_dict = dataManager.get_influence_dict()
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
-    if image_path not in influence_dict: # [check] 此处由fail改成abort。status code 400bad request和 or 500 internal server error
+    if image_path not in influence_dict:
         RResponse.abort(400, 'Image is not found or influence for that image is not calculated')
     return RResponse.ok(influence_dict[image_path], 'Success')
 
