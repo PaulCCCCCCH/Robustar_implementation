@@ -6,24 +6,24 @@ class TestImage:
     class TestGetImageList:
         def test_get_image_list_fail_invalid_split(self, client):
             response = client.get("/image/list/non-exist/1/1")
-            assert response.status_code == 500
+            assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
-            assert rv['detail'] == 'Error retrieving image paths - Invalid data split'
+            assert rv['detail'] == 'Invalid data split'
 
-        # def test_get_image_list_fail_num_per_page_0(self, client):
-        #     response = client.get("/image/list/train/1/0")
-        #     assert response.status_code == 500
-        #     rv = response.get_json()
-        #     assert rv['error_code'] == -1
-        #     assert rv['detail'] == 'Error retrieving image paths - empty image list [0, 0)'
+        def test_get_image_list_fail_num_per_page_0(self, client):
+            response = client.get("/image/list/train/1/0")
+            assert response.status_code == 400
+            rv = response.get_json()
+            assert rv['error_code'] == -1
+            assert rv['detail'] == 'Invalid non-positive num_per_page'
 
-        # def test_get_image_list_fail_index_out_of_bound(self, client):
-        #     response = client.get("/image/list/train/9/10")  # image index 90-99
-        #     assert response.status_code == 500
-        #     rv = response.get_json()
-        #     assert rv['error_code'] == -1
-        #     assert rv['detail'] == 'Error retrieving image paths - empty image list [90, 100)'
+        def test_get_image_list_fail_index_out_of_bound(self, client): # TODO: [test] other splits
+            response = client.get("/image/list/train/9/10")  # image index 90-99
+            assert response.status_code == 400
+            rv = response.get_json()
+            assert rv['error_code'] == -1
+            assert rv['detail'] == 'Out of upper-bound'
 
         def test_get_image_list_success(self, client):
             # image index 0 - 3

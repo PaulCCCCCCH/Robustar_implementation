@@ -15,6 +15,9 @@ dataManager = server.getDataManager()
 
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
+    if num_per_page == 0:
+        RResponse.abort(400, 'Invalid non-positive num_per_page')
+
     image_idx_start = num_per_page * start
     image_idx_end = num_per_page * (start + 1)
 
@@ -23,6 +26,8 @@ def get_image_list(split, start, num_per_page):
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
         ls_image_path_data = list(zip(ls_image_path, ls_image_data))
         return RResponse.ok(ls_image_path_data)
+    except (ValueError, NotImplementedError) as e:
+        RResponse.abort(400, '{}'.format(str(e)))
     except Exception as e:
         RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
 

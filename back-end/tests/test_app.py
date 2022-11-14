@@ -26,7 +26,8 @@ def app(request):
     yield app
     app.config['TESTING'] = False
 
-    RServer.getDataManager().get_db_conn().close()  # [check] due to unavalability in close_connection() in fs.py
+    RServer.getDataManager().get_db_conn().close()
+    # due to unavailability of close_connection() in fs.py
 
     _clean_up(basedir)
 
