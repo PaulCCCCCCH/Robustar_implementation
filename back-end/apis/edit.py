@@ -1,3 +1,5 @@
+import binascii
+
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from objects.RResponse import RResponse
@@ -51,23 +53,27 @@ def api_user_edit(split):
         description: edit success
     """
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
+    path = to_unix(path)
 
     # TODO: Maybe support editing other splits as well? Or not?
     if split not in ['train', 'annotated', 'proposed']:
         RResponse.abort(400, 'Split {} not supported'.format(split))
 
-    path = to_unix(path)
     json_data = request.get_json()
-    print(json_data)
     encoded_string = json_data['image'].split(',')[1]
-    decoded = base64.b64decode(encoded_string)
-
     h = int(json_data['image_height'])
     w = int(json_data['image_width'])
 
-    save_edit(split, path, decoded, h, w)
-
-    return RResponse.ok("Success!")
+    try:
+        decoded = base64.b64decode(encoded_string)
+        save_edit(split, path, decoded, h, w)
+        return RResponse.ok("Success!")
+    except binascii.Error:
+        RResponse.abort(400, 'Broken image, fail to decode')
+    except ValueError as e:
+        RResponse.abort(400, str(e))
+    except Exception as e:
+        RResponse.abort(500, str(e))
 
 
 @app.route('/edit/<split>', methods=['DELETE'])
@@ -102,10 +108,8 @@ def api_propose_edit(split):
     """
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
-    proposed_image_path = ""
     if split not in ['annotated', 'train']:
-        print("Cannot propose edit to a wrong split")
-        return RResponse.ok(proposed_image_path)
+        RResponse.abort(400, 'Cannot propose edit to a wrong split {}'.format(split))
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
@@ -136,7 +140,3 @@ def api_auto_annotate(split):
         RResponse.abort(500, 'Auto annotation failed: ' + str(e))
 
     return RResponse.ok('success')
-
-
-if __name__ == '__main__':
-    print(RServer)
