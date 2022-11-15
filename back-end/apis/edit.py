@@ -67,7 +67,7 @@ def api_user_edit(split):
     try:
         decoded = base64.b64decode(encoded_string)
         save_edit(split, path, decoded, h, w)
-        return RResponse.ok("Success!")
+        return RResponse.ok(None)
     except binascii.Error:
         RResponse.abort(400, 'Broken image, fail to decode')
     except ValueError as e:

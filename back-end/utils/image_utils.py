@@ -41,10 +41,10 @@ def getImagePath(split, start=None, end=None):
         return dataManager.testset.get_record(correct=True, start=start, end=end)
     if split == 'test_incorrect':
         return dataManager.testset.get_record(correct=False, start=start, end=end)
-    else:
-        if split not in dataManager.split_dict:
-            raise NotImplementedError('Invalid data split')
+    if split in dataManager.split_dict:
         return dataManager.split_dict[split].get_image_list(start, end)
+    raise NotImplementedError('Invalid data split')
+
 
 
 def getNextImagePath(split, path):
