@@ -40,57 +40,62 @@ def client(app):
 
 
 def _set_up(basedir):
-    print(os.getcwd())
+    # print(os.getcwd())
     base_dir = to_unix(basedir)
 
     dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    print(dataset_dir)
     dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    os.rename(dataset_dir, dataset_dir_original)
-    os.mkdir(dataset_dir)
-    print("setup > rename " + dataset_dir + " to " + dataset_dir_original)
-    train_dir = to_unix(osp.join(dataset_dir, 'train'))
-    test_dir = to_unix(osp.join(dataset_dir, 'test'))
-    train_dir_original = to_unix(osp.join(dataset_dir_original, 'train'))
-    test_dir_original = to_unix(osp.join(dataset_dir_original, 'test'))
-    os.mkdir(train_dir)
-    os.mkdir(test_dir)
-    for name in os.listdir(train_dir_original):
-        image_dir = to_unix(osp.join(train_dir, name))
-        if len(image_dir.split('.')) > 1:
-            continue
-        os.mkdir(image_dir)
-        image_dir_original = to_unix(osp.join(train_dir_original, name))
-        for i in range(10):
-            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
-            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
-            shutil.copy2(image_original, image)
-    for name in os.listdir(test_dir_original):
-        image_dir = to_unix(osp.join(test_dir, name))
-        if len(image_dir.split('.')) > 1:
-            continue
-        os.mkdir(image_dir)
-        image_dir_original = to_unix(osp.join(test_dir_original, name))
-        for i in range(10):
-            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
-            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
-            shutil.copy2(image_original, image)
-    print("setup > copy images into " + dataset_dir)
+    if osp.exists(dataset_dir):
+        os.rename(dataset_dir, dataset_dir_original)
+        os.mkdir(dataset_dir)
+        print("setup > rename " + dataset_dir + " to " + dataset_dir_original)
+        train_dir = to_unix(osp.join(dataset_dir, 'train'))
+        train_dir_original = to_unix(osp.join(dataset_dir_original, 'train'))
+        os.mkdir(train_dir)
+        for name in os.listdir(train_dir_original):
+            image_dir = to_unix(osp.join(train_dir, name))
+            if len(image_dir.split('.')) > 1:
+                continue
+            os.mkdir(image_dir)
+            image_dir_original = to_unix(osp.join(train_dir_original, name))
+            for i in range(10):
+                image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+                image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+                shutil.copy2(image_original, image)
+        test_dir = to_unix(osp.join(dataset_dir, 'test'))
+        test_dir_original = to_unix(osp.join(dataset_dir_original, 'test'))
+        os.mkdir(test_dir)
+        for name in os.listdir(test_dir_original):
+            image_dir = to_unix(osp.join(test_dir, name))
+            if len(image_dir.split('.')) > 1:
+                continue
+            os.mkdir(image_dir)
+            image_dir_original = to_unix(osp.join(test_dir_original, name))
+            for i in range(10):
+                image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+                image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+                shutil.copy2(image_original, image)
+        print("setup > copy images into " + dataset_dir)
+    else:
+        print("setup > no database dir, skip copy")
 
     proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
     proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
-    os.rename(proposed_dir, proposed_dir_original)
-    os.mkdir(proposed_dir)
-    print("setup > rename " + proposed_dir + " to " + proposed_dir_original)
-    for name in os.listdir(proposed_dir_original):
-        image_dir = to_unix(osp.join(proposed_dir, name))
-        os.mkdir(image_dir)
-        image_dir_original = to_unix(osp.join(proposed_dir_original, name))
-        for i in range(10):
-            image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
-            image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
-            shutil.copy2(image_original, image)
-    print("setup > copy images into " + proposed_dir)
+    if osp.exists(proposed_dir):
+        os.rename(proposed_dir, proposed_dir_original)
+        os.mkdir(proposed_dir)
+        print("setup > rename " + proposed_dir + " to " + proposed_dir_original)
+        for name in os.listdir(proposed_dir_original):
+            image_dir = to_unix(osp.join(proposed_dir, name))
+            os.mkdir(image_dir)
+            image_dir_original = to_unix(osp.join(proposed_dir_original, name))
+            for i in range(10):
+                image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+                image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
+                shutil.copy2(image_original, image)
+        print("setup > copy images into " + proposed_dir)
+    else:
+        print("setup > no proposed dir, skip copy")
 
     # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
     # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
@@ -101,6 +106,8 @@ def _set_up(basedir):
     if osp.exists(db_path):
         print("setup > delete " + db_path)
         os.remove(db_path)
+    else:
+        print("setup > no db, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
@@ -112,31 +119,37 @@ def _clean_up(basedir):
     base_dir = to_unix(basedir)
 
     dataset_dir = to_unix(osp.join(base_dir, 'dataset'))
-    for split in os.listdir(dataset_dir):
-        split_dir = to_unix(osp.join(dataset_dir, split))
-        for class_name in os.listdir(split_dir):
-            class_name_dir = to_unix(osp.join(split_dir, class_name))
+    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
+    if osp.exists(dataset_dir_original):
+        for split in os.listdir(dataset_dir):
+            split_dir = to_unix(osp.join(dataset_dir, split))
+            for class_name in os.listdir(split_dir):
+                class_name_dir = to_unix(osp.join(split_dir, class_name))
+                for image_name in os.listdir(class_name_dir):
+                    img = to_unix(osp.join(class_name_dir, image_name))
+                    os.remove(img)
+                os.rmdir(class_name_dir)
+            os.rmdir(split_dir)
+        os.rmdir(dataset_dir)
+        os.rename(dataset_dir_original, dataset_dir)
+        print("cleanup > switch " + dataset_dir_original + " to " + dataset_dir)
+    else:
+        print("cleanup > no origin database dir, skip restore")
+
+    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
+    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
+    if osp.exists(proposed_dir_original):
+        for class_name in os.listdir(proposed_dir):
+            class_name_dir = to_unix(osp.join(proposed_dir, class_name))
             for image_name in os.listdir(class_name_dir):
                 img = to_unix(osp.join(class_name_dir, image_name))
                 os.remove(img)
             os.rmdir(class_name_dir)
-        os.rmdir(split_dir)
-    dataset_dir_original = to_unix(osp.join(base_dir, 'dataset_o'))
-    os.rmdir(dataset_dir)
-    os.rename(dataset_dir_original, dataset_dir)
-    print("cleanup > switch " + dataset_dir_original + " to " + dataset_dir)
-
-    proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
-    for class_name in os.listdir(proposed_dir):
-        class_name_dir = to_unix(osp.join(proposed_dir, class_name))
-        for image_name in os.listdir(class_name_dir):
-            img = to_unix(osp.join(class_name_dir, image_name))
-            os.remove(img)
-        os.rmdir(class_name_dir)
-    proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
-    os.rmdir(proposed_dir)
-    os.rename(proposed_dir_original, proposed_dir)
-    print("cleanup > switch " + proposed_dir_original + " to " + proposed_dir)
+        os.rmdir(proposed_dir)
+        os.rename(proposed_dir_original, proposed_dir)
+        print("cleanup > switch " + proposed_dir_original + " to " + proposed_dir)
+    else:
+        print("cleanup > no origin proposed dir, skip restore")
 
     # proposed_dir = to_unix(osp.join(base_dir, 'proposed'))
     # proposed_dir_original = to_unix(osp.join(base_dir, 'proposed_o'))
@@ -152,6 +165,8 @@ def _clean_up(basedir):
     if osp.exists(db_path):
         print("cleanup > delete " + db_path)
         os.remove(db_path)
+    else:
+        print("cleanup > no db, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
