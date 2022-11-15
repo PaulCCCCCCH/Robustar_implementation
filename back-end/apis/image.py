@@ -25,11 +25,12 @@ def get_image_list(split, start, num_per_page):
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
         ls_image_path_data = list(zip(ls_image_path, ls_image_data))
+        
         return RResponse.ok(ls_image_path_data)
     except (ValueError, NotImplementedError) as e:
         RResponse.abort(400, '{}'.format(str(e)))
     except Exception as e:
-        RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
+        RResponse.abort(500, str(e))
 
 
 @app.route('/image/next/<split>')

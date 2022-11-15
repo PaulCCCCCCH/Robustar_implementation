@@ -18,15 +18,29 @@ class TestImage:
             assert rv['error_code'] == -1
             assert rv['detail'] == 'Invalid non-positive num_per_page'
 
-        def test_get_image_list_fail_index_out_of_bound(self, client): # TODO: [test] other splits
-            response = client.get("/image/list/train/9/10")  # image index 90-99
+        def test_get_image_list_fail_index_out_of_bound(self, client):
+            # train, image index 90-99
+            response = client.get("/image/list/train/9/10")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv['error_code'] == -1
             assert rv['detail'] == 'Out of upper-bound'
+            # test, image index 90-99
+            response = client.get("/image/list/test/9/10")
+            assert response.status_code == 400
+            rv = response.get_json()
+            assert rv['error_code'] == -1
+            assert rv['detail'] == 'Out of upper-bound'
+            # validation, image index 90-99
+            response = client.get("/image/list/validation/9/10")
+            assert response.status_code == 400
+            rv = response.get_json()
+            assert rv['error_code'] == -1
+            assert rv['detail'] == 'Out of upper-bound'
+            # TODO: split `validation_(in)correct`, `annotated` (&`_(in)correct`) and `proposed`
 
         def test_get_image_list_success(self, client):
-            # image index 0 - 3
+            # train, image index 0 - 3
             response = client.get("/image/list/train/0/4")
             assert response.status_code == 200
             rv = response.get_json()
@@ -36,19 +50,7 @@ class TestImage:
             assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/bird/3.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
-            # image index 30 - 35
-            response = client.get("/image/list/train/5/6")
-            assert response.status_code == 200
-            rv = response.get_json()
-            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/train/dog/0.JPEG'
-            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/train/dog/1.JPEG'
-            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/train/dog/2.JPEG'
-            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/train/dog/3.JPEG'
-            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/train/dog/4.JPEG'
-            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/train/dog/5.JPEG'
-            assert rv['code'] == 0
-            assert rv['msg'] == 'Success'
-            # image index 80 - 89 (last 10)
+            # train, image index 80 - 89 (last 10)
             response = client.get("/image/list/train/8/10")
             assert response.status_code == 200
             rv = response.get_json()
@@ -64,7 +66,7 @@ class TestImage:
             assert rv['data'][9][0] == RServer.getServer().baseDir + '/dataset/train/turtle/9.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
-            # image index 84 - (89) - 90 (1 of 7 out of upper-bound)
+            # train, image index 84 - (89) - 90 (1 of 7 out of upper-bound)
             response = client.get("/image/list/train/12/7")
             assert response.status_code == 200
             rv = response.get_json()
@@ -76,7 +78,31 @@ class TestImage:
             assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/train/turtle/9.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
-            # TODO: [test] other splits - needs other test methods
+            # test, image index 84 - (89) - 90 (1 of 7 out of upper-bound)
+            response = client.get("/image/list/test/12/7")
+            assert response.status_code == 200
+            rv = response.get_json()
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/test/turtle/4.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/test/turtle/5.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/test/turtle/6.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/test/turtle/7.JPEG'
+            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/test/turtle/8.JPEG'
+            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/test/turtle/9.JPEG'
+            assert rv['code'] == 0
+            assert rv['msg'] == 'Success'
+            # validation, image index 84 - (89) - 90 (1 of 7 out of upper-bound)
+            response = client.get("/image/list/validation/12/7")
+            assert response.status_code == 200
+            rv = response.get_json()
+            assert rv['data'][0][0] == RServer.getServer().baseDir + '/dataset/test/turtle/4.JPEG'
+            assert rv['data'][1][0] == RServer.getServer().baseDir + '/dataset/test/turtle/5.JPEG'
+            assert rv['data'][2][0] == RServer.getServer().baseDir + '/dataset/test/turtle/6.JPEG'
+            assert rv['data'][3][0] == RServer.getServer().baseDir + '/dataset/test/turtle/7.JPEG'
+            assert rv['data'][4][0] == RServer.getServer().baseDir + '/dataset/test/turtle/8.JPEG'
+            assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/test/turtle/9.JPEG'
+            assert rv['code'] == 0
+            assert rv['msg'] == 'Success'
+            # TODO: split `validation_(in)correct`, `annotated` (&`_(in)correct`) and `proposed`
 
     class TestGetNextImage:
         def test_get_next_image_fail_invalid_split(self, client):
