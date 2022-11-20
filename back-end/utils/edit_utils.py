@@ -1,3 +1,5 @@
+import os.path
+
 from PIL import Image
 from objects.RServer import RServer
 from io import BytesIO
@@ -32,10 +34,12 @@ def save_edit(split, image_path, image_data, image_height, image_width):
     If 'split' is 'train', image_path should point to the training image.
     If 'split' is 'annotated', image_path should point to the annotated image.
     If 'split' is 'proposed', image_path should point to the proposed image.
-    The file name will still end with `JPEG` extension.
     """
 
     train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
+
+    if not os.path.exists(train_img_path):
+        raise ValueError('invalid image path')
 
     with Image.open(BytesIO(image_data)) as img:
 

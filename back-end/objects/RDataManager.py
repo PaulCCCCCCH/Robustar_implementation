@@ -1,6 +1,5 @@
 import collections
 from genericpath import exists
-import imp
 import pickle
 import sqlite3
 import torchvision
