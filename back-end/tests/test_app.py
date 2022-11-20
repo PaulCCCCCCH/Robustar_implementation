@@ -54,10 +54,11 @@ def _set_up(basedir):
         os.mkdir(train_dir)
         for name in os.listdir(train_dir_original):
             image_dir = to_unix(osp.join(train_dir, name))
-            if len(image_dir.split('.')) > 1:
+            image_dir_original = to_unix(osp.join(train_dir_original, name))
+            if not osp.isdir(image_dir_original):
+            # if len(image_dir.split('/')[-1].split('.')) > 1:
                 continue
             os.mkdir(image_dir)
-            image_dir_original = to_unix(osp.join(train_dir_original, name))
             for i in range(10):
                 image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
                 image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
@@ -67,10 +68,11 @@ def _set_up(basedir):
         os.mkdir(test_dir)
         for name in os.listdir(test_dir_original):
             image_dir = to_unix(osp.join(test_dir, name))
-            if len(image_dir.split('.')) > 1:
+            image_dir_original = to_unix(osp.join(test_dir_original, name))
+            if not osp.isdir(image_dir_original):
+            # if len(image_dir.split('/')[-1].split('.')) > 1:
                 continue
             os.mkdir(image_dir)
-            image_dir_original = to_unix(osp.join(test_dir_original, name))
             for i in range(10):
                 image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
                 image_original = to_unix(osp.join(image_dir_original, "{}.JPEG".format(i)))
