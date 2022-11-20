@@ -14,13 +14,13 @@ describe('Image List', () => {
         cy.getBySel('image-list-btn-prev-page').as('prev-page');
 
         cy.get('@page-num').should('have.value', 0);
-        cy.checkSessionStorage('train', '0');
+        cy.checkSessionStorageObj('image_page_history', 'train', 0);
 
         cy.get('@next-page').click();
         cy.get('@next-page').click();
 
         cy.get('@page-num').should('have.value', 2);
-        cy.checkSessionStorage('train', '2');
+        cy.checkSessionStorageObj('image_page_history', 'train', 2);
 
         cy.get('@class-name-dropdown').click({ force: true });
         cy.contains('cat').click();
@@ -44,12 +44,12 @@ describe('Image List', () => {
         cy.get('@prev-page').click();
 
         cy.get('@page-num').should('have.value', maxPage - 2);
-        cy.checkSessionStorage('train', `${maxPage - 2}`);
+        cy.checkSessionStorageObj('image_page_history', 'train', maxPage - 2);
 
         cy.wait(300);
         cy.getBySel('image-list-img-1').trigger('mouseenter');
         cy.getBySel('image-list-btn-edit-image-1').click();
-        cy.checkSessionStorage('split', 'train');
+        cy.checkSessionStorage('image_split', 'train');
       });
   });
 
@@ -69,8 +69,8 @@ describe('Image List', () => {
     const maxPage = Math.ceil(9000 / num_per_page) - 1;
 
     cy.get('@page-num').should('have.value', 0);
-    cy.checkSessionStorage('train', `${maxPage - 2}`);
-    cy.checkSessionStorage('validation', '0');
+    cy.checkSessionStorageObj('image_page_history', 'train', maxPage - 2);
+    cy.checkSessionStorageObj('image_page_history', 'validation', 0);
 
     cy.get('@classification').click({ force: true });
     cy.contains('Incorrectly Classified').click();

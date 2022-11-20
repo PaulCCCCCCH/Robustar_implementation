@@ -29,7 +29,7 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('image-list-div-img').should('have.length', 2);
     cy.getBySel('image-list-img-1').trigger('mouseenter');
     cy.clickBySel('image-list-btn-edit-image-1');
-    cy.checkSessionStorage('split', 'annotated');
+    cy.checkSessionStorage('image_split', 'annotated');
   });
 
   it('Delete the Only One Task', () => {

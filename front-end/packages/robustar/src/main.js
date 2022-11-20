@@ -27,7 +27,24 @@ new Vue({
       successMsg: 'Succeeded',
       error: false,
       errorMsg: 'Failed',
+      // global info of image to be loaded/annotated
+      imageURL: '',
+      imageBase64: '',
+      imageSplit: 'test_correct',
+      imageClass: 'none',
+      imagePageHistory: {},
     };
+  },
+  created() {
+    this.imageURL = sessionStorage.getItem('image_url') || '';
+    this.imageBase64 = sessionStorage.getItem('image_base64') || '';
+    this.imageSplit = sessionStorage.getItem('image_split') || 'test_correct';
+    this.imageClass = sessionStorage.getItem('image_class') || 'none';
+    this.imagePageHistory = JSON.parse(sessionStorage.getItem('image_page_history')) || {};
+    window.onbeforeunload = this.updateSessionStorage;
+  },
+  beforeDestroy() {
+    this.updateSessionStorage();
   },
   methods: {
     /**
@@ -54,6 +71,13 @@ new Vue({
     },
     finishProcessing() {
       this.processing = false;
+    },
+    updateSessionStorage() {
+      sessionStorage.setItem('image_url', this.imageURL);
+      sessionStorage.setItem('image_base64', this.imageBase64);
+      sessionStorage.setItem('image_split', this.imageSplit);
+      sessionStorage.setItem('image_class', this.imageClass);
+      sessionStorage.setItem('image_page_history', JSON.stringify(this.imagePageHistory));
     },
   },
 }).$mount('#app');

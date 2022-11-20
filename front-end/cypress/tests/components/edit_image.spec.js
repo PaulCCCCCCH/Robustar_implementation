@@ -16,7 +16,7 @@ describe('Annotation Pad (Image Editor)', () => {
   it('Enables editing images in training set', () => {
     cy.getBySel('image-list-img-0').trigger('mouseenter');
     cy.getBySel('image-list-btn-edit-image-0').click();
-    cy.checkSessionStorage('split', 'train');
+    cy.checkSessionStorage('image_split', 'train');
 
     cy.wait(1000);
     const strs = ['1.JPEG', '10.JPEG', '100.JPEG'];
@@ -36,7 +36,7 @@ describe('Annotation Pad (Image Editor)', () => {
 
     cy.getBySel('image-list-img-0').trigger('mouseenter');
     cy.getBySel('image-list-btn-edit-image-0').click();
-    cy.checkSessionStorage('split', 'annotated');
+    cy.checkSessionStorage('image_split', 'annotated');
 
     cy.wait(1000);
     Cypress._.times(3, (index) => {

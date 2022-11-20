@@ -25,8 +25,8 @@ export default {
   },
   methods: {
     gotoImage(url) {
-      sessionStorage.setItem('split', 'train');
-      sessionStorage.setItem('image_url', getImageUrlFromFullUrl(url));
+      this.imageSplit = 'train';
+      this.imageURL = url;
       this.$router.push({ name: 'ImageAnnotation', params: { split: 'train' } });
     },
   },
