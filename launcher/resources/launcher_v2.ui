@@ -41,8 +41,8 @@
    <string>Robustar Launcher</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../../../doc/logo_short.png</normaloff>../../../../../../doc/logo_short.png</iconset>
+   <iconset resource="../resource.qrc">
+    <normaloff>:/resources/logo_short.png</normaloff>:/resources/logo_short.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{font: 8pt &quot;Arial&quot;}
@@ -93,7 +93,7 @@ QPushButton:hover {
          <enum>Qt::AutoText</enum>
         </property>
         <property name="pixmap">
-         <pixmap>../../../../../../doc/logo_long.png</pixmap>
+         <pixmap resource="../resource.qrc">:/resources/logo_long.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -2445,6 +2445,24 @@ QPushButton:hover {
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>801</width>
+            <height>319</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>801</width>
+            <height>319</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <family>Arial</family>
@@ -2571,6 +2589,8 @@ QPushButton:hover {
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

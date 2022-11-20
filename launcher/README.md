@@ -33,7 +33,7 @@ pip install pyinstaller
 ```
 Then, in `\launcher` folder, run
 ```
-pyinstaller -F -w app.py
+pyinstaller app.spec
 ```
 After that you shall see a new folder `\launcher\dist`, inside it is the newly packaged launcher. 
 

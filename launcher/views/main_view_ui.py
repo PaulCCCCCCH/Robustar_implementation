@@ -12,6 +12,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
+import resource_rc
 
 class Ui_RobustarLauncher(object):
     def setupUi(self, RobustarLauncher):
@@ -33,7 +34,7 @@ class Ui_RobustarLauncher(object):
         font.setWeight(50)
         RobustarLauncher.setFont(font)
         icon = QIcon()
-        icon.addFile(u"../doc/logo_short.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/resources/logo_short.png", QSize(), QIcon.Normal, QIcon.Off)
         RobustarLauncher.setWindowIcon(icon)
         RobustarLauncher.setStyleSheet(u"QWidget{font: 8pt \"Arial\"}\n"
 "QPushButton{background-color: #E1E1E1; \n"
@@ -61,7 +62,7 @@ class Ui_RobustarLauncher(object):
         self.header.setMinimumSize(QSize(164, 42))
         self.header.setMaximumSize(QSize(164, 42))
         self.header.setTextFormat(Qt.AutoText)
-        self.header.setPixmap(QPixmap(u"../doc/logo_long.png"))
+        self.header.setPixmap(QPixmap(u":/resources/logo_long.png"))
         self.header.setScaledContents(True)
         self.header.setIndent(-1)
 
@@ -870,6 +871,10 @@ class Ui_RobustarLauncher(object):
 
         self.tabWidget_2 = QTabWidget(self.layoutWidget)
         self.tabWidget_2.setObjectName(u"tabWidget_2")
+        sizePolicy1.setHeightForWidth(self.tabWidget_2.sizePolicy().hasHeightForWidth())
+        self.tabWidget_2.setSizePolicy(sizePolicy1)
+        self.tabWidget_2.setMinimumSize(QSize(801, 319))
+        self.tabWidget_2.setMaximumSize(QSize(801, 319))
         self.tabWidget_2.setFont(font)
         self.tabWidget_2.setStyleSheet(u"")
         self.tab = QWidget()
