@@ -5,7 +5,7 @@
     "prettier": "2.7.1"
   },
   "scripts": {
-    "prepare": "npm install -g lint-staged && husky install && pip install black"
+    "prepare": "npm install -g lint-staged prettier && husky install && pip install black"
   },
   "lint-staged": {
     "*.html": "prettier --write --ignore-unknown",

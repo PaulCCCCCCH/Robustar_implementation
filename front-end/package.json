@@ -1,6 +1,17 @@
 {
   "name": "robustar",
   "private": true,
+  "scripts": {
+    "prepare": "npm install -g webpack webpack-cli lerna @vue/cli",
+    "postinstall": "lerna bootstrap",
+    "build": "lerna run build",
+    "build:editor": "lerna run --scope @robustar/image-editor build --stream",
+    "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
+    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
+    "cypress:open": "npx cypress open --browser chrome",
+    "cypress:run": "npx cypress run --browser chrome",
+    "cypress:component": "npx cypress open-ct"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/eslint-parser": "^7.15.0",
@@ -52,17 +63,6 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4",
     "cypress-real-events": "^1.7.0"
-  },
-  "scripts": {
-    "init:lerna": "lerna bootstrap",
-    "format": "prettier --write .",
-    "build": "lerna run build",
-    "build:editor": "lerna run --scope @robustar/image-editor build --stream",
-    "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
-    "cypress:open": "npx cypress open --browser chrome",
-    "cypress:run": "npx cypress run --browser chrome",
-    "cypress:component": "npx cypress open-ct"
   },
   "workspaces": [
     "apps/*"

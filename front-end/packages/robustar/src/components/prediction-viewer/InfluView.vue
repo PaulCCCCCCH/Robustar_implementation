@@ -27,7 +27,7 @@ export default {
     gotoImage(url) {
       this.imageSplit = 'train';
       this.imageURL = url;
-      this.$router.push({ name: 'ImageAnnotation', params: { split: 'train' } });
+      this.$router.push({ name: 'ImageAnnotation' });
     },
   },
 };

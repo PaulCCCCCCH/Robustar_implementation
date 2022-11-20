@@ -29,7 +29,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '@/views/TrainPad.vue'),
   },
   {
-    path: '/edit/:mode',
+    path: '/edit',
     name: 'ImageAnnotation',
     component: () => import(/* webpackChunkName: "about" */ '@/views/ImageAnnotation.vue'),
     props: true,

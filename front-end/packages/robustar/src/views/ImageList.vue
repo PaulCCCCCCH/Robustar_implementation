@@ -399,7 +399,6 @@ export default {
       this.$root.imageBase64 = base64;
       this.$router.push({
         name: componentName,
-        params: { split: this.$route.params.split },
       });
     },
     gotoPage() {
