@@ -2,8 +2,8 @@
   "name": "robustar",
   "private": true,
   "scripts": {
-    "prepare": "npm install -g webpack webpack-cli lerna @vue/cli",
-    "postinstall": "lerna bootstrap",
+    "prepare": "sudo npm install -g webpack webpack-cli lerna @vue/cli",
+    "postinstall": "lerna init && lerna bootstrap",
     "build": "lerna run build",
     "build:editor": "lerna run --scope @robustar/image-editor build --stream",
     "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
