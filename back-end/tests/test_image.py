@@ -102,7 +102,7 @@ class TestImage:
             assert rv['data'][5][0] == RServer.getServer().baseDir + '/dataset/test/turtle/9.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
-            # TODO: split `validation_(in)correct`, `annotated` (&`_(in)correct`) and `proposed`
+            # TODO: split `validation_(in)correct`, `annotated`, `test_(in)correct` and `proposed`
 
     class TestGetNextImage:
         def test_get_next_image_fail_invalid_split(self, client):
@@ -136,13 +136,7 @@ class TestImage:
             rv = response.get_json()
             assert rv['error_code'] == -1
             assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/proposed/bird/0.JPEG'
-            # TODO: [test] annotated and proposed - needs other test methods
-            # rv = client.get("/image/next/annotated/100000").get_json()
-            # assert rv['code'] == -1
-            # assert rv['msg'] == 'Image with given id not exist'
-            # rv = client.get("/image/next/proposed/100000").get_json()
-            # assert rv['code'] == -1
-            # assert rv['msg'] == 'Image with given id not exist'
+            # TODO: split `annotated` and `proposed`
 
         def test_get_next_image_success(self, client):
             response = client.get("/image/next/train?" + PARAM_NAME_IMAGE_PATH +
@@ -152,7 +146,7 @@ class TestImage:
             assert rv['data'] == RServer.getServer().baseDir + '/dataset/train/bird/2.JPEG'
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
-            # TODO: [test] annotated and proposed - needs other test methods
+            # TODO: split `annotated` and `proposed`
 
     # class TestGetAnnotated: # TODO [test]
 
@@ -171,7 +165,49 @@ class TestImage:
             assert rv['code'] == 0
             assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
                                   'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
-            # TODO: [test] other splits
+            response = client.get("/image/class/annotated")
+            assert response.status_code == 200
+            rv = response.get_json()
+            assert rv['code'] == 0
+            assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+                                  'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            response = client.get("/image/class/validation")
+            assert response.status_code == 200
+            rv = response.get_json()
+            assert rv['code'] == 0
+            assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+                                  'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            # response = client.get("/image/class/validation_correct")
+            # assert response.status_code == 200
+            # rv = response.get_json()
+            # assert rv['code'] == 0
+            # assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+            #                       'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            # response = client.get("/image/class/validation_incorrect")
+            # assert response.status_code == 200
+            # rv = response.get_json()
+            # assert rv['code'] == 0
+            assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+                                  'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            response = client.get("/image/class/test")
+            assert response.status_code == 200
+            rv = response.get_json()
+            assert rv['code'] == 0
+            assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+                                  'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            # response = client.get("/image/class/test_correct")
+            # assert response.status_code == 200
+            # rv = response.get_json()
+            # assert rv['code'] == 0
+            # assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+            #                       'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            # response = client.get("/image/class/test_incorrect")
+            # assert response.status_code == 200
+            # rv = response.get_json()
+            # assert rv['code'] == 0
+            # assert rv['data'] == {'bird': 0, 'cat': 10, 'crab': 20, 'dog': 30, 'fish': 40,
+            #                       'frog': 50, 'insect': 60, 'primate': 70, 'turtle': 80}
+            # TODO: split `validation_(in)correct`, `test_(in)correct`) and `proposed`
 
     class TestGetSplitLength:
         def test_split_length_fail_invalid_split(self, client):
