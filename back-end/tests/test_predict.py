@@ -1,5 +1,7 @@
 from test_app import app, client, PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
+from utils.path_utils import to_snake_path
+
 
 
 class TestPredict:
@@ -33,32 +35,43 @@ class TestPredict:
             assert sum((0 <= x <= 1) for x in data[1]) == 9
             assert data[2] == [
                 RServer.getServer().baseDir + '/visualize_images/' +
-                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_0.png',
+                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_0.png',
                 RServer.getServer().baseDir + '/visualize_images/' +
-                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_1.png',
+                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_1.png',
                 RServer.getServer().baseDir + '/visualize_images/' +
-                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_2.png',
+                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_2.png',
                 RServer.getServer().baseDir + '/visualize_images/' +
-                RServer.getServer().baseDir.replace("/", "_") + '_dataset_train_bird_1_JPEG_3.png']
+                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_3.png']
             # TODO: [test] other splits
 
     class TestGetInfluence:
         def test_get_influence_fail_invalid_split(self, client):
-            response = client.get("/influence/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0")
+            response = client.get(
+                "/influence/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0"
+            )
             assert response.status_code == 400
             rv = response.get_json()
-            assert rv['error_code'] == -1
-            assert rv[
-                       'detail'] == 'Image is not found or influence for that image is not calculated'
+            assert rv["error_code"] == -1
+            assert (
+                rv["detail"]
+                == "Image is not found or influence for that image is not calculated"
+            )
 
         def test_get_influence_fail_invalid_path(self, client):
-            response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=" + RServer.getServer().baseDir + "dataset/train/bird/10000.JPEG")
+            response = client.get(
+                "/influence/train?"
+                + PARAM_NAME_IMAGE_PATH
+                + "="
+                + RServer.getServer().baseDir
+                + "dataset/train/bird/10000.JPEG"
+            )
             assert response.status_code == 400
             rv = response.get_json()
-            assert rv['error_code'] == -1
-            assert rv[
-                       'detail'] == 'Image is not found or influence for that image is not calculated'
+            assert rv["error_code"] == -1
+            assert (
+                rv["detail"]
+                == "Image is not found or influence for that image is not calculated"
+            )
 
         def test_get_influence_success(self, client):
             assert True
