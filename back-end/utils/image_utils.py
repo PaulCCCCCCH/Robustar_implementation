@@ -48,9 +48,9 @@ def getImagePath(split, start=None, end=None):
 
 
 def getNextImagePath(split, path):
-    allowed_splits = ['train', 'annotated', 'proposed']  # TODO: redundancy check (apis/image.py)?
+    allowed_splits = ['train', 'annotated', 'proposed']
     if split not in allowed_splits:
-        raise NotImplementedError('Next image only supported for {}'.format(allowed_splits))
+        raise NotImplementedError('Split {} not supported'.format(split))
 
     return dataManager.split_dict[split].get_next_image(path)
 
