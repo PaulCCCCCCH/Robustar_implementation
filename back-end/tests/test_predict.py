@@ -33,15 +33,7 @@ class TestPredict:
                                'frog', 'insect', 'primate', 'turtle']
             assert len(data[1]) == 9
             assert sum((0 <= x <= 1) for x in data[1]) == 9
-            assert data[2] == [
-                RServer.getServer().baseDir + '/visualize_images/' +
-                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_0.png',
-                RServer.getServer().baseDir + '/visualize_images/' +
-                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_1.png',
-                RServer.getServer().baseDir + '/visualize_images/' +
-                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_2.png',
-                RServer.getServer().baseDir + '/visualize_images/' +
-                to_snake_path(RServer.getServer().baseDir) + '_dataset_train_bird_1_JPEG_3.png']
+            assert data[2] == [f"{RServer.getServer().baseDir}/visualize_images/{to_snake_path(RServer.getServer().baseDir)}_dataset_train_bird_1_JPEG_{idx}.png" for idx in range(4)]
             # TODO: [test] other splits
 
     class TestGetInfluence:
