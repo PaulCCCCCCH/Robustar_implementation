@@ -24,7 +24,7 @@ jobs:
           command: |
             echo "Files in directory: $(ls)"
             npm install
-            lerna run build
+            npx lerna run build
 
       - run:
           name: Download dataset
@@ -57,7 +57,7 @@ jobs:
             sudo apt-get update
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
             # Run frontend
-            lerna run serve:main &
+            npx lerna run serve:main &
             pip install -r ../back-end/requirements.txt
             # Run backend
             cd ../back-end

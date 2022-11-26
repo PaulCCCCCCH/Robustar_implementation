@@ -2,12 +2,11 @@
   "name": "robustar",
   "private": true,
   "scripts": {
-    "prepare": "sudo npm install -g webpack webpack-cli lerna @vue/cli",
-    "postinstall": "lerna init && lerna bootstrap",
-    "build": "lerna run build",
-    "build:editor": "lerna run --scope @robustar/image-editor build --stream",
-    "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
+    "postinstall": "npx lerna init && npx lerna bootstrap",
+    "build": "npx lerna run build",
+    "build:editor": "npx lerna run --scope @robustar/image-editor build --stream",
+    "serve:editor": "npx lerna run --scope @robustar/image-editor serve --stream",
+    "serve:main": "npx lerna run --scope @robustar/robustar serve --stream",
     "cypress:open": "npx cypress open --browser chrome",
     "cypress:run": "npx cypress run --browser chrome",
     "cypress:component": "npx cypress open-ct"
@@ -55,8 +54,8 @@
     "vue-eslint-parser": "^7.10.0",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.14",
-    "webpack": "^5.52.0",
-    "webpack-cli": "^4.8.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.7.3",
     "webpack-merge": "^5.8.0"
   },

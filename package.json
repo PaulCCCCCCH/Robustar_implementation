@@ -1,11 +1,11 @@
 {
-  "devDependencies": {
-    "husky": "^8.0.0",
-    "lint-staged": "^13.0.3",
-    "prettier": "2.7.1"
-  },
   "scripts": {
-    "prepare": "sudo npm install -g lint-staged prettier && husky install && pip install black"
+    "postinstall": "npx husky install && pip install black"
+  },
+  "devDependencies": {
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "prettier": "^2.8.0"
   },
   "lint-staged": {
     "*.html": "prettier --write --ignore-unknown",

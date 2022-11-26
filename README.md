@@ -35,7 +35,7 @@ dos2unix ./scripts/start.sh
 
 ---
 
-In `front-end` directory, run `lerna run build`.
+In `front-end` directory, run `npx lerna run build`.
 
 ---
 
