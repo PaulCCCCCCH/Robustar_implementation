@@ -175,6 +175,7 @@
         :url="url ? url : $root.imageURL"
         :base64="url ? url : $root.imageURL"
         @mousedown="mousedown"
+        @objectMoved="_doOperation('move', 'mdi-gesture-tap')"
       ></ImageEditor>
       <div class="d-flex flex-column align-center" style="width: 100%">
         <div v-if="mode === 'resize'" style="width: 500px" class="d-flex flex-column align-center">
@@ -577,7 +578,7 @@ export default {
       this.stackPointer++;
       this.$refs['editor'].invoke('redo');
     },
-    _doOperation(name, icon) {
+    _doOperation: pDebounce(function (name, icon) {
       const delta = this.operationStack.length - 1 - this.stackPointer;
       if (delta > 0) {
         this.operationStack = this.operationStack.slice(0, this.stackPointer + 1);
@@ -585,7 +586,7 @@ export default {
       this.operationStack.push({ name, icon });
       this.stackPointer++;
       console.log('do');
-    },
+    }, 200),
     _goToOperation(pos) {
       if (pos === this.stackPointer) return;
       const delta = Math.abs(pos - this.stackPointer);
