@@ -172,8 +172,8 @@ export default {
           this.proposedEditUrl = '';
           return;
         }
-        const proposedPath = res.data.data;
-        this.proposedEditUrl = `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${proposedPath}`;
+        const { base64 } = res.data.data;
+        this.proposedEditUrl = base64;
       } catch (error) {
         console.log(error);
       }
