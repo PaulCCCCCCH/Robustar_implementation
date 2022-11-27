@@ -22,7 +22,7 @@ describe('Image List', () => {
 
         cy.get('@next-page').click();
         cy.get('@next-page').click();
-        cy.wait(500);
+        cy.wait(1000);
 
         cy.get('@page-num').should('have.value', 2);
         cy.reload();
