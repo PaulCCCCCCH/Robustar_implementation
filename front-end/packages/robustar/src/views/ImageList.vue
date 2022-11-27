@@ -26,7 +26,7 @@
               :disabled="currentPage <= 0 || !hasImages"
               depressed
               color="primary"
-              @click="currentPage -= 1"
+              @click="currentPage--"
               data-test="image-list-btn-prev-page"
             >
               PREV PAGE
@@ -49,7 +49,7 @@
               :disabled="currentPage >= maxPage || !hasImages"
               depressed
               color="primary"
-              @click="currentPage += 1"
+              @click="currentPage++"
             >
               NEXT PAGE
             </v-btn>
@@ -274,6 +274,7 @@ export default {
       imageIdxSelection: 'start',
       imageStartIdx: 0,
       imageEndIdx: 0,
+      currentPage: 0,
       inputPage: 0,
       maxPage: 0,
       imageList: [],
@@ -292,32 +293,23 @@ export default {
     };
   },
   mounted() {
-    this.updateSplit();
+    this.handleRouteChange();
     this.imagePerPage = this.imagePerPageOptions[1];
-    this.inputPage = this.currentPage;
     this.initImageList();
   },
   watch: {
     $route() {
-      this.updateSplit();
+      this.handleRouteChange();
       this.initImageList();
       this.$root.imageURL = ''; // Reset current image url for visualizaer
     },
     currentPage() {
-      this.$root.imagePageHistory[this.$root.imageSplit] = this.currentPage;
       this.inputPage = this.currentPage;
+      this.$root.imagePageHistory[this.$root.imageSplit] = this.currentPage;
       this.loadImages();
     },
   },
   computed: {
-    currentPage: {
-      get() {
-        return this.$root.imagePageHistory[this.$root.imageSplit] || 0;
-      },
-      set(v) {
-        this.$root.imagePageHistory[this.$root.imageSplit] = v || 0;
-      },
-    },
     classification() {
       return [
         { text: 'All', value: this.$route.params.split },
@@ -335,16 +327,14 @@ export default {
     },
   },
   methods: {
-    updateSplit() {
+    handleRouteChange() {
       this.$root.imageSplit = this.$route.params.split;
+      this.currentPage = this.$root.imagePageHistory[this.$root.imageSplit] || 0;
     },
     async initImageList() {
       try {
         const res = await APIGetSplitLength(this.$root.imageSplit);
         this.splitLength = res.data.data;
-        this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
-        this.getClassNames();
-        this.loadImages();
       } catch (error) {
         console.log(error);
         this.$root.alert(
@@ -352,7 +342,11 @@ export default {
           error.response?.data?.detail || 'Image list initialization failed'
         );
         this.imageList = [];
+        this.splitLength = 0;
       }
+      this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+      this.getClassNames();
+      this.loadImages();
     },
     resetImageList() {
       this.currentPage = 0;
