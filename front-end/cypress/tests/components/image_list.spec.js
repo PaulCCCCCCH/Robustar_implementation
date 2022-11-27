@@ -23,7 +23,6 @@ describe('Image List', () => {
         cy.get('@next-page').click();
         cy.get('@next-page').click();
         cy.wait(1000);
-
         cy.get('@page-num').should('have.value', 2);
         cy.reload();
         cy.checkSessionStorageObj('image_page_history', 'train', 2);
@@ -80,9 +79,12 @@ describe('Image List', () => {
     const maxPage = Math.ceil(9000 / num_per_page) - 1;
 
     cy.get('@page-num').should('have.value', 0);
+    cy.get('@next-page').click();
+    cy.get('@next-page').click();
+    cy.wait(1000);
+    cy.get('@page-num').should('have.value', 2);
     cy.reload();
-    cy.checkSessionStorageObj('image_page_history', 'train', maxPage - 2);
-    cy.checkSessionStorageObj('image_page_history', 'validation', 0);
+    cy.checkSessionStorageObj('image_page_history', 'validation', 2);
 
     cy.get('@classification').click({ force: true });
     cy.contains('Incorrectly Classified').click();

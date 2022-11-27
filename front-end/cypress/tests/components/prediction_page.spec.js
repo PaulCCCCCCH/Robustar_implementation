@@ -76,6 +76,7 @@ describe('Visualizer', () => {
 
   it('Test Proposed annotation Panel', () => {
     cy.getBySel('proposed-annotation').click();
+    cy.wait(1000);
     cy.getBySel('proposed-annotation-panel').should('be.visible');
     cy.getBySel('proposed-annotation').click();
   });
