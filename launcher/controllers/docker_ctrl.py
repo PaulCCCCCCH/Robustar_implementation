@@ -82,18 +82,23 @@ class DockerController(QObject):
             'image_padding': self.model.padding,
             'num_classes': int(self.model.classNumber),
         }
-        fileName = f'config_{uuid.uuid4().hex}.json'
+
+        # Create folder to store record data
+        if not os.path.exists('./RecordData'):
+            os.makedirs('./RecordData')
+
+        fileName = f'./RecordData/config_{uuid.uuid4().hex}.json'
         with open(fileName, 'w') as f:
             f.write(json.dumps(config))
         configFile = os.path.join(os.getcwd(), fileName)
 
         # Store the (container - config file) matching
-        if not os.path.exists('./config_record.json'):
+        if not os.path.exists('./RecordData/config_record.json'):
             matchDict = {}
         else:
-            with open('./config_record.json', 'r') as f:
+            with open('./RecordData/config_record.json', 'r') as f:
                 matchDict = json.load(f)
-        with open('./config_record.json', 'w') as f:
+        with open('./RecordData/config_record.json', 'w') as f:
             matchDict[self.model.profile['containerName']] = fileName
             json.dump(matchDict, f)
 
@@ -131,9 +136,9 @@ class DockerController(QObject):
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                             'Unexpected error encountered. See more in <i>Details</i> page')
                 self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
-                with open('./config_record.json', 'r') as f:
+                with open('./RecordData/config_record.json', 'r') as f:
                     matchDict = json.load(f)
-                with open('./config_record.json', 'w') as f:
+                with open('./RecordData/config_record.json', 'w') as f:
                     fileName = matchDict.pop(self.model.profile['containerName'])
                     os.remove(fileName)
                     json.dump(matchDict, f)
@@ -272,9 +277,9 @@ class DockerController(QObject):
                 elif (self.model.container.status == 'exited'):
                     self.mainCtrl.removeItem(self.mainView.ui.exitedListWidget, self.model.tempName)
 
-                with open('./config_record.json', 'r') as f:
+                with open('./RecordData/config_record.json', 'r') as f:
                     matchDict = json.load(f)
-                with open('./config_record.json', 'w') as f:
+                with open('./RecordData/config_record.json', 'w') as f:
                     fileName = matchDict.pop(self.model.tempName)
                     os.remove(fileName)
                     json.dump(matchDict, f)
