@@ -18,6 +18,7 @@ class DockerController(QObject):
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
+        self.apiClient = docker.APIClient(base_url='tcp://localhost:2375')
 
     def getSelection(self, forStart=False):
         if (self.mainView.ui.tabWidget.currentIndex() == 0):
@@ -107,16 +108,6 @@ class DockerController(QObject):
                 self.startNewCudaServer(image, configFile)
             elif 'cpu' in self.model.device:
                 self.startNewCpuServer(image, configFile)
-            # else:
-            #     self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
-            #                                                "The image version doesn't match the device. Fail to create the container")
-            #     with open('./config_record.json', 'r') as f:
-            #         matchDict = json.load(f)
-            #     with open('./config_record.json', 'w') as f:
-            #         fileName = matchDict.pop(self.model.profile['containerName'])
-            #         os.remove(fileName)
-            #         json.dump(matchDict, f)
-            #     return
 
             self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Running {}'.format(self.model.tempVer))
             self.mainCtrl.updateSucView()
@@ -145,6 +136,8 @@ class DockerController(QObject):
 
 
     def startNewCpuServer(self, image, configFile):
+        self.downloadImage(image)
+
         self.model.container = self.client.containers.run(
             image,
             detach=True,
@@ -173,6 +166,8 @@ class DockerController(QObject):
         )
 
     def startNewCudaServer(self, image, configFile):
+        self.downloadImage(image)
+
         self.model.container = self.client.containers.run(
             image,
             detach=True,
@@ -315,6 +310,16 @@ class DockerController(QObject):
             self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                        'Unexpected error encountered. See more in <i>Details</i> page')
             self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+
+    def downloadImage(self, image):
+        imageList = [x.tags[0] for x in self.client.images.list()]
+        if image not in imageList:
+            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                                       f'Downloading {image}. See more in <i>Details</i> page')
+            repo, tag = image.split(':')
+            for line in self.apiClient.pull(repository=repo, tag=tag, stream=True, decode=True):
+                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(line))
+            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, f'Downloaded {image}')
 
     def printLog(self, container):
         def func(container):
