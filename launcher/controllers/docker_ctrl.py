@@ -4,6 +4,7 @@ import os
 import re
 import uuid
 
+from sys import platform
 from PySide2.QtCore import QObject
 from threading import Thread
 from datetime import datetime
@@ -18,7 +19,10 @@ class DockerController(QObject):
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
-        self.apiClient = docker.APIClient(base_url='tcp://localhost:2375')
+        if platform == "linux" or platform == "linux2":
+            self.apiClient = docker.APIClient(base_url='unix://var/run/docker.sock')
+        elif platform == "win32":
+            self.apiClient = docker.APIClient(base_url='tcp://localhost:2375')
 
     def getSelection(self, forStart=False):
         if (self.mainView.ui.tabWidget.currentIndex() == 0):
