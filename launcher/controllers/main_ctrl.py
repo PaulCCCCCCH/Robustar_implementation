@@ -26,13 +26,16 @@ class MainController(QObject):
     def init(self):
         from controllers.docker_ctrl import DockerController
 
-        self.initImageVersions()
-
         try:
+            self.initImageVersions()
             self.dockerCtrl = DockerController(self.model, self.mainView, self)
             self.dockerCtrl.refreshServers()
             self.mainView.show()
+        except requests.RequestException:
+            self.popupView.ui.warningLabel.setText(f'Failed to fetch image versions online!\nPlease check your network!')
+            self.popupView.show()
         except docker.errors.DockerException:
+            self.popupView.ui.warningLabel.setText('Docker is not running!\nPlease start Docker first!')
             self.popupView.show()
 
 
@@ -266,7 +269,8 @@ class MainController(QObject):
     # Fetch the docker image versions to add to the image version combobox and initiate model's image version
     def initImageVersions(self):
         res = requests.get(
-            'https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024')
+            'https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024', timeout=3)
+
         for item in res.json()['results']:
             self.mainView.ui.versionComboBox.addItem(item['name'])
         self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()

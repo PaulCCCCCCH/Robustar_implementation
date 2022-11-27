@@ -17,43 +17,34 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(308, 123)
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        Dialog.resize(806, 400)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
-        Dialog.setMinimumSize(QSize(300, 100))
+        Dialog.setMinimumSize(QSize(308, 123))
+        Dialog.setMaximumSize(QSize(1000, 1000))
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(-1, 0, -1, 0)
-        self.verticalSpacer = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Minimum)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.warningLabel = QLabel(Dialog)
+        self.warningLabel.setObjectName(u"warningLabel")
+        sizePolicy.setHeightForWidth(self.warningLabel.sizePolicy().hasHeightForWidth())
+        self.warningLabel.setSizePolicy(sizePolicy)
+        self.warningLabel.setMinimumSize(QSize(776, 240))
+        self.warningLabel.setMaximumSize(QSize(776, 240))
+        font = QFont()
+        font.setFamily(u"Arial")
+        font.setPointSize(16)
+        self.warningLabel.setFont(font)
+        self.warningLabel.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout.addItem(self.horizontalSpacer)
-
-        self.label = QLabel(Dialog)
-        self.label.setObjectName(u"label")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy1)
-        self.label.setMinimumSize(QSize(0, 26))
-        self.label.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout.addWidget(self.label)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer_2)
+        self.horizontalLayout.addWidget(self.warningLabel)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -66,13 +57,10 @@ class Ui_Dialog(object):
 
         self.okButton = QPushButton(Dialog)
         self.okButton.setObjectName(u"okButton")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.okButton.sizePolicy().hasHeightForWidth())
-        self.okButton.setSizePolicy(sizePolicy2)
-        self.okButton.setMinimumSize(QSize(60, 20))
-        self.okButton.setMaximumSize(QSize(60, 20))
+        sizePolicy.setHeightForWidth(self.okButton.sizePolicy().hasHeightForWidth())
+        self.okButton.setSizePolicy(sizePolicy)
+        self.okButton.setMinimumSize(QSize(120, 40))
+        self.okButton.setMaximumSize(QSize(120, 40))
 
         self.horizontalLayout_2.addWidget(self.okButton)
 
@@ -86,6 +74,8 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
+        self.verticalLayout.setStretch(0, 2)
+        self.verticalLayout.setStretch(1, 1)
 
         self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
 
@@ -97,8 +87,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Warning", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Docker is not running!\n"
-"Please start Docker first!", None))
+        self.warningLabel.setText("")
         self.okButton.setText(QCoreApplication.translate("Dialog", u"OK", None))
     # retranslateUi
 
