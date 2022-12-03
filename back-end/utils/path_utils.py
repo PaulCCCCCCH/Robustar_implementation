@@ -3,7 +3,7 @@ import re
 
 
 def create_empty_paired_image(path):
-    with open(path, 'wb') as f:
+    with open(path, "wb") as f:
         pass
 
 
@@ -21,14 +21,14 @@ def split_path(path):
         filename
     """
 
-    path_split = normpath(path).replace('\\', '/').split('/')
+    path_split = normpath(path).replace("\\", "/").split("/")
 
     # Only one segment in the path, e.g. 'folder'
     if len(path_split) == 1:
         return None, path_split[0]
 
     # Otherwise, split 'path/to/file/filename.py' to 'path/to/file' and 'filename.py'
-    folder_path = '/'.join(path_split[:-1])
+    folder_path = "/".join(path_split[:-1])
     filename = path_split[-1]
     return folder_path, filename
 
@@ -46,9 +46,9 @@ def replace_folder(path, new_folder):
         new folder path
     """
 
-    dirs = normpath(path).replace('\\', '/').split('/')
+    dirs = normpath(path).replace("\\", "/").split("/")
     dirs[-1] = new_folder
-    return '/'.join(dirs)
+    return "/".join(dirs)
 
 
 def get_paired_path(img_path, prev_root, paired_root):
@@ -60,7 +60,7 @@ def get_paired_path(img_path, prev_root, paired_root):
 
     args:
         img_path: path to the image
-        origin_root: 
+        origin_root:
         paired_root: mirrored image root
 
     returns:
@@ -70,23 +70,40 @@ def get_paired_path(img_path, prev_root, paired_root):
 
 
 def to_unix(path: str):
-    pClean = path.replace('\\', '/')
-    return pClean if path.startswith('./') else join('/', pClean)
+    pClean = path.replace("\\", "/")
+    return pClean if path.startswith("./") else join("/", pClean)
+
+
+def to_snake_path(path: str):
+
+    return path.replace(".", "_").replace("/", "_").replace("\\", "_")
 
 
 def to_absolute(cwd: str, path: str):
-    if path.startswith('/'): return path
-    if path.startswith('./'): return join(cwd, path[2:])
+    if path.startswith("/"):
+        return path
+    if path.startswith("./"):
+        return join(cwd, path[2:])
     return join(cwd, path)
 
-if __name__ == '__main__':
-    assert replace_folder('/Robustar2/dataset/train', 'paired') == '/Robustar2/dataset/paired'
-    assert get_paired_path('/Robustar2/dataset/train/1/2134.jpg',
-                           '/Robustar2/dataset/train',
-                           '/Robustar2/dataset/paired'
-                           ) == '/Robustar2/dataset/paired/1/2134.jpg'
 
-    print(split_path('/Robustar2/dataset/train/0/2134.jpg'))
-    assert split_path('/Robustar2/dataset/train/0/2134.jpg') == (
-    '/Robustar2/dataset/train/0', '2134.jpg')
-    print('passed')
+if __name__ == "__main__":
+    assert (
+        replace_folder("/Robustar2/dataset/train", "paired")
+        == "/Robustar2/dataset/paired"
+    )
+    assert (
+        get_paired_path(
+            "/Robustar2/dataset/train/1/2134.jpg",
+            "/Robustar2/dataset/train",
+            "/Robustar2/dataset/paired",
+        )
+        == "/Robustar2/dataset/paired/1/2134.jpg"
+    )
+
+    print(split_path("/Robustar2/dataset/train/0/2134.jpg"))
+    assert split_path("/Robustar2/dataset/train/0/2134.jpg") == (
+        "/Robustar2/dataset/train/0",
+        "2134.jpg",
+    )
+    print("passed")

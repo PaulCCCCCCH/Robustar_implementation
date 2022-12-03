@@ -3,7 +3,8 @@ from test_app import app, client
 
 class TestConfig:
     def test_config_success(self, client):
-        rv = client.get("/config").get_json()
+        response = client.get("/config")
+        rv = response.get_json()
         assert rv['code'] == 0
         assert rv['data'] == {
             "weight_to_load": "resnet-18.pth",

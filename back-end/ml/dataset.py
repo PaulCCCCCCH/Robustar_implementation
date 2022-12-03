@@ -103,7 +103,7 @@ class PairedDataset(DataSet):
 
         img = Image.open(path)
         imgarr = np.array(img)
-        user_edit = 1 * np.equal(imgarr, [255, 255, 255, 255]).all(axis=2)
+        user_edit = 1 * np.equal(imgarr, [255] * imgarr.shape[2]).all(axis=2)
         return torch.tensor(user_edit)
 
     def paired_loader_with_buffer(self, path):
