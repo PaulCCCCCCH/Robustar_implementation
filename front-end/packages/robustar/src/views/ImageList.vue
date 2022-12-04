@@ -403,6 +403,7 @@ export default {
       this.currentPage = this.inputPage;
     },
     gotoClass() {
+      console.log(this.$root.imageClass);
       let startIdx = this.classStartIdx[this.$root.imageClass] || 0;
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
     },
