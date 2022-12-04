@@ -4,7 +4,8 @@ from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, getImgData
+from utils.image_utils import getClassStart, getImagePath, getNextImagePath, getSplitLength, \
+    getImgData
 from utils.path_utils import to_unix
 
 server = RServer.getServer()
@@ -12,43 +13,24 @@ app = server.getFlaskBluePrint()
 dataManager = server.getDataManager()
 
 
-
 @app.route('/image/list/<split>/<int:start>/<int:num_per_page>')
 def get_image_list(split, start, num_per_page):
+    if num_per_page == 0:
+        RResponse.abort(400, 'Invalid non-positive num_per_page')
+
     image_idx_start = num_per_page * start
     image_idx_end = num_per_page * (start + 1)
 
     try:
         ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
         ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
+        ls_image_path_data = list(zip(ls_image_path, ls_image_data))
+        return RResponse.ok(ls_image_path_data)
+    except (ValueError, NotImplementedError) as e:
+        RResponse.abort(400, '{}'.format(str(e)))
     except Exception as e:
-        RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
+        RResponse.abort(500, str(e))
 
-    ls_image_path_data = list(zip(ls_image_path, ls_image_data))
-
-    return RResponse.ok(ls_image_path_data)
-
-
-
-    if osp.exists(normal_path):
-        if normal_path in datasetFileBuffer:
-            image_data = datasetFileBuffer[normal_path]
-        else:
-            with open(normal_path, "rb") as image_file:
-                image_base64 = base64.b64encode(image_file.read()).decode()
-            image_mime = mimetypes.guess_type(normal_path)[0]
-
-            image_data = 'data:' + image_mime + ";base64," + image_base64
-
-            datasetFileQueue.append(normal_path)
-            if len(datasetFileQueue) > datasetFileQueueLen:
-                temp_path = datasetFileQueue.popleft()
-                del datasetFileBuffer[temp_path]
-            datasetFileBuffer[normal_path] = image_data
-
-        return image_data
-    else:
-        raise Exception
 
 
 @app.route('/image/next/<split>')
@@ -57,16 +39,18 @@ def get_next_image(split):
     Gets next image path given current image split and path.
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
-    if split not in ['train', 'annotated', 'proposed']:
-        RResponse.abort(400, 'Split {} not supported'.format(split))
-
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
-    next_image_path = getNextImagePath(split, path)
+    try:
+        next_image_path = getNextImagePath(split, path)
+    except NotImplementedError as e:
+        RResponse.abort(400, str(e))
+        
     if next_image_path is None:
         RResponse.abort(400, 'Invalid image path {}'.format(path))
 
     return RResponse.ok(next_image_path)
+
 
 @app.route('/image/annotated/<split>')
 def get_annotated(split):

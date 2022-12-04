@@ -11,29 +11,29 @@ dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
+
 class TestThread(threading.Thread):
     def __init__(self, split):
         super(TestThread, self).__init__()
-        self.split = split
+
+        if split == 'validation':
+            self.dataset: REvalImageFolder = dataManager.validationset
+        elif split == 'test':
+            self.dataset: REvalImageFolder = dataManager.testset
+        else:
+            raise NotImplementedError('Test called with wrong data split')
+
         self.stop = False
 
     def run(self):
         self.startTestThread()
-    
+
     def stop(self):
         print("Setting trainer stop flag...")
         self.stop = True
 
     def startTestThread(self):
-        split = self.split
-        if split == 'validation':
-            dataset: REvalImageFolder = dataManager.validationset
-        elif split == 'test':
-            dataset: REvalImageFolder = dataManager.testset
-        else:
-            raise NotImplementedError('Test called with wrong data split')
-
-        samples = dataset.samples
+        samples = self.dataset.samples
         dataset_length = len(samples)
 
         correct_buffer = []
@@ -43,7 +43,8 @@ class TestThread(threading.Thread):
 
         for img_path, label in samples:
 
-            output = get_image_prediction(modelWrapper, img_path, dataManager.image_size, argmax=False)
+            output = get_image_prediction(modelWrapper, img_path, dataManager.image_size,
+                                          argmax=False)
             output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
             # TODO: replace this snippet with numpy argmax function
@@ -71,19 +72,15 @@ class TestThread(threading.Thread):
             # task.exit()
             pass
 
-        dataset.add_records(correct_buffer, True)
-        dataset.add_records(incorrect_buffer, False)
-        
+        self.dataset.add_records(correct_buffer, True)
+        self.dataset.add_records(incorrect_buffer, False)
 
 
 def start_test(split):
     try:
-
         test_thread = TestThread(split)
         test_thread.start()
-
     except Exception as e:
-        e.with_traceback()
-        return None
+        raise e
 
-    return test_thread
+
