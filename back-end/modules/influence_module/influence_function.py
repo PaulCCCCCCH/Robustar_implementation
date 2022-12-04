@@ -1,14 +1,14 @@
 #! /usr/bin/env python3
 
-from regex import W
 import torch
 from torch.autograd import grad
 from pytorch_influence_functions.utils import display_progress
 import numpy as np
 
 
-def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=500,
-           recursion_depth=5000):
+def s_test(
+    z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=500, recursion_depth=5000
+):
     """s_test can be precomputed for each test point of interest, and then
     multiplied with grad_z to get the desired value for each training point.
     Here, strochastic estimation is used to calculate s_test. s_test is the
@@ -46,14 +46,15 @@ def s_test(z_test, t_test, model, z_loader, gpu=-1, damp=0.01, scale=500,
                 x, t = x.cuda(), t.cuda()
             y = model(x)
             loss = calc_loss(y, t)
-            params = [ p for p in model.parameters() if p.requires_grad ]
+            params = [p for p in model.parameters() if p.requires_grad]
             hv = hvp(loss, params, h_estimate)
             # print(hv)
             # Recursively caclulate h_estimate
             with torch.no_grad():
                 h_estimate = [
                     _v + (1 - damp) * _h_e - _hv / scale
-                    for _v, _h_e, _hv in zip(v, h_estimate, hv)]
+                    for _v, _h_e, _hv in zip(v, h_estimate, hv)
+                ]
             if np.nan in hv[-1]:
                 raise ValueError("NaN detected. Existing.")
             break
@@ -76,8 +77,7 @@ def calc_loss(y, t):
     ####################
     # y = torch.nn.functional.log_softmax(y, dim=0)
     y = torch.nn.functional.log_softmax(y)
-    loss = torch.nn.functional.nll_loss(
-        y, t, weight=None, reduction='mean')
+    loss = torch.nn.functional.nll_loss(y, t, weight=None, reduction="mean")
     return loss
 
 
@@ -103,7 +103,7 @@ def grad_z(z, t, model, gpu=-1):
     loss = calc_loss(y, t)
     # Compute sum of gradients from model parameters to loss
 
-    params = [ p for p in model.parameters() if p.requires_grad ]
+    params = [p for p in model.parameters() if p.requires_grad]
     # print(params)
 
     return list(grad(loss, params, create_graph=True))
@@ -129,7 +129,7 @@ def hvp(y, w, v):
     Raises:
         ValueError: `y` and `w` have a different length."""
     if len(w) != len(v):
-        raise(ValueError("w and v must have the same length."))
+        raise (ValueError("w and v must have the same length."))
 
     # First backprop
     first_grads = grad(y, w, retain_graph=True, create_graph=True)
