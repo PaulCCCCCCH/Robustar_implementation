@@ -24,5 +24,5 @@ ADD requirements.txt .
 # Python libs
 RUN python3.9 -m pip install -r requirements.txt
 
-# Install gunicorn
-RUN python3.9 -m pip install gunicorn
+# Install gunicorn and gevent
+RUN python3.9 -m pip install gunicorn gevent
