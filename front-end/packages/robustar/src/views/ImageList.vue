@@ -64,6 +64,7 @@
                 v-model="$root.imageClass"
                 label="Class Name"
                 data-test="image-list-select-class-name"
+                clearable
               >
               </v-select>
             </div>
@@ -276,7 +277,7 @@ export default {
       maxPage: 0,
       imageList: [],
       splitLength: 1000,
-      classNames: ['none'],
+      classNames: [''],
       classStartIdx: {},
       imagePerPage: 0,
       imageSize: configs.imageSize,
@@ -347,16 +348,16 @@ export default {
     },
     resetImageList() {
       this.currentPage = 0;
-      this.classNames = ['none'];
+      this.classNames = [''];
       this.classStartIdx = {};
-      this.$root.imageClass = 'none';
+      this.$root.imageClass = '';
       this.initImageList();
     },
     async getClassNames() {
       try {
         const res = await APIGetClassNames(this.$root.imageSplit);
         this.classStartIdx = res.data.data;
-        this.classNames = ['none', ...Object.keys(this.classStartIdx)];
+        this.classNames = Object.keys(this.classStartIdx);
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || 'Fetching class names failed');
         this.imageList = [];
@@ -403,6 +404,7 @@ export default {
       this.currentPage = this.inputPage;
     },
     gotoClass() {
+      console.log(this.$root.imageClass);
       let startIdx = this.classStartIdx[this.$root.imageClass] || 0;
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
     },

@@ -31,7 +31,7 @@ new Vue({
       imageURL: '',
       imageBase64: '',
       imageSplit: 'test_correct',
-      imageClass: 'none',
+      imageClass: '',
       imagePageHistory: {},
     };
   },
@@ -39,7 +39,7 @@ new Vue({
     this.imageURL = sessionStorage.getItem('image_url') || '';
     this.imageBase64 = sessionStorage.getItem('image_base64') || '';
     this.imageSplit = sessionStorage.getItem('image_split') || 'test_correct';
-    this.imageClass = sessionStorage.getItem('image_class') || 'none';
+    this.imageClass = sessionStorage.getItem('image_class') || '';
     this.imagePageHistory = JSON.parse(sessionStorage.getItem('image_page_history')) || {};
     window.onbeforeunload = this.updateSessionStorage;
   },
