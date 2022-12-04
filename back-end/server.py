@@ -10,7 +10,6 @@ from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
-from flask import g
 
 
 def start_flask_app():
