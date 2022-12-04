@@ -29,7 +29,8 @@ def get_image_list(split, start, num_per_page):
     except (ValueError, NotImplementedError) as e:
         RResponse.abort(400, '{}'.format(str(e)))
     except Exception as e:
-        RResponse.abort(500, 'Error retrieving image paths - {}'.format(str(e)))
+        RResponse.abort(500, str(e))
+
 
 
 @app.route('/image/next/<split>')
@@ -38,12 +39,13 @@ def get_next_image(split):
     Gets next image path given current image split and path.
     Only supports 'train', 'annotated' and 'proposed' splits.
     """
-    if split not in ['train', 'annotated', 'proposed']:
-        RResponse.abort(400, 'Split {} not supported'.format(split))
-
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
-    next_image_path = getNextImagePath(split, path)
+    try:
+        next_image_path = getNextImagePath(split, path)
+    except NotImplementedError as e:
+        RResponse.abort(400, str(e))
+        
     if next_image_path is None:
         RResponse.abort(400, 'Invalid image path {}'.format(path))
 

@@ -16,7 +16,6 @@ def abort_with_error_message(status_code: int, err_message: str, err_code=-1):
     abort(response)
 
 class RResponse:
-
     def __init__(self, data, code, message):
         self.data = data
         self.code = code
