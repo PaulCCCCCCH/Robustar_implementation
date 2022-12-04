@@ -7,7 +7,7 @@
       elevation="1"
       data-test="visualizer-sheet"
     >
-      <v-btn class="mb-4" icon @click="closeVisualizer">
+      <v-btn class="mb-4" icon @click="close">
         <v-icon>mdi-close</v-icon>
       </v-btn>
 
@@ -83,7 +83,7 @@
       color="secondary"
       outlined
       large
-      @click="openVisualizer"
+      @click="open"
       data-test="visualizer-btn"
     >
       <v-icon left>mdi-eye</v-icon>VISUALIZER
@@ -235,11 +235,11 @@ export default {
       }, 0);
     },
 
-    openVisualizer() {
+    open() {
       this.isActive = true;
     },
 
-    closeVisualizer() {
+    close() {
       this.isActive = false;
     },
   },

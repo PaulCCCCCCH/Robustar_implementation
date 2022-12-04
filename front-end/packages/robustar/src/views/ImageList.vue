@@ -223,7 +223,7 @@
                       width="80%"
                       @click="
                         $root.imageURL = url_and_binary[0];
-                        showVisualizer = true;
+                        $refs['visualizer'].open();
                       "
                       :data-test="`image-list-btn-predict-image-${idx}`"
                     >
@@ -241,11 +241,9 @@
 
     <Visualizer
       v-if="hasImages"
-      :is-active="showVisualizer"
+      ref="visualizer"
       :image_url="$root.imageURL"
       :split="$root.imageSplit"
-      @open="showVisualizer = true"
-      @close="showVisualizer = false"
     />
   </div>
 </template>
@@ -270,7 +268,6 @@ export default {
     return {
       isLoadingImages: false,
       showExtraSettings: false,
-      showVisualizer: false,
       imageIdxSelection: 'start',
       imageStartIdx: 0,
       imageEndIdx: 0,
