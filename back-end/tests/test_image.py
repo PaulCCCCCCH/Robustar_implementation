@@ -80,8 +80,8 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv['data']] == [
-                f"{RServer.getServer().baseDir}/dataset/test/turtle/{idx}.JPEG" for idx in
-                range(4, 10)]
+                f"{RServer.getServer().baseDir}/dataset/validation/turtle/{idx}.JPEG" for idx in
+                range(14, 20)]
             assert rv['code'] == 0
             assert rv['msg'] == 'Success'
             # TODO: split `validation_(in)correct`, `annotated`, `test_(in)correct` and `proposed`
