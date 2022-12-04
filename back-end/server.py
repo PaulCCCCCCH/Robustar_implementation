@@ -21,6 +21,8 @@ def start_flask_app():
 
     app = Flask(__name__)
     app.after_request(afterRequest)
+
+    # register all api routes
     for bp in blueprints:
         # TODO: use /api/<version> prefix
         # app.register_blueprint(bp, url_prefix='/api/v1')
@@ -132,9 +134,6 @@ def new_server_object(basedir):
         model_name="u2net",
     )
     RServer.setAutoAnnotator(annotator)
-
-    # register all api routes
-    RServer.registerAPIs()
 
     # Check file state consistency
     precheck()

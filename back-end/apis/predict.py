@@ -13,11 +13,6 @@ from utils.predict import (
 )
 from flask import Blueprint
 
-server = RServer.getServer()
-dataManager = server.dataManager
-predictBuffer = dataManager.predictBuffer
-modelWrapper = RServer.getModelWrapper()
-
 predict_api = Blueprint("predict_api", __name__)
 
 # Return prediction result
@@ -85,6 +80,10 @@ def predict(split):
               type: string
               example: Success
     """
+    server = RServer.getServer()
+    dataManager = server.dataManager
+    predictBuffer = dataManager.predictBuffer
+    modelWrapper = RServer.getModelWrapper()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -177,6 +176,7 @@ def get_influence(split):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
+    dataManager = RServer.getDataManager()
     influence_dict = dataManager.get_influence_dict()
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
@@ -230,8 +230,8 @@ def calculate_influence():
     json_data = request.get_json()
     configs = json_data["configs"]
     calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper,
-        dataManager,
+        RServer.getModelWrapper(),
+        RServer.getDataManager(),
         start_idx=int(configs["test_sample_start_idx"]),
         end_idx=int(configs["test_sample_end_idx"]),
         r_averaging=int(configs["r_averaging"]),

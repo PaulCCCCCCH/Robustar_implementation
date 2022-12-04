@@ -5,12 +5,15 @@ from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
 import base64
-from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
+from utils.edit_utils import (
+    propose_edit,
+    save_edit,
+    start_auto_annotate,
+    remove_edit,
+    clear_edit,
+)
 from utils.path_utils import to_unix
 from flask import Blueprint
-
-server = RServer.getServer()
-dataManager = server.getDataManager()
 
 edit_api = Blueprint("edit_api", __name__)
 
@@ -81,13 +84,13 @@ def api_user_edit(split):
 @edit_api.route("/edit/<split>", methods=["DELETE"])
 def api_delete_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
-    dataManager.pairedset.remove_image(path)
+    remove_edit(path)
     return RResponse.ok("Success!")
 
 
 @edit_api.route("/edit/clear", methods=["DELETE"])
 def api_clear_edit():
-    dataManager.pairedset.clear_images()
+    clear_edit()
     return RResponse.ok("Success!")
 
 

@@ -1,21 +1,18 @@
 import os.path as osp
-import mimetypes
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
 from objects.RResponse import RResponse
-from objects.RServer import RServer
 from utils.image_utils import (
     getClassStart,
     getImagePath,
     getNextImagePath,
     getSplitLength,
     getImgData,
+    get_annotated,
 )
 from utils.path_utils import to_unix
 from flask import Blueprint
 
-server = RServer.getServer()
-dataManager = server.getDataManager()
 image_api = Blueprint("image_api", __name__)
 
 
@@ -92,17 +89,7 @@ def get_annotated(split):
     """
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
-    if split == "annotated":
-        paired_path = path
-    elif split == "train":
-        paired_path = dataManager.pairedset.get_paired_by_train(path)
-    else:
-        return RResponse.ok("")
-
-    if paired_path is None:
-        return RResponse.ok("")
-
-    return RResponse.ok(paired_path)
+    return RResponse.ok(get_annotated(split, path))
 
 
 @image_api.route("/image/class/<split>")
