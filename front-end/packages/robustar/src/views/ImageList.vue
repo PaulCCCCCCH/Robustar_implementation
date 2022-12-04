@@ -406,7 +406,7 @@ export default {
       this.currentPage = this.inputPage;
     },
     gotoClass() {
-      let startIdx = this.classStartIdx[this.$root.imageClass];
+      let startIdx = this.classStartIdx[this.$root.imageClass] || 0;
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
     },
     setImageSize() {

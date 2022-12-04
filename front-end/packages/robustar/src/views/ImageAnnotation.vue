@@ -12,7 +12,7 @@
             @click="
               $router.push({
                 name: 'ImageList',
-                params: { split: $route.params.split },
+                params: { split: $root.imageSplit },
               })
             "
           >
@@ -310,13 +310,7 @@
         </v-sheet>
       </div>
     </div>
-    <Visualizer
-      :is-active="showVisualizer"
-      :image_url="$root.imageURL"
-      :split="$root.imageSplit"
-      @open="showVisualizer = true"
-      @close="showVisualizer = false"
-    />
+    <Visualizer :image_url="$root.imageURL" :split="$root.imageSplit" />
   </div>
 </template>
 <script>
@@ -325,7 +319,6 @@ import { APISendEdit, APIGetProposedEdit } from '@/services/edit';
 import { APIGetAnnotated, APIGetNextImage } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import pDebounce from 'p-debounce';
-import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 const debouncedResize = pDebounce((ctx, dimension) => {
   ctx.$refs.editor.resize(dimension);
@@ -368,8 +361,6 @@ export default {
       lockAspectRatio: false,
       operationStack: [{ name: 'load image', icon: 'mdi-file-image-outline' }],
       stackPointer: 0,
-      showVisualizer: false,
-      getImageUrlFromFullUrl: getImageUrlFromFullUrl,
     };
   },
   computed: {

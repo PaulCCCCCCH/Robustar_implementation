@@ -22,7 +22,6 @@ describe('Image List', () => {
 
         cy.get('@next-page').click();
         cy.get('@next-page').click();
-        cy.wait(1000);
         cy.get('@page-num').should('have.value', 2);
         cy.reload();
         cy.checkSessionStorageObj('image_page_history', 'train', 2);
@@ -52,7 +51,6 @@ describe('Image List', () => {
         cy.reload();
         cy.checkSessionStorageObj('image_page_history', 'train', maxPage - 2);
 
-        cy.wait(300);
         cy.getBySel('image-list-img-1').trigger('mouseenter');
         cy.getBySel('image-list-btn-edit-image-1').click();
         cy.reload();
@@ -62,7 +60,6 @@ describe('Image List', () => {
 
   it('Navigates through validation data', () => {
     cy.visit('http://localhost:8080/#/image-list/validation');
-    cy.wait(300);
 
     // define elements
     cy.getBySel('image-list-select-class-name').as('class-name-dropdown');
@@ -81,7 +78,6 @@ describe('Image List', () => {
     cy.get('@page-num').should('have.value', 0);
     cy.get('@next-page').click();
     cy.get('@next-page').click();
-    cy.wait(1000);
     cy.get('@page-num').should('have.value', 2);
     cy.reload();
     cy.checkSessionStorageObj('image_page_history', 'validation', 2);

@@ -71,7 +71,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <ProposedEditView
-              :proposedEditUrl="proposedEditUrl"
+              :proposedEditBase64="proposedEditBase64"
               data-test="proposed-annotation-panel"
             />
           </v-expansion-panel-content>
@@ -103,10 +103,6 @@ import { configs } from '@/configs.js';
 export default {
   components: { PredView, InfluView, FocusView, ProposedEditView },
   props: {
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
     split: {
       type: String,
       default: () => '',
@@ -118,13 +114,14 @@ export default {
   },
   data() {
     return {
+      isActive: false,
       predDataArr: [
         ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'],
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
       ],
       focusImgUrl: [],
       influImgUrl: [],
-      proposedEditUrl: '',
+      proposedEditBase64: '',
       predViewConfig: {
         componentWidth: 300,
         figHeight: 300,
@@ -169,11 +166,11 @@ export default {
       try {
         const res = await APIGetProposedEdit(split, image_url);
         if (res.data.code === -1) {
-          this.proposedEditUrl = '';
+          this.proposedEditBase64 = '';
           return;
         }
         const { base64 } = res.data.data;
-        this.proposedEditUrl = base64;
+        this.proposedEditBase64 = base64;
       } catch (error) {
         console.log(error);
       }
@@ -239,11 +236,11 @@ export default {
     },
 
     openVisualizer() {
-      this.$emit('open');
+      this.isActive = true;
     },
 
     closeVisualizer() {
-      this.$emit('close');
+      this.isActive = false;
     },
   },
 };
