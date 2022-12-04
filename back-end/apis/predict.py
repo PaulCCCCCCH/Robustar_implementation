@@ -5,8 +5,12 @@ from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RDataManager import RDataManager
 from objects.RServer import RServer
 from objects.RResponse import RResponse
-from utils.path_utils import to_unix
-from utils.predict import convert_predict_to_array, get_image_prediction, calculate_influence
+from utils.path_utils import to_unix, to_snake_path
+from utils.predict import (
+    convert_predict_to_array,
+    get_image_prediction,
+    calculate_influence,
+)
 
 app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
@@ -16,7 +20,7 @@ modelWrapper = RServer.getModelWrapper()
 
 
 # Return prediction result
-@app.route('/predict/<split>')
+@app.route("/predict/<split>")
 def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
@@ -102,22 +106,30 @@ def predict(split):
         # get predict results
         try:
             modelWrapper.lock.acquire()
-            output = get_image_prediction(modelWrapper, image_path, dataManager.image_size, argmax=False)
+            output = get_image_prediction(
+                modelWrapper, image_path, dataManager.image_size, argmax=False
+            )
         except Exception as e:
-            RResponse.abort(400, 'Invalid image path {}'.format(image_path))
+            RResponse.abort(400, "Invalid image path {}".format(image_path))
         finally:
             modelWrapper.lock.release()
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
-        image_name = image_path.replace('.', '_').replace('/', '_').replace('\\', '_')
-        output = visualize(modelWrapper, image_path, dataManager.image_size, server.configs['device'])
+        image_name = to_snake_path(image_path)
+        output = visualize(
+            modelWrapper, image_path, dataManager.image_size, server.configs["device"]
+        )
         if len(output) != 4:
-            RResponse.abort(400, "[Unexpected] Invalid number of predict visualize figures")
+            RResponse.abort(
+                500, "[Unexpected] Invalid number of predict visualize figures"
+            )
 
         predict_fig_routes = []
         for i, fig in enumerate(output):
-            predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
+            predict_fig_route = "{}/{}_{}.png".format(
+                visualize_root, image_name, str(i)
+            )
             fig.savefig(predict_fig_route)
             predict_fig_routes.append(predict_fig_route)
 
@@ -131,7 +143,7 @@ def predict(split):
     return RResponse.ok(return_value)
 
 
-@app.route('/influence/<split>')
+@app.route("/influence/<split>")
 def get_influence(split):
     """
      Gets the influence for an image specified by its id
@@ -168,11 +180,13 @@ def get_influence(split):
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
     if influence_dict.contains(image_path):
-        return RResponse.ok(influence_dict.get(image_path), 'Success')
-    return RResponse.fail('Image is not found or influence for that image is not calculated')
+        return RResponse.ok(influence_dict.get(image_path), "Success")
+    return RResponse.abort(
+        400, "Image is not found or influence for that image is not calculated"
+    )
 
 
-@app.route('/influence', methods=['POST'])
+@app.route("/influence", methods=["POST"])
 def api_calculate_influence():
     """
     Calculates the influence for the test set
@@ -214,25 +228,27 @@ def api_calculate_influence():
               example: "Influence calculation started!"
     """
     json_data = request.get_json()
-    configs = json_data['configs']
+    configs = json_data["configs"]
 
-    if 'is_batch' in configs and configs['is_batch']:
-      start = int(configs['test_sample_start_idx'])
-      end = int(configs['test_sample_end_idx'])
+    if "is_batch" in configs and configs["is_batch"]:
+        start = int(configs["test_sample_start_idx"])
+        end = int(configs["test_sample_end_idx"])
 
     else:
-      start = dataManager.testset.get_idx_from_path(configs['instance_path'])
-      end = start + 1
-
+        start = dataManager.testset.get_idx_from_path(configs["instance_path"])
+        end = start + 1
 
     print("Calculating influence from {} to {}".format(start, end))
-    calcInfluenceThread= threading.Thread(target=calculate_influence, args=(
-      modelWrapper, 
-      dataManager,  
-      start,
-      end,
-      int(configs['r_averaging']),
-    ))
+    calcInfluenceThread = threading.Thread(
+        target=calculate_influence,
+        args=(
+            modelWrapper,
+            dataManager,
+            start,
+            end,
+            int(configs["r_averaging"]),
+        ),
+    )
 
     calcInfluenceThread.start()
 

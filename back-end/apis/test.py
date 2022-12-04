@@ -7,7 +7,7 @@ from utils.test import start_test
 app = RServer.getServer().getFlaskBluePrint()
 
 
-@app.route('/test', methods=['POST'])
+@app.route("/test", methods=["POST"])
 def start_testing():
     """
     Starts the test thread
@@ -43,16 +43,17 @@ def start_testing():
               type: string
               example: Success
     """
-    # Try to start training thread
-    print("DEBUG: Testing request received! ...")
+    # print("DEBUG: Testing request received! ...")
 
     json_data = request.get_json()
-    split = json_data['split']
+    split = json_data["split"]
+    if split not in ["validation", "test"]:
+        RResponse.abort(400, "Wrong split chosen for test")
     # print(split)
 
-    test_thread = start_test(split)
+    try:
+        start_test(split)
+    except Exception as e:
+        RResponse.abort(500, "Failed to start testing - " + str(e))
 
-    if not test_thread:
-        RResponse.abort(500, "Failed to start testing", -1)
-
-    return RResponse.ok("Test started!")
+    return RResponse.ok("Test started")

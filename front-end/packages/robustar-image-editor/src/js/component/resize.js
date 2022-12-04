@@ -80,8 +80,8 @@ class Resize extends Component {
 
       // scale the objects (e.g. path) on the image
       this.getCanvas().forEachObject((object) => {
-        if (!object.cacheLeft) object.cacheLeft = object.left;
-        if (!object.cacheTop) object.cacheTop = object.top;
+        if (!object.cacheLeft) object.cacheLeft = object.left / scaleValues.scaleX;
+        if (!object.cacheTop) object.cacheTop = object.top / scaleValues.scaleY;
         object.left = object.cacheLeft * scaleValues.scaleX;
         object.top = object.cacheTop * scaleValues.scaleY;
         object.scaleX = scaleValues.scaleX;
