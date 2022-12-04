@@ -1,18 +1,19 @@
-# import os
-# for module in os.listdir(os.path.dirname(__file__)):
-#     if module == '__init__.py' or module[-3:] != '.py':
-#         continue
+from .edit import edit_api
+from .generate import generate_api
+from .image import image_api
+from .predict import predict_api
+from .train import train_api
+from .test import test_api
+from .config import config_api
+from .task import task_api
 
-#     __import__("api.{}.*".format(module[:-3]), locals(), globals())
-# del module
-
-from .edit import *
-from .generate import *
-from .image import *
-from .predict import *
-from .train import *
-from .test import *
-from .config import *
-from .socket import *
-from .task import *
-from .fs import *
+blueprints = [
+    edit_api,
+    generate_api,
+    image_api,
+    predict_api,
+    train_api,
+    test_api,
+    config_api,
+    task_api,
+]

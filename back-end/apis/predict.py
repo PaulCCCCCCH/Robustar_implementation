@@ -11,16 +11,17 @@ from utils.predict import (
     CalcInfluenceThread,
     get_image_prediction,
 )
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
 server = RServer.getServer()
 dataManager = server.dataManager
 predictBuffer = dataManager.predictBuffer
 modelWrapper = RServer.getModelWrapper()
 
+predict_api = Blueprint("predict_api", __name__)
 
 # Return prediction result
-@app.route("/predict/<split>")
+@predict_api.route("/predict/<split>")
 def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
@@ -143,7 +144,7 @@ def predict(split):
     return RResponse.ok(return_value)
 
 
-@app.route("/influence/<split>")
+@predict_api.route("/influence/<split>")
 def get_influence(split):
     """
      Gets the influence for an image specified by its id
@@ -186,7 +187,7 @@ def get_influence(split):
     return RResponse.ok(influence_dict[image_path], "Success")
 
 
-@app.route("/influence", methods=["POST"])
+@predict_api.route("/influence", methods=["POST"])
 def calculate_influence():
     """
     Calculates the influence for the test set

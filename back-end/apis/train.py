@@ -3,10 +3,12 @@ from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
 from objects.RTask import RTask, TaskType
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
+train_api = Blueprint("train_api", __name__)
 
-@app.route('/train/stop', methods=['GET'])
+
+@train_api.route("/train/stop", methods=["GET"])
 def stop_training():
     """
     Stops the training thread
@@ -34,10 +36,11 @@ def stop_training():
         RTask.exit_tasks_of_type(TaskType.Training)
     except:
         RResponse.abort(500, "Failed to stop training", -1)
-    
+
     return RResponse.ok("Training stopped!")
 
-@app.route('/train', methods=['POST'])
+
+@train_api.route("/train", methods=["POST"])
 def start_training():
     """
     Takes in a training config and start the training thread
@@ -104,7 +107,7 @@ def start_training():
     print("Requested to training with the following configuration: ")
     json_data = request.get_json()
     print(json_data)
-    configs = json_data['configs']
+    configs = json_data["configs"]
     print(configs)
 
     # Return error message if config is invalid
@@ -115,7 +118,7 @@ def start_training():
     # Try to start training thread
     print("DEBUG: Training request received! Setting up training...")
 
-    # TODO: Save this train_thread variable somewhere. 
+    # TODO: Save this train_thread variable somewhere.
     # When a stop API is called, stop this thread.
     train_thread = start_train(configs)
 
@@ -128,10 +131,9 @@ def start_training():
     return RResponse.ok("Training started!")
 
 
-
 def check_configs(config):
     """
-    Check the config of the server. Returns 0 if config is valid. 
+    Check the config of the server. Returns 0 if config is valid.
     Otherwise, return an error code from the following table:
     error code  |       meaning
         10      | Training set not found or not valid
@@ -151,4 +153,3 @@ def check_configs(config):
     """
     # TODO: check the config here
     return 0
-
