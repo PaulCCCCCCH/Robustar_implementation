@@ -323,14 +323,14 @@ export default {
     this.fetchCurrentPage();
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
-    this.initClassifiedtImageList();
+    this.initClassifiedImageList();
   },
   watch: {
     $route() {
       this.updateSplit();
       this.fetchCurrentPage();
       this.initImageList();
-      this.initClassifiedtImageList();
+      this.initClassifiedImageList();
 
       this.image_url = ''; // Reset current image url for visualizaer
     },
@@ -349,10 +349,7 @@ export default {
       ];
     },
     accuarcy() {
-      const allImageLength = this.testImageList[0];
-      const correctImageLength = this.testImageList[1];
-      const incorrectImageLength = this.testImageList[2];
-
+      const [allImageLength, correctImageLength, incorrectImageLength] = this.testImageList
       // const correct_image_length = this.correct_image.length;
       // return { value: currect_length };
       return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
@@ -391,7 +388,7 @@ export default {
         this.imageList = [];
       }
     },
-    async initClassifiedtImageList() {
+    async initClassifiedImageList() {
       try {
         const res = await APIGetClassifiedSplitLength(this.split);
         this.testImageList = res.data.data;
@@ -416,7 +413,7 @@ export default {
       this.classStartIdx = {};
       this.selectedClass = 0;
       this.initImageList();
-      this.initClassifiedtImageList();
+      this.initClassifiedImageList();
     },
     async getClassNames() {
       try {
@@ -437,7 +434,7 @@ export default {
       try {
         await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
         this.initImageList();
-        this.initClassifiedtImageList();
+        this.initClassifiedImageList();
       } catch (error) {
         this.$root.alert('error', 'Image deletion failed');
       }
