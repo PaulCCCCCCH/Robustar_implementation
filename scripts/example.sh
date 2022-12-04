@@ -13,7 +13,7 @@
 # Running on cpu (For windows users)
 ./robustar.sh \
 -m run \
--a 0.1_backend-wsgi_98bb4c0 \
+-a 0.1_backend-wsgi_fd113ed	 \
 -p 8080 \
 -t C:\\Robustar2\\dataset\\train \
 -e C:\\Robustar2\\dataset\\test \
