@@ -452,7 +452,6 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Failed to auto annotate');
       }
@@ -483,7 +482,6 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('success', 'Sending succeeded');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Sending failed');
       }
@@ -494,7 +492,6 @@ export default {
         await this.$refs['editor'].loadImageFromURL();
         this._reset();
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Failed to get next image');
       }
     },
@@ -576,7 +573,6 @@ export default {
       }
       this.operationStack.push({ name, icon });
       this.stackPointer++;
-      console.log('do');
     }, 200),
     _goToOperation(pos) {
       if (pos === this.stackPointer) return;

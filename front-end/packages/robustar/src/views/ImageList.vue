@@ -334,7 +334,6 @@ export default {
         const res = await APIGetSplitLength(this.$root.imageSplit);
         this.splitLength = res.data.data;
       } catch (error) {
-        console.log(error);
         this.$root.alert(
           'error',
           error.response?.data?.detail || 'Image list initialization failed'
@@ -404,7 +403,6 @@ export default {
       this.currentPage = this.inputPage;
     },
     gotoClass() {
-      console.log(this.$root.imageClass);
       let startIdx = this.classStartIdx[this.$root.imageClass] || 0;
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
     },
@@ -430,7 +428,6 @@ export default {
         });
         this.isLoadingImages = false;
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Loading images failed');
         this.imageList = [];
         this.isLoadingImages = false;
