@@ -12,11 +12,6 @@ import '@robustar/image-editor/dist/tui-image-editor.css';
 import { configs } from '@/configs.js';
 import whiteTheme from './white-theme.js';
 
-const getImage = () => ({
-  path: `${configs.imagePathServerUrl}?image_url=${sessionStorage.getItem('image_url')}`,
-  name: sessionStorage.getItem('image_url'),
-});
-
 const includeUIOptions = {
   includeUI: {
     initMenu: 'draw',
@@ -46,6 +41,14 @@ export default {
       type: String,
       default: 'default',
     },
+    url: {
+      type: String,
+      default: '',
+    },
+    base64: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -59,6 +62,15 @@ export default {
       if (this.editorInstance) {
         this.editorInstance.changeCursor(this.cursor);
       }
+    },
+  },
+  computed: {
+    image() {
+      return {
+        path: `${configs.imagePathServerUrl}?image_url=${this.base64}`,
+        // path: this.base64,
+        name: this.url,
+      };
     },
   },
   mounted() {
@@ -85,19 +97,22 @@ export default {
       let options = editorDefaultOptions;
       if (this.includeUi) {
         options = Object.assign(includeUIOptions, this.options);
-        options.includeUI.loadImage = getImage();
+        options.includeUI.loadImage = this.image;
       }
       this.editorInstance = new ImageEditor('.tui-image-editor', options);
       if (!this.includeUi) {
-        const { path, name } = getImage();
-        this.editorInstance.loadImageFromURL(path, name).then(() => {
-          this.editorInstance.clearUndoStack();
-        });
+        const { path, name } = this.image;
+        this.editorInstance
+          .loadImageFromURL(path, name)
+          .then(() => {
+            this.editorInstance.clearUndoStack();
+          })
+          .catch((reason) => console.log(reason));
       }
       this._addEventListener();
     },
     async loadImageFromURL() {
-      const { path, name } = getImage();
+      const { path, name } = this.image;
       await this.editorInstance.loadImageFromURL(path, name);
     },
     getRootElement() {

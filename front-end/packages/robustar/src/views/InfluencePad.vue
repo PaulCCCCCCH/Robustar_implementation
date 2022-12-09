@@ -102,11 +102,9 @@ export default {
         const res = await APICalculateInfluence({
           configs: this.configs,
         });
-        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Influence calculation succeeded');
       } catch (error) {
-        console.log(error);
         alert('Server error. Check console.');
         this.$root.finishProcessing();
         this.$root.alert('error', 'Influence calculation failed');

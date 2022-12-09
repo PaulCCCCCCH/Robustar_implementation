@@ -209,12 +209,10 @@ export default {
           configs: this.configs,
           info: 'placeholder',
         });
-        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Training started successfully');
         window.open(configs.tensorboardUrl);
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Training failed');
       }
@@ -222,10 +220,8 @@ export default {
     async stopTraining() {
       try {
         const res = await APIStopTrain();
-        console.log(res);
         this.$root.alert('success', 'Successfully stop training');
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Failed to stop training');
       }
     },

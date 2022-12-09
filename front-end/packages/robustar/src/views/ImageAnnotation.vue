@@ -8,15 +8,26 @@
         <div class="d-flex justify-center mb-8">
           <v-btn
             depressed
-            color="warning"
             class="mr-4"
+            @click="
+              $router.push({
+                name: 'ImageList',
+                params: { split: $root.imageSplit },
+              })
+            "
+          >
+            <v-icon left>mdi-arrow-left</v-icon>Back
+          </v-btn>
+          <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
+          <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
+          <v-btn depressed class="mr-4" @click="autoEdit">Auto Edit</v-btn>
+          <v-btn
+            depressed
+            color="warning"
             @click="sendEdit"
             data-test="tui-image-editor-send-edit-btn"
             >Send Edit</v-btn
           >
-          <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
-          <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
-          <v-btn depressed @click="autoEdit">Auto Edit</v-btn>
         </div>
         <div class="d-flex">
           <v-tooltip bottom>
@@ -161,7 +172,10 @@
         :include-ui="useDefaultUI"
         :options="options"
         :cursor="cursorIcon"
+        :url="url ? url : $root.imageURL"
+        :base64="url ? url : $root.imageURL"
         @mousedown="mousedown"
+        @objectMoved="_doOperation('move', 'mdi-gesture-tap')"
       ></ImageEditor>
       <div class="d-flex flex-column align-center" style="width: 100%">
         <div v-if="mode === 'resize'" style="width: 500px" class="d-flex flex-column align-center">
@@ -296,13 +310,7 @@
         </v-sheet>
       </div>
     </div>
-    <Visualizer
-      :is-active="image_url !== ''"
-      :image_url="image_url"
-      :split="split"
-      @open="loadImageInfo"
-      @close="image_url = ''"
-    />
+    <Visualizer :image_url="$root.imageURL" :split="$root.imageSplit" />
   </div>
 </template>
 <script>
@@ -328,6 +336,7 @@ const debouncedResize = pDebounce((ctx, dimension) => {
  *
  */
 export default {
+  name: 'ImageAnnotation',
   components: {
     ImageEditor,
     Visualizer,
@@ -340,7 +349,7 @@ export default {
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
       },
-      image_url: '',
+      url: '',
       split: '',
       mode: '',
       zoomLevel: 1,
@@ -398,8 +407,6 @@ export default {
     },
   },
   mounted() {
-    this.loadImageInfo();
-    this.split = this.$route.params.split;
     this.toggleDraw();
   },
   beforeRouteEnter(to, from, next) {
@@ -408,22 +415,18 @@ export default {
     });
   },
   methods: {
-    loadImageInfo() {
-      this.image_url = sessionStorage.getItem('image_url');
-    },
     async loadEdit() {
       this.$root.startProcessing('Loading previous annotation. Please wait...');
       try {
-        const res = await APIGetAnnotated(this.split, this.image_url);
+        const res = await APIGetAnnotated(this.$root.imageSplit, this.$root.imageURL);
         const edit_url = res.data.data;
         if (!edit_url) {
           this.$root.finishProcessing();
           this.$root.alert('error', 'No previous annotation found');
         } else {
-          // Don't change this.split and this.image_url here because they will be used
-          // to get the next image
-          sessionStorage.setItem('split', 'annotated');
-          sessionStorage.setItem('image_url', edit_url);
+          this.split = 'annotated';
+          this.url = edit_url;
+          await this.$refs['editor'].loadImageFromURL();
           this._reset();
           this.$root.finishProcessing();
           this.$root.alert('success', 'Previous annotation loaded');
@@ -439,18 +442,16 @@ export default {
     async autoEdit() {
       this.$root.startProcessing('Auto-annotating...');
       try {
-        const res = await APIGetProposedEdit(this.split, this.image_url);
+        const res = await APIGetProposedEdit(this.$root.imageSplit, this.$root.imageURL);
         const proposed_url = res.data.data;
-        // Same as above, don't change this.split and this.image_url here because they will be used
-        // to get the next image
-        sessionStorage.setItem('image_url', proposed_url);
-        sessionStorage.setItem('split', 'proposed');
+        this.url = proposed_url;
+        this.split = 'proposed';
+        await this.$refs['editor'].loadImageFromURL();
         await this.$refs['editor'].loadImageFromURL();
         this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Failed to auto annotate');
       }
@@ -467,27 +468,30 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_url = sessionStorage.getItem('image_url') || '';
       const image_height = sessionStorage.getItem('image_height');
       const image_width = sessionStorage.getItem('image_width');
-      const split = sessionStorage.getItem('split');
       try {
         const image_base64 = this.$refs['editor'].invoke('toDataURL');
-        await APISendEdit({ split, image_url, image_height, image_width, image_base64 });
+        await APISendEdit({
+          split: this.$root.imageSplit,
+          image_url: this.$root.imageURL,
+          image_height,
+          image_width,
+          image_base64,
+        });
         this.$root.finishProcessing();
         this.$root.alert('success', 'Sending succeeded');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Sending failed');
       }
       try {
-        const res = await APIGetNextImage(this.split, this.image_url);
-        sessionStorage.setItem('image_url', res.data.data);
+        const res = await APIGetNextImage(this.$root.imageSplit, this.$root.imageURL);
+        this.$root.imageURL = res.data.data;
+        this.url = res.data.data;
+        await this.$refs['editor'].loadImageFromURL();
         this._reset();
-        this.loadImageInfo();
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Failed to get next image');
       }
     },
@@ -562,15 +566,14 @@ export default {
       this.stackPointer++;
       this.$refs['editor'].invoke('redo');
     },
-    _doOperation(name, icon) {
+    _doOperation: pDebounce(function (name, icon) {
       const delta = this.operationStack.length - 1 - this.stackPointer;
       if (delta > 0) {
         this.operationStack = this.operationStack.slice(0, this.stackPointer + 1);
       }
       this.operationStack.push({ name, icon });
       this.stackPointer++;
-      console.log('do');
-    },
+    }, 200),
     _goToOperation(pos) {
       if (pos === this.stackPointer) return;
       const delta = Math.abs(pos - this.stackPointer);
