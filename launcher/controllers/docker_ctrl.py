@@ -86,6 +86,7 @@ class DockerController(QObject):
             'image_size': int(self.model.imgSize),
             'image_padding': self.model.padding,
             'num_classes': int(self.model.classNumber),
+            'port': int(self.model.port)
         }
 
         # Create folder to store record data
@@ -331,6 +332,15 @@ class DockerController(QObject):
             curTime = datetime.utcnow()
             logs = container.logs(stream=True, since=curTime)
 
+            # Get the name and port setting
+            name = container.name
+            with open('./RecordData/config_record.json', 'r') as f:
+                matchDict = json.load(f)
+                fileName = matchDict[name]
+            with open(fileName) as f:
+                config = json.load(f)
+                port = config['port']
+
             # Print the logs until the container is stopped
             try:
                 while True:
@@ -338,6 +348,10 @@ class DockerController(QObject):
 
                     # Remove the color of log
                     log = re.sub('.\[\d+m', '', log)
+
+                    # Add the name and port information
+                    log = f'{name} - - ' + log[:log.find(' - -')] + f':{port}' + log[log.find(' - -'):]
+
                     self.mainCtrl.printMessage(self.mainView.ui.logBrowser, log, timestamp=False)
             except StopIteration:
                 return
