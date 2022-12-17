@@ -317,8 +317,16 @@ class DockerController(QObject):
             self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
     def downloadImage(self, image):
-        imageList = [x.tags[0] for x in self.client.images.list()]
-        if image not in imageList:
+        if self.client.images.list() != []:
+            imageList = [x.tags[0] for x in self.client.images.list()]
+            if image not in imageList:
+                exist = False
+            else:
+                exist = True
+        else:
+            exist = False
+
+        if not exist:
             self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
                                        f'Downloading {image}. See more in <i>Details</i> page')
             repo, tag = image.split(':')
