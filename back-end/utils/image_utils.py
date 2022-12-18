@@ -108,19 +108,31 @@ def getImgData(dataset_img_path):
         raise Exception
 
 
-def refreshImgData(dataset_img_path):
-    dataManager = RServer.getDataManager()
-    datasetFileQueue = dataManager.datasetFileQueue
-    datasetFileBuffer = dataManager.datasetFileBuffer
-    datasetFileQueueLen = dataManager.datasetFileQueueLen
-
-    normal_path = to_unix(dataset_img_path)
+def imageToBase64String(path: str) -> str:
+    """
+    Convert an image to it's base64 string
+    args:
+        path: path to the image to be converted
+    returns:
+        base64 string of the image
+    """
+    normal_path = to_unix(path)
     with open(normal_path, "rb") as image_file:
         image_base64 = base64.b64encode(image_file.read()).decode()
     image_mime = mimetypes.guess_type(normal_path)[0]
 
     image_data = "data:" + image_mime + ";base64," + image_base64
+    return image_data
 
+
+def refreshImgData(path: str):
+    dataManager = RServer.getDataManager()
+    datasetFileQueue = dataManager.datasetFileQueue
+    datasetFileBuffer = dataManager.datasetFileBuffer
+    datasetFileQueueLen = dataManager.datasetFileQueueLen
+
+    normal_path = to_unix(path)
+    image_data = imageToBase64String(normal_path)
     datasetFileQueue.append(normal_path)
     if len(datasetFileQueue) > datasetFileQueueLen:
         temp_path = datasetFileQueue.popleft()

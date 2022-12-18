@@ -32,7 +32,7 @@ def app(request):
 
     _clean_up(basedir)
 
-    # time.sleep(0.5)
+    time.sleep(0.1)
 
 
 @pytest.fixture()
@@ -66,6 +66,7 @@ def _set_up(basedir):
                     osp.join(image_dir_original, "{}.JPEG".format(i))
                 )
                 shutil.copy2(image_original, image)
+        print("setup >> test train set created")
         test_dir = to_unix(osp.join(dataset_dir, "test"))
         test_dir_original = to_unix(osp.join(dataset_dir_original, "test"))
         os.mkdir(test_dir)
@@ -82,6 +83,22 @@ def _set_up(basedir):
                     osp.join(image_dir_original, "{}.JPEG".format(i))
                 )
                 shutil.copy2(image_original, image)
+        print("setup >> test test set created")
+        validation_dir = to_unix(osp.join(dataset_dir, "validation"))
+        os.mkdir(validation_dir)
+        for name in os.listdir(test_dir_original):
+            image_dir = to_unix(osp.join(validation_dir, name))
+            image_dir_original = to_unix(osp.join(test_dir_original, name))
+            if not osp.isdir(image_dir_original):
+                continue
+            os.mkdir(image_dir)
+            for i in range(10, 20):
+                image = to_unix(osp.join(image_dir, "{}.JPEG".format(i)))
+                image_original = to_unix(
+                    osp.join(image_dir_original, "{}.JPEG".format(i))
+                )
+                shutil.copy2(image_original, image)
+        print("setup >> test validation set created")
         print("setup > copy images into " + dataset_dir)
     else:
         print("setup > no database dir, skip copy")
@@ -106,17 +123,21 @@ def _set_up(basedir):
     else:
         print("setup > no proposed dir, skip copy")
 
-    # visualize_images_dir = to_unix(osp.join(base_dir, 'visualize_images'))
-    # visualize_images_dir_original = to_unix(osp.join(base_dir, 'visualize_images_o'))
-    # os.rename(visualize_images_dir, visualize_images_dir_original)
-    # os.mkdir(visualize_images_dir)
-
     db_path = to_unix(osp.join(base_dir, "data.db"))
     if osp.exists(db_path):
         print("setup > delete " + db_path)
         os.remove(db_path)
     else:
         print("setup > no db, skip delete")
+
+    visualize_images_dir = to_unix(osp.join(base_dir, "visualize_images"))
+    if osp.exists(visualize_images_dir):
+        for name in os.listdir(visualize_images_dir):
+            image_path = to_unix(osp.join(visualize_images_dir, name))
+            os.remove(image_path)
+        print("setup > delete " + visualize_images_dir)
+    else:
+        print("setup > no visualize images dir, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))

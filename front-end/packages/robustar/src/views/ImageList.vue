@@ -12,7 +12,7 @@
             style="width: 200px"
           >
             <v-select
-              v-model="split"
+              v-model="$root.imageSplit"
               :items="classification"
               @change="resetImageList"
               data-test="image-list-select-classification"
@@ -58,20 +58,13 @@
 
             <!-- Class filter -->
             <div class="d-flex align-center">
-              <v-btn
-                :disabled="selectedClass === 0"
-                class="mr-4"
-                depressed
-                color="primary"
-                @click="gotoClass"
-              >
-                GOTO CLASS
-              </v-btn>
+              <v-btn class="mr-4" depressed color="primary" @click="gotoClass"> GOTO CLASS </v-btn>
               <v-select
                 :items="classNames"
-                v-model="selectedClass"
+                v-model="$root.imageClass"
                 label="Class Name"
                 data-test="image-list-select-class-name"
+                clearable
               >
               </v-select>
             </div>
@@ -90,6 +83,7 @@
             >
             </v-select>
             <v-select
+              class="mr-8"
               :items="Object.keys(imageSizeMap)"
               v-model="imageSize"
               label="Image size"
@@ -99,11 +93,11 @@
             </v-select>
 
             <v-btn
+              v-if="$route.params.split === 'annotated'"
               depressed
               color="primary"
               @click="clearAnnotatedImage"
               data-test="image-list-btn-clear-annotated-imgs"
-              v-if="$route.params.split === 'annotated'"
             >
               DELETE ALL
             </v-btn>
@@ -218,7 +212,7 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="gotoImage(url_and_binary[0], 'EditImage')"
+                      @click="gotoImage(url_and_binary[0], url_and_binary[1], 'ImageAnnotation')"
                       :data-test="`image-list-btn-edit-image-${idx}`"
                     >
                       <v-icon>mdi-pencil</v-icon>
@@ -228,7 +222,10 @@
                       outlined
                       color="white"
                       width="80%"
-                      @click="setCurrentImage(url_and_binary[0])"
+                      @click="
+                        $root.imageURL = url_and_binary[0];
+                        $refs['visualizer'].open();
+                      "
                       :data-test="`image-list-btn-predict-image-${idx}`"
                     >
                       <v-icon>mdi-cogs</v-icon>
@@ -245,11 +242,9 @@
 
     <Visualizer
       v-if="hasImages"
-      :is-active="image_url !== ''"
-      :image_url="image_url"
-      :split="split"
-      @open="fetchImageUrl"
-      @close="image_url = ''"
+      ref="visualizer"
+      :image_url="$root.imageURL"
+      :split="$root.imageSplit"
     />
   </div>
 </template>
@@ -282,11 +277,8 @@ export default {
       maxPage: 0,
       imageList: [],
       splitLength: 1000,
-      classNames: [],
+      classNames: [''],
       classStartIdx: {},
-      selectedClass: 0,
-      split: 'test_correct',
-      image_url: '',
       imagePerPage: 0,
       imageSize: configs.imageSize,
       imageSizeMap: {
@@ -299,21 +291,19 @@ export default {
     };
   },
   mounted() {
-    this.updateSplit();
-    this.fetchCurrentPage();
+    this.handleRouteChange();
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
   },
   watch: {
     $route() {
-      this.updateSplit();
-      this.fetchCurrentPage();
+      this.handleRouteChange();
       this.initImageList();
-      this.image_url = ''; // Reset current image url for visualizaer
+      this.$root.imageURL = ''; // Reset current image url for visualizaer
     },
     currentPage() {
-      sessionStorage.setItem(this.split, this.currentPage);
       this.inputPage = this.currentPage;
+      this.$root.imagePageHistory[this.$root.imageSplit] = this.currentPage;
       this.loadImages();
     },
   },
@@ -335,42 +325,36 @@ export default {
     },
   },
   methods: {
-    fetchImageUrl() {
-      this.image_url = sessionStorage.getItem('image_url') || '';
-    },
-    fetchCurrentPage() {
-      this.currentPage = Number(sessionStorage.getItem(this.split)) || 0;
-      sessionStorage.setItem(this.split, this.currentPage);
-    },
-    updateSplit() {
-      this.split = this.$route.params.split;
+    handleRouteChange() {
+      this.$root.imageSplit = this.$route.params.split;
+      this.currentPage = this.$root.imagePageHistory[this.$root.imageSplit] || 0;
     },
     async initImageList() {
       try {
-        const res = await APIGetSplitLength(this.split);
+        const res = await APIGetSplitLength(this.$root.imageSplit);
         this.splitLength = res.data.data;
-        this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
-        this.getClassNames();
-        this.loadImages();
       } catch (error) {
-        console.log(error);
         this.$root.alert(
           'error',
           error.response?.data?.detail || 'Image list initialization failed'
         );
         this.imageList = [];
+        this.splitLength = 0;
       }
+      this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
+      this.getClassNames();
+      this.loadImages();
     },
     resetImageList() {
       this.currentPage = 0;
-      this.classNames = [];
+      this.classNames = [''];
       this.classStartIdx = {};
-      this.selectedClass = 0;
+      this.$root.imageClass = '';
       this.initImageList();
     },
     async getClassNames() {
       try {
-        const res = await APIGetClassNames(this.split);
+        const res = await APIGetClassNames(this.$root.imageSplit);
         this.classStartIdx = res.data.data;
         this.classNames = Object.keys(this.classStartIdx);
       } catch (error) {
@@ -378,14 +362,9 @@ export default {
         this.imageList = [];
       }
     },
-    setCurrentImage(url) {
-      this.image_url = getImageUrlFromFullUrl(url);
-      sessionStorage.setItem('split', this.split);
-      sessionStorage.setItem('image_url', this.image_url);
-    },
     async deleteAnnotatedImage(idx, url) {
       try {
-        await APIDeleteEdit(this.split, getImageUrlFromFullUrl(url));
+        await APIDeleteEdit(this.$root.imageSplit, getImageUrlFromFullUrl(url));
         this.initImageList();
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || 'Image deletion failed');
@@ -394,14 +373,23 @@ export default {
     deleteImageFailed() {
       this.$root.alert('error', 'Image deletion failed');
     },
-    clearAnnotatedImage() {
-      APIClearEdit(() => this.deleteImageSuccess(), this.deleteImageFailed);
+    async clearAnnotatedImage() {
+      this.$root.startProcessing('Auto-annotating...');
+      try {
+        await APIClearEdit();
+        this.$root.finishProcessing();
+        this.$root.alert('success', 'Image deletion succeed');
+        this.loadImages();
+      } catch (error) {
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Image deletion failed');
+      }
     },
-    gotoImage(url, componentName) {
-      this.setCurrentImage(getImageUrlFromFullUrl(url));
+    gotoImage(url, base64, componentName) {
+      this.$root.imageURL = url;
+      this.$root.imageBase64 = base64;
       this.$router.push({
         name: componentName,
-        params: { split: this.$route.params.split },
       });
     },
     gotoPage() {
@@ -415,9 +403,8 @@ export default {
       this.currentPage = this.inputPage;
     },
     gotoClass() {
-      let startIdx = this.classStartIdx[this.selectedClass];
+      let startIdx = this.classStartIdx[this.$root.imageClass] || 0;
       this.currentPage = Math.floor(startIdx / this.imagePerPage);
-      this.loadImages();
     },
     setImageSize() {
       this.imagePerPage = this.imagePerPageOptions[1];
@@ -426,7 +413,11 @@ export default {
     async loadImages() {
       this.isLoadingImages = true;
       try {
-        const res = await APIGetImageListDebounced(this.split, this.currentPage, this.imagePerPage);
+        const res = await APIGetImageListDebounced(
+          this.$root.imageSplit,
+          this.currentPage,
+          this.imagePerPage
+        );
         const list = res.data.data || [];
         this.$nextTick(() => {
           this.imageList = [];
@@ -437,7 +428,6 @@ export default {
         });
         this.isLoadingImages = false;
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Loading images failed');
         this.imageList = [];
         this.isLoadingImages = false;

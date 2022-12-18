@@ -1,4 +1,3 @@
-from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
@@ -67,11 +66,8 @@ def start_training():
                 'train_path': '/Robustar2/dataset/train',
                 'test_path': '/Robustar2/dataset/test',
                 'class_path': './model/cifar-class.txt',
-                'port': '8000',
-                'save_dir': '/Robustar2/checkpoints',
                 'use_paired_train': True,
                 'mixture': 'random_pure',
-                'paired_data_path': '/Robustar2/dataset/paired',
                 'auto_save_model': True,
                 'batch_size': '128',
                 'shuffle': True,
@@ -118,8 +114,7 @@ def start_training():
     # Try to start training thread
     print("DEBUG: Training request received! Setting up training...")
 
-    # TODO: Save this train_thread variable somewhere.
-    # When a stop API is called, stop this thread.
+    # start the training thread
     train_thread = start_train(configs)
 
     # Return error if training cannot be started

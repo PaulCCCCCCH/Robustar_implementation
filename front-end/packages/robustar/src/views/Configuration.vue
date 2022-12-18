@@ -18,7 +18,7 @@
 <script>
 import { APIGetConfig } from '@/services/config';
 export default {
-  name: 'Config',
+  name: 'Configuration',
   data() {
     return {
       configs: null,
@@ -29,7 +29,6 @@ export default {
     async startGettingConfig() {
       try {
         const res = await APIGetConfig();
-        console.log(res);
         this.configs = res.data.data;
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || '');

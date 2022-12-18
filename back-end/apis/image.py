@@ -6,8 +6,8 @@ from utils.image_utils import (
     getClassStart,
     getImagePath,
     getNextImagePath,
-    getSplitLength,
     getImgData,
+    getSplitLength,
     get_annotated,
 )
 from utils.path_utils import to_unix
