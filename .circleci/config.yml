@@ -23,9 +23,7 @@ jobs:
           working_directory: ./front-end
           command: |
             echo "Files in directory: $(ls)"
-            npx lerna@latest init
             npm install
-            npx lerna bootstrap
             npx lerna run build
 
       - run:
@@ -40,14 +38,14 @@ jobs:
             ls ./Robustar2
  
       - run:
-          name: Install backend test dependencies
+          name: Install backend test dependencies and run
           working_directory: ./back-end
           command: |
             echo "Files in directory: $(ls)"
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
-            
+            python -m pytest --basedir ./Robustar2 -W ignore::UserWarning -W ignore::DeprecationWarning
 
       - run:
           name: End-to-end tests

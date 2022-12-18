@@ -7,14 +7,14 @@
       elevation="1"
       data-test="visualizer-sheet"
     >
-      <v-btn class="mb-4" icon @click="closeVisualizer">
+      <v-btn class="mb-4" icon @click="close">
         <v-icon>mdi-close</v-icon>
       </v-btn>
 
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
         <v-expansion-panel @click="toggle_panel" v-if="show">
-          <v-expansion-panel-header expand-icon="mdi-menu-down"data-test="model-prediction">
+          <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-prediction">
             Model Prediction
           </v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -48,10 +48,9 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <div style="overflow-x: scroll">
-              <FocusView :focusImgUrl="focusImgUrl" data-test="model-focus-panel"  />
+              <FocusView :focusImgUrl="focusImgUrl" data-test="model-focus-panel" />
             </div>
             <v-icon @click="showCount" style="float: right"> mdi-magnify-plus</v-icon>
-
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -72,7 +71,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <ProposedEditView
-              :proposedEditUrl="proposedEditUrl"
+              :proposedEditBase64="proposedEditBase64"
               data-test="proposed-annotation-panel"
             />
           </v-expansion-panel-content>
@@ -84,7 +83,7 @@
       color="secondary"
       outlined
       large
-      @click="openVisualizer"
+      @click="open"
       data-test="visualizer-btn"
     >
       <v-icon left>mdi-eye</v-icon>VISUALIZER
@@ -104,10 +103,6 @@ import { configs } from '@/configs.js';
 export default {
   components: { PredView, InfluView, FocusView, ProposedEditView },
   props: {
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
     split: {
       type: String,
       default: () => '',
@@ -119,13 +114,14 @@ export default {
   },
   data() {
     return {
+      isActive: false,
       predDataArr: [
         ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'],
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
       ],
       focusImgUrl: [],
       influImgUrl: [],
-      proposedEditUrl: '',
+      proposedEditBase64: '',
       predViewConfig: {
         componentWidth: 300,
         figHeight: 300,
@@ -170,11 +166,11 @@ export default {
       try {
         const res = await APIGetProposedEdit(split, image_url);
         if (res.data.code === -1) {
-          this.proposedEditUrl = '';
+          this.proposedEditBase64 = '';
           return;
         }
-        const proposedPath = res.data.data;
-        this.proposedEditUrl = `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${proposedPath}`;
+        const { base64 } = res.data.data;
+        this.proposedEditBase64 = base64;
       } catch (error) {
         console.log(error);
       }
@@ -207,7 +203,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Server error. Check console.');
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
 
@@ -239,12 +235,12 @@ export default {
       }, 0);
     },
 
-    openVisualizer() {
-      this.$emit('open');
+    open() {
+      this.isActive = true;
     },
 
-    closeVisualizer() {
-      this.$emit('close');
+    close() {
+      this.isActive = false;
     },
   },
 };

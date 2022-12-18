@@ -1,6 +1,16 @@
 {
   "name": "robustar",
   "private": true,
+  "scripts": {
+    "postinstall": "npx lerna init && npx lerna bootstrap",
+    "build": "npx lerna run build",
+    "build:editor": "npx lerna run --scope @robustar/image-editor build --stream",
+    "serve:editor": "npx lerna run --scope @robustar/image-editor serve --stream",
+    "serve:main": "npx lerna run --scope @robustar/robustar serve --stream",
+    "cypress:open": "npx cypress open --browser chrome",
+    "cypress:run": "npx cypress run --browser chrome",
+    "cypress:component": "npx cypress open-ct"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/eslint-parser": "^7.15.0",
@@ -17,7 +27,7 @@
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
-    "cypress": "^9.5.3",
+    "cypress": "^11.2.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-tui": "^4.2.0",
@@ -43,26 +53,15 @@
     "typescript": "^3.2.2",
     "vue-eslint-parser": "^7.10.0",
     "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.6.14",
-    "webpack": "^5.52.0",
-    "webpack-cli": "^4.8.0",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.7.3",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4",
     "cypress-real-events": "^1.7.0"
-  },
-  "scripts": {
-    "init:lerna": "lerna bootstrap",
-    "format": "prettier --write .",
-    "build": "lerna run build",
-    "build:editor": "lerna run --scope @robustar/image-editor build --stream",
-    "serve:editor": "lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "lerna run --scope @robustar/robustar serve --stream",
-    "cypress:open": "npx cypress open --browser chrome",
-    "cypress:run": "npx cypress run --browser chrome",
-    "cypress:component": "npx cypress open-ct"
   },
   "workspaces": [
     "apps/*"

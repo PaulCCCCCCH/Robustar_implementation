@@ -46,6 +46,16 @@ Cypress.Commands.add('checkSessionStorage', (key, val) => {
   cy.window().its('sessionStorage').invoke({ timeout: 5000 }, 'getItem', key).should('eq', val);
 });
 
+Cypress.Commands.add('checkSessionStorageObj', (storageKey, objKey, val) => {
+  cy.window()
+    .its('sessionStorage')
+    .invoke({ timeout: 5000 }, 'getItem', storageKey)
+    .then((item) => {
+      const temp = JSON.parse(item);
+      cy.wrap(temp).its(objKey).should('eq', val);
+    });
+});
+
 Cypress.Commands.add('checkSessionStorageSubString', (key, val) => {
   cy.window()
     .its('sessionStorage')

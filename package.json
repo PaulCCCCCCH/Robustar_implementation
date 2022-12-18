@@ -1,8 +1,19 @@
 {
-  "devDependencies": {
-    "husky": "^7.0.4"
-  },
   "scripts": {
-    "prepare": "husky install"
+    "postinstall": "npx husky install && pip install black"
+  },
+  "devDependencies": {
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "prettier": "^2.8.0"
+  },
+  "lint-staged": {
+    "*.html": "prettier --write --ignore-unknown",
+    "*.js": "prettier --write --ignore-unknown",
+    "*.css": "prettier --write --ignore-unknown",
+    "*.vue": "prettier --write --ignore-unknown",
+    "*.json": "prettier --write --ignore-unknown",
+    "*.md": "prettier --write --ignore-unknown",
+    "*.py": "black"
   }
 }

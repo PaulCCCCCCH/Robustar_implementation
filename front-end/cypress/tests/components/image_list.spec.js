@@ -13,14 +13,18 @@ describe('Image List', () => {
         cy.getBySel('image-list-btn-next-page').as('next-page');
         cy.getBySel('image-list-btn-prev-page').as('prev-page');
 
-        cy.get('@page-num').should('have.value', 0);
-        cy.checkSessionStorage('train', '0');
+        cy.get('@page-num').clear().type('0');
+        cy.contains('GOTO PAGE').click();
+
+        // cy.get('@page-num').should('have.value', 0);
+        // cy.reload()
+        // cy.checkSessionStorageObj('image_page_history', 'train', 0);
 
         cy.get('@next-page').click();
         cy.get('@next-page').click();
-
         cy.get('@page-num').should('have.value', 2);
-        cy.checkSessionStorage('train', '2');
+        cy.reload();
+        cy.checkSessionStorageObj('image_page_history', 'train', 2);
 
         cy.get('@class-name-dropdown').click({ force: true });
         cy.contains('cat').click();
@@ -34,7 +38,7 @@ describe('Image List', () => {
         cy.get('@next-page').click();
         cy.get('@page-num').should('have.value', currPage + 2);
 
-        cy.get('@page-num').type('9999');
+        cy.get('@page-num').clear().type('9999');
         cy.contains('GOTO PAGE').click();
 
         const maxPage = Math.ceil(9000 / num_per_page) - 1;
@@ -44,19 +48,19 @@ describe('Image List', () => {
         cy.get('@prev-page').click();
 
         cy.get('@page-num').should('have.value', maxPage - 2);
-        cy.checkSessionStorage('train', `${maxPage - 2}`);
+        cy.reload();
+        cy.checkSessionStorageObj('image_page_history', 'train', maxPage - 2);
 
-        cy.wait(300);
         cy.getBySel('image-list-img-1').trigger('mouseenter');
         cy.getBySel('image-list-btn-edit-image-1').click();
-        cy.checkSessionStorage('split', 'train');
+        cy.reload();
+        cy.checkSessionStorage('image_split', 'train');
       });
   });
 
   it('Navigates through validation data', () => {
     cy.visit('http://localhost:8080/#/image-list/validation');
 
-    cy.wait(300);
     // define elements
     cy.getBySel('image-list-select-class-name').as('class-name-dropdown');
     cy.getBySel('image-list-input-page-number').as('page-num');
@@ -64,20 +68,26 @@ describe('Image List', () => {
     cy.getBySel('image-list-btn-prev-page').as('prev-page');
     cy.getBySel('image-list-select-classification').as('classification');
 
+    cy.get('@page-num').clear().type('0');
+    cy.contains('GOTO PAGE').click();
+
     const num_per_page = 12;
     const currPage = Math.ceil(1000 / num_per_page) - 1;
     const maxPage = Math.ceil(9000 / num_per_page) - 1;
 
     cy.get('@page-num').should('have.value', 0);
-    cy.checkSessionStorage('train', `${maxPage - 2}`);
-    cy.checkSessionStorage('validation', '0');
+    cy.get('@next-page').click();
+    cy.get('@next-page').click();
+    cy.get('@page-num').should('have.value', 2);
+    cy.reload();
+    cy.checkSessionStorageObj('image_page_history', 'validation', 2);
 
     cy.get('@classification').click({ force: true });
     cy.contains('Incorrectly Classified').click();
 
     // cy.getBySel('image-list-div-all-imgs').children().should('have.length', 0);
 
-    cy.get('@page-num').type('9999');
+    cy.get('@page-num').clear().type('9999');
     cy.contains('GOTO PAGE').click();
 
     cy.get('@next-page').should('be.disabled');

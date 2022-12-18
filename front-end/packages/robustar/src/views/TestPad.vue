@@ -33,13 +33,11 @@ export default {
         const res = await APIStartTest({
           split,
         });
-        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Testing succeeded');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Testing failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Testing failed');
       }
     },
   },

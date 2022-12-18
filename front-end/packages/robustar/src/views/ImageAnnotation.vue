@@ -8,15 +8,26 @@
         <div class="d-flex justify-center mb-8">
           <v-btn
             depressed
-            color="warning"
             class="mr-4"
+            @click="
+              $router.push({
+                name: 'ImageList',
+                params: { split: $root.imageSplit },
+              })
+            "
+          >
+            <v-icon left>mdi-arrow-left</v-icon>Back
+          </v-btn>
+          <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
+          <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
+          <v-btn depressed class="mr-4" @click="autoEdit">Auto Edit</v-btn>
+          <v-btn
+            depressed
+            color="warning"
             @click="sendEdit"
             data-test="tui-image-editor-send-edit-btn"
             >Send Edit</v-btn
           >
-          <v-btn depressed class="mr-4" @click="adjustImageSize">Adjust Size</v-btn>
-          <v-btn depressed class="mr-4" @click="loadEdit">Load Edit</v-btn>
-          <v-btn depressed @click="autoEdit">Auto Edit</v-btn>
         </div>
         <div class="d-flex">
           <v-tooltip bottom>
@@ -66,14 +77,36 @@
             <span>move</span>
           </v-tooltip>
           <v-divider vertical inset class="mx-8"></v-divider>
-          <v-tooltip bottom>
+          <v-menu offset-y bottom auto :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon large class="mr-4" v-bind="attrs" v-on="on"
                 ><v-icon>mdi-history</v-icon></v-btn
               >
             </template>
-            <span>history</span>
-          </v-tooltip>
+            <v-list dense flat>
+              <v-subheader>History</v-subheader>
+              <v-list-item-group
+                :value="stackPointer"
+                @change="_goToOperation"
+                color="primary"
+                mandatory
+              >
+                <v-list-item v-for="(operation, i) in operationStack" :key="i" dense>
+                  <v-list-item-icon>
+                    <v-icon
+                      :color="i > stackPointer ? 'grey lighten-1' : ''"
+                      v-text="operation.icon"
+                    ></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <div :class="i > stackPointer ? 'grey--text' : ''">{{ operation.name }}</div>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -82,7 +115,8 @@
                 class="mr-4"
                 v-bind="attrs"
                 v-on="on"
-                @click="$refs['editor'].invoke('undo')"
+                @click="_undoOperation"
+                :disabled="stackPointer <= 0"
                 ><v-icon>mdi-arrow-u-left-top</v-icon></v-btn
               >
             </template>
@@ -96,7 +130,8 @@
                 class="mr-4"
                 v-bind="attrs"
                 v-on="on"
-                @click="$refs['editor'].invoke('redo')"
+                @click="_redoOperation"
+                :disabled="operationStack.length - 1 <= stackPointer"
                 ><v-icon>mdi-arrow-u-right-top</v-icon></v-btn
               >
             </template>
@@ -104,7 +139,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn icon large v-bind="attrs" v-on="on" @click="$refs['editor'].reset()"
+              <v-btn icon large v-bind="attrs" v-on="on" @click="_reset"
                 ><v-icon>mdi-cached</v-icon></v-btn
               >
             </template>
@@ -119,8 +154,8 @@
                 v-bind="attrs"
                 v-on="on"
                 @click="
-                  $refs['editor'].invoke('removeActiveObject');
                   $refs['editor'].invoke('clearObjects');
+                  _doOperation('delete', 'mdi-trash-can-outline');
                 "
                 ><v-icon>mdi-trash-can-outline</v-icon></v-btn
               >
@@ -137,7 +172,10 @@
         :include-ui="useDefaultUI"
         :options="options"
         :cursor="cursorIcon"
+        :url="url ? url : $root.imageURL"
+        :base64="url ? url : $root.imageURL"
         @mousedown="mousedown"
+        @objectMoved="_doOperation('move', 'mdi-gesture-tap')"
       ></ImageEditor>
       <div class="d-flex flex-column align-center" style="width: 100%">
         <div v-if="mode === 'resize'" style="width: 500px" class="d-flex flex-column align-center">
@@ -182,7 +220,7 @@
             </v-slider>
           </div>
           <v-checkbox v-model="lockAspectRatio" label="Lock Aspect Ratio" hide-details></v-checkbox>
-          <div class="mt-6 mb-8">
+          <!-- <div class="mt-6 mb-8">
             <v-btn
               text
               @click="
@@ -203,9 +241,9 @@
             >
               <v-icon class="mr-2">mdi-close</v-icon>Cancel
             </v-btn>
-          </div>
+          </div> -->
         </div>
-        <div v-if="mode === 'draw'" class="d-flex align-center mb-8" style="width: 500px">
+        <div v-if="mode === 'draw'" class="d-flex align-center" style="width: 500px">
           <span class="mr-4 font-weight-medium" style="width: 100px">Brush Width</span>
           <v-slider
             v-model="brushWidth"
@@ -243,7 +281,7 @@
           </v-slider>
         </div>
         <v-sheet
-          class="d-flex justify-center align-center"
+          class="d-flex justify-center align-center mt-8"
           color="primary"
           width="100%"
           height="70"
@@ -272,13 +310,7 @@
         </v-sheet>
       </div>
     </div>
-    <Visualizer
-      :is-active="image_url !== ''"
-      :image_url="image_url"
-      :split="split"
-      @open="loadImageInfo"
-      @close="image_url = ''"
-    />
+    <Visualizer :image_url="$root.imageURL" :split="$root.imageSplit" />
   </div>
 </template>
 <script>
@@ -286,6 +318,12 @@ import ImageEditor from '@/components/image-editor/ImageEditor';
 import { APISendEdit, APIGetProposedEdit } from '@/services/edit';
 import { APIGetAnnotated, APIGetNextImage } from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
+import pDebounce from 'p-debounce';
+
+const debouncedResize = pDebounce((ctx, dimension) => {
+  ctx.$refs.editor.resize(dimension);
+  ctx._doOperation('resize', 'mdi-resize');
+}, 200);
 
 /**
  * The implementation for this component is tricky, because after a `loadEdit` or `autoEdit` call
@@ -298,6 +336,7 @@ import Visualizer from '@/components/prediction-viewer/Visualizer';
  *
  */
 export default {
+  name: 'ImageAnnotation',
   components: {
     ImageEditor,
     Visualizer,
@@ -310,7 +349,7 @@ export default {
         cssMaxWidth: 700,
         cssMaxHeight: 1000,
       },
-      image_url: '',
+      url: '',
       split: '',
       mode: '',
       zoomLevel: 1,
@@ -320,6 +359,8 @@ export default {
       imageHeight: 224,
       tempHeight: 224,
       lockAspectRatio: false,
+      operationStack: [{ name: 'load image', icon: 'mdi-file-image-outline' }],
+      stackPointer: 0,
     };
   },
   computed: {
@@ -344,9 +385,7 @@ export default {
         if (this.lockAspectRatio) {
           this.tempHeight = this.tempWidth;
         }
-        setTimeout(() => {
-          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
-        }, 0);
+        debouncedResize(this, { width: this.tempWidth, height: this.tempHeight });
       }
     },
     tempHeight() {
@@ -354,9 +393,7 @@ export default {
         if (this.lockAspectRatio) {
           this.tempWidth = this.tempHeight;
         }
-        setTimeout(() => {
-          this.$refs.editor.resize({ width: this.tempWidth, height: this.tempHeight });
-        }, 0);
+        debouncedResize(this, { width: this.tempWidth, height: this.tempHeight });
       }
     },
     mode(newValue, oldValue) {
@@ -370,8 +407,6 @@ export default {
     },
   },
   mounted() {
-    this.loadImageInfo();
-    this.split = this.$route.params.split;
     this.toggleDraw();
   },
   beforeRouteEnter(to, from, next) {
@@ -380,81 +415,84 @@ export default {
     });
   },
   methods: {
-    loadImageInfo() {
-      this.image_url = sessionStorage.getItem('image_url');
-    },
     async loadEdit() {
       this.$root.startProcessing('Loading previous annotation. Please wait...');
       try {
-        const res = await APIGetAnnotated(this.split, this.image_url);
+        const res = await APIGetAnnotated(this.$root.imageSplit, this.$root.imageURL);
         const edit_url = res.data.data;
         if (!edit_url) {
           this.$root.finishProcessing();
           this.$root.alert('error', 'No previous annotation found');
         } else {
-          // Don't change this.split and this.image_url here because they will be used
-          // to get the next image
-          sessionStorage.setItem('split', 'annotated');
-          sessionStorage.setItem('image_url', edit_url);
+          this.split = 'annotated';
+          this.url = edit_url;
+          await this.$refs['editor'].loadImageFromURL();
           this._reset();
           this.$root.finishProcessing();
           this.$root.alert('success', 'Previous annotation loaded');
         }
       } catch (error) {
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Failed to load previous annotation');
+        this.$root.alert(
+          'error',
+          error.response?.data?.detail || 'Failed to load previous annotation'
+        );
       }
     },
     async autoEdit() {
       this.$root.startProcessing('Auto-annotating...');
       try {
-        const res = await APIGetProposedEdit(this.split, this.image_url);
+        const res = await APIGetProposedEdit(this.$root.imageSplit, this.$root.imageURL);
         const proposed_url = res.data.data;
-        // Same as above, don't change this.split and this.image_url here because they will be used
-        // to get the next image
-        sessionStorage.setItem('image_url', proposed_url);
-        sessionStorage.setItem('split', 'proposed');
-        this._reset();
+        this.url = proposed_url;
+        this.split = 'proposed';
+        await this.$refs['editor'].loadImageFromURL();
+        await this.$refs['editor'].loadImageFromURL();
+        this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Failed to auto annotate');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to auto annotate');
       }
     },
     adjustImageSize() {
-      this.imageWidth = 500;
-      this.imageHeight = 500;
-      this.$refs.editor.resize({ width: 500, height: 500 });
+      // this.imageWidth = 500;
+      // this.imageHeight = 500;
+      this.tempWidth = 500;
+      this.tempHeight = 500;
+      debouncedResize(this, { width: 500, height: 500 });
       // this.$refs['editor'].invoke('resizeCanvasDimension', { width: 500, height: 500 });
     },
     async sendEdit() {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_url = sessionStorage.getItem('image_url') || '';
       const image_height = sessionStorage.getItem('image_height');
       const image_width = sessionStorage.getItem('image_width');
-      const split = sessionStorage.getItem('split');
       try {
         const image_base64 = this.$refs['editor'].invoke('toDataURL');
-        await APISendEdit({ split, image_url, image_height, image_width, image_base64 });
+        await APISendEdit({
+          split: this.$root.imageSplit,
+          image_url: this.$root.imageURL,
+          image_height,
+          image_width,
+          image_base64,
+        });
         this.$root.finishProcessing();
         this.$root.alert('success', 'Sending succeeded');
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Sending failed');
+        this.$root.alert('error', error.response?.data?.detail || 'Sending failed');
       }
       try {
-        const res = await APIGetNextImage(this.split, this.image_url);
-        sessionStorage.setItem('image_url', res.data.data);
+        const res = await APIGetNextImage(this.$root.imageSplit, this.$root.imageURL);
+        this.$root.imageURL = res.data.data;
+        this.url = res.data.data;
+        await this.$refs['editor'].loadImageFromURL();
         this._reset();
-        this.loadImageInfo();
       } catch (error) {
-        console.log(error);
-        this.$root.alert('error', 'Failed to get next image');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to get next image');
       }
     },
     mousedown(event, originPointer) {
@@ -476,6 +514,12 @@ export default {
             zoomLevel: this.zoomLevel,
           });
           break;
+        case 'draw':
+          this._doOperation('draw', 'mdi-draw');
+          break;
+        case 'colorRange':
+          this._doOperation('color range', 'mdi-image-filter-center-focus-strong-outline');
+          break;
         default:
           break;
       }
@@ -485,8 +529,8 @@ export default {
         this.mode = '';
       } else {
         this.mode = 'resize';
-        this.tempWidth = this.imageWidth;
-        this.tempHeight = this.imageHeight;
+        // this.tempWidth = this.imageWidth;
+        // this.tempHeight = this.imageHeight;
       }
     },
     toggleDraw() {
@@ -512,6 +556,37 @@ export default {
         this.$refs['editor'].invoke('startDrawingMode', 'COLOR_RANGE_DRAWING');
       }
     },
+    _undoOperation() {
+      if (this.stackPointer === 0) return;
+      this.stackPointer--;
+      this.$refs['editor'].invoke('undo');
+    },
+    _redoOperation() {
+      if (this.stackPointer >= this.operationStack.length - 1) return;
+      this.stackPointer++;
+      this.$refs['editor'].invoke('redo');
+    },
+    _doOperation: pDebounce(function (name, icon) {
+      const delta = this.operationStack.length - 1 - this.stackPointer;
+      if (delta > 0) {
+        this.operationStack = this.operationStack.slice(0, this.stackPointer + 1);
+      }
+      this.operationStack.push({ name, icon });
+      this.stackPointer++;
+    }, 200),
+    _goToOperation(pos) {
+      if (pos === this.stackPointer) return;
+      const delta = Math.abs(pos - this.stackPointer);
+      if (pos > this.stackPointer) {
+        for (let i = 1; i <= delta; i++) {
+          setTimeout(this._redoOperation, 0);
+        }
+      } else {
+        for (let i = 1; i <= delta; i++) {
+          setTimeout(this._undoOperation, 0);
+        }
+      }
+    },
     _reset() {
       this.$refs.editor.reset();
       Object.assign(this, {
@@ -523,6 +598,8 @@ export default {
         imageHeight: 224,
         tempHeight: 224,
         lockAspectRatio: false,
+        operationStack: [{ name: 'load image', icon: 'mdi-file-image-outline' }],
+        stackPointer: 0,
       });
       this.toggleDraw();
     },

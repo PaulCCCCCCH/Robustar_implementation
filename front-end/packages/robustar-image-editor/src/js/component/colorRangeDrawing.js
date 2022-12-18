@@ -193,7 +193,7 @@ class ColorRangeDrawing extends Component {
   // }
 
   _getPointerColor(canvas, x, y) {
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d', { willReadFrequently: true });
     const { width, height } = canvas;
     const data = context.getImageData(0, 0, width, height).data;
     const bytes = 4;
