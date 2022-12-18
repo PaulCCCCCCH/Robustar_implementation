@@ -30,24 +30,42 @@ class Ui_Dialog(object):
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(-1, 0, -1, 0)
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.warningLabel = QLabel(Dialog)
         self.warningLabel.setObjectName(u"warningLabel")
         sizePolicy.setHeightForWidth(self.warningLabel.sizePolicy().hasHeightForWidth())
         self.warningLabel.setSizePolicy(sizePolicy)
-        self.warningLabel.setMinimumSize(QSize(776, 240))
-        self.warningLabel.setMaximumSize(QSize(776, 240))
+        self.warningLabel.setMinimumSize(QSize(776, 144))
+        self.warningLabel.setMaximumSize(QSize(776, 144))
         font = QFont()
         font.setFamily(u"Arial")
         font.setPointSize(16)
         self.warningLabel.setFont(font)
         self.warningLabel.setAlignment(Qt.AlignCenter)
+        self.warningLabel.setWordWrap(True)
 
-        self.horizontalLayout.addWidget(self.warningLabel)
+        self.verticalLayout_2.addWidget(self.warningLabel)
+
+        self.exceptionLabel = QLabel(Dialog)
+        self.exceptionLabel.setObjectName(u"exceptionLabel")
+        sizePolicy.setHeightForWidth(self.exceptionLabel.sizePolicy().hasHeightForWidth())
+        self.exceptionLabel.setSizePolicy(sizePolicy)
+        self.exceptionLabel.setMinimumSize(QSize(776, 96))
+        self.exceptionLabel.setMaximumSize(QSize(776, 96))
+        font1 = QFont()
+        font1.setFamily(u"Arial")
+        font1.setPointSize(11)
+        font1.setBold(False)
+        font1.setWeight(50)
+        self.exceptionLabel.setFont(font1)
+        self.exceptionLabel.setAlignment(Qt.AlignCenter)
+        self.exceptionLabel.setWordWrap(True)
+
+        self.verticalLayout_2.addWidget(self.exceptionLabel)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.addLayout(self.verticalLayout_2)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -74,7 +92,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.verticalLayout.setStretch(0, 2)
         self.verticalLayout.setStretch(1, 1)
 
         self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
@@ -87,7 +104,8 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Warning", None))
-        self.warningLabel.setText("")
+        self.warningLabel.setText(QCoreApplication.translate("Dialog", u"ff", None))
+        self.exceptionLabel.setText(QCoreApplication.translate("Dialog", u"ff", None))
         self.okButton.setText(QCoreApplication.translate("Dialog", u"OK", None))
     # retranslateUi
 

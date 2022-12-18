@@ -31,11 +31,13 @@ class MainController(QObject):
             self.dockerCtrl = DockerController(self.model, self.mainView, self)
             self.dockerCtrl.refreshServers()
             self.mainView.show()
-        except requests.RequestException:
+        except requests.RequestException as e:
             self.popupView.ui.warningLabel.setText(f'Failed to fetch image versions online!\nPlease check your network!')
+            self.popupView.ui.exceptionLabel.setText(str(e))
             self.popupView.show()
-        except docker.errors.DockerException:
+        except docker.errors.DockerException as e:
             self.popupView.ui.warningLabel.setText('Docker is not running!\nPlease start Docker first!')
+            self.popupView.ui.exceptionLabel.setText(str(e))
             self.popupView.show()
 
 

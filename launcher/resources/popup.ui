@@ -33,7 +33,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
      <property name="topMargin">
       <number>0</number>
      </property>
@@ -41,7 +41,7 @@
       <number>0</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="warningLabel">
          <property name="sizePolicy">
@@ -53,13 +53,13 @@
          <property name="minimumSize">
           <size>
            <width>776</width>
-           <height>240</height>
+           <height>144</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>776</width>
-           <height>240</height>
+           <height>144</height>
           </size>
          </property>
          <property name="font">
@@ -69,10 +69,52 @@
           </font>
          </property>
          <property name="text">
-          <string/>
+          <string>ff</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="exceptionLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>776</width>
+           <height>96</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>776</width>
+           <height>96</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>11</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>ff</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
