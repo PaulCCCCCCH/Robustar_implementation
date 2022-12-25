@@ -79,6 +79,11 @@ jobs:
             not:
               equal: [ main, << pipeline.git.branch >> ]          
           steps:
+            - run:
+                name: Clean Up Test Data
+                command: |
+                  rm ./back-end/Robustar2.zip
+                  rm -rf ./back-end/Robustar2
             - run: 
                 name: Build And Push Dev Docker Image
                 # We have to have this blob of command and repeat it twice because CircleCI does not support sharing variables between steps.
