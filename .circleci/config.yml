@@ -80,6 +80,10 @@ jobs:
               equal: [ main, << pipeline.git.branch >> ]          
           steps:
             - run:
+                name: Include U2Net Checkpoint (Should remove this step in the future)
+                command: |
+                  mv ./back-end/Robustar2/u2net.pth .
+            - run:
                 name: Clean Up Test Data
                 command: |
                   rm ./back-end/Robustar2.zip
