@@ -25,7 +25,9 @@ def precheck():
         errors = []
         if len(trainset.classes) != classes_num:
             errors.append(
-                error_template.format(classes_num, "Training Set", len(trainset.classes))
+                error_template.format(
+                    classes_num, "Training Set", len(trainset.classes)
+                )
             )
         if len(testset.classes) != classes_num:
             errors.append(
@@ -33,46 +35,53 @@ def precheck():
             )
         if len(validationset.classes) != classes_num:
             errors.append(
-                error_template.format(classes_num, "Validation Set", len(trainset.classes))
+                error_template.format(
+                    classes_num, "Validation Set", len(trainset.classes)
+                )
             )
         assert len(errors) == 0, "\n".join(errors)
 
     check_num_classes_consistency()
 
+
 def start_server(basedir):
     baseDir = to_unix(basedir)
-    datasetDir = to_unix(osp.join(baseDir, 'dataset'))
-    ckptDir = to_unix(osp.join(baseDir, 'checkpoints'))
-    dbPath = to_unix(osp.join(baseDir, 'data.db'))
+    datasetDir = to_unix(osp.join(baseDir, "dataset"))
+    ckptDir = to_unix(osp.join(baseDir, "checkpoints"))
+    dbPath = to_unix(osp.join(baseDir, "generated", "data.db"))
 
-    with open(osp.join(baseDir, 'configs.json')) as jsonfile:
+    with open(osp.join(baseDir, "configs.json")) as jsonfile:
         configs = json.load(jsonfile)
 
-    class2labelPath = osp.join(baseDir, 'class2label.json')
+    class2labelPath = osp.join(baseDir, "class2label.json")
     class2labelMapping = {}
     if osp.exists(class2labelPath):
         try:
             with open(class2labelPath) as jsonfile:
                 class2labelMapping = json.load(jsonfile)
-                print('Class to label file loaded!')
+                print("Class to label file loaded!")
         except Exception as e:
-            print('Class to label file invalid!')
+            print("Class to label file invalid!")
             class2labelMapping = {}
     else:
-        print('Class to label file not found!')
+        print("Class to label file not found!")
 
     # Create server
 
     # Set data manager
-    server = RServer.createServer(configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir)
+    server = RServer.createServer(
+        configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir
+    )
     dataManager = RDataManager(
-        baseDir, datasetDir, dbPath,
-        batch_size=configs['batch_size'], 
-        shuffle=configs['shuffle'],
-        num_workers=configs['num_workers'],
-        image_size=configs['image_size'],
-        image_padding=configs['image_padding'],
-        class2label_mapping=class2labelMapping
+        baseDir,
+        datasetDir,
+        dbPath,
+        batch_size=configs["batch_size"],
+        shuffle=configs["shuffle"],
+        num_workers=configs["num_workers"],
+        image_size=configs["image_size"],
+        image_padding=configs["image_padding"],
+        class2label_mapping=class2labelMapping,
     )
     RServer.setDataManager(dataManager)
 
@@ -84,9 +93,9 @@ def start_server(basedir):
     # TODO: model_name and checkpoint hard-coded for now
     checkpoint_name = "u2net.pth"
     annotator = RAutoAnnotator(
-        configs['device'],
+        configs["device"],
         checkpoint=osp.join(baseDir, checkpoint_name),
-        model_name="u2net"
+        model_name="u2net",
     )
     RServer.setAutoAnnotator(annotator)
 
@@ -96,9 +105,14 @@ def start_server(basedir):
     # Check file state consistency
     precheck()
 
+
 def get_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--basedir', default="/Robustar2", help='path to base directory for data folder (default: /Robustar2)')
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument(
+        "--basedir",
+        default="/Robustar2",
+        help="path to base directory for data folder (default: /Robustar2)",
+    )
 
     args = parser.parse_args()
     return args
@@ -114,4 +128,4 @@ if __name__ == "__main__":
     start_server(basedir)
 
     # Start server
-    RServer.getServer().run(port='8000', host='0.0.0.0', debug=False)
+    RServer.getServer().run(port="8000", host="0.0.0.0", debug=False)
