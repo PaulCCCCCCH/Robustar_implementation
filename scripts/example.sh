@@ -6,9 +6,11 @@
 # -a "cuda11.1-0.1.0-beta" \
 # -t "/Robustar2/dataset/train" \
 # -e "/Robustar2/dataset/test" \
+# -d "/Robustar2/dataset/paired" \
 # -i "/Robustar2/influence_images" \
 # -o "/Robustar2/configs.json" \
 # -c "/Robustar2/checkpoints" 
+# -g "/Robustar2/generated" 
 
 # Running on cpu (For windows users)
 ./robustar.sh \
@@ -17,7 +19,9 @@
 -p 8080 \
 -t C:\\Robustar2\\dataset\\train \
 -e C:\\Robustar2\\dataset\\test \
+-d C:\\Robustar2\\dataset\\paired \
 -i C:\\Robustar2\\influence_images \
 -c C:\\Robustar2\\checkpoints \
+-g C:\\Robustar2\\generated \
 -o C:\\Robustar2\\configs.json
 
