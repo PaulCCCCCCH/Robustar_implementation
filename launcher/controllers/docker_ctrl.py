@@ -229,7 +229,6 @@ class DockerController(QObject):
         except docker.errors.APIError as apiError:
             if ('port is already allocated' in str(apiError)):
 
-                self.mainCtrl.addItem(self.mainView.ui.createdListWidget, self.model.tempName)
                 self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} fails to run because port is already allocated. See more in <i>Details</i> page'.format(self.model.tempName))
                 self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
 
