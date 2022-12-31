@@ -82,8 +82,8 @@ def predict(split):
     """
     server = RServer.getServer()
     dataManager = server.dataManager
-    predictBuffer = dataManager.predictBuffer
-    modelWrapper = RServer.getModelWrapper()
+    predict_buffer = dataManager.predict_buffer
+    model_wrapper = RServer.getModelWrapper()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -100,25 +100,25 @@ def predict(split):
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
 
-    if image_path in predictBuffer:
-        output_object = predictBuffer[image_path]
+    if image_path in predict_buffer:
+        output_object = predict_buffer[image_path]
     else:
         # get predict results
         try:
-            modelWrapper.lock.acquire()
+            model_wrapper.lock.acquire()
             output = get_image_prediction(
-                modelWrapper, image_path, dataManager.image_size, argmax=False
+                model_wrapper, image_path, dataManager.image_size, argmax=False
             )
         except Exception as e:
             RResponse.abort(400, "Invalid image path {}".format(image_path))
         finally:
-            modelWrapper.lock.release()
+            model_wrapper.lock.release()
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
         # get visualize images
         image_name = to_snake_path(image_path)
         output = visualize(
-            modelWrapper, image_path, dataManager.image_size, server.configs["device"]
+            model_wrapper, image_path, dataManager.image_size, server.configs["device"]
         )
         if len(output) != 4:
             RResponse.abort(
@@ -134,7 +134,7 @@ def predict(split):
             predict_fig_routes.append(predict_fig_route)
 
         output_object = [output_array, predict_fig_routes]
-        predictBuffer[image_path] = output_object
+        predict_buffer[image_path] = output_object
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]

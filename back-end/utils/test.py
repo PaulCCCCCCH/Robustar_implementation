@@ -22,6 +22,7 @@ class TestThread(threading.Thread):
         self.stop = False
 
     def run(self):
+        print("Starting testing thread")
         self.startTestThread()
 
     def stop(self):
@@ -74,6 +75,7 @@ class TestThread(threading.Thread):
 
         self.dataset.add_records(correct_buffer, True)
         self.dataset.add_records(incorrect_buffer, False)
+        print("Testing complete")
 
 
 def start_test(split):

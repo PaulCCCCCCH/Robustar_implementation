@@ -96,13 +96,13 @@ def getClassStart(split):
 
 
 def getImgData(dataset_img_path):
-    datasetFileBuffer = RServer.getDataManager().datasetFileBuffer
+    dataset_file_buffer = RServer.getDataManager().dataset_file_buffer
     normal_path = to_unix(dataset_img_path)
 
     if osp.exists(normal_path):
-        if normal_path not in datasetFileBuffer:
+        if normal_path not in dataset_file_buffer:
             refreshImgData(normal_path)
-        image_data = datasetFileBuffer[normal_path]
+        image_data = dataset_file_buffer[normal_path]
         return image_data
     else:
         raise Exception
@@ -127,17 +127,17 @@ def imageToBase64String(path: str) -> str:
 
 def refreshImgData(path: str):
     dataManager = RServer.getDataManager()
-    datasetFileQueue = dataManager.datasetFileQueue
-    datasetFileBuffer = dataManager.datasetFileBuffer
-    datasetFileQueueLen = dataManager.datasetFileQueueLen
+    dataset_file_queue = dataManager.dataset_file_queue
+    dataset_file_buffer = dataManager.dataset_file_buffer
+    dataset_file_queue_len = dataManager.dataset_file_queue_len
 
     normal_path = to_unix(path)
     image_data = imageToBase64String(normal_path)
-    datasetFileQueue.append(normal_path)
-    if len(datasetFileQueue) > datasetFileQueueLen:
-        temp_path = datasetFileQueue.popleft()
-        del datasetFileBuffer[temp_path]
-    datasetFileBuffer[normal_path] = image_data
+    dataset_file_queue.append(normal_path)
+    if len(dataset_file_queue) > dataset_file_queue_len:
+        temp_path = dataset_file_queue.popleft()
+        del dataset_file_buffer[temp_path]
+    dataset_file_buffer[normal_path] = image_data
 
 
 def binarySearchLeftBorder(ls, target: int):

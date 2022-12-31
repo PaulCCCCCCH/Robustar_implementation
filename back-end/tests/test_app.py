@@ -248,12 +248,12 @@ def _clean_up(basedir):
 #         for name, weight in server.getModelsWeights().items():
 #             # Get the model weights saved in local path
 #             model_arch = server.getServerConfigs()['model_arch']
-#             net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
+#             net_path = os.path.join(server.ckpt_dir, name).replace('\\', '/')
 #             device = server.getServerConfigs()['device']
 #             pre_trained = server.getServerConfigs()['pre_trained']
 #             num_classes = server.getServerConfigs()['num_classes']
-#             modelWrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
-#             modelLoaded = modelWrapper.model
+#             model_wrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
+#             modelLoaded = model_wrapper.model
 #             weightLoaded = modelLoaded.state_dict()
 #
 #             # Get the model weights saved in memory

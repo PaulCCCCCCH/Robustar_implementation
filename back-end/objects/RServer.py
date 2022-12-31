@@ -5,10 +5,10 @@ from flasgger import Swagger
 # Wrapper for flask server instance
 class RServer:
 
-    serverInstance = None
+    server_instance = None
 
     # Use createServer method instead!
-    def __init__(self, configs, baseDir, datasetDir, ckptDir, app, socket):
+    def __init__(self, configs, base_dir, dataset_dir, ckpt_dir, app, socket):
 
         app.config["SWAGGER"] = {
             "title": "Robustar API",
@@ -17,69 +17,69 @@ class RServer:
         }
         self.swagger = Swagger(app)
 
-        self.datasetDir = datasetDir
-        self.baseDir = baseDir
-        self.datasetPath = datasetDir
-        self.ckptDir = ckptDir
+        self.dataset_dir = dataset_dir
+        self.base_dir = base_dir
+        self.datasetPath = dataset_dir
+        self.ckpt_dir = ckpt_dir
         self.app = app
         self.socket = socket
         self.configs = configs
-        self.modelWrapper = None
+        self.model_wrapper = None
         self.modelsWeights = {}
 
     @staticmethod
     def createServer(
-        configs: dict, baseDir: str, datasetDir: str, ckptDir: str, app, socket
+        configs: dict, base_dir: str, dataset_dir: str, ckpt_dir: str, app, socket
     ):
-        if RServer.serverInstance is None:
-            RServer.serverInstance = RServer(
-                configs, baseDir, datasetDir, ckptDir, app, socket
+        if RServer.server_instance is None:
+            RServer.server_instance = RServer(
+                configs, base_dir, dataset_dir, ckpt_dir, app, socket
             )
         else:
             assert (
-                configs == RServer.serverInstance.configs
+                configs == RServer.server_instance.configs
             ), "Attempting to recreate an existing server with different configs"
-        return RServer.serverInstance
+        return RServer.server_instance
 
     @staticmethod
     def getServer():
-        return RServer.serverInstance
+        return RServer.server_instance
 
     @staticmethod
     def getDataManager() -> RDataManager:
-        return RServer.serverInstance.dataManager
+        return RServer.server_instance.dataManager
 
     @staticmethod
     def setDataManager(dataManager):
-        RServer.serverInstance.dataManager = dataManager
+        RServer.server_instance.dataManager = dataManager
 
     @staticmethod
     def getAutoAnnotator():
-        return RServer.serverInstance.autoAnnotator
+        return RServer.server_instance.autoAnnotator
 
     @staticmethod
     def setAutoAnnotator(autoAnnotator):
-        RServer.serverInstance.autoAnnotator = autoAnnotator
+        RServer.server_instance.autoAnnotator = autoAnnotator
 
     @staticmethod
     def getServerConfigs():
-        return RServer.serverInstance.configs
+        return RServer.server_instance.configs
 
     @staticmethod
     def getModelWrapper():
-        return RServer.serverInstance.modelWrapper
+        return RServer.server_instance.model_wrapper
 
     @staticmethod
-    def setModel(modelWrapper):
-        RServer.serverInstance.modelWrapper = modelWrapper
+    def setModel(model_wrapper):
+        RServer.server_instance.model_wrapper = model_wrapper
 
     @staticmethod
     def getModelsWeights():
-        return RServer.serverInstance.modelsWeights
+        return RServer.server_instance.modelsWeights
 
     @staticmethod
     def addModelWeight(name, weight):
-        RServer.serverInstance.modelsWeights[name] = weight
+        RServer.server_instance.modelsWeights[name] = weight
 
     @staticmethod
     def getSocket():

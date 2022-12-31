@@ -1,18 +1,13 @@
 from ml import DataSet, PairedDataset, Trainer
-import math
-import time
 import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from objects.RServer import RServer
-from objects.RModelWrapper import RModelWrapper
-from utils.path_utils import to_unix
 import threading
 import multiprocessing
 
 
 def setup_training(configs):
-
     # Configs from training pad
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
@@ -24,7 +19,7 @@ def setup_training(configs):
     model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
     # Default configs from the server
-    save_dir = RServer.getServer().ckptDir
+    save_dir = RServer.getServer().ckpt_dir
     device = RServer.getServerConfigs()["device"]
     dataManager = RServer.getDataManager()
     transforms = dataManager.transforms
@@ -50,9 +45,9 @@ def setup_training(configs):
         classes_path=configs["class_path"],
     )
 
-    # modelwrapper = initialize_model() # Model will be initialized with server config
-    modelwrapper = RServer.getModelWrapper()
-    model = modelwrapper.model
+    # Model will be initialized with server config
+    model_wrapper = RServer.getModelWrapper()
+    model = model_wrapper.model
 
     trainer = Trainer(
         net=model,
@@ -74,27 +69,13 @@ def setup_training(configs):
     return train_set, test_set, model, trainer
 
 
-def initialize_model():
-    # Configs given at server boot time
-    server_configs = RServer.getServerConfigs()
-    model_arch = server_configs["model_arch"]
-    weight_to_load = server_configs["weight_to_load"]
-    device = server_configs["device"]
-    pre_trained = server_configs["pre_trained"]
-    num_classes = server_configs["num_classes"]
-
-    net_path = to_unix(os.path.join(RServer.getServer().ckptDir, weight_to_load))
-
-    return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
-
-
 def update_info(status_dict):
     return """This is a placeholder function. If anything needs to be done
     after each iteration, put it here.
     """
 
 
-def startTB(logdir):
+def start_tensorboard(logdir):
     """
     Starts updating tensorboard.
     """
@@ -114,11 +95,7 @@ def start_train(configs):
 
     train_set, test_set, model, trainer = setup_training(configs)
 
-    iter_per_epoch = math.ceil(1.0 * len(train_set) / int(configs["batch_size"]))
-    start_train_time = time.time()
-
     try:
-
         # Set up tensorboard log directory
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
         if not os.path.exists("runs"):
@@ -130,7 +107,7 @@ def start_train(configs):
         writer.add_scalar("loss", 0, 0)
 
         # Start the tensorboard writer as a new process
-        t = multiprocessing.Process(target=startTB, args=(logdir,))
+        t = multiprocessing.Process(target=start_tensorboard, args=(logdir,))
         t.start()
         trainer.set_tb_process(t)
 
