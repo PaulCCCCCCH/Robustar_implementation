@@ -2,10 +2,12 @@ from flask import request
 
 from objects.RResponse import RResponse
 from objects.RServer import RServer
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
+config_api = Blueprint("config_api", __name__)
 
-@app.route('/config', methods=['GET'])
+
+@config_api.route("/config", methods=["GET"])
 def get_config():
     """
     Gets current server configuration
@@ -46,4 +48,4 @@ def get_config():
         configs = RServer.getServerConfigs()
         return RResponse.ok(configs)
     except:
-        RResponse.abort(500, "Cannot retrieve server configs", -1) 
+        RResponse.abort(500, "Cannot retrieve server configs", -1)

@@ -63,6 +63,7 @@ class U2NET:
             raise FileNotFoundError("No pre-trained model found!")
         net.eval()
         self.__net__ = net  # Define model
+        print("U2NET model loaded")
 
     def process_image(self, data, preprocessing=None, postprocessing=None):
         """

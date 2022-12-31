@@ -11,16 +11,12 @@ from utils.predict import (
     CalcInfluenceThread,
     get_image_prediction,
 )
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
-server = RServer.getServer()
-dataManager = server.dataManager
-predictBuffer = dataManager.predictBuffer
-modelWrapper = RServer.getModelWrapper()
-
+predict_api = Blueprint("predict_api", __name__)
 
 # Return prediction result
-@app.route("/predict/<split>")
+@predict_api.route("/predict/<split>")
 def predict(split):
     """
     Gets the prediction path of the image specified by its split and path
@@ -84,6 +80,10 @@ def predict(split):
               type: string
               example: Success
     """
+    server = RServer.getServer()
+    dataManager = server.dataManager
+    predictBuffer = dataManager.predictBuffer
+    modelWrapper = RServer.getModelWrapper()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -143,7 +143,7 @@ def predict(split):
     return RResponse.ok(return_value)
 
 
-@app.route("/influence/<split>")
+@predict_api.route("/influence/<split>")
 def get_influence(split):
     """
      Gets the influence for an image specified by its id
@@ -176,6 +176,7 @@ def get_influence(split):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
+    dataManager = RServer.getDataManager()
     influence_dict = dataManager.get_influence_dict()
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
@@ -186,7 +187,7 @@ def get_influence(split):
     return RResponse.ok(influence_dict[image_path], "Success")
 
 
-@app.route("/influence", methods=["POST"])
+@predict_api.route("/influence", methods=["POST"])
 def calculate_influence():
     """
     Calculates the influence for the test set
@@ -229,8 +230,8 @@ def calculate_influence():
     json_data = request.get_json()
     configs = json_data["configs"]
     calcInfluenceThread = CalcInfluenceThread(
-        modelWrapper,
-        dataManager,
+        RServer.getModelWrapper(),
+        RServer.getDataManager(),
         start_idx=int(configs["test_sample_start_idx"]),
         end_idx=int(configs["test_sample_end_idx"]),
         r_averaging=int(configs["r_averaging"]),
