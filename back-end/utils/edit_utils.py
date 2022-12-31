@@ -8,24 +8,40 @@ import threading
 from objects.RTask import RTask, TaskType
 import time
 
-server = RServer.getServer()
-dataManager = server.getDataManager()
-
 
 def get_train_and_paired_path(split, image_path):
-    if split == 'train':
+    dataManager = RServer.getDataManager()
+    if split == "train":
         train_img_path = image_path
-        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
-    elif split == 'annotated':
+        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(
+            train_img_path
+        )
+    elif split == "annotated":
         paired_img_path = image_path
-        train_img_path = dataManager.pairedset.convert_paired_path_to_train(paired_img_path)
-    elif split == 'proposed':
-        train_img_path = dataManager.proposedset.convert_paired_path_to_train(image_path)
-        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(train_img_path)
+        train_img_path = dataManager.pairedset.convert_paired_path_to_train(
+            paired_img_path
+        )
+    elif split == "proposed":
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(
+            image_path
+        )
+        paired_img_path = dataManager.pairedset.convert_train_path_to_paired(
+            train_img_path
+        )
     else:
-        raise NotImplementedError('Getting train-paired pair only works for `train`, `annotated` and `proposed` splits')
+        raise NotImplementedError(
+            "Getting train-paired pair only works for `train`, `annotated` and `proposed` splits"
+        )
 
     return train_img_path, paired_img_path
+
+
+def remove_edit(path: str):
+    RServer.getDataManager().pairedset.remove_image(path)
+
+
+def clear_edit():
+    RServer.getDataManager().pairedset.clear_images()
 
 
 def save_edit(split, image_path, image_data, image_height, image_width):
@@ -37,21 +53,23 @@ def save_edit(split, image_path, image_data, image_height, image_width):
     """
 
     train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
+    dataManager = RServer.getDataManager()
 
     if not os.path.exists(train_img_path):
-        raise ValueError('invalid image path')
+        raise ValueError("invalid image path")
 
     with Image.open(BytesIO(image_data)) as img:
 
         to_save = img.resize((image_width, image_height))
         # to_save = to_save.convert('RGB') # image comming from canvas is RGBA
 
-        to_save.save(paired_img_path, format='png')
+        to_save.save(paired_img_path, format="png")
 
-        dataManager.pairedset.save_annotated_image(train_img_path, image_data, image_height, image_width)
+        dataManager.pairedset.save_annotated_image(
+            train_img_path, image_data, image_height, image_width
+        )
         dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
         refreshImgData(paired_img_path)
-        
 
 
 def propose_edit(split, image_path, return_image=False):
@@ -59,17 +77,26 @@ def propose_edit(split, image_path, return_image=False):
     Propose an annotation for an training image specified by image_path and return the path to the proposed image
     """
 
-    if split == 'train':
+    dataManager = RServer.getDataManager()
+    if split == "train":
         train_img_path = image_path
-        proposed_path = dataManager.proposedset.convert_train_path_to_paired(train_img_path)
-    elif split == 'annotated':
+        proposed_path = dataManager.proposedset.convert_train_path_to_paired(
+            train_img_path
+        )
+    elif split == "annotated":
         proposed_path = image_path
-        train_img_path = dataManager.proposedset.convert_paired_path_to_train(proposed_path)
+        train_img_path = dataManager.proposedset.convert_paired_path_to_train(
+            proposed_path
+        )
     else:
-        raise NotImplementedError("We can only propose an edit for 'train' or `annotated` split")
+        raise NotImplementedError(
+            "We can only propose an edit for 'train' or `annotated` split"
+        )
 
     if not dataManager.proposedset.is_annotated(train_img_path):
-        pil_image = server.getAutoAnnotator().annotate_single(train_img_path, dataManager.image_size)
+        pil_image = RServer.getAutoAnnotator().annotate_single(
+            train_img_path, dataManager.image_size
+        )
         dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
     else:
         if return_image:
@@ -78,15 +105,19 @@ def propose_edit(split, image_path, return_image=False):
             pil_image = None
 
     return proposed_path, pil_image
-        
+
 
 def start_auto_annotate(split, start: int, end: int):
-    if split != 'train': raise NotImplementedError('Auto annotation only supported for train split')
+    if split != "train":
+        raise NotImplementedError("Auto annotation only supported for train split")
 
+    dataManager = RServer.getDataManager()
     # -1 means annotate till the end
-    if end == -1: end = len(dataManager.trainset)
+    if end == -1:
+        end = len(dataManager.trainset)
     end = min(end, len(dataManager.trainset))
-    if start == end: return
+    if start == end:
+        return
 
     def auto_annotate_thread(split, start, end):
         task = RTask(TaskType.AutoAnnotate, end - start)
@@ -102,12 +133,12 @@ def start_auto_annotate(split, start: int, end: int):
             task_update_res = task.update()
             if not task_update_res:
                 endtime = time.time()
-                print("Time consumption:", endtime-starttime)
+                print("Time consumption:", endtime - starttime)
                 print("Auto annotate stopped!")
-                return 
+                return
         # task.exit()
 
-
-    auto_annotate_thread = threading.Thread(target=auto_annotate_thread, args=(split, start, end))
+    auto_annotate_thread = threading.Thread(
+        target=auto_annotate_thread, args=(split, start, end)
+    )
     auto_annotate_thread.start()
-

@@ -5,10 +5,12 @@ from flask_socketio import emit
 server = RServer.getServer()
 socketio = RServer.getSocket()
 
-@socketio.on('connect')
+
+@socketio.on("connect")
 def test_connect():
     print("Successfully connected to frontend with socket")
-    emit('afterConnect',  {'data':'Lets dance'})
+    emit("afterConnect", {"data": "Lets dance"})
+
 
 # @socketio.on('message')
 # def handle_message(data):

@@ -1,13 +1,13 @@
-from objects.RServer import RServer
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
 from objects.RTask import RTask, TaskType
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
+train_api = Blueprint("train_api", __name__)
 
 
-@app.route("/train/stop", methods=["GET"])
+@train_api.route("/train/stop", methods=["GET"])
 def stop_training():
     """
     Stops the training thread
@@ -39,7 +39,7 @@ def stop_training():
     return RResponse.ok("Training stopped!")
 
 
-@app.route("/train", methods=["POST"])
+@train_api.route("/train", methods=["POST"])
 def start_training():
     """
     Takes in a training config and start the training thread

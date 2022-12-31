@@ -5,22 +5,6 @@ from utils.path_utils import to_unix
 import base64
 import mimetypes
 
-dataManager = RServer.getDataManager()
-
-datasetDir = dataManager.data_root
-
-trainset = dataManager.trainset
-testset = dataManager.testset
-validationset = dataManager.validationset
-pairedset = dataManager.pairedset
-proposedset = dataManager.proposedset
-
-datasetFileBuffer = dataManager.datasetFileBuffer
-
-datasetFileQueue = dataManager.datasetFileQueue
-datasetFileBuffer = dataManager.datasetFileBuffer
-datasetFileQueueLen = dataManager.datasetFileQueueLen
-
 
 def getImagePath(split, start=None, end=None):
     """
@@ -31,7 +15,7 @@ def getImagePath(split, start=None, end=None):
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
-
+    dataManager = RServer.getDataManager()
     if split == "validation_correct":
         return dataManager.validationset.get_record(correct=True, start=start, end=end)
     if split == "validation_incorrect":
@@ -45,7 +29,23 @@ def getImagePath(split, start=None, end=None):
     raise NotImplementedError("Invalid data split")
 
 
+def get_annotated(split: str, path: str):
+
+    dataManager = RServer.getDataManager()
+    if split == "annotated":
+        paired_path = path
+    elif split == "train":
+        paired_path = dataManager.pairedset.get_paired_by_train(path)
+    else:
+        return ""
+
+    if paired_path is None:
+        return ""
+    return ""
+
+
 def getNextImagePath(split, path):
+    dataManager = RServer.getDataManager()
     allowed_splits = ["train", "annotated", "proposed"]
     if split not in allowed_splits:
         raise NotImplementedError("Split {} not supported".format(split))
@@ -54,6 +54,11 @@ def getNextImagePath(split, path):
 
 
 def getClassStart(split):
+    dataManager = RServer.getDataManager()
+    trainset = dataManager.trainset
+    testset = dataManager.testset
+    validationset = dataManager.validationset
+
     if split == "train" or split == "annotated":
         dataset = trainset
     elif (
@@ -91,6 +96,7 @@ def getClassStart(split):
 
 
 def getImgData(dataset_img_path):
+    datasetFileBuffer = RServer.getDataManager().datasetFileBuffer
     normal_path = to_unix(dataset_img_path)
 
     if osp.exists(normal_path):
@@ -120,6 +126,11 @@ def imageToBase64String(path: str) -> str:
 
 
 def refreshImgData(path: str):
+    dataManager = RServer.getDataManager()
+    datasetFileQueue = dataManager.datasetFileQueue
+    datasetFileBuffer = dataManager.datasetFileBuffer
+    datasetFileQueueLen = dataManager.datasetFileQueueLen
+
     normal_path = to_unix(path)
     image_data = imageToBase64String(normal_path)
     datasetFileQueue.append(normal_path)
