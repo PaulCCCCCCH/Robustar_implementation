@@ -81,7 +81,7 @@ def predict(split):
               example: Success
     """
     server = RServer.get_server()
-    dataManager = server.dataManager
+    dataManager = server.data_manager
     predict_buffer = dataManager.predict_buffer
     model_wrapper = RServer.get_model_wrapper()
 
