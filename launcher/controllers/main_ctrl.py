@@ -263,9 +263,16 @@ class MainController(QObject):
 
 
     def updateSucView(self):
+        with open('./RecordData/config_record.json', 'r') as f:
+            matchDict = json.load(f)
+            fileName = matchDict[self.model.tempName]
+        with open(fileName) as f:
+            config = json.load(f)
+            port = config['port']
+
         self.printMessage(self.mainView.ui.promptBrowser,
                                     '{} is available at http://localhost:{}'.format(self.model.tempName,
-                                                                                    self.model.tempPort))
+                                                                                    port))
         self.addItem(self.mainView.ui.runningListWidget, self.model.tempName)
 
     # Fetch the docker image versions to add to the image version combobox and initiate model's image version
