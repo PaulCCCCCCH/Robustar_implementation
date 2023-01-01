@@ -20,14 +20,14 @@ def app(request):
 
     app, _ = start_flask_app()
     server = new_server_object(basedir)
-    server = RServer.getServer()
-    app = server.getFlaskApp()
+    server = RServer.get_server()
+    app = server.get_flask_app()
 
     app.config["TESTING"] = True
     yield app
     app.config["TESTING"] = False
 
-    RServer.getDataManager().get_db_conn().close()
+    RServer.get_data_manager().get_db_conn().close()
     # due to unavailability of close_connection() in fs.py
 
     _clean_up(basedir)
@@ -206,7 +206,7 @@ def _clean_up(basedir):
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level
 #     def test_load_model_correctness(self, client, server):
-#         assert server.getModelsWeights() == {}
+#         assert server.get_model_weights() == {}
 #
 #         data = {
 #             'info': 'placeholder',
@@ -245,19 +245,19 @@ def _clean_up(basedir):
 #         time.sleep(25)
 #
 #         # Compare model weights saved in local path and in memory
-#         for name, weight in server.getModelsWeights().items():
+#         for name, weight in server.get_model_weights().items():
 #             # Get the model weights saved in local path
-#             model_arch = server.getServerConfigs()['model_arch']
+#             model_arch = server.get_server_configs()['model_arch']
 #             net_path = os.path.join(server.ckpt_dir, name).replace('\\', '/')
-#             device = server.getServerConfigs()['device']
-#             pre_trained = server.getServerConfigs()['pre_trained']
-#             num_classes = server.getServerConfigs()['num_classes']
+#             device = server.get_server_configs()['device']
+#             pre_trained = server.get_server_configs()['pre_trained']
+#             num_classes = server.get_server_configs()['num_classes']
 #             model_wrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
 #             modelLoaded = model_wrapper.model
 #             weightLoaded = modelLoaded.state_dict()
 #
 #             # Get the model weights saved in memory
-#             weightInMem = server.getModelsWeights()[name]
+#             weightInMem = server.get_model_weights()[name]
 #
 #             # Compare each item in them
 #             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):

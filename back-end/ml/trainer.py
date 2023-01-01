@@ -65,7 +65,7 @@ class Trainer:
         # Save the model to the Rserver instance
         dict_in_mem = copy.deepcopy(self.net.state_dict())
 
-        RServer.addModelWeight(name, dict_in_mem)
+        RServer.add_model_weight(name, dict_in_mem)
 
     def save_net_best(self):
         name_str = self.name + "_best"

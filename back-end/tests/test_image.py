@@ -45,7 +45,7 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv["data"]] == [
-                f"{RServer.getServer().base_dir}/dataset/train/bird/{idx}.JPEG"
+                f"{RServer.get_server().base_dir}/dataset/train/bird/{idx}.JPEG"
                 for idx in range(4)
             ]
             assert rv["code"] == 0
@@ -55,7 +55,7 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv["data"]] == [
-                f"{RServer.getServer().base_dir}/dataset/train/turtle/{idx}.JPEG"
+                f"{RServer.get_server().base_dir}/dataset/train/turtle/{idx}.JPEG"
                 for idx in range(10)
             ]
             assert rv["code"] == 0
@@ -65,7 +65,7 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv["data"]] == [
-                f"{RServer.getServer().base_dir}/dataset/train/turtle/{idx}.JPEG"
+                f"{RServer.get_server().base_dir}/dataset/train/turtle/{idx}.JPEG"
                 for idx in range(4, 10)
             ]
             assert rv["code"] == 0
@@ -75,7 +75,7 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv["data"]] == [
-                f"{RServer.getServer().base_dir}/dataset/test/turtle/{idx}.JPEG"
+                f"{RServer.get_server().base_dir}/dataset/test/turtle/{idx}.JPEG"
                 for idx in range(4, 10)
             ]
             assert rv["code"] == 0
@@ -85,7 +85,7 @@ class TestImage:
             assert response.status_code == 200
             rv = response.get_json()
             assert [x[0] for x in rv["data"]] == [
-                f"{RServer.getServer().base_dir}/dataset/validation/turtle/{idx}.JPEG"
+                f"{RServer.get_server().base_dir}/dataset/validation/turtle/{idx}.JPEG"
                 for idx in range(14, 20)
             ]
             assert rv["code"] == 0
@@ -112,7 +112,7 @@ class TestImage:
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/10000.JPEG"
             )
             assert response.status_code == 400
@@ -121,14 +121,14 @@ class TestImage:
             assert (
                 rv["detail"]
                 == "Invalid image path "
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/10000.JPEG"
             )
             response = client.get(
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/panda/0.JPEG"
             )
             assert response.status_code == 400
@@ -137,14 +137,14 @@ class TestImage:
             assert (
                 rv["detail"]
                 == "Invalid image path "
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/panda/0.JPEG"
             )
             response = client.get(
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/proposed/bird/0.JPEG"
             )
             assert response.status_code == 400
@@ -153,7 +153,7 @@ class TestImage:
             assert (
                 rv["detail"]
                 == "Invalid image path "
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/proposed/bird/0.JPEG"
             )
             # TODO: split `annotated` and `proposed`
@@ -163,14 +163,14 @@ class TestImage:
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/1.JPEG"
             )
             assert response.status_code == 200
             rv = response.get_json()
             assert (
                 rv["data"]
-                == RServer.getServer().base_dir + "/dataset/train/bird/2.JPEG"
+                == RServer.get_server().base_dir + "/dataset/train/bird/2.JPEG"
             )
             assert rv["code"] == 0
             assert rv["msg"] == "Success"

@@ -80,10 +80,10 @@ def predict(split):
               type: string
               example: Success
     """
-    server = RServer.getServer()
+    server = RServer.get_server()
     dataManager = server.dataManager
     predict_buffer = dataManager.predict_buffer
-    model_wrapper = RServer.getModelWrapper()
+    model_wrapper = RServer.get_model_wrapper()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -176,7 +176,7 @@ def get_influence(split):
               type: string
               example: Image is not found or influence for that image is not calculated
     """
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
     influence_dict = dataManager.get_influence_dict()
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
@@ -230,8 +230,8 @@ def calculate_influence():
     json_data = request.get_json()
     configs = json_data["configs"]
     calcInfluenceThread = CalcInfluenceThread(
-        RServer.getModelWrapper(),
-        RServer.getDataManager(),
+        RServer.get_model_wrapper(),
+        RServer.get_data_manager(),
         start_idx=int(configs["test_sample_start_idx"]),
         end_idx=int(configs["test_sample_end_idx"]),
         r_averaging=int(configs["r_averaging"]),

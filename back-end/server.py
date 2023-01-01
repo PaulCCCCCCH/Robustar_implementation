@@ -44,8 +44,8 @@ def test_connect():
 
 def precheck():
     def check_num_classes_consistency():
-        configs = RServer.getServerConfigs()
-        data_manager = RServer.getDataManager()
+        configs = RServer.get_server_configs()
+        data_manager = RServer.get_data_manager()
         trainset = data_manager.trainset
         testset = data_manager.testset
         validationset = data_manager.validationset
@@ -97,7 +97,7 @@ def new_server_object(base_dir):
         print("Class to label file not found!")
 
     """ CREATE SERVER """
-    server = RServer.createServer(
+    server = RServer.create_server(
         configs=configs,
         base_dir=base_dir,
         dataset_dir=dataset_dir,
@@ -107,7 +107,7 @@ def new_server_object(base_dir):
     )
 
     """ SETUP DATA MANAGER """
-    dataManager = RDataManager(
+    data_manager = RDataManager(
         base_dir,
         dataset_dir,
         db_path,
@@ -118,10 +118,10 @@ def new_server_object(base_dir):
         image_padding=configs["image_padding"],
         class2label_mapping=class2label_mapping,
     )
-    RServer.setDataManager(dataManager)
+    RServer.set_data_manager(data_manager)
 
     """ SETUP MODEL """
-    serverConfigs = RServer.getServerConfigs()
+    serverConfigs = RServer.get_server_configs()
     model = RModelWrapper(
         network_type=serverConfigs["model_arch"],
         net_path=to_unix(os.path.join(ckpt_dir, serverConfigs["weight_to_load"])),
@@ -129,7 +129,7 @@ def new_server_object(base_dir):
         pretrained=serverConfigs["pre_trained"],
         num_classes=serverConfigs["num_classes"],
     )
-    RServer.setModel(model)
+    RServer.set_model(model)
 
     """ SETUP AUTO ANNOTATOR """
     checkpoint_name = "u2net.pth"
@@ -138,7 +138,7 @@ def new_server_object(base_dir):
         checkpoint=osp.join(base_dir, checkpoint_name),
         model_name="u2net",
     )
-    RServer.setAutoAnnotator(annotator)
+    RServer.set_auto_annotator(annotator)
 
     # Check file state consistency
     precheck()
@@ -165,7 +165,7 @@ def create_app():
     print("Absolute basedir is {}".format(basedir))
     new_server_object(basedir)
 
-    return RServer.getServer().getFlaskApp()
+    return RServer.get_server().get_flask_app()
 
 
 if __name__ == "__main__":

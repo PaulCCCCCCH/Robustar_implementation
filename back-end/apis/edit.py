@@ -14,7 +14,7 @@ from utils.edit_utils import (
 )
 from utils.path_utils import to_unix
 from flask import Blueprint
-from utils.image_utils import imageToBase64String
+from utils.image_utils import image_to_base64_string
 
 edit_api = Blueprint("edit_api", __name__)
 
@@ -119,7 +119,7 @@ def api_propose_edit(split):
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
-    base64 = imageToBase64String(proposed_image_path)
+    base64 = image_to_base64_string(proposed_image_path)
 
     response = {"path": proposed_image_path, "base64": base64}
 

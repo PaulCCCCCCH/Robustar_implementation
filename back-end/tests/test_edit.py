@@ -28,7 +28,7 @@ class TestEdit:
                 "/edit/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/10000.JPEG",
                 json=json.loads(json.dumps(data)),
             )
@@ -47,7 +47,7 @@ class TestEdit:
                 "/edit/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/1.JPEG",
                 json=json.loads(json.dumps(data)),
             )
@@ -61,7 +61,7 @@ class TestEdit:
     #         'image': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=',
     #         'image_height': '224', 'image_width': '224'}  # a png image of 1*1 pixel in white
     #     response = client.post("/edit/train?" + PARAM_NAME_IMAGE_PATH +
-    #                            "=" + RServer.getServer().base_dir + "/dataset/train/bird/0.JPEG",
+    #                            "=" + RServer.get_server().base_dir + "/dataset/train/bird/0.JPEG",
     #                            json=json.loads(json.dumps(data)))
     #     assert response.status_code == 200
     #     rv = response.get_json()

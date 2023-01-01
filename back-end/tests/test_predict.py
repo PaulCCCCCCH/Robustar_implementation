@@ -17,7 +17,7 @@ class TestPredict:
                 "/predict/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/10000.JPEG"
             )
             assert response.status_code == 400
@@ -26,7 +26,7 @@ class TestPredict:
             assert (
                 rv["detail"]
                 == "Invalid image path "
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/10000.JPEG"
             )
             # TODO: [test] other splits
@@ -36,7 +36,7 @@ class TestPredict:
                 "/predict/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "/dataset/train/bird/1.JPEG"
             )
             assert response.status_code == 200
@@ -57,7 +57,7 @@ class TestPredict:
             assert len(data[1]) == 9
             assert sum((0 <= x <= 1) for x in data[1]) == 9
             assert data[2] == [
-                f"{RServer.getServer().base_dir}/visualize_images/{to_snake_path(RServer.getServer().base_dir)}_dataset_train_bird_1_JPEG_{idx}.png"
+                f"{RServer.get_server().base_dir}/visualize_images/{to_snake_path(RServer.get_server().base_dir)}_dataset_train_bird_1_JPEG_{idx}.png"
                 for idx in range(4)
             ]
             # TODO: [test] other splits
@@ -80,7 +80,7 @@ class TestPredict:
                 "/influence/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().base_dir
+                + RServer.get_server().base_dir
                 + "dataset/train/bird/10000.JPEG"
             )
             assert response.status_code == 400
@@ -94,7 +94,7 @@ class TestPredict:
         def test_get_influence_success(self, client):
             assert True
             # response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
-            #                 "=" + RServer.getServer().base_dir + "/dataset/train/bird/1.JPEG")
+            #                 "=" + RServer.get_server().base_dir + "/dataset/train/bird/1.JPEG")
             # assert response.status_code == 200
             # rv = response.get_json()
             # assert rv['code'] == -1

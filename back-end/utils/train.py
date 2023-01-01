@@ -19,11 +19,11 @@ def setup_training(configs):
     model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
     # Default configs from the server
-    save_dir = RServer.getServer().ckpt_dir
-    device = RServer.getServerConfigs()["device"]
-    dataManager = RServer.getDataManager()
-    transforms = dataManager.transforms
-    paired_data_path = dataManager.paired_root
+    save_dir = RServer.get_server().ckpt_dir
+    device = RServer.get_server_configs()["device"]
+    data_manager = RServer.get_data_manager()
+    transforms = data_manager.transforms
+    paired_data_path = data_manager.paired_root
 
     if use_paired_train:
         train_set = PairedDataset(
@@ -46,7 +46,7 @@ def setup_training(configs):
     )
 
     # Model will be initialized with server config
-    model_wrapper = RServer.getModelWrapper()
+    model_wrapper = RServer.get_model_wrapper()
     model = model_wrapper.model
 
     trainer = Trainer(
