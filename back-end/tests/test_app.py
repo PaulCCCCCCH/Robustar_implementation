@@ -94,6 +94,11 @@ def _set_up(basedir):
     else:
         print("setup > no database dir, skip copy")
 
+    # create generated folder
+    generated_folder = osp.join(base_dir, "generated")
+    if not osp.exists(generated_folder):
+        os.mkdir(generated_folder)
+
     proposed_dir = to_unix(osp.join(base_dir, "generated", 'proposed'))
     proposed_dir_original = to_unix(osp.join(base_dir, "generated", 'proposed_o'))
     if osp.exists(proposed_dir):
