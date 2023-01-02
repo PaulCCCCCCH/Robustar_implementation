@@ -13,6 +13,7 @@ from objects.RServer import RServer
 
 from .imagenet import *
 
+
 def load_image(image_path):
     """Loads image as a PIL RGB image.
 
@@ -24,7 +25,7 @@ def load_image(image_path):
 
     """
 
-    return Image.open(image_path).convert('RGB')
+    return Image.open(image_path).convert("RGB")
 
 
 def apply_transforms(image, size=224):
@@ -65,7 +66,7 @@ def apply_transforms(image, size=224):
     if not isinstance(image, Image.Image):
         image = F.to_pil_image(image)
 
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
 
     transform = dataManager.transforms
 
@@ -108,25 +109,26 @@ def denormalize(tensor):
     means = [0.485, 0.456, 0.406]
     stds = [0.229, 0.224, 0.225]
 
-    #means = [0.5, 0.5, 0.5]
-    #stds = [0.5, 0.5, 0.5]
+    # means = [0.5, 0.5, 0.5]
+    # stds = [0.5, 0.5, 0.5]
 
     denormalized = tensor.clone()
 
     for i in range(3):
-        channel,mean,std=denormalized[0][i],means[i],stds[i]
+        channel, mean, std = denormalized[0][i], means[i], stds[i]
         channel.mul_(std).add_(mean)
 
-    #This library could support the PyTorch 1.8.0
+    # This library could support the PyTorch 1.8.0
 
-    #for channel, mean, std in zip(denormalized[0], means, stds):
+    # for channel, mean, std in zip(denormalized[0], means, stds):
     #    channel.mul_(std).add_(mean)
 
     return denormalized
 
 
-def standardize_and_clip(tensor, min_value=0.0, max_value=1.0,
-                         saturation=0.1, brightness=0.5):
+def standardize_and_clip(
+    tensor, min_value=0.0, max_value=1.0, saturation=0.1, brightness=0.5
+):
 
     """Standardizes and clips input tensor.
 

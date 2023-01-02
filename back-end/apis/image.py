@@ -3,11 +3,11 @@ from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from flask import send_file, request
 from objects.RResponse import RResponse
 from utils.image_utils import (
-    getClassStart,
-    getImagePath,
-    getNextImagePath,
-    getImgData,
-    getSplitLength,
+    get_class_start,
+    get_image_path,
+    get_next_image_path,
+    get_img_Data,
+    get_split_length,
     get_annotated,
 )
 from utils.path_utils import to_unix
@@ -25,8 +25,8 @@ def get_image_list(split, start, num_per_page):
     image_idx_end = num_per_page * (start + 1)
 
     try:
-        ls_image_path = getImagePath(split, image_idx_start, image_idx_end)
-        ls_image_data = [getImgData(image_path) for image_path in ls_image_path]
+        ls_image_path = get_image_path(split, image_idx_start, image_idx_end)
+        ls_image_data = [get_img_Data(image_path) for image_path in ls_image_path]
         ls_image_path_data = list(zip(ls_image_path, ls_image_data))
         return RResponse.ok(ls_image_path_data)
     except (ValueError, NotImplementedError) as e:
@@ -44,7 +44,7 @@ def get_next_image(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
     path = to_unix(path)
     try:
-        next_image_path = getNextImagePath(split, path)
+        next_image_path = get_next_image_path(split, path)
     except NotImplementedError as e:
         RResponse.abort(400, str(e))
 
@@ -110,7 +110,7 @@ def get_class_page(split):
         description: A map of class names with the index of the first image of the class
     """
     try:
-        response = getClassStart(split)
+        response = get_class_start(split)
     except Exception:
         RResponse.abort(400, "Split not supported")
 
@@ -118,7 +118,7 @@ def get_class_page(split):
 
 
 @image_api.route("/image/<split>")
-def get_split_length(split):
+def api_get_split_length(split):
     """
     Gets the length of the split
     ---
@@ -146,8 +146,9 @@ def get_split_length(split):
               example: Success
     """
     try:
-        response = getSplitLength(split)
-    except Exception:
+        response = get_split_length(split)
+    except Exception as e:
+        print(e)
         RResponse.abort(400, "Split not supported")
 
     return RResponse.ok(response)

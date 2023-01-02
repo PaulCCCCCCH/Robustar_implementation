@@ -5,10 +5,10 @@ from flasgger import Swagger
 # Wrapper for flask server instance
 class RServer:
 
-    serverInstance = None
+    server_instance = None
 
     # Use createServer method instead!
-    def __init__(self, configs, baseDir, datasetDir, ckptDir, app, socket):
+    def __init__(self, configs, base_dir, dataset_dir, ckpt_dir, app, socket):
 
         app.config["SWAGGER"] = {
             "title": "Robustar API",
@@ -17,75 +17,75 @@ class RServer:
         }
         self.swagger = Swagger(app)
 
-        self.datasetDir = datasetDir
-        self.baseDir = baseDir
-        self.datasetPath = datasetDir
-        self.ckptDir = ckptDir
+        self.dataset_dir = dataset_dir
+        self.base_dir = base_dir
+        self.datasetPath = dataset_dir
+        self.ckpt_dir = ckpt_dir
         self.app = app
         self.socket = socket
         self.configs = configs
-        self.modelWrapper = None
-        self.modelsWeights = {}
+        self.model_wrapper = None
+        self.model_weights = {}
 
     @staticmethod
-    def createServer(
-        configs: dict, baseDir: str, datasetDir: str, ckptDir: str, app, socket
+    def create_server(
+        configs: dict, base_dir: str, dataset_dir: str, ckpt_dir: str, app, socket
     ):
-        if RServer.serverInstance is None:
-            RServer.serverInstance = RServer(
-                configs, baseDir, datasetDir, ckptDir, app, socket
+        if RServer.server_instance is None:
+            RServer.server_instance = RServer(
+                configs, base_dir, dataset_dir, ckpt_dir, app, socket
             )
         else:
             assert (
-                configs == RServer.serverInstance.configs
+                configs == RServer.server_instance.configs
             ), "Attempting to recreate an existing server with different configs"
-        return RServer.serverInstance
+        return RServer.server_instance
 
     @staticmethod
-    def getServer():
-        return RServer.serverInstance
+    def get_server():
+        return RServer.server_instance
 
     @staticmethod
-    def getDataManager() -> RDataManager:
-        return RServer.serverInstance.dataManager
+    def get_data_manager() -> RDataManager:
+        return RServer.server_instance.data_manager
 
     @staticmethod
-    def setDataManager(dataManager):
-        RServer.serverInstance.dataManager = dataManager
+    def set_data_manager(data_manager):
+        RServer.server_instance.data_manager = data_manager
 
     @staticmethod
-    def getAutoAnnotator():
-        return RServer.serverInstance.autoAnnotator
+    def get_auto_annotator():
+        return RServer.server_instance.auto_annotator
 
     @staticmethod
-    def setAutoAnnotator(autoAnnotator):
-        RServer.serverInstance.autoAnnotator = autoAnnotator
+    def set_auto_annotator(auto_annotator):
+        RServer.server_instance.auto_annotator = auto_annotator
 
     @staticmethod
-    def getServerConfigs():
-        return RServer.serverInstance.configs
+    def get_server_configs():
+        return RServer.server_instance.configs
 
     @staticmethod
-    def getModelWrapper():
-        return RServer.serverInstance.modelWrapper
+    def get_model_wrapper():
+        return RServer.server_instance.model_wrapper
 
     @staticmethod
-    def setModel(modelWrapper):
-        RServer.serverInstance.modelWrapper = modelWrapper
+    def set_model(model_wrapper):
+        RServer.server_instance.model_wrapper = model_wrapper
 
     @staticmethod
-    def getModelsWeights():
-        return RServer.serverInstance.modelsWeights
+    def get_model_weights():
+        return RServer.server_instance.model_weights
 
     @staticmethod
-    def addModelWeight(name, weight):
-        RServer.serverInstance.modelsWeights[name] = weight
+    def add_model_weight(name, weight):
+        RServer.server_instance.model_weights[name] = weight
 
     @staticmethod
-    def getSocket():
-        return RServer.getServer().socket
+    def get_socket():
+        return RServer.get_server().socket
 
-    def getFlaskApp(self):
+    def get_flask_app(self):
         return self.app
 
     def run(self, port=8000, host="0.0.0.0", debug=True):
