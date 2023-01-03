@@ -16,6 +16,7 @@ class MainView(QWidget):
         self.ui.portInput.textEdited.connect(self.ctrl.setMPort)
         self.ui.trainPathButton.clicked.connect(self.ctrl.setMTrainPath)
         self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
+        self.ui.validationPathButton.clicked.connect(self.ctrl.setMValidationPath)
         self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
 
@@ -38,14 +39,26 @@ class MainView(QWidget):
         self.ui.refreshListWidgetsButton.clicked.connect(self.ctrl.refreshServers)
 
         # Set the listWidgets so that only one entry in them can be selected at a time
-        self.listWidgets = [self.ui.runningListWidget, self.ui.exitedListWidget, self.ui.createdListWidget]
+        self.listWidgets = [
+            self.ui.runningListWidget,
+            self.ui.exitedListWidget,
+            self.ui.createdListWidget,
+        ]
         self.ui.runningListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(self.ui.runningListWidget, self.listWidgets))
+            lambda sel, unsel: self.singleSelect(
+                self.ui.runningListWidget, self.listWidgets
+            )
+        )
         self.ui.exitedListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(self.ui.exitedListWidget, self.listWidgets))
+            lambda sel, unsel: self.singleSelect(
+                self.ui.exitedListWidget, self.listWidgets
+            )
+        )
         self.ui.createdListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(self.ui.createdListWidget, self.listWidgets))
-
+            lambda sel, unsel: self.singleSelect(
+                self.ui.createdListWidget, self.listWidgets
+            )
+        )
 
     # Function to ensure only one entry in the three listWidgets can be selected at a time
     def singleSelect(self, listWidget, listWidgets):
