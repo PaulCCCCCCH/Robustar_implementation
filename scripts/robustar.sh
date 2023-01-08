@@ -15,6 +15,7 @@ OPT_NAME=robustar
 RUN_MODE='HELP'
 TRAIN_FOLDER='./'
 TEST_FOLDER='./'
+VALIDATION_FOLDER='./'
 INFLU_FOLDER='./'
 CHECK_FOLDER='./'
 CONFIG_FILE='configs.json'
@@ -70,6 +71,7 @@ function RUN {
     -p 127.0.0.1:${OPT_PORT}:80 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
+    --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
     -v $CONFIG_FILE:/Robustar2/configs.json \
@@ -83,6 +85,7 @@ function RUN_GPU {
     -p 127.0.0.1:${OPT_PORT}:80 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
+    --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
     -v $CONFIG_FILE:/Robustar2/configs.json \
@@ -119,6 +122,9 @@ while getopts :m:p:a:n:t:e:i:c:o:h FLAG; do
       ;;
     e)
       TEST_FOLDER=$OPTARG
+      ;;
+    d)
+      VALIDATION_FOLDER=$OPTARG
       ;;
     i)
       INFLU_FOLDER=$OPTARG
