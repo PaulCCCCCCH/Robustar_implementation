@@ -14,36 +14,36 @@ class DockerController(QObject):
         super().__init__()
 
         self.model = model
-        self.mainView = view
-        self.mainCtrl = ctrl
+        self.main_view = view
+        self.main_ctrl = ctrl
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
         if platform == "linux" or platform == "linux2":
-            self.apiClient = docker.APIClient(base_url='unix://var/run/docker.sock')
+            self.api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
         elif platform == "win32":
-            self.apiClient = docker.APIClient(base_url='tcp://localhost:2375')
+            self.api_client = docker.APIClient(base_url='tcp://localhost:2375')
 
-    def getSelection(self, forStart=False):
-        if (self.mainView.ui.tabWidget.currentIndex() == 0):
+    def get_selection(self, for_start=False):
+        if (self.main_view.ui.tabWidget.currentIndex() == 0):
             self.model.madeOnCreateTab = True
             self.model.tempName = self.model.profile['containerName']
-            if(forStart == True):
+            if(for_start == True):
                 self.model.tempVer = self.model.profile['imageVersion']
                 self.model.tempPort = self.model.profile['port']
-            return self.getContainerByName(self.model.tempName, forStart=forStart)
+            return self.getContainerByName(self.model.tempName, forStart=for_start)
         else:
             self.model.madeOnCreateTab = False
-            items = self.mainCtrl.getItemsFromListWidgets()
+            items = self.main_ctrl.getItemsFromListWidgets()
             if (len(items) == 0):
                 self.model.tempName = None
                 self.model.container = None
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Please select a container first')
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, 'Please select a container first')
                 return 1
             else:
                 item = items[0]
                 self.model.tempName = item.text()
-                return self.getContainerByName(self.model.tempName, forStart=forStart)
+                return self.getContainerByName(self.model.tempName, forStart=for_start)
 
     def getContainerByName(self, name, forStart):
         try:
@@ -54,16 +54,16 @@ class DockerController(QObject):
                 self.model.container = None
                 return 0
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Can not find {}. Refresh <i>Manage</i> page to check the latest information'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, 'Can not find {}. Refresh <i>Manage</i> page to check the latest information'.format(self.model.tempName))
                 return 1
         except docker.errors.APIError as apiError:
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                         'Unexpected error encountered. See more in <i>Details</i> page')
-            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
             return 1
 
     def startServer(self):
-        if(self.getSelection(forStart=True)):
+        if(self.get_selection(for_start=True)):
             return
         if(self.model.container == None):
             self.startNewServer()
@@ -114,8 +114,8 @@ class DockerController(QObject):
             elif 'cpu' in self.model.device:
                 self.startNewCpuServer(image, configFile)
 
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Running {}'.format(self.model.tempVer))
-            self.mainCtrl.updateSucView()
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, 'Running {}'.format(self.model.tempVer))
+            self.main_ctrl.updateSucView()
 
             self.printLog(self.model.container)
 
@@ -124,14 +124,14 @@ class DockerController(QObject):
 
             if ('port is already allocated' in str(apiError)):
 
-                self.mainCtrl.addItem(self.mainView.ui.createdListWidget, self.model.tempName)
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} is created but fails to run because port is already allocated. See more in <i>Details</i> page'.format(self.model.tempName))
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+                self.main_ctrl.addItem(self.main_view.ui.createdListWidget, self.model.tempName)
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} is created but fails to run because port is already allocated. See more in <i>Details</i> page'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                             'Unexpected error encountered. See more in <i>Details</i> page')
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+                self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
                 with open('./RecordData/config_record.json', 'r') as f:
                     matchDict = json.load(f)
                 with open('./RecordData/config_record.json', 'w') as f:
@@ -215,72 +215,72 @@ class DockerController(QObject):
         try:
             if self.model.container.status == 'exited':
                 self.model.container.restart()
-                self.mainCtrl.updateSucView()
-                self.mainCtrl.removeItem(self.mainView.ui.exitedListWidget, self.model.tempName)
+                self.main_ctrl.updateSucView()
+                self.main_ctrl.removeItem(self.main_view.ui.exitedListWidget, self.model.tempName)
 
                 self.printLog(self.model.container)
 
             elif self.model.container.status == 'created':
                 self.model.container.start()
-                self.mainCtrl.updateSucView()
-                self.mainCtrl.removeItem(self.mainView.ui.createdListWidget, self.model.tempName)
+                self.main_ctrl.updateSucView()
+                self.main_ctrl.removeItem(self.main_view.ui.createdListWidget, self.model.tempName)
 
                 self.printLog(self.model.container)
 
             elif self.model.container.status == 'running':
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} is running'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} is running'.format(self.model.tempName))
 
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, 'Illegal container status encountered')
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, 'Illegal container status encountered')
         except docker.errors.APIError as apiError:
             if ('port is already allocated' in str(apiError)):
 
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} fails to run because port is already allocated. See more in <i>Details</i> page'.format(self.model.tempName))
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} fails to run because port is already allocated. See more in <i>Details</i> page'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                             'Unexpected error encountered. See more in <i>Details</i> page')
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+                self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
     def stopServer(self):
-        if(self.getSelection()):
+        if(self.get_selection()):
             return
         try:
             if self.model.container.status == 'exited':
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} has already stopped'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} has already stopped'.format(self.model.tempName))
 
             elif self.model.container.status == 'created':
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} is not running'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} is not running'.format(self.model.tempName))
 
             elif self.model.container.status == 'running':
                 self.model.container.stop()
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} is now stopped'.format(self.model.tempName))
-                self.mainCtrl.addItem(self.mainView.ui.exitedListWidget, self.model.tempName)
-                self.mainCtrl.removeItem(self.mainView.ui.runningListWidget, self.model.tempName)
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} is now stopped'.format(self.model.tempName))
+                self.main_ctrl.addItem(self.main_view.ui.exitedListWidget, self.model.tempName)
+                self.main_ctrl.removeItem(self.main_view.ui.runningListWidget, self.model.tempName)
 
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                                            'Illegal container status encountered')
         except docker.errors.APIError as apiError:
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                        'Unexpected error encountered. See more in <i>Details</i> page')
-            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
     def deleteServer(self):
-        if(self.getSelection()):
+        if(self.get_selection()):
             return
         try:
             if self.model.container.status == 'running' or self.model.container.status == 'created' or self.model.container.status == 'exited':
                 self.model.container.remove()
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, '{} removed'.format(self.model.tempName))
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, '{} removed'.format(self.model.tempName))
 
                 if(self.model.container.status == 'running'):
-                    self.mainCtrl.removeItem(self.mainView.ui.runningListWidget, self.model.tempName)
+                    self.main_ctrl.removeItem(self.main_view.ui.runningListWidget, self.model.tempName)
                 elif(self.model.container.status == 'created'):
-                    self.mainCtrl.removeItem(self.mainView.ui.createdListWidget, self.model.tempName)
+                    self.main_ctrl.removeItem(self.main_view.ui.createdListWidget, self.model.tempName)
                 elif (self.model.container.status == 'exited'):
-                    self.mainCtrl.removeItem(self.mainView.ui.exitedListWidget, self.model.tempName)
+                    self.main_ctrl.removeItem(self.main_view.ui.exitedListWidget, self.model.tempName)
 
                 with open('./RecordData/config_record.json', 'r') as f:
                     matchDict = json.load(f)
@@ -289,15 +289,15 @@ class DockerController(QObject):
                     os.remove(fileName)
                     json.dump(matchDict, f)
             else:
-                self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                                            'Illegal container status encountered')
         except docker.errors.APIError as apiError:
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                        'Unexpected error encountered. See more in <i>Details</i> page')
-            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
     def refreshServers(self):
-        for listWidget in self.mainView.listWidgets:
+        for listWidget in self.main_view.listWidgets:
             listWidget.clear()
 
         try:
@@ -306,30 +306,30 @@ class DockerController(QObject):
             for container in containerList:
                 if ('paulcccccch/robustar:' in str(container.image)):
                     if (container.status == 'running'):
-                        self.mainCtrl.addItem(self.mainView.ui.runningListWidget, container.name)
+                        self.main_ctrl.addItem(self.main_view.ui.runningListWidget, container.name)
 
                         self.printLog(container)
                     elif (container.status == 'exited'):
-                        self.mainCtrl.addItem(self.mainView.ui.exitedListWidget, container.name)
+                        self.main_ctrl.addItem(self.main_view.ui.exitedListWidget, container.name)
                     elif (container.status == 'created'):
-                        self.mainCtrl.addItem(self.mainView.ui.createdListWidget, container.name)
+                        self.main_ctrl.addItem(self.main_view.ui.createdListWidget, container.name)
                     else:
-                        self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+                        self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                                                    'Illegal container status encountered')
         except docker.errors.APIError as apiError:
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                        'Unexpected error encountered. See more in <i>Details</i> page')
-            self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(apiError))
+            self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(apiError))
 
     def downloadImage(self, image):
         imageList = [x.tags[0] for x in self.client.images.list() if x.tags != []]
         if image not in imageList:
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser,
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser,
                                        f'Downloading {image}. See more in <i>Details</i> page')
             repo, tag = image.split(':')
-            for line in self.apiClient.pull(repository=repo, tag=tag, stream=True, decode=True):
-                self.mainCtrl.printMessage(self.mainView.ui.detailBrowser, str(line))
-            self.mainCtrl.printMessage(self.mainView.ui.promptBrowser, f'Downloaded {image}')
+            for line in self.api_client.pull(repository=repo, tag=tag, stream=True, decode=True):
+                self.main_ctrl.printMessage(self.main_view.ui.detailBrowser, str(line))
+            self.main_ctrl.printMessage(self.main_view.ui.promptBrowser, f'Downloaded {image}')
 
     def printLog(self, container):
         def func(container):
@@ -357,7 +357,7 @@ class DockerController(QObject):
                     # Add the name and port information
                     log = f'{name} - - ' + log[:log.find(' - -')] + f':{port}' + log[log.find(' - -'):]
 
-                    self.mainCtrl.printMessage(self.mainView.ui.logBrowser, log, timestamp=False)
+                    self.main_ctrl.printMessage(self.main_view.ui.logBrowser, log, timestamp=False)
             except StopIteration:
                 return
 
