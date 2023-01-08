@@ -6,6 +6,7 @@ class Model(QObject):
     imageVersionChanged = Signal(str)
     portChanged = Signal(str)
     trainPathChanged = Signal(str)
+    validationPathChanged = Signal(str)
     testPathChanged = Signal(str)
     checkPointPathChanged = Signal(str)
     influencePathChanged = Signal(str)
@@ -32,6 +33,7 @@ class Model(QObject):
             'imageVersion': '',
             'port': '8000',
             'trainPath': '',
+            'validationPath': '',
             'testPath': '',
             'checkPointPath': '',
             'influencePath': '',
@@ -71,6 +73,7 @@ class Model(QObject):
         self.imageVersionChanged.connect(self.ctrl.setVImageVersion)
         self.portChanged.connect(self.ctrl.setVPort)
         self.trainPathChanged.connect(self.ctrl.setVTrainPath)
+        self.validationPathChanged.connect(self.ctrl.setVValidationPath)
         self.testPathChanged.connect(self.ctrl.setVTestPath)
         self.checkPointPathChanged.connect(self.ctrl.setVCheckPointPath)
         self.influencePathChanged.connect(self.ctrl.setVInfluencePath)
@@ -120,6 +123,15 @@ class Model(QObject):
     def trainPath(self, val):
         self._profile['trainPath'] = val
         self.trainPathChanged.emit(val)
+
+    @property
+    def validationPath(self):
+        return self._profile['validationPath']
+
+    @validationPath.setter
+    def validationPath(self, val):
+        self._profile['validationPath'] = val
+        self.validationPathChanged.emit(val)
 
     @property
     def testPath(self):
@@ -248,6 +260,7 @@ class Model(QObject):
         self.imageVersion = val['imageVersion']
         self.port = val['port']
         self.trainPath = val['trainPath']
+        self.validationPath = val['validationPath']
         self.testPath = val['testPath']
         self.checkPointPath = val['checkPointPath']
         self.influencePath = val['influencePath']
@@ -261,4 +274,3 @@ class Model(QObject):
         self.imgSize = val['image_size']
         self.padding = val['padding']
         self.classNumber = val['num_classes']
-

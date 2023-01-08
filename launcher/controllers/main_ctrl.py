@@ -5,7 +5,6 @@ import json
 import time
 
 from PySide2.QtCore import QObject, Qt
-from PySide2 import QtGui
 from PySide2.QtWidgets import QFileDialog
 from threading import Thread
 
@@ -62,14 +61,6 @@ class MainController(QObject):
         if path:
             self.model.trainPath = path
 
-    def setMTestPath(self):
-        path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Test Set Path", self.model.cwd
-        )
-        self.model.cwd = os.path.dirname(path)
-        if path:
-            self.model.testPath = path
-
     def setMValidationPath(self):
         path = QFileDialog.getExistingDirectory(
             self.mainView, "Choose Validation Set Path", self.model.cwd
@@ -77,6 +68,14 @@ class MainController(QObject):
         self.model.cwd = os.path.dirname(path)
         if path:
             self.model.validationPath = path
+
+    def setMTestPath(self):
+        path = QFileDialog.getExistingDirectory(
+            self.mainView, "Choose Test Set Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.testPath = path
 
     def setMCheckPointPath(self):
         path = QFileDialog.getExistingDirectory(
@@ -192,6 +191,9 @@ class MainController(QObject):
     def setVTrainPath(self, val):
         self.mainView.ui.trainPathDisplay.setText(val)
 
+    def setVValidationPath(self, val):
+        self.mainView.ui.validationPathDisplay.setText(val)
+
     def setVTestPath(self, val):
         self.mainView.ui.testPathDisplay.setText(val)
 
@@ -270,6 +272,7 @@ class MainController(QObject):
     def checkProfile(self):
         missProfileDict = {
             "trainPath": "train set path",
+            "validationPath": "validation set path",
             "testPath": "test set path",
             "influencePath": "influence result path",
             "checkPointPath": "check point path",
@@ -282,6 +285,7 @@ class MainController(QObject):
 
         for profileName in [
             "trainPath",
+            "validationPath",
             "testPath",
             "influencePath",
             "checkPointPath",
