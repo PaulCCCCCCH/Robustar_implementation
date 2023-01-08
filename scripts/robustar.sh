@@ -16,6 +16,7 @@ RUN_MODE='HELP'
 TRAIN_FOLDER='./'
 TEST_FOLDER='./'
 PAIR_FOLDER='./'
+VALIDATION_FOLDER='./'
 INFLU_FOLDER='./'
 CHECK_FOLDER='./'
 GENERATED_FOLDER='./'
@@ -75,6 +76,7 @@ function RUN {
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
     --mount type=bind,source=${PAIR_FOLDER},target=/Robustar2/dataset/paired \
+    --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
     --mount type=bind,source=${GENERATED_FOLDER},target=/Robustar2/generated \
@@ -90,6 +92,7 @@ function RUN_GPU {
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
     --mount type=bind,source=${PAIR_FOLDER},target=/Robustar2/dataset/paired \
+    --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
     --mount type=bind,source=${GENERATED_FOLDER},target=/Robustar2/generated \
@@ -108,7 +111,7 @@ function RUN_GPU {
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get my unrecognized option code to work.
 
-while getopts :m:p:a:n:t:e:d:i:c:g:o:h FLAG; do
+while getopts :m:p:a:n:t:e:r:d:i:c:g:o:h FLAG; do
   case $FLAG in
     m) 
       RUN_MODE=$OPTARG
@@ -128,8 +131,11 @@ while getopts :m:p:a:n:t:e:d:i:c:g:o:h FLAG; do
     e)
       TEST_FOLDER=$OPTARG
       ;;
-    d)
+    r)
       PAIR_FOLDER=$OPTARG
+      ;;
+    d)
+      VALIDATION_FOLDER=$OPTARG
       ;;
     i)
       INFLU_FOLDER=$OPTARG
