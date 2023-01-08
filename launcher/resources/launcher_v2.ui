@@ -916,7 +916,7 @@ QPushButton:hover {
                     <x>10</x>
                     <y>20</y>
                     <width>361</width>
-                    <height>243</height>
+                    <height>201</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="data_v_layout">

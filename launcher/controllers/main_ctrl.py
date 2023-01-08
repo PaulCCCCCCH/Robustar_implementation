@@ -13,127 +13,130 @@ class MainController(QObject):
     def __init__(self):
         super().__init__()
 
-    def setModel(self, model):
+        self.popup_view = None
+        self.main_view = None
+
+    def set_model(self, model):
         self.model = model
 
-    def setMainView(self, view):
-        self.mainView = view
+    def set_main_view(self, view):
+        self.main_view = view
 
-    def setPopupView(self, view):
-        self.popupView = view
+    def set_popup_view(self, view):
+        self.popup_view = view
 
     def init(self):
         from controllers.docker_ctrl import DockerController
 
         try:
-            self.initImageVersions()
-            self.dockerCtrl = DockerController(self.model, self.mainView, self)
-            self.dockerCtrl.refreshServers()
-            self.mainView.show()
+            self.init_images()
+            self.docker_ctrl = DockerController(self.model, self.main_view, self)
+            self.docker_ctrl.refresh_server()
+            self.main_view.show()
         except requests.RequestException as e:
-            self.popupView.ui.warningLabel.setText(
+            self.popup_view.ui.warning_label.setText(
                 f"Failed to fetch image versions online!\nPlease check your network!"
             )
-            self.popupView.ui.exceptionLabel.setText(str(e))
-            self.popupView.show()
+            self.popup_view.ui.exception_label.setText(str(e))
+            self.popup_view.show()
         except docker.errors.DockerException as e:
-            self.popupView.ui.warningLabel.setText(
+            self.popup_view.ui.warning_label.setText(
                 "Docker is not running!\nPlease start Docker first!"
             )
-            self.popupView.ui.exceptionLabel.setText(str(e))
-            self.popupView.show()
+            self.popup_view.ui.exception_label.setText(str(e))
+            self.popup_view.show()
 
     # Slot functions to change the model
-    def setMContainerName(self):
-        self.model.containerName = self.mainView.ui.nameInput.text()
+    def set_m_name(self):
+        self.model.name = self.main_view.ui.name_line_edit.text()
 
-    def setMImageVersion(self):
-        self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
+    def set_m_image(self):
+        self.model.image = self.main_view.ui.image_combo_box.currentText()
 
-    def setMPort(self):
-        self.model.port = self.mainView.ui.portInput.text()
+    def set_m_port(self):
+        self.model.port = self.main_view.ui.port_line_edit.text()
 
-    def setMTrainPath(self):
+    def set_m_train_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Train Set Path", self.model.cwd
+            self.main_view, "Choose Train Set Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.trainPath = path
+            self.model.train_path = path
 
-    def setMValidationPath(self):
+    def set_m_val_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Validation Set Path", self.model.cwd
+            self.main_view, "Choose Validation Set Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.validationPath = path
+            self.model.val_path = path
 
-    def setMTestPath(self):
+    def set_m_test_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Test Set Path", self.model.cwd
+            self.main_view, "Choose Test Set Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.testPath = path
+            self.model.test_path = path
 
-    def setMCheckPointPath(self):
+    def set_m_ckpt_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Checkpoints Path", self.model.cwd
+            self.main_view, "Choose Checkpoints Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.checkPointPath = path
+            self.model.ckpt_path = path
 
-        self.initWeightFiles()
+        self.init_weights()
 
-    def setMInfluencePath(self):
+    def set_m_inf_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.mainView, "Choose Influence Result Path", self.model.cwd
+            self.main_view, "Choose Influence Result Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.influencePath = path
+            self.model.inf_path = path
 
-    def setMArch(self):
-        self.model.modelArch = self.mainView.ui.archComboBox.currentText()
+    def set_m_arch(self):
+        self.model.arch = self.main_view.ui.arch_combo_box.currentText()
 
-    def setMPretrained(self):
-        if self.mainView.ui.pretrainedCheckBox.isChecked():
-            self.model.pretrained = "True"
+    def set_m_pretrain(self):
+        if self.main_view.ui.pretrain_check_box.isChecked():
+            self.model.pretrain = "True"
         else:
-            self.model.pretrained = "False"
+            self.model.pretrain = "False"
 
-    def setMWeightFile(self):
-        self.model.weightFile = self.mainView.ui.weightFileComboBox.currentText()
+    def set_m_weight(self):
+        self.model.weight = self.main_view.ui.weight_combo_box.currentText()
 
-    def setMDevice(self):
-        self.model.device = self.mainView.ui.deviceInput.text()
+    def set_m_device(self):
+        self.model.device = self.main_view.ui.device_line_edit.text()
 
-    def setMShuffle(self):
-        if self.mainView.ui.shuffleCheckBox.isChecked():
+    def set_m_shuffle(self):
+        if self.main_view.ui.shuffle_check_box.isChecked():
             self.model.shuffle = "True"
         else:
             self.model.shuffle = "False"
 
-    def setMBatchSize(self):
-        self.model.batchSize = self.mainView.ui.batchSizeInput.text()
+    def set_m_batch(self):
+        self.model.batch = self.main_view.ui.batch_line_edit.text()
 
-    def setMWorkerNumber(self):
-        self.model.workerNumber = self.mainView.ui.workerNumberInput.text()
+    def set_m_worker(self):
+        self.model.worker = self.main_view.ui.worker_line_edit.text()
 
-    def setMImgSize(self):
-        self.model.imgSize = self.mainView.ui.imgSizeInput.text()
+    def set_m_size(self):
+        self.model.size = self.main_view.ui.size_line_edit.text()
 
-    def setMPadding(self):
-        self.model.padding = self.mainView.ui.paddingComboBox.currentText()
+    def set_m_pad(self):
+        self.model.pad = self.main_view.ui.pad_combo_box.currentText()
 
-    def setMClassNumber(self):
-        self.model.classNumber = self.mainView.ui.classNumberInput.text()
+    def set_m_cls(self):
+        self.model.cls = self.main_view.ui.cls_line_edit.text()
 
-    def loadProfile(self):
+    def load_profile(self):
         path, _ = QFileDialog.getOpenFileName(
-            self.mainView,
+            self.main_view,
             "Load Profile",
             self.model.cwd,
             "JSON Files (*.json);;All Files (*)",
@@ -145,9 +148,9 @@ class MainController(QObject):
         except FileNotFoundError:
             print("Load path not found")
 
-    def saveProfile(self):
+    def save_profile(self):
         path, _ = QFileDialog.getSaveFileName(
-            self.mainView,
+            self.main_view,
             "Save Profile",
             self.model.cwd,
             "JSON Files (*.json);;All Files (*)",
@@ -159,198 +162,201 @@ class MainController(QObject):
         except FileNotFoundError:
             print("The dialog is closed")
 
-    def startServer(self):
-        if self.mainView.ui.tabWidget.currentIndex() == 0 and self.checkProfile():
+    def start_server(self):
+        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and self.check_profile():
             return
         else:
-            t = ServerOperationThread(target=self.dockerCtrl.start_server, ctrl=self)
+            t = ServerOperationThread(target=self.docker_ctrl.start_server, ctrl=self)
             t.start()
 
-    def stopServer(self):
-        t = ServerOperationThread(target=self.dockerCtrl.stopServer, ctrl=self)
+    def stop_server(self):
+        t = ServerOperationThread(target=self.docker_ctrl.stop_server, ctrl=self)
         t.start()
 
-    def deleteServer(self):
-        t = ServerOperationThread(target=self.dockerCtrl.deleteServer, ctrl=self)
+    def delete_server(self):
+        t = ServerOperationThread(target=self.docker_ctrl.delete_server, ctrl=self)
         t.start()
 
-    def refreshServers(self):
-        t = Thread(target=self.dockerCtrl.refreshServers)
+    def refresh_server(self):
+        t = Thread(target=self.docker_ctrl.refresh_server)
         t.start()
 
     # Slot functions to change the view
-    def setVContainerName(self, val):
-        self.mainView.ui.nameInput.setText(val)
+    def set_v_name(self, val):
+        self.main_view.ui.name_line_edit.setText(val)
 
-    def setVImageVersion(self, val):
-        self.mainView.ui.versionComboBox.setCurrentText(val)
+    def set_v_image(self, val):
+        self.main_view.ui.image_combo_box.setCurrentText(val)
 
-    def setVPort(self, val):
-        self.mainView.ui.portInput.setText(val)
+    def set_v_port(self, val):
+        self.main_view.ui.port_line_edit.setText(val)
 
-    def setVTrainPath(self, val):
-        self.mainView.ui.trainPathDisplay.setText(val)
+    def set_v_train_path(self, val):
+        self.main_view.ui.train_line_edit.setText(val)
 
-    def setVValidationPath(self, val):
-        self.mainView.ui.validationPathDisplay.setText(val)
+    def set_v_val_path(self, val):
+        self.main_view.ui.val_line_edit.setText(val)
 
-    def setVTestPath(self, val):
-        self.mainView.ui.testPathDisplay.setText(val)
+    def set_v_test_path(self, val):
+        self.main_view.ui.test_line_edit.setText(val)
 
-    def setVCheckPointPath(self, val):
-        self.mainView.ui.checkPointPathDisplay.setText(val)
-        self.initWeightFiles()
+    def set_v_ckpt_path(self, val):
+        self.main_view.ui.ckpt_line_edit.setText(val)
+        self.init_weights()
 
-    def setVInfluencePath(self, val):
-        self.mainView.ui.influencePathDisplay.setText(val)
+    def set_v_inf_path(self, val):
+        self.main_view.ui.inf_line_edit.setText(val)
 
-    def setVModelArch(self, val):
-        self.mainView.ui.archComboBox.setCurrentText(val)
+    def set_v_arch(self, val):
+        self.main_view.ui.arch_combo_box.setCurrentText(val)
 
-    def setVPretrained(self, val):
+    def set_v_pretrain(self, val):
         if val == "True":
-            self.mainView.ui.pretrainedCheckBox.setChecked(True)
+            self.main_view.ui.pretrain_check_box.setChecked(True)
         else:
-            self.mainView.ui.pretrainedCheckBox.setChecked(False)
+            self.main_view.ui.pretrain_check_box.setChecked(False)
 
-    def setVWeightFile(self, val):
-        self.mainView.ui.weightFileComboBox.setCurrentText(val)
+    def set_v_weight(self, val):
+        self.main_view.ui.weight_combo_box.setCurrentText(val)
 
-    def setVDevice(self, val):
-        self.mainView.ui.deviceInput.setText(val)
+    def set_v_device(self, val):
+        self.main_view.ui.device_line_edit.setText(val)
 
-    def setVShuffle(self, val):
+    def set_v_shuffle(self, val):
         if val == "True":
-            self.mainView.ui.shuffleCheckBox.setChecked(True)
+            self.main_view.ui.shuffle_check_box.setChecked(True)
         else:
-            self.mainView.ui.shuffleCheckBox.setChecked(False)
+            self.main_view.ui.shuffle_check_box.setChecked(False)
 
-    def setVBatchSize(self, val):
-        self.mainView.ui.batchSizeInput.setText(val)
+    def set_v_batch(self, val):
+        self.main_view.ui.batch_line_edit.setText(val)
 
-    def setVWorkerNumber(self, val):
-        self.mainView.ui.workerNumberInput.setText(val)
+    def set_v_worker(self, val):
+        self.main_view.ui.worker_line_edit.setText(val)
 
-    def setVImgSize(self, val):
-        self.mainView.ui.imgSizeInput.setText(val)
+    def set_v_size(self, val):
+        self.main_view.ui.size_line_edit.setText(val)
 
-    def setVPadding(self, val):
-        self.mainView.ui.paddingComboBox.setCurrentText(val)
+    def set_v_pad(self, val):
+        self.main_view.ui.pad_combo_box.setCurrentText(val)
 
-    def setVClassNumber(self, val):
-        self.mainView.ui.classNumberInput.setText(val)
+    def set_v_cls(self, val):
+        self.main_view.ui.cls_line_edit.setText(val)
 
-    # Other control functions
-    def print_message(self, textBrowser, message, timestamp=True):
-        if timestamp == True:
-            currentTime = time.strftime("%H:%M:%S", time.localtime())
-            message = currentTime + " - - " + message + "\n"
-        textBrowser.append(message)
-        textBrowser.verticalScrollBar().setValue(
-            textBrowser.verticalScrollBar().maximum()
-        )
+    def enable_control(self):
+        self.main_view.ui.start_push_button.setEnabled(True)
+        self.main_view.ui.stop_push_button.setEnabled(True)
+        self.main_view.ui.delete_push_button.setEnabled(True)
 
-    def addItem(self, listWidget, name):
-        listWidget.addItem(name)
+    def disable_control(self):
+        self.main_view.ui.start_push_button.setEnabled(False)
+        self.main_view.ui.stop_push_button.setEnabled(False)
+        self.main_view.ui.delete_push_button.setEnabled(False)
 
-    def removeItem(self, listWidget, name):
-        items = listWidget.findItems(name, Qt.MatchExactly)
-        item = items[0]
-        row = listWidget.row(item)
-        listWidget.takeItem(row)
-
-    def enableControl(self):
-        self.mainView.ui.startServerButton.setEnabled(True)
-        self.mainView.ui.stopServerButton.setEnabled(True)
-        self.mainView.ui.deleteServerButton.setEnabled(True)
-
-    def disableControl(self):
-        self.mainView.ui.startServerButton.setEnabled(False)
-        self.mainView.ui.stopServerButton.setEnabled(False)
-        self.mainView.ui.deleteServerButton.setEnabled(False)
-
-    def checkProfile(self):
-        missProfileDict = {
-            "trainPath": "train set path",
-            "validationPath": "validation set path",
-            "testPath": "test set path",
-            "influencePath": "influence result path",
-            "checkPointPath": "check point path",
-            "batch_size": "batch size",
-            "num_workers": "worker number",
-            "num_classes": "class number",
-            "image_size": "image size",
+    def check_profile(self):
+        miss_profile_dict = {
+            "train_path": "train set path",
+            "val_path": "validation set path",
+            "test_path": "test set path",
+            "inf_path": "influence result path",
+            "ckpt_path": "check point path",
+            "batch": "batch size",
+            "worker": "worker number",
+            "cls": "class number",
+            "size": "image size",
         }
-        missProfilePrompt = []
+        miss_profile_prompt = []
 
-        for profileName in [
-            "trainPath",
-            "validationPath",
-            "testPath",
-            "influencePath",
-            "checkPointPath",
-            "batch_size",
-            "num_workers",
-            "num_classes",
-            "image_size",
+        for profile_name in [
+            "train_path",
+            "val_path",
+            "test_path",
+            "inf_path",
+            "ckpt_path",
+            "batch",
+            "worker",
+            "cls",
+            "size",
         ]:
-            if not self.model.profile[profileName].strip():
-                missProfilePrompt.append(missProfileDict[profileName])
+            if not self.model.profile[profile_name].strip():
+                miss_profile_prompt.append(miss_profile_dict[profile_name])
 
-        if len(missProfilePrompt) != 0:
+        if len(miss_profile_prompt) != 0:
             self.print_message(
-                self.mainView.ui.promptBrowser,
-                "Please provide {}".format(", ".join(missProfilePrompt)),
+                self.main_view.ui.prompt_text_browser,
+                "Please provide {}".format(", ".join(miss_profile_prompt)),
             )
             return 1
         return 0
 
     def get_item_from_list_widgets(self):
         return (
-            self.mainView.ui.runningListWidget.selectedItems()
-            if len(self.mainView.ui.runningListWidget.selectedItems()) > 0
-            else self.mainView.ui.exitedListWidget.selectedItems()
-            if len(self.mainView.ui.exitedListWidget.selectedItems()) > 0
-            else self.mainView.ui.createdListWidget.selectedItems()
-            if len(self.mainView.ui.createdListWidget.selectedItems()) > 0
+            self.main_view.ui.run_list_widget.selectedItems()
+            if len(self.main_view.ui.run_list_widget.selectedItems()) > 0
+            else self.main_view.ui.exit_list_widget.selectedItems()
+            if len(self.main_view.ui.exit_list_widget.selectedItems()) > 0
+            else self.main_view.ui.create_list_widget.selectedItems()
+            if len(self.main_view.ui.create_list_widget.selectedItems()) > 0
             else []
         )
 
-    def updateSucView(self):
+    def update_success_view(self):
         with open("./RecordData/config_record.json", "r") as f:
-            matchDict = json.load(f)
-            fileName = matchDict[self.model.temp_name]
-        with open(fileName) as f:
+            match_dict = json.load(f)
+            file_name = match_dict[self.model.temp_name]
+        with open(file_name) as f:
             config = json.load(f)
             port = config["port"]
 
         self.print_message(
-            self.mainView.ui.promptBrowser,
+            self.main_view.ui.prompt_text_browser,
             "{} is available at http://localhost:{}".format(self.model.temp_name, port),
         )
-        self.addItem(self.mainView.ui.runningListWidget, self.model.temp_name)
+        self.add_item(self.main_view.ui.run_list_widget, self.model.temp_name)
 
     # Fetch the docker image versions to add to the image version combobox and initiate model's image version
-    def initImageVersions(self):
+    def init_images(self):
         res = requests.get(
             "https://registry.hub.docker.com/v2/repositories/paulcccccch/robustar/tags?page_size=1024",
             timeout=3,
         )
 
         for item in res.json()["results"]:
-            self.mainView.ui.versionComboBox.addItem(item["name"])
-        self.model.imageVersion = self.mainView.ui.versionComboBox.currentText()
+            self.main_view.ui.image_combo_box.addItem(item["name"])
+        self.model.image = self.main_view.ui.image_combo_box.currentText()
 
     # Scan the checkpoint directory to add checkpoint files to the weight file combobox and initiates model's weight file
-    def initWeightFiles(self):
-        self.mainView.ui.weightFileComboBox.clear()
-        self.mainView.ui.weightFileComboBox.addItem("None")
+    def init_weights(self):
+        self.main_view.ui.weight_combo_box.clear()
+        self.main_view.ui.weight_combo_box.addItem("None")
 
-        for file in os.listdir(self.model.checkPointPath):
+        for file in os.listdir(self.model.ckpt_path):
             if file.endswith(".pth") or file.endswith(".pt"):
-                self.mainView.ui.weightFileComboBox.addItem(file)
+                self.main_view.ui.weight_combo_box.addItem(file)
 
-        self.model.weightFile = self.mainView.ui.weightFileComboBox.currentText()
+        self.model.weight = self.main_view.ui.weight_combo_box.currentText()
+
+    # Other control functions
+    @staticmethod
+    def print_message(text_browser, message, timestamp=True):
+        if timestamp is True:
+            current_time = time.strftime("%H:%M:%S", time.localtime())
+            message = current_time + " - - " + message + "\n"
+        text_browser.append(message)
+        text_browser.verticalScrollBar().setValue(
+            text_browser.verticalScrollBar().maximum()
+        )
+
+    @staticmethod
+    def add_item(list_widget, name):
+        list_widget.addItem(name)
+
+    @staticmethod
+    def remove_item(list_widget, name):
+        items = list_widget.findItems(name, Qt.MatchExactly)
+        item = items[0]
+        row = list_widget.row(item)
+        list_widget.takeItem(row)
 
 
 class ServerOperationThread(Thread):
@@ -360,6 +366,6 @@ class ServerOperationThread(Thread):
         self.ctrl = ctrl
 
     def run(self):
-        self.ctrl.disableControl()
+        self.ctrl.disable_control()
         self.func()
-        self.ctrl.enableControl()
+        self.ctrl.enable_control()

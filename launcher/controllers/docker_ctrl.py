@@ -28,9 +28,9 @@ class DockerController(QObject):
     def get_selection(self, for_start=False):
         if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
             self.model.made_on_create = True
-            self.model.temp_name = self.model.profile["containerName"]
+            self.model.temp_name = self.model.profile["name"]
             if for_start is True:
-                self.model.temp_image = self.model.profile["imageVersion"]
+                self.model.temp_image = self.model.profile["image"]
                 self.model.temp_port = self.model.profile["port"]
             return self.get_container_by_name(self.model.temp_name, for_start=for_start)
         else:
@@ -74,20 +74,20 @@ class DockerController(QObject):
             self.start_exist_server()
 
     def start_new_server(self):
-        image = "paulcccccch/robustar:" + self.model.profile["imageVersion"]
+        image = "paulcccccch/robustar:" + self.model.profile["image"]
 
         # save backend relevant configs in a json file
         config = {
-            "model_arch": self.model.modelArch,
-            "pre_trained": True if self.model.pretrained == "True" else False,
-            "weight_to_load": self.model.weightFile,
+            "model_arch": self.model.arch,
+            "pre_trained": True if self.model.pretrain == "True" else False,
+            "weight_to_load": self.model.weight,
             "device": self.model.device,
             "shuffle": True if self.model.shuffle == "True" else False,
-            "batch_size": int(self.model.batchSize),
-            "num_workers": int(self.model.workerNumber),
-            "image_size": int(self.model.imgSize),
-            "image_padding": self.model.padding,
-            "num_classes": int(self.model.classNumber),
+            "batch_size": int(self.model.batch),
+            "num_workers": int(self.model.worker),
+            "image_size": int(self.model.size),
+            "image_padding": self.model.pad,
+            "num_classes": int(self.model.cls),
             "port": int(self.model.port)
         }
 
@@ -95,117 +95,118 @@ class DockerController(QObject):
         if not os.path.exists("./RecordData"):
             os.makedirs("./RecordData")
 
-        fileName = f"./RecordData/config_{uuid.uuid4().hex}.json"
-        with open(fileName, "w") as f:
+        file_name = f"./RecordData/config_{uuid.uuid4().hex}.json"
+        with open(file_name, "w") as f:
             f.write(json.dumps(config))
-        configFile = os.path.join(os.getcwd(), fileName)
+        config_file = os.path.join(os.getcwd(), file_name)
 
-        # Store the (container - config file) matching
+        # Store the (container - config file) mapping
         if not os.path.exists("./RecordData/config_record.json"):
-            matchDict = {}
+            match_dict = {}
         else:
             with open("./RecordData/config_record.json", "r") as f:
-                matchDict = json.load(f)
+                match_dict = json.load(f)
         with open("./RecordData/config_record.json", "w") as f:
-            matchDict[self.model.profile["containerName"]] = fileName
-            json.dump(matchDict, f)
+            match_dict[self.model.profile["name"]] = file_name
+            json.dump(match_dict, f)
 
         try:
             if "cuda" in self.model.device:
-                self.startNewCudaServer(image, configFile)
+                self.start_new_cuda_server(image, config_file)
             elif "cpu" in self.model.device:
-                self.startNewCpuServer(image, configFile)
+                self.start_new_cpu_server(image, config_file)
 
-            self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Running {}".format(self.model.temp_image))
-            self.main_ctrl.updateSucView()
+            self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Running {}".format(
+                self.model.temp_image))
+            self.main_ctrl.update_success_view()
 
-            self.printLog(self.model.container)
+            self.print_log(self.model.container)
 
+        except docker.errors.APIError as api_error:
 
-        except docker.errors.APIError as apiError:
-
-            if ("port is already allocated" in str(apiError)):
-
-                self.main_ctrl.addItem(self.main_view.ui.create_list_widget, self.model.temp_name)
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is created but fails to run because port is already allocated. See more in <i>Details</i> page".format(self.model.temp_name))
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+            if "port is already allocated" in str(api_error):
+                self.main_ctrl.add_item(self.main_view.ui.create_list_widget, self.model.temp_name)
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is created but fails to run "
+                                                                                    "because port is already allocated."
+                                                                                    " See more in <i>Details</i> page"
+                                             .format(self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                            "Unexpected error encountered. See more in <i>Details</i> page")
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                                             "Unexpected error encountered. See more in <i>Details</i> page")
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
                 with open("./RecordData/config_record.json", "r") as f:
-                    matchDict = json.load(f)
+                    match_dict = json.load(f)
                 with open("./RecordData/config_record.json", "w") as f:
-                    fileName = matchDict.pop(self.model.profile["containerName"])
-                    os.remove(fileName)
-                    json.dump(matchDict, f)
+                    file_name = match_dict.pop(self.model.profile["name"])
+                    os.remove(file_name)
+                    json.dump(match_dict, f)
 
-
-    def startNewCpuServer(self, image, configFile):
-        self.downloadImage(image)
+    def start_new_cpu_server(self, image, config_file):
+        self.download_image(image)
 
         self.model.container = self.client.containers.run(
             image,
             detach=True,
-            name=self.model.profile["containerName"],
+            name=self.model.profile["name"],
             ports={
                 "80/tcp": (
                     "127.0.0.1", int(self.model.profile["port"]))
             },
             mounts=[
                 docker.types.Mount(target="/Robustar2/dataset/train",
-                                   source=getSystemPath(self.model.profile["trainPath"]),
+                                   source=get_system_path(self.model.profile["train_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/dataset/validation",
-                                   source=getSystemPath(self.model.profile["validationPath"]),
+                                   source=get_system_path(self.model.profile["val_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/dataset/test",
-                                   source=getSystemPath(self.model.profile["testPath"]),
+                                   source=get_system_path(self.model.profile["test_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/influence_images",
-                                   source=getSystemPath(self.model.profile["influencePath"]),
+                                   source=get_system_path(self.model.profile["inf_path"]),
                                    type="bind"),
                 docker.types.Mount(
                     target="/Robustar2/checkpoints",
-                    source=getSystemPath(self.model.profile["checkPointPath"]),
+                    source=get_system_path(self.model.profile["ckpt_path"]),
                     type="bind"),
             ],
             volumes=[
-                getSystemPath(configFile) + ":/Robustar2/configs.json"]
+                get_system_path(config_file) + ":/Robustar2/configs.json"]
         )
 
-    def startNewCudaServer(self, image, configFile):
-        self.downloadImage(image)
+    def start_new_cuda_server(self, image, config_file):
+        self.download_image(image)
 
         self.model.container = self.client.containers.run(
             image,
             detach=True,
-            name=self.model.profile["containerName"],
+            name=self.model.profile["name"],
             ports={
                 "80/tcp": (
                     "127.0.0.1", int(self.model.profile["port"]))
             },
             mounts=[
                 docker.types.Mount(target="/Robustar2/dataset/train",
-                                   source=getSystemPath(self.model.profile["trainPath"]),
+                                   source=get_system_path(self.model.profile["train_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/dataset/validation",
-                                   source=getSystemPath(self.model.profile["validationPath"]),
+                                   source=get_system_path(self.model.profile["val_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/dataset/test",
-                                   source=getSystemPath(self.model.profile["testPath"]),
+                                   source=get_system_path(self.model.profile["test_path"]),
                                    type="bind"),
                 docker.types.Mount(target="/Robustar2/influence_images",
-                                   source=getSystemPath(self.model.profile["influencePath"]),
+                                   source=get_system_path(self.model.profile["inf_path"]),
                                    type="bind"),
                 docker.types.Mount(
                     target="/Robustar2/checkpoints",
-                    source=getSystemPath(self.model.profile["checkPointPath"]),
+                    source=get_system_path(self.model.profile["ckpt_path"]),
                     type="bind"),
             ],
             volumes=[
-                configFile + ":/Robustar2/configs.json"],
+                config_file + ":/Robustar2/configs.json"],
 
             # Set the device_requests parm
             device_requests=[
@@ -217,134 +218,143 @@ class DockerController(QObject):
         try:
             if self.model.container.status == "exited":
                 self.model.container.restart()
-                self.main_ctrl.updateSucView()
-                self.main_ctrl.removeItem(self.main_view.ui.exit_list_widget, self.model.temp_name)
+                self.main_ctrl.update_success_view()
+                self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
 
-                self.printLog(self.model.container)
+                self.print_log(self.model.container)
 
             elif self.model.container.status == "created":
                 self.model.container.start()
-                self.main_ctrl.updateSucView()
-                self.main_ctrl.removeItem(self.main_view.ui.create_list_widget, self.model.temp_name)
+                self.main_ctrl.update_success_view()
+                self.main_ctrl.remove_item(self.main_view.ui.create_list_widget, self.model.temp_name)
 
-                self.printLog(self.model.container)
+                self.print_log(self.model.container)
 
             elif self.model.container.status == "running":
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is running".format(self.model.temp_name))
-
-            else:
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Illegal container status encountered")
-        except docker.errors.APIError as apiError:
-            if ("port is already allocated" in str(apiError)):
-
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} fails to run because port is already allocated. See more in <i>Details</i> page".format(self.model.temp_name))
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is running".format(
+                    self.model.temp_name))
 
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                            "Unexpected error encountered. See more in <i>Details</i> page")
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                                             "Illegal container status encountered")
+        except docker.errors.APIError as api_error:
+            if "port is already allocated" in str(api_error):
 
-    def stopServer(self):
-        if(self.get_selection()):
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} fails to run because port is "
+                                                                                    "already allocated. See more in"
+                                                                                    " <i>Details</i> page".format(
+                                                                                                self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+
+            else:
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                             "Unexpected error encountered. See more in <i>Details</i> page")
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+
+    def stop_server(self):
+        if self.get_selection():
             return
         try:
             if self.model.container.status == "exited":
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} has already stopped".format(self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                             "{} has already stopped".format(self.model.temp_name))
 
             elif self.model.container.status == "created":
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is not running".format(self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                             "{} is not running".format(self.model.temp_name))
 
             elif self.model.container.status == "running":
                 self.model.container.stop()
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is now stopped".format(self.model.temp_name))
-                self.main_ctrl.addItem(self.main_view.ui.exit_list_widget, self.model.temp_name)
-                self.main_ctrl.removeItem(self.main_view.ui.run_list_widget, self.model.temp_name)
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                             "{} is now stopped".format(self.model.temp_name))
+                self.main_ctrl.add_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
+                self.main_ctrl.remove_item(self.main_view.ui.run_list_widget, self.model.temp_name)
 
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                           "Illegal container status encountered")
-        except docker.errors.APIError as apiError:
+                                             "Illegal container status encountered")
+        except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                       "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                                         "Unexpected error encountered. See more in <i>Details</i> page")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-    def deleteServer(self):
-        if(self.get_selection()):
+    def delete_server(self):
+        if self.get_selection():
             return
         try:
-            if self.model.container.status == "running" or self.model.container.status == "created" or self.model.container.status == "exited":
+            if self.model.container.status == "running" or self.model.container.status == "created" or \
+                    self.model.container.status == "exited":
                 self.model.container.remove()
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} removed".format(self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                             "{} removed".format(self.model.temp_name))
 
-                if(self.model.container.status == "running"):
-                    self.main_ctrl.removeItem(self.main_view.ui.run_list_widget, self.model.temp_name)
-                elif(self.model.container.status == "created"):
-                    self.main_ctrl.removeItem(self.main_view.ui.create_list_widget, self.model.temp_name)
-                elif (self.model.container.status == "exited"):
-                    self.main_ctrl.removeItem(self.main_view.ui.exit_list_widget, self.model.temp_name)
+                if self.model.container.status == "running":
+                    self.main_ctrl.remove_item(self.main_view.ui.run_list_widget, self.model.temp_name)
+                elif self.model.container.status == "created":
+                    self.main_ctrl.remove_item(self.main_view.ui.create_list_widget, self.model.temp_name)
+                elif self.model.container.status == "exited":
+                    self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
 
                 with open("./RecordData/config_record.json", "r") as f:
-                    matchDict = json.load(f)
+                    match_dict = json.load(f)
                 with open("./RecordData/config_record.json", "w") as f:
-                    fileName = matchDict.pop(self.model.temp_name)
-                    os.remove(fileName)
-                    json.dump(matchDict, f)
+                    file_name = match_dict.pop(self.model.temp_name)
+                    os.remove(file_name)
+                    json.dump(match_dict, f)
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                           "Illegal container status encountered")
-        except docker.errors.APIError as apiError:
+                                             "Illegal container status encountered")
+        except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                       "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                                         "Unexpected error encountered. See more in <i>Details</i> page")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-    def refreshServers(self):
-        for listWidget in self.main_view.list_widget_lst:
-            listWidget.clear()
+    def refresh_server(self):
+        for list_widget in self.main_view.list_widget_lst:
+            list_widget.clear()
 
         try:
-            containerList = self.client.containers.list(all=True)
+            container_lst = self.client.containers.list(all=True)
 
-            for container in containerList:
-                if ("paulcccccch/robustar:" in str(container.image)):
-                    if (container.status == "running"):
-                        self.main_ctrl.addItem(self.main_view.ui.run_list_widget, container.name)
-
-                        self.printLog(container)
-                    elif (container.status == "exited"):
-                        self.main_ctrl.addItem(self.main_view.ui.exit_list_widget, container.name)
-                    elif (container.status == "created"):
-                        self.main_ctrl.addItem(self.main_view.ui.create_list_widget, container.name)
+            for container in container_lst:
+                if "paulcccccch/robustar:" in str(container.image):
+                    if container.status == "running":
+                        self.main_ctrl.add_item(self.main_view.ui.run_list_widget, container.name)
+                        self.print_log(container)
+                    elif container.status == "exited":
+                        self.main_ctrl.add_item(self.main_view.ui.exit_list_widget, container.name)
+                    elif container.status == "created":
+                        self.main_ctrl.add_item(self.main_view.ui.create_list_widget, container.name)
                     else:
                         self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                                   "Illegal container status encountered")
-        except docker.errors.APIError as apiError:
+                                                     "Illegal container status encountered")
+        except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                       "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(apiError))
+                                         "Unexpected error encountered. See more in <i>Details</i> page")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-    def downloadImage(self, image):
-        imageList = [x.tags[0] for x in self.client.images.list() if x.tags != []]
-        if image not in imageList:
+    def download_image(self, image):
+        image_lst = [x.tags[0] for x in self.client.images.list() if x.tags != []]
+        if image not in image_lst:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                       f"Downloading {image}. See more in <i>Details</i> page")
+                                         f"Downloading {image}. See more in <i>Details</i> page")
             repo, tag = image.split(":")
             for line in self.api_client.pull(repository=repo, tag=tag, stream=True, decode=True):
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(line))
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, f"Downloaded {image}")
 
-    def printLog(self, container):
-        def func(container):
+    def print_log(self, container):
+        def func(ct):
             # Get the logs since current utc time as an iterator
-            curTime = datetime.utcnow()
-            logs = container.logs(stream=True, since=curTime)
+            cur_time = datetime.utcnow()
+            logs = ct.logs(stream=True, since=cur_time)
 
             # Get the name and port setting
-            name = container.name
+            name = ct.name
             with open("./RecordData/config_record.json", "r") as f:
-                matchDict = json.load(f)
-                fileName = matchDict[name]
-            with open(fileName) as f:
+                match_dict = json.load(f)
+                file_name = match_dict[name]
+            with open(file_name) as f:
                 config = json.load(f)
                 port = config["port"]
 
@@ -368,5 +378,5 @@ class DockerController(QObject):
 
 
 # Change path input by the user to system path
-def getSystemPath(userPath: str):
-    return str(os.path.normpath(userPath))
+def get_system_path(user_path):
+    return str(os.path.normpath(user_path))

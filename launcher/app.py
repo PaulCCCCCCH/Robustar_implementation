@@ -17,9 +17,9 @@ class App(QApplication):
         self.mainView = MainView(self.mainCtrl)
         self.popupView = PopupView()
 
-        self.mainCtrl.setModel(self.model)
-        self.mainCtrl.setMainView(self.mainView)
-        self.mainCtrl.setPopupView(self.popupView)
+        self.mainCtrl.set_model(self.model)
+        self.mainCtrl.set_main_view(self.mainView)
+        self.mainCtrl.set_popup_view(self.popupView)
 
         self.mainCtrl.init()
 

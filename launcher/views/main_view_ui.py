@@ -353,7 +353,7 @@ class Ui_main_widget(object):
         self.data_group_box.setFont(font)
         self.layoutWidget4 = QWidget(self.data_group_box)
         self.layoutWidget4.setObjectName(u"layoutWidget4")
-        self.layoutWidget4.setGeometry(QRect(10, 20, 361, 243))
+        self.layoutWidget4.setGeometry(QRect(10, 20, 361, 201))
         self.data_v_layout = QVBoxLayout(self.layoutWidget4)
         self.data_v_layout.setSpacing(9)
         self.data_v_layout.setObjectName(u"data_v_layout")
