@@ -564,7 +564,7 @@ QPushButton:hover {
            <attribute name="title">
             <string>Create</string>
            </attribute>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>21</x>
@@ -2107,9 +2107,9 @@ QPushButton:hover {
                     </layout>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="class_h_layout">
+                    <layout class="QHBoxLayout" name="cls_h_layout">
                      <item>
-                      <widget class="QLabel" name="class_label">
+                      <widget class="QLabel" name="cls_label">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -2146,7 +2146,7 @@ QPushButton:hover {
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="class_line_edit">
+                      <widget class="QLineEdit" name="cls_line_edit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                          <horstretch>0</horstretch>

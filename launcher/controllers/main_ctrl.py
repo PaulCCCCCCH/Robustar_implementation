@@ -163,7 +163,7 @@ class MainController(QObject):
         if self.mainView.ui.tabWidget.currentIndex() == 0 and self.checkProfile():
             return
         else:
-            t = ServerOperationThread(target=self.dockerCtrl.startServer, ctrl=self)
+            t = ServerOperationThread(target=self.dockerCtrl.start_server, ctrl=self)
             t.start()
 
     def stopServer(self):
@@ -241,7 +241,7 @@ class MainController(QObject):
         self.mainView.ui.classNumberInput.setText(val)
 
     # Other control functions
-    def printMessage(self, textBrowser, message, timestamp=True):
+    def print_message(self, textBrowser, message, timestamp=True):
         if timestamp == True:
             currentTime = time.strftime("%H:%M:%S", time.localtime())
             message = currentTime + " - - " + message + "\n"
@@ -298,14 +298,14 @@ class MainController(QObject):
                 missProfilePrompt.append(missProfileDict[profileName])
 
         if len(missProfilePrompt) != 0:
-            self.printMessage(
+            self.print_message(
                 self.mainView.ui.promptBrowser,
                 "Please provide {}".format(", ".join(missProfilePrompt)),
             )
             return 1
         return 0
 
-    def getItemsFromListWidgets(self):
+    def get_item_from_list_widgets(self):
         return (
             self.mainView.ui.runningListWidget.selectedItems()
             if len(self.mainView.ui.runningListWidget.selectedItems()) > 0
@@ -319,16 +319,16 @@ class MainController(QObject):
     def updateSucView(self):
         with open("./RecordData/config_record.json", "r") as f:
             matchDict = json.load(f)
-            fileName = matchDict[self.model.tempName]
+            fileName = matchDict[self.model.temp_name]
         with open(fileName) as f:
             config = json.load(f)
             port = config["port"]
 
-        self.printMessage(
+        self.print_message(
             self.mainView.ui.promptBrowser,
-            "{} is available at http://localhost:{}".format(self.model.tempName, port),
+            "{} is available at http://localhost:{}".format(self.model.temp_name, port),
         )
-        self.addItem(self.mainView.ui.runningListWidget, self.model.tempName)
+        self.addItem(self.mainView.ui.runningListWidget, self.model.temp_name)
 
     # Fetch the docker image versions to add to the image version combobox and initiate model's image version
     def initImageVersions(self):

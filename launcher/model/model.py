@@ -1,26 +1,26 @@
 from PySide2.QtCore import QObject, Signal
 
+
 class Model(QObject):
     # Custom signals
-    containerNameChanged = Signal(str)
-    imageVersionChanged = Signal(str)
+    nameChanged = Signal(str)
+    imageChanged = Signal(str)
     portChanged = Signal(str)
     trainPathChanged = Signal(str)
-    validationPathChanged = Signal(str)
+    valPathChanged = Signal(str)
     testPathChanged = Signal(str)
-    checkPointPathChanged = Signal(str)
-    influencePathChanged = Signal(str)
-    configFileChanged = Signal(str)
-    modelArchChanged = Signal(str)
-    pretrainedChanged = Signal(str)
-    weightFileChanged = Signal(str)
+    ckptPathChanged = Signal(str)
+    infPathChanged = Signal(str)
+    archChanged = Signal(str)
+    pretrainChanged = Signal(str)
+    weightChanged = Signal(str)
     deviceChanged = Signal(str)
     shuffleChanged = Signal(str)
-    batchSizeChanged = Signal(str)
-    workerNumberChanged = Signal(str)
-    imgSizeChanged = Signal(str)
-    paddingChanged = Signal(str)
-    classNumberChanged = Signal(str)
+    batchChanged = Signal(str)
+    workerChanged = Signal(str)
+    sizeChanged = Signal(str)
+    padChanged = Signal(str)
+    clsChanged = Signal(str)
 
     def __init__(self, ctrl):
         super().__init__()
@@ -29,24 +29,24 @@ class Model(QObject):
 
         # Profile of the createTab
         self._profile = {
-            'containerName': 'robustar',
-            'imageVersion': '',
+            'name': 'robustar',
+            'image': '',
             'port': '8000',
-            'trainPath': '',
-            'validationPath': '',
-            'testPath': '',
-            'checkPointPath': '',
-            'influencePath': '',
-            'model_arch': 'resnet-18',
-            'pre_trained': 'False',
-            'weight_to_load': '',
+            'train_path': '',
+            'val_path': '',
+            'test_path': '',
+            'ckpt_path': '',
+            'inf_path': '',
+            'arch': 'resnet-18',
+            'pretrain': 'False',
+            'weight': '',
             'device': 'cpu',
             'shuffle': 'False',
-            'batch_size': '',
-            'num_workers': '',
-            'image_size': '',
-            'padding': 'short side',
-            'num_classes': ''
+            'batch': '',
+            'worker': '',
+            'size': '',
+            'pad': 'short side',
+            'cls': ''
         }
 
         # Root path of the path choosing window
@@ -56,55 +56,55 @@ class Model(QObject):
         self.container = None
 
         # Name of the container to be operated on
-        self.tempName = ''
+        self.temp_name = ''
 
         # Image version of the container to be operated on
-        self.tempVer = ''
+        self.temp_image = ''
 
         # Website port of the container to be operated on
-        self.tempPort = ''
+        self.temp_port = ''
 
         # Boolean to record if the instruction is made on createTab
-        self.madeOnCreateTab = False
+        self.made_on_create = False
 
 
         # Match the corresponding signals to slots in controllers
-        self.containerNameChanged.connect(self.ctrl.setVContainerName)
-        self.imageVersionChanged.connect(self.ctrl.setVImageVersion)
+        self.nameChanged.connect(self.ctrl.setVContainerName)
+        self.imageChanged.connect(self.ctrl.setVImageVersion)
         self.portChanged.connect(self.ctrl.setVPort)
         self.trainPathChanged.connect(self.ctrl.setVTrainPath)
-        self.validationPathChanged.connect(self.ctrl.setVValidationPath)
+        self.valPathChanged.connect(self.ctrl.setVValidationPath)
         self.testPathChanged.connect(self.ctrl.setVTestPath)
-        self.checkPointPathChanged.connect(self.ctrl.setVCheckPointPath)
-        self.influencePathChanged.connect(self.ctrl.setVInfluencePath)
-        self.modelArchChanged.connect(self.ctrl.setVModelArch)
-        self.pretrainedChanged.connect(self.ctrl.setVPretrained)
-        self.weightFileChanged.connect(self.ctrl.setVWeightFile)
+        self.ckptPathChanged.connect(self.ctrl.setVCheckPointPath)
+        self.infPathChanged.connect(self.ctrl.setVInfluencePath)
+        self.archChanged.connect(self.ctrl.setVModelArch)
+        self.pretrainChanged.connect(self.ctrl.setVPretrained)
+        self.weightChanged.connect(self.ctrl.setVWeightFile)
         self.deviceChanged.connect(self.ctrl.setVDevice)
         self.shuffleChanged.connect(self.ctrl.setVShuffle)
-        self.batchSizeChanged.connect(self.ctrl.setVBatchSize)
-        self.workerNumberChanged.connect(self.ctrl.setVWorkerNumber)
-        self.imgSizeChanged.connect(self.ctrl.setVImgSize)
-        self.paddingChanged.connect(self.ctrl.setVPadding)
-        self.classNumberChanged.connect(self.ctrl.setVClassNumber)
+        self.batchChanged.connect(self.ctrl.setVBatchSize)
+        self.workerChanged.connect(self.ctrl.setVWorkerNumber)
+        self.sizeChanged.connect(self.ctrl.setVImgSize)
+        self.padChanged.connect(self.ctrl.setVPadding)
+        self.clsChanged.connect(self.ctrl.setVClassNumber)
 
     @property
-    def containerName(self):
-        return self._profile['containerName']
+    def name(self):
+        return self._profile['name']
 
-    @containerName.setter
-    def containerName(self, val):
-        self._profile['containerName'] = val
-        self.containerNameChanged.emit(val)
+    @name.setter
+    def name(self, val):
+        self._profile['name'] = val
+        self.nameChanged.emit(val)
 
     @property
-    def imageVersion(self):
-        return self._profile['imageVersion']
+    def image(self):
+        return self._profile['image']
 
-    @imageVersion.setter
-    def imageVersion(self, val):
-        self._profile['imageVersion'] = val
-        self.imageVersionChanged.emit(val)
+    @image.setter
+    def image(self, val):
+        self._profile['image'] = val
+        self.imageChanged.emit(val)
 
     @property
     def port(self):
@@ -116,76 +116,76 @@ class Model(QObject):
         self.portChanged.emit(val)
 
     @property
-    def trainPath(self):
-        return self._profile['trainPath']
+    def train_path(self):
+        return self._profile['train_path']
 
-    @trainPath.setter
-    def trainPath(self, val):
-        self._profile['trainPath'] = val
+    @train_path.setter
+    def train_path(self, val):
+        self._profile['train_path'] = val
         self.trainPathChanged.emit(val)
 
     @property
-    def validationPath(self):
-        return self._profile['validationPath']
+    def val_path(self):
+        return self._profile['val_path']
 
-    @validationPath.setter
-    def validationPath(self, val):
-        self._profile['validationPath'] = val
-        self.validationPathChanged.emit(val)
+    @val_path.setter
+    def val_path(self, val):
+        self._profile['val_path'] = val
+        self.valPathChanged.emit(val)
 
     @property
-    def testPath(self):
-        return self._profile['testPath']
+    def test_path(self):
+        return self._profile['test_path']
 
-    @testPath.setter
-    def testPath(self, val):
-        self._profile['testPath'] = val
+    @test_path.setter
+    def test_path(self, val):
+        self._profile['test_path'] = val
         self.testPathChanged.emit(val)
 
     @property
-    def checkPointPath(self):
-        return self._profile['checkPointPath']
+    def ckpt_path(self):
+        return self._profile['ckpt_path']
 
-    @checkPointPath.setter
-    def checkPointPath(self, val):
-        self._profile['checkPointPath'] = val
-        self.checkPointPathChanged.emit(val)
-
-    @property
-    def influencePath(self):
-        return self._profile['influencePath']
-
-    @influencePath.setter
-    def influencePath(self, val):
-        self._profile['influencePath'] = val
-        self.influencePathChanged.emit(val)
+    @ckpt_path.setter
+    def ckpt_path(self, val):
+        self._profile['ckpt_path'] = val
+        self.ckptPathChanged.emit(val)
 
     @property
-    def modelArch(self):
-        return self._profile['model_arch']
+    def inf_path(self):
+        return self._profile['inf_path']
 
-    @modelArch.setter
-    def modelArch(self, val):
-        self._profile['model_arch'] = val
-        self.modelArchChanged.emit(val)
-
-    @property
-    def pretrained(self):
-        return self._profile['pre_trained']
-
-    @pretrained.setter
-    def pretrained(self, val):
-        self._profile['pre_trained'] = val
-        self.pretrainedChanged.emit(val)
+    @inf_path.setter
+    def inf_path(self, val):
+        self._profile['inf_path'] = val
+        self.infPathChanged.emit(val)
 
     @property
-    def weightFile(self):
-        return self._profile['weight_to_load']
+    def arch(self):
+        return self._profile['arch']
 
-    @weightFile.setter
-    def weightFile(self, val):
-        self._profile['weight_to_load'] = val
-        self.weightFileChanged.emit(val)
+    @arch.setter
+    def arch(self, val):
+        self._profile['arch'] = val
+        self.archChanged.emit(val)
+
+    @property
+    def pretrain(self):
+        return self._profile['pretrain']
+
+    @pretrain.setter
+    def pretrain(self, val):
+        self._profile['pretrain'] = val
+        self.pretrainChanged.emit(val)
+
+    @property
+    def weight(self):
+        return self._profile['weight']
+
+    @weight.setter
+    def weight(self, val):
+        self._profile['weight'] = val
+        self.weightChanged.emit(val)
 
     @property
     def device(self):
@@ -206,49 +206,49 @@ class Model(QObject):
         self.shuffleChanged.emit(val)
 
     @property
-    def batchSize(self):
-        return self._profile['batch_size']
+    def batch(self):
+        return self._profile['batch']
 
-    @batchSize.setter
-    def batchSize(self, val):
-        self._profile['batch_size'] = val
-        self.batchSizeChanged.emit(val)
-
-    @property
-    def workerNumber(self):
-        return self._profile['num_workers']
-
-    @workerNumber.setter
-    def workerNumber(self, val):
-        self._profile['num_workers'] = val
-        self.workerNumberChanged.emit(val)
+    @batch.setter
+    def batch(self, val):
+        self._profile['batch'] = val
+        self.batchChanged.emit(val)
 
     @property
-    def imgSize(self):
-        return self._profile['image_size']
+    def worker(self):
+        return self._profile['worker']
 
-    @imgSize.setter
-    def imgSize(self, val):
-        self._profile['image_size'] = val
-        self.imgSizeChanged.emit(val)
-
-    @property
-    def padding(self):
-        return self._profile['padding']
-
-    @padding.setter
-    def padding(self, val):
-        self._profile['padding'] = val
-        self.paddingChanged.emit(val)
+    @worker.setter
+    def worker(self, val):
+        self._profile['worker'] = val
+        self.workerChanged.emit(val)
 
     @property
-    def classNumber(self):
-        return self._profile['num_classes']
+    def size(self):
+        return self._profile['size']
 
-    @classNumber.setter
-    def classNumber(self, val):
-        self._profile['num_classes'] = val
-        self.classNumberChanged.emit(val)
+    @size.setter
+    def size(self, val):
+        self._profile['size'] = val
+        self.sizeChanged.emit(val)
+
+    @property
+    def pad(self):
+        return self._profile['pad']
+
+    @pad.setter
+    def pad(self, val):
+        self._profile['pad'] = val
+        self.padChanged.emit(val)
+
+    @property
+    def cls(self):
+        return self._profile['cls']
+
+    @cls.setter
+    def cls(self, val):
+        self._profile['cls'] = val
+        self.clsChanged.emit(val)
 
     @property
     def profile(self):
@@ -256,21 +256,21 @@ class Model(QObject):
 
     @profile.setter
     def profile(self, val):
-        self.containerName = val['containerName']
-        self.imageVersion = val['imageVersion']
+        self.name = val['name']
+        self.image = val['image']
         self.port = val['port']
-        self.trainPath = val['trainPath']
-        self.validationPath = val['validationPath']
-        self.testPath = val['testPath']
-        self.checkPointPath = val['checkPointPath']
-        self.influencePath = val['influencePath']
-        self.modelArch = val['model_arch']
-        self.pretrained = val['pre_trained']
-        self.weightFile = val['weight_to_load']
+        self.train_path = val['train_path']
+        self.val_path = val['val_path']
+        self.test_path = val['test_path']
+        self.ckpt_path = val['ckpt_path']
+        self.inf_path = val['inf_path']
+        self.arch = val['arch']
+        self.pretrain = val['pretrain']
+        self.weight = val['weight']
         self.device = val['device']
         self.shuffle = val['shuffle']
-        self.batchSize = val['batch_size']
-        self.workerNumber = val['num_workers']
-        self.imgSize = val['image_size']
-        self.padding = val['padding']
-        self.classNumber = val['num_classes']
+        self.batch = val['batch']
+        self.worker = val['worker']
+        self.size = val['size']
+        self.pad = val['pad']
+        self.cls = val['cls']
