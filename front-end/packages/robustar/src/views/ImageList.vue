@@ -344,7 +344,7 @@ export default {
       ];
     },
     accuarcy() {
-      const [allImageLength, correctImageLength, incorrectImageLength] = this.testImageList
+      const {allImageLength, correctImageLength, incorrectImageLength} = this.testImageList
       // const correct_image_length = this.correct_image.length;
       // return { value: currect_length };
       return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
