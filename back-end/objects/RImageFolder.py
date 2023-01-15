@@ -293,7 +293,7 @@ class REvalImageFolder(RImageFolder):
 
     def get_record(self, correct: bool, start=None, end=None):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
-        if len(buffer) <= start:
+        if start is not None and len(buffer) <= start:
             raise ValueError("Out of upper-bound")
         return [p[0] for p in get_slice(buffer, start, end)]
 

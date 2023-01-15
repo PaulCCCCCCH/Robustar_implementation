@@ -185,5 +185,5 @@ def getClassifiedSplitLength(split):
         correct_length = len(getImagePath(split + '_correct', None, None))
         incorrect_length = len(getImagePath(split + '_incorrect', None, None))
 
-    test_image_lists = list((all_length, correct_length, incorrect_length))
-    return test_image_lists
+        test_image_lists = list((all_length, correct_length, incorrect_length))
+        return test_image_lists
