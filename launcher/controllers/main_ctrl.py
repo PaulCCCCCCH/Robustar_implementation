@@ -78,6 +78,22 @@ class MainController(QObject):
         if path:
             self.model.validationPath = path
 
+    def setMPairedPath(self):
+        path = QFileDialog.getExistingDirectory(
+            self.mainView, "Choose Paired Set Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.pairedPath = path
+
+    def setMGeneratedPath(self):
+        path = QFileDialog.getExistingDirectory(
+            self.mainView, "Choose Generated Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.generatedPath = path
+
     def setMCheckPointPath(self):
         path = QFileDialog.getExistingDirectory(
             self.mainView, "Choose Checkpoints Path", self.model.cwd
@@ -194,6 +210,15 @@ class MainController(QObject):
 
     def setVTestPath(self, val):
         self.mainView.ui.testPathDisplay.setText(val)
+
+    def setVValidationPath(self, val):
+        self.mainView.ui.validationPathDisplay.setText(val)
+
+    def setVPairedPath(self, val):
+        self.mainView.ui.pairedPathDisplay.setText(val)
+
+    def setVGeneratedPath(self, val):
+        self.mainView.ui.generatedPathDisplay.setText(val)
 
     def setVCheckPointPath(self, val):
         self.mainView.ui.checkPointPathDisplay.setText(val)

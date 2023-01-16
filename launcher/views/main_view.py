@@ -17,6 +17,8 @@ class MainView(QWidget):
         self.ui.trainPathButton.clicked.connect(self.ctrl.setMTrainPath)
         self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
         self.ui.validationPathButton.clicked.connect(self.ctrl.setMValidationPath)
+        self.ui.pairedPathButton.clicked.connect(self.ctrl.setMPairedPath)
+        self.ui.generatedPathButton.clicked.connect(self.ctrl.setMGeneratedPath)
         self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)
         self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
 

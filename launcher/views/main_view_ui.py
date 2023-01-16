@@ -474,6 +474,98 @@ class Ui_RobustarLauncher(object):
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_validation_set)
 
+        # paired
+
+        self.horizontalLayout_paired_set = QHBoxLayout()
+        self.horizontalLayout_paired_set.setObjectName(
+            "horizontalLayout_paired_set"
+        )
+        self.horizontalLayout_paired_set.setContentsMargins(-1, -1, 0, -1)
+        self.label_paired_set = QLabel(self.layoutWidget3)
+        self.label_paired_set.setObjectName("label_paired_set")
+        sizePolicy1.setHeightForWidth(
+            self.label_paired_set.sizePolicy().hasHeightForWidth()
+        )
+        self.label_paired_set.setSizePolicy(sizePolicy1)
+        self.label_paired_set.setMinimumSize(QSize(174, 39))
+        self.label_paired_set.setMaximumSize(QSize(174, 39))
+        self.label_paired_set.setFont(font)
+
+        self.horizontalLayout_paired_set.addWidget(self.label_paired_set)
+
+        self.pairedPathDisplay = QLineEdit(self.layoutWidget3)
+        self.pairedPathDisplay.setObjectName("pairedPathDisplay")
+        sizePolicy1.setHeightForWidth(
+            self.pairedPathDisplay.sizePolicy().hasHeightForWidth()
+        )
+        self.pairedPathDisplay.setSizePolicy(sizePolicy1)
+        self.pairedPathDisplay.setMinimumSize(QSize(137, 24))
+        self.pairedPathDisplay.setMaximumSize(QSize(137, 24))
+        self.pairedPathDisplay.setFont(font)
+
+        self.horizontalLayout_paired_set.addWidget(self.pairedPathDisplay)
+
+        self.pairedPathButton = QPushButton(self.layoutWidget3)
+        self.pairedPathButton.setObjectName("pairedPathButton")
+        sizePolicy1.setHeightForWidth(
+            self.pairedPathButton.sizePolicy().hasHeightForWidth()
+        )
+        self.pairedPathButton.setSizePolicy(sizePolicy1)
+        self.pairedPathButton.setMinimumSize(QSize(28, 20))
+        self.pairedPathButton.setMaximumSize(QSize(28, 20))
+        self.pairedPathButton.setFont(font)
+
+        self.horizontalLayout_paired_set.addWidget(self.pairedPathButton)
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_paired_set)
+
+        # generated
+
+        self.horizontalLayout_generated_set = QHBoxLayout()
+        self.horizontalLayout_generated_set.setObjectName(
+            "horizontalLayout_generated_set"
+        )
+        self.horizontalLayout_generated_set.setContentsMargins(-1, -1, 0, -1)
+        self.label_generated_set = QLabel(self.layoutWidget3)
+        self.label_generated_set.setObjectName("label_generated_set")
+        sizePolicy1.setHeightForWidth(
+            self.label_generated_set.sizePolicy().hasHeightForWidth()
+        )
+        self.label_generated_set.setSizePolicy(sizePolicy1)
+        self.label_generated_set.setMinimumSize(QSize(174, 39))
+        self.label_generated_set.setMaximumSize(QSize(174, 39))
+        self.label_generated_set.setFont(font)
+
+        self.horizontalLayout_generated_set.addWidget(self.label_generated_set)
+
+        self.generatedPathDisplay = QLineEdit(self.layoutWidget3)
+        self.generatedPathDisplay.setObjectName("generatedPathDisplay")
+        sizePolicy1.setHeightForWidth(
+            self.generatedPathDisplay.sizePolicy().hasHeightForWidth()
+        )
+        self.generatedPathDisplay.setSizePolicy(sizePolicy1)
+        self.generatedPathDisplay.setMinimumSize(QSize(137, 24))
+        self.generatedPathDisplay.setMaximumSize(QSize(137, 24))
+        self.generatedPathDisplay.setFont(font)
+
+        self.horizontalLayout_generated_set.addWidget(self.generatedPathDisplay)
+
+        self.generatedPathButton = QPushButton(self.layoutWidget3)
+        self.generatedPathButton.setObjectName("generatedPathButton")
+        sizePolicy1.setHeightForWidth(
+            self.generatedPathButton.sizePolicy().hasHeightForWidth()
+        )
+        self.generatedPathButton.setSizePolicy(sizePolicy1)
+        self.generatedPathButton.setMinimumSize(QSize(28, 20))
+        self.generatedPathButton.setMaximumSize(QSize(28, 20))
+        self.generatedPathButton.setFont(font)
+
+        self.horizontalLayout_generated_set.addWidget(self.generatedPathButton)
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_generated_set)
+
+        # generated end
+
         self.horizontalLayout_17 = QHBoxLayout()
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
         self.horizontalLayout_17.setContentsMargins(-1, -1, 0, -1)
@@ -1134,6 +1226,35 @@ class Ui_RobustarLauncher(object):
         self.validationPathButton.setText(
             QCoreApplication.translate("RobustarLauncher", "...", None)
         )
+        
+        self.label_paired_set.setToolTip(
+            QCoreApplication.translate(
+                "RobustarLauncher", "The root path of the paired set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_paired_set.setText(
+            QCoreApplication.translate("RobustarLauncher", "Paired Set", None)
+        )
+        self.pairedPathDisplay.setText("")
+        self.pairedPathButton.setText(
+            QCoreApplication.translate("RobustarLauncher", "...", None)
+        )
+        
+        self.label_generated_set.setToolTip(
+            QCoreApplication.translate(
+                "RobustarLauncher", "The root path of the generated set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_generated_set.setText(
+            QCoreApplication.translate("RobustarLauncher", "Generated Set", None)
+        )
+        self.generatedPathDisplay.setText("")
+        self.generatedPathButton.setText(
+            QCoreApplication.translate("RobustarLauncher", "...", None)
+        )
+
         # if QT_CONFIG(tooltip)
         self.label_13.setToolTip(
             QCoreApplication.translate(

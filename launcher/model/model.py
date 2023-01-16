@@ -7,6 +7,9 @@ class Model(QObject):
     portChanged = Signal(str)
     trainPathChanged = Signal(str)
     testPathChanged = Signal(str)
+    validationPathChanged = Signal(str)
+    pairedPathChanged = Signal(str)
+    generatedPathChanged = Signal(str)
     checkPointPathChanged = Signal(str)
     influencePathChanged = Signal(str)
     configFileChanged = Signal(str)
@@ -72,6 +75,9 @@ class Model(QObject):
         self.portChanged.connect(self.ctrl.setVPort)
         self.trainPathChanged.connect(self.ctrl.setVTrainPath)
         self.testPathChanged.connect(self.ctrl.setVTestPath)
+        self.validationPathChanged.connect(self.ctrl.setVValidationPath)
+        self.pairedPathChanged.connect(self.ctrl.setVPairedPath)
+        self.generatedPathChanged.connect(self.ctrl.setVGeneratedPath)
         self.checkPointPathChanged.connect(self.ctrl.setVCheckPointPath)
         self.influencePathChanged.connect(self.ctrl.setVInfluencePath)
         self.modelArchChanged.connect(self.ctrl.setVModelArch)
@@ -129,6 +135,33 @@ class Model(QObject):
     def testPath(self, val):
         self._profile['testPath'] = val
         self.testPathChanged.emit(val)
+
+    @property
+    def validationPath(self):
+        return self._profile['validation']
+
+    @validationPath.setter
+    def validationPath(self, val):
+        self._profile['validationPath'] = val
+        self.validationPathChanged.emit(val)
+
+    @property
+    def pairedPath(self):
+        return self._profile['pairedPath']
+
+    @pairedPath.setter
+    def pairedPath(self, val):
+        self._profile['pairedPath'] = val
+        self.pairedPathChanged.emit(val)
+
+    @property
+    def generatedPath(self):
+        return self._profile['generatedPath']
+
+    @generatedPath.setter
+    def generatedPath(self, val):
+        self._profile['generatedPath'] = val
+        self.generatedPathChanged.emit(val)
 
     @property
     def checkPointPath(self):
