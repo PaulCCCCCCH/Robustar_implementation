@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget
-from views.main_view_ui import Ui_RobustarLauncher
+from views.main_view_ui import Ui_main_widget
 
 
 class MainView(QWidget):
@@ -7,67 +7,67 @@ class MainView(QWidget):
         super().__init__()
 
         self.ctrl = ctrl
-        self.ui = Ui_RobustarLauncher()
+        self.ui = Ui_main_widget()
         self.ui.setupUi(self)
 
         # Match the corresponding signals to slots in controllers
-        self.ui.nameInput.textEdited.connect(self.ctrl.setMContainerName)
-        self.ui.versionComboBox.currentIndexChanged.connect(self.ctrl.setMImageVersion)
-        self.ui.portInput.textEdited.connect(self.ctrl.setMPort)
-        self.ui.trainPathButton.clicked.connect(self.ctrl.setMTrainPath)
-        self.ui.testPathButton.clicked.connect(self.ctrl.setMTestPath)
-        self.ui.validationPathButton.clicked.connect(self.ctrl.setMValidationPath)
-        self.ui.pairedPathButton.clicked.connect(self.ctrl.setMPairedPath)
-        self.ui.generatedPathButton.clicked.connect(self.ctrl.setMGeneratedPath)
-        self.ui.checkPointPathButton.clicked.connect(self.ctrl.setMCheckPointPath)
-        self.ui.influencePathButton.clicked.connect(self.ctrl.setMInfluencePath)
+        self.ui.name_line_edit.textEdited.connect(self.ctrl.set_m_name)
+        self.ui.image_combo_box.currentIndexChanged.connect(self.ctrl.set_m_image)
+        self.ui.port_line_edit.textEdited.connect(self.ctrl.set_m_port)
+        self.ui.train_push_button.clicked.connect(self.ctrl.set_m_train_path)
+        self.ui.val_push_button.clicked.connect(self.ctrl.set_m_val_path)
+        self.ui.test_push_button.clicked.connect(self.ctrl.set_m_test_path)
+        self.ui.paired_push_button.clicked.connect(self.ctrl.setMPairedPath)
+        self.ui.gen_push_button.clicked.connect(self.ctrl.setMGeneratedPath)
+        self.ui.ckpt_push_button.clicked.connect(self.ctrl.set_m_ckpt_path)
+        self.ui.inf_push_button.clicked.connect(self.ctrl.set_m_inf_path)
 
-        self.ui.archComboBox.currentIndexChanged.connect(self.ctrl.setMArch)
-        self.ui.pretrainedCheckBox.stateChanged.connect(self.ctrl.setMPretrained)
-        self.ui.weightFileComboBox.currentIndexChanged.connect(self.ctrl.setMWeightFile)
-        self.ui.deviceInput.textEdited.connect(self.ctrl.setMDevice)
-        self.ui.shuffleCheckBox.stateChanged.connect(self.ctrl.setMShuffle)
-        self.ui.batchSizeInput.textEdited.connect(self.ctrl.setMBatchSize)
-        self.ui.workerNumberInput.textEdited.connect(self.ctrl.setMWorkerNumber)
-        self.ui.imgSizeInput.textEdited.connect(self.ctrl.setMImgSize)
-        self.ui.paddingComboBox.currentIndexChanged.connect(self.ctrl.setMPadding)
-        self.ui.classNumberInput.textEdited.connect(self.ctrl.setMClassNumber)
+        self.ui.arch_combo_box.currentIndexChanged.connect(self.ctrl.set_m_arch)
+        self.ui.pretrain_check_box.stateChanged.connect(self.ctrl.set_m_pretrain)
+        self.ui.weight_combo_box.currentIndexChanged.connect(self.ctrl.set_m_weight)
+        self.ui.device_line_edit.textEdited.connect(self.ctrl.set_m_device)
+        self.ui.shuffle_check_box.stateChanged.connect(self.ctrl.set_m_shuffle)
+        self.ui.batch_line_edit.textEdited.connect(self.ctrl.set_m_batch)
+        self.ui.worker_line_edit.textEdited.connect(self.ctrl.set_m_worker)
+        self.ui.size_line_edit.textEdited.connect(self.ctrl.set_m_size)
+        self.ui.pad_combo_box.currentIndexChanged.connect(self.ctrl.set_m_pad)
+        self.ui.cls_line_edit.textEdited.connect(self.ctrl.set_m_cls)
 
-        self.ui.loadProfileButton.clicked.connect(self.ctrl.loadProfile)
-        self.ui.saveProfileButton.clicked.connect(self.ctrl.saveProfile)
-        self.ui.startServerButton.clicked.connect(self.ctrl.startServer)
-        self.ui.stopServerButton.clicked.connect(self.ctrl.stopServer)
-        self.ui.deleteServerButton.clicked.connect(self.ctrl.deleteServer)
-        self.ui.refreshListWidgetsButton.clicked.connect(self.ctrl.refreshServers)
+        self.ui.load_push_button.clicked.connect(self.ctrl.load_profile)
+        self.ui.save_push_button.clicked.connect(self.ctrl.save_profile)
+        self.ui.start_push_button.clicked.connect(self.ctrl.start_server)
+        self.ui.stop_push_button.clicked.connect(self.ctrl.stop_server)
+        self.ui.delete_push_button.clicked.connect(self.ctrl.delete_server)
+        self.ui.refresh_push_button.clicked.connect(self.ctrl.refresh_server)
 
         # Set the listWidgets so that only one entry in them can be selected at a time
-        self.listWidgets = [
-            self.ui.runningListWidget,
-            self.ui.exitedListWidget,
-            self.ui.createdListWidget,
+        self.list_widget_lst = [
+            self.ui.run_list_widget,
+            self.ui.exit_list_widget,
+            self.ui.create_list_widget,
         ]
-        self.ui.runningListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(
-                self.ui.runningListWidget, self.listWidgets
+        self.ui.run_list_widget.selectionModel().selectionChanged.connect(
+            lambda sel, unsel: self.single_select(
+                self.ui.run_list_widget, self.list_widget_lst
             )
         )
-        self.ui.exitedListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(
-                self.ui.exitedListWidget, self.listWidgets
+        self.ui.exit_list_widget.selectionModel().selectionChanged.connect(
+            lambda sel, unsel: self.single_select(
+                self.ui.exit_list_widget, self.list_widget_lst
             )
         )
-        self.ui.createdListWidget.selectionModel().selectionChanged.connect(
-            lambda sel, unsel: self.singleSelect(
-                self.ui.createdListWidget, self.listWidgets
+        self.ui.create_list_widget.selectionModel().selectionChanged.connect(
+            lambda sel, unsel: self.single_select(
+                self.ui.create_list_widget, self.list_widget_lst
             )
         )
 
     # Function to ensure only one entry in the three listWidgets can be selected at a time
-    def singleSelect(self, listWidget, listWidgets):
+    def single_select(self, list_widget, list_widget_lst):
 
-        for widget in listWidgets:
+        for widget in list_widget_lst:
             # Only check the other listWidgets
-            if widget == listWidget:
+            if widget == list_widget:
                 continue
 
             # If the newly selected item is not in the same listWidget as the previous selected one
