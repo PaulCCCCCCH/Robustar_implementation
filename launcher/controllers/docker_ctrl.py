@@ -25,6 +25,37 @@ class DockerController(QObject):
         elif platform == "win32":
             self.api_client = docker.APIClient(base_url="tcp://localhost:2375")
 
+        # Synchronize the record data
+        self.sync_record()
+
+    def sync_record(self):
+        try:
+            container_lst = self.client.containers.list(all=True)
+            name_lst = []
+
+            for container in container_lst:
+                if "paulcccccch/robustar:" in str(container.image):
+                    name_lst.append(container.name)
+
+        except docker.errors.APIError as api_error:
+            self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                         "Unexpected error encountered during record synchronization. See more in <i>Details</i> page")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+
+        if os.path.exists("./RecordData"):
+            if os.path.exists("./RecordData/config_record.json"):
+                new_match_dict = {}
+                with open("./RecordData/config_record.json", "r") as f:
+                    match_dict = json.load(f)
+                    for name in match_dict.keys():
+                        if name in name_lst:
+                            new_match_dict[name] = match_dict[name]
+                        else:
+                            file_name = match_dict[name]
+                            os.remove(file_name)
+                with open("./RecordData/config_record.json", "w") as f:
+                    json.dump(new_match_dict, f)
+
     def get_selection(self, for_start=False):
         if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
             self.model.made_on_create = True
@@ -243,7 +274,7 @@ class DockerController(QObject):
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} fails to run because port is "
                                                                                     "already allocated. See more in"
                                                                                     " <i>Details</i> page".format(
-                                                                                                self.model.temp_name))
+                    self.model.temp_name))
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
             else:
