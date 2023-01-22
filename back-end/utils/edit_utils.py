@@ -3,14 +3,14 @@ import os.path
 from PIL import Image
 from objects.RServer import RServer
 from io import BytesIO
-from utils.image_utils import refreshImgData
+from utils.image_utils import refresh_img_data
 import threading
 from objects.RTask import RTask, TaskType
 import time
 
 
 def get_train_and_paired_path(split, image_path):
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
     if split == "train":
         train_img_path = image_path
         paired_img_path = dataManager.pairedset.convert_train_path_to_paired(
@@ -37,11 +37,11 @@ def get_train_and_paired_path(split, image_path):
 
 
 def remove_edit(path: str):
-    RServer.getDataManager().pairedset.remove_image(path)
+    RServer.get_data_manager().pairedset.remove_image(path)
 
 
 def clear_edit():
-    RServer.getDataManager().pairedset.clear_images()
+    RServer.get_data_manager().pairedset.clear_images()
 
 
 def save_edit(split, image_path, image_data, image_height, image_width):
@@ -53,7 +53,7 @@ def save_edit(split, image_path, image_data, image_height, image_width):
     """
 
     train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
 
     if not os.path.exists(train_img_path):
         raise ValueError("invalid image path")
@@ -69,7 +69,7 @@ def save_edit(split, image_path, image_data, image_height, image_width):
             train_img_path, image_data, image_height, image_width
         )
         dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
-        refreshImgData(paired_img_path)
+        refresh_img_data(paired_img_path)
 
 
 def propose_edit(split, image_path, return_image=False):
@@ -77,7 +77,7 @@ def propose_edit(split, image_path, return_image=False):
     Propose an annotation for an training image specified by image_path and return the path to the proposed image
     """
 
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
     if split == "train":
         train_img_path = image_path
         proposed_path = dataManager.proposedset.convert_train_path_to_paired(
@@ -94,7 +94,7 @@ def propose_edit(split, image_path, return_image=False):
         )
 
     if not dataManager.proposedset.is_annotated(train_img_path):
-        pil_image = RServer.getAutoAnnotator().annotate_single(
+        pil_image = RServer.get_auto_annotator().annotate_single(
             train_img_path, dataManager.image_size
         )
         dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
@@ -111,7 +111,7 @@ def start_auto_annotate(split, start: int, end: int):
     if split != "train":
         raise NotImplementedError("Auto annotation only supported for train split")
 
-    dataManager = RServer.getDataManager()
+    dataManager = RServer.get_data_manager()
     # -1 means annotate till the end
     if end == -1:
         end = len(dataManager.trainset)

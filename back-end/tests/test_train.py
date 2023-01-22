@@ -9,7 +9,7 @@ from test_app import app, client
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level
 #     def test_load_model_correctness(self, client, server):
-#         assert server.getModelsWeights() == {}
+#         assert server.get_model_weights() == {}
 #
 #         data = {
 #             'info': 'placeholder',
@@ -48,19 +48,19 @@ from test_app import app, client
 #         time.sleep(30)
 #
 #         # Compare model weights saved in local path and in memory
-#         for name, weight in server.getModelsWeights().items():
+#         for name, weight in server.get_model_weights().items():
 #             # Get the model weights saved in local path
-#             model_arch = server.getServerConfigs()['model_arch']
-#             net_path = os.path.join(server.ckptDir, name).replace('\\', '/')
-#             device = server.getServerConfigs()['device']
-#             pre_trained = server.getServerConfigs()['pre_trained']
-#             num_classes = server.getServerConfigs()['num_classes']
-#             modelWrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
-#             modelLoaded = modelWrapper.model
+#             model_arch = server.get_server_configs()['model_arch']
+#             net_path = os.path.join(server.ckpt_dir, name).replace('\\', '/')
+#             device = server.get_server_configs()['device']
+#             pre_trained = server.get_server_configs()['pre_trained']
+#             num_classes = server.get_server_configs()['num_classes']
+#             model_wrapper = RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
+#             modelLoaded = model_wrapper.model
 #             weightLoaded = modelLoaded.state_dict()
 #
 #             # Get the model weights saved in memory
-#             weightInMem = server.getModelsWeights()[name]
+#             weightInMem = server.get_model_weights()[name]
 #
 #             # Compare each item in them
 #             for key_item_1, key_item_2 in zip(weightLoaded.items(), weightInMem.items()):

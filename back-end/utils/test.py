@@ -11,7 +11,7 @@ class TestThread(threading.Thread):
     def __init__(self, split):
         super(TestThread, self).__init__()
 
-        self.dataManager = RServer.getDataManager()
+        self.dataManager = RServer.get_data_manager()
         if split == "validation":
             self.dataset: REvalImageFolder = self.dataManager.validationset
         elif split == "test":
@@ -22,6 +22,7 @@ class TestThread(threading.Thread):
         self.stop = False
 
     def run(self):
+        print("Starting testing thread")
         self.startTestThread()
 
     def stop(self):
@@ -40,7 +41,7 @@ class TestThread(threading.Thread):
         for img_path, label in samples:
 
             output = get_image_prediction(
-                RServer.getModelWrapper(),
+                RServer.get_model_wrapper(),
                 img_path,
                 self.dataManager.image_size,
                 argmax=False,
@@ -74,6 +75,7 @@ class TestThread(threading.Thread):
 
         self.dataset.add_records(correct_buffer, True)
         self.dataset.add_records(incorrect_buffer, False)
+        print("Testing complete")
 
 
 def start_test(split):
