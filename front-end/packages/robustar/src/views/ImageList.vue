@@ -344,10 +344,10 @@ export default {
       ];
     },
     accuarcy() {
-      const {allImageLength, correctImageLength, incorrectImageLength} = this.testImageList
-      // const correct_image_length = this.correct_image.length;
-      // return { value: currect_length };
-      return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
+      const {allImageLength, correctImageLength, incorrectImageLength} = this.testImageList || {}
+      // const correct_image_length = this.$route.params.split.length
+      return { value: allImageLength };
+      // return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
       // return { value: Math.round((allImageLength) * 100) / 100 };
     },
     hasImages() {
@@ -382,7 +382,7 @@ export default {
     },
     async initClassifiedImageList() {
       try {
-        const res = await APIGetClassifiedSplitLength(this.split);
+        const res = await APIGetClassifiedSplitLength(this.$route.params.split);
         this.testImageList = res.data.data;
         // this.allSplitLength = res.data.data[0];
         // this.correctSplitLength = res.data.data[1];

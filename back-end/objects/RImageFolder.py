@@ -253,8 +253,11 @@ class REvalImageFolder(RImageFolder):
         paths = [to_unix(record[0]) for record in records]
 
         # 1. update db with the result
-        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',),
-                                [(correct,) for _ in paths])
+        if correct:
+            value_list = [(self.CLS_CORRECT,) for _ in paths]
+        else:
+            value_list = [(self.CLS_INCORRECT,) for _ in paths]
+        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), value_list)
 
         # 2. update buffer
         if buffer == []:
@@ -293,7 +296,7 @@ class REvalImageFolder(RImageFolder):
 
     def get_record(self, correct: bool, start=None, end=None):
         buffer = self.buffer_correct if correct else self.buffer_incorrect
-        if start is not None and len(buffer) <= start:
+        if start and len(buffer) <= start:
             raise ValueError("Out of upper-bound")
         return [p[0] for p in get_slice(buffer, start, end)]
 

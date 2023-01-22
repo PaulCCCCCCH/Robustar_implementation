@@ -31,8 +31,10 @@ def get_image_list(split, start, num_per_page):
         ls_image_path_data = list(zip(ls_image_path, ls_image_data))
         return RResponse.ok(ls_image_path_data)
     except (ValueError, NotImplementedError) as e:
+        print(e)
         RResponse.abort(400, "{}".format(str(e)))
     except Exception as e:
+        print(e)
         RResponse.abort(500, str(e))
 
 
@@ -154,7 +156,7 @@ def api_get_split_length(split):
 
     return RResponse.ok(response)
 
-@image_api.route('/image/classified/<split>', methods = ['GET'])
+@image_api.route('/image/classified/<split>')
 def get_classfied_split_length(split):
     """
     Gets the length of all/correctly classified/incorrectly classified split lengt
@@ -184,6 +186,7 @@ def get_classfied_split_length(split):
     """
     try:
       response = getClassifiedSplitLength(split)
+      print(response)
     except Exception as e:
       print(e)
       RResponse.abort(400, "Split {} not supported".format(split))
