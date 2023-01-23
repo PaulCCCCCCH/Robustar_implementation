@@ -1,19 +1,20 @@
-'''
+"""
 Author: Jingcheng Wu (wu_jingcheng@qq.com)
 Last Modified: Feb 6, 2022
 
 Brief: A Task Panel Class that Monitor all classes
-'''
+"""
 from time import time
 from datetime import timedelta
 from threading import Lock
+
 # from utils.train import start_train
 # from utils.test import start_test
 from objects.RServer import RServer
 
-'''
+"""
 make all thread apis create here
-'''
+"""
 
 
 class TaskType:
@@ -22,7 +23,8 @@ class TaskType:
     Influence = 2
     AutoAnnotate = 3
 
-    mapping = ['Training', 'Test', 'Influence', 'AutoAnnotate']
+    mapping = ["Training", "Test", "Influence", "AutoAnnotate"]
+
 
 def with_lock(func):
     def wrapper(*wargs, **kwargs):
@@ -44,14 +46,12 @@ class RTask:
 
     @staticmethod
     def send_digest():
-        '''
+        """
         This method is supposed to be called within the scope of lock
-        '''
+        """
         digest = RTask.get_tasks_digest()
-        socket = RServer.getSocket()
-        socket.emit("digest", {
-            "digest": digest
-        })
+        socket = RServer.get_socket()
+        socket.emit("digest", {"digest": digest})
 
     @staticmethod
     # @with_lock
@@ -112,8 +112,16 @@ class RTask:
     def get_tasks_digest():
         digest = []
         for task in RTask.tasks:
-            digest.append((task.get_readable_label(), task.get_percentage(), task.get_finished_task(),
-                           task.get_readable_time(), task.tid, task.get_done()))
+            digest.append(
+                (
+                    task.get_readable_label(),
+                    task.get_percentage(),
+                    task.get_finished_task(),
+                    task.get_readable_time(),
+                    task.tid,
+                    task.get_done(),
+                )
+            )
         return digest
 
     def __init__(self, task_type, total):
@@ -125,10 +133,10 @@ class RTask:
         self.n = 0
         self.total = total
         self.start_time = time()
-        self.remaining_time = float('inf')
-        self.remaining_readable_time = 'Unknown'
+        self.remaining_time = float("inf")
+        self.remaining_readable_time = "Unknown"
         self.elapsed_time = 0
-        self.elapsed_readable_time = 'Unknown'
+        self.elapsed_readable_time = "Unknown"
         RTask.create_task(self)
 
     def start(self):
@@ -139,7 +147,7 @@ class RTask:
             assert t >= 0
             res = str(timedelta(seconds=int(t)))
         except:
-            res = 'Unknown'
+            res = "Unknown"
         return res
 
     def exit(self):
@@ -158,7 +166,7 @@ class RTask:
         self.remaining_readable_time = self.make_time_readable(self.remaining_time)
 
     def get_percentage(self):
-        return self.n / self.total if self.total else 'Invalid'
+        return self.n / self.total if self.total else "Invalid"
 
     def get_readable_label(self):
         return f"{TaskType.mapping[self.task_type]}({self.tid})"
@@ -173,4 +181,4 @@ class RTask:
         return f"{self.elapsed_readable_time}/{self.remaining_readable_time}"
 
     def get_done(self):
-        return self.n==self.total
+        return self.n == self.total

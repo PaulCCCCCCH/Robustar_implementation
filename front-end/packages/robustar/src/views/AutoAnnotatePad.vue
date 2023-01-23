@@ -104,11 +104,9 @@ export default {
       this.$root.startProcessing('Starting annotation... Please wait');
       try {
         const res = await APIStartAutoAnnotate(this.configs.split, this.configs);
-        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Auto annotation started');
       } catch (error) {
-        console.log(error.response);
         this.$root.finishProcessing();
         this.$root.alert(
           'error',

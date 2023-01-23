@@ -30,13 +30,6 @@
           class="mt-n2 mb-1"
         ></v-checkbox>
         <div v-if="configs.auto_save_model">
-          <!-- Save path -->
-          <v-text-field
-            v-model="configs.save_dir"
-            label="The directory to save model to"
-            outlined
-            clearable
-          ></v-text-field>
           <!-- Save every-->
           <v-text-field
             value="10"
@@ -97,13 +90,6 @@
           class="mb-2"
         ></v-checkbox>
         <div v-if="configs.use_paired_train">
-          <!-- Paired data path -->
-          <v-text-field
-            v-model="configs.paired_data_path"
-            label="specify the path to the paired training set"
-            outlined
-            clearable
-          ></v-text-field>
           <v-select
             v-model="configs.mixture"
             :items="mixture_methods"
@@ -173,19 +159,13 @@ export default {
       // Training configs
       configs: {
         model_name: 'my-test-model',
-        // weight: "/Robustar2/checkpoint_images",
         weight: '',
         train_path: `${configs.dataBaseDir}/dataset/train`,
         test_path: `${configs.dataBaseDir}/dataset/test`,
         class_path: './model/cifar-class.txt',
-        port: '8000',
-        save_dir: `${configs.dataBaseDir}/checkpoints`,
         use_paired_train: false,
         mixture: 'random_pure',
         user_edit_buffering: false,
-
-        // Selection for the following not implemented
-        paired_data_path: `${configs.dataBaseDir}/dataset/paired`,
         device: 'cuda',
         auto_save_model: true,
         save_every: 5,
@@ -209,12 +189,10 @@ export default {
           configs: this.configs,
           info: 'placeholder',
         });
-        console.log(res);
         this.$root.finishProcessing();
         this.$root.alert('success', 'Training started successfully');
         window.open(configs.tensorboardUrl);
       } catch (error) {
-        console.log(error);
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Training failed');
       }
@@ -222,10 +200,8 @@ export default {
     async stopTraining() {
       try {
         const res = await APIStopTrain();
-        console.log(res);
         this.$root.alert('success', 'Successfully stop training');
       } catch (error) {
-        console.log(error);
         this.$root.alert('error', error.response?.data?.detail || 'Failed to stop training');
       }
     },

@@ -3,37 +3,63 @@ from objects.RServer import RServer
 from utils.path_utils import to_snake_path
 
 
-
 class TestPredict:
     class TestPredict:
         def test_predict_fail_invalid_split(self, client):
             response = client.get("/predict/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0")
             assert response.status_code == 400
             rv = response.get_json()
-            assert rv['error_code'] == -1
-            assert rv['detail'] == 'Split not supported'
+            assert rv["error_code"] == -1
+            assert rv["detail"] == "Split not supported"
 
         def test_predict_fail_invalid_path(self, client):
-            response = client.get("/predict/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/10000.JPEG")
+            response = client.get(
+                "/predict/train?"
+                + PARAM_NAME_IMAGE_PATH
+                + "="
+                + RServer.get_server().base_dir
+                + "/dataset/train/bird/10000.JPEG"
+            )
             assert response.status_code == 400
             rv = response.get_json()
-            assert rv['error_code'] == -1
-            assert rv['detail'] == 'Invalid image path ' + RServer.getServer().baseDir + '/dataset/train/bird/10000.JPEG'
+            assert rv["error_code"] == -1
+            assert (
+                rv["detail"]
+                == "Invalid image path "
+                + RServer.get_server().base_dir
+                + "/dataset/train/bird/10000.JPEG"
+            )
             # TODO: [test] other splits
 
         def test_predict_success(self, client):
-            response = client.get("/predict/train?" + PARAM_NAME_IMAGE_PATH +
-                                  "=" + RServer.getServer().baseDir + "/dataset/train/bird/1.JPEG")
+            response = client.get(
+                "/predict/train?"
+                + PARAM_NAME_IMAGE_PATH
+                + "="
+                + RServer.get_server().base_dir
+                + "/dataset/train/bird/1.JPEG"
+            )
             assert response.status_code == 200
             rv = response.get_json()
-            assert rv['code'] == 0
-            data = rv['data']
-            assert data[0] == ['bird', 'cat', 'crab', 'dog', 'fish',
-                               'frog', 'insect', 'primate', 'turtle']
+            assert rv["code"] == 0
+            data = rv["data"]
+            assert data[0] == [
+                "bird",
+                "cat",
+                "crab",
+                "dog",
+                "fish",
+                "frog",
+                "insect",
+                "primate",
+                "turtle",
+            ]
             assert len(data[1]) == 9
             assert sum((0 <= x <= 1) for x in data[1]) == 9
-            assert data[2] == [f"{RServer.getServer().baseDir}/visualize_images/{to_snake_path(RServer.getServer().baseDir)}_dataset_train_bird_1_JPEG_{idx}.png" for idx in range(4)]
+            assert data[2] == [
+                f"{RServer.get_server().base_dir}/visualize_images/{to_snake_path(RServer.get_server().base_dir)}_dataset_train_bird_1_JPEG_{idx}.png"
+                for idx in range(4)
+            ]
             # TODO: [test] other splits
 
     class TestGetInfluence:
@@ -54,7 +80,7 @@ class TestPredict:
                 "/influence/train?"
                 + PARAM_NAME_IMAGE_PATH
                 + "="
-                + RServer.getServer().baseDir
+                + RServer.get_server().base_dir
                 + "dataset/train/bird/10000.JPEG"
             )
             assert response.status_code == 400
@@ -68,7 +94,7 @@ class TestPredict:
         def test_get_influence_success(self, client):
             assert True
             # response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
-            #                 "=" + RServer.getServer().baseDir + "/dataset/train/bird/1.JPEG")
+            #                 "=" + RServer.get_server().base_dir + "/dataset/train/bird/1.JPEG")
             # assert response.status_code == 200
             # rv = response.get_json()
             # assert rv['code'] == -1

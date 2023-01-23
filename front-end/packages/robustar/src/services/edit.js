@@ -34,6 +34,6 @@ export const APIDeleteEdit = async (split, image_url) => {
   return deleteRequest(`/edit/${split}?${configs.imagePathParamName}=${image_url}`);
 };
 
-export const APIClearEdit = (success, failed) => {
-  deleteRequest(`/edit/clear`, success, failed);
+export const APIClearEdit = async () => {
+  return deleteRequest(`/edit/clear`);
 };

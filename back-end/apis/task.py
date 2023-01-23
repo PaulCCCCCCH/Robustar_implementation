@@ -1,11 +1,12 @@
 from objects.RServer import RServer
 from objects.RResponse import RResponse
 from objects.RTask import RTask
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
+task_api = Blueprint("task_api", __name__)
 
 
-@app.route("/task/stop/<tid>", methods=["GET"])
+@task_api.route("/task/stop/<tid>", methods=["GET"])
 def stop_task(tid):
     tid = int(tid)
     print(tid)
