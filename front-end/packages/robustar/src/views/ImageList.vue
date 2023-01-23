@@ -105,48 +105,98 @@
         </v-sheet>
 
         <!-- influence calculation & auto annotate -->
-        <v-sheet class="d-flex align-center justify-center rounded px-8 elevation-2" color="white">
-          <div v-if="showExtraSettings" class="mr-4">
-            <p>Click image to select its index</p>
-            <v-radio-group v-model="imageIdxSelection" mandatory row>
-              <v-radio :label="`Start Index : ${imageStartIdx}`" value="start"></v-radio>
-              <v-radio :label="`End Index : ${imageEndIdx}`" value="end"></v-radio>
-            </v-radio-group>
-            <p v-if="imageEndIdx < imageStartIdx" style="color: red">
-              End Index smaller than Start Index
-            </p>
-            <v-btn
-              depressed
-              outlined
-              color="primary"
-              class="mr-4"
-              @click="
-                $router.push({
-                  name: 'InfluencePad',
-                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
-                })
-              "
+        <v-sheet class="d-flex align-center justify-center rounded px-4 elevation-2" color="white">
+          <v-stepper v-if="showExtraSettings" v-model="selectImageSteps" tile flat vertical>
+            <v-stepper-step :complete="selectImageSteps > 1" step="1">
+              Select starting point
+              <small
+                >Image with a green dot at the top-right corner indicates the starting point
+              </small>
+            </v-stepper-step>
+
+            <v-stepper-content step="1">
+              <span class="mr-4">Start Index : {{ imageStartIdx }}</span>
+              <v-btn class="mr-4" color="primary" outlined @click="selectImageSteps++">
+                Continue
+              </v-btn>
+            </v-stepper-content>
+
+            <v-stepper-step :complete="selectImageSteps > 2" step="2">
+              Select end point
+              <small
+                >Images with yellow dots at the top-right corner indicates the range of your
+                selection</small
+              >
+            </v-stepper-step>
+
+            <v-stepper-content step="2">
+              <span class="mr-4">End Index : {{ imageEndIdx }}</span>
+              <v-btn
+                class="mr-4"
+                color="primary"
+                outlined
+                :disabled="imageEndIdx < imageStartIdx"
+                @click="selectImageSteps++"
+              >
+                Continue
+              </v-btn>
+              <v-btn color="warning" outlined @click="selectImageSteps--"> Back </v-btn>
+              <v-alert v-if="imageEndIdx < imageStartIdx" dense text type="error" class="mt-4">
+                End Index smaller than Start Index
+              </v-alert>
+            </v-stepper-content>
+
+            <v-stepper-step :complete="selectImageSteps > 3" step="3"
+              >Apply selection</v-stepper-step
             >
-              <v-icon class="mr-2">mdi-vector-link</v-icon> Influence
-            </v-btn>
-            <v-btn
-              depressed
-              outlined
-              color="primary"
-              @click="
-                $router.push({
-                  name: 'AutoAnnotatePad',
-                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
-                })
-              "
-            >
-              <v-icon class="mr-2">mdi-auto-fix</v-icon> Auto Annotate
-            </v-btn>
-          </div>
-          <v-btn icon color="grey" large @click="showExtraSettings = !showExtraSettings">
-            <v-icon v-if="!showExtraSettings">mdi-chevron-double-right</v-icon>
-            <v-icon v-else>mdi-chevron-double-left</v-icon>
-          </v-btn>
+
+            <v-stepper-content step="3">
+              <v-btn
+                depressed
+                outlined
+                color="primary"
+                @click="
+                  $router.push({
+                    name: 'InfluencePad',
+                    params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
+                  })
+                "
+              >
+                <v-icon class="mr-2">mdi-vector-link</v-icon> Influence
+              </v-btn>
+              <v-btn
+                depressed
+                outlined
+                color="primary"
+                class="mx-4"
+                @click="
+                  $router.push({
+                    name: 'AutoAnnotatePad',
+                    params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
+                  })
+                "
+              >
+                <v-icon class="mr-2">mdi-auto-fix</v-icon> Auto Annotate
+              </v-btn>
+              <v-btn color="warning" outlined @click="selectImageSteps--"> Back </v-btn>
+            </v-stepper-content>
+          </v-stepper>
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                color="grey"
+                large
+                @click="showExtraSettings = !showExtraSettings"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon v-if="!showExtraSettings">mdi-chevron-double-right</v-icon>
+                <v-icon v-else>mdi-chevron-double-left</v-icon>
+              </v-btn>
+            </template>
+            <span>Select images</span>
+          </v-tooltip>
         </v-sheet>
       </div>
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
@@ -178,8 +228,10 @@
             <v-badge
               :value="
                 showExtraSettings &&
-                calcAbsIdx(idx) >= imageStartIdx &&
-                calcAbsIdx(idx) <= imageEndIdx
+                (calcAbsIdx(idx) === imageStartIdx ||
+                  (imageEndIdx >= imageStartIdx &&
+                    calcAbsIdx(idx) >= imageStartIdx &&
+                    calcAbsIdx(idx) <= imageEndIdx))
               "
               :color="calcAbsIdx(idx) < imageEndIdx ? 'warning' : 'success'"
               :dot="calcAbsIdx(idx) > imageStartIdx && calcAbsIdx(idx) < imageEndIdx"
@@ -269,7 +321,6 @@ export default {
     return {
       isLoadingImages: false,
       showExtraSettings: false,
-      imageIdxSelection: 'start',
       imageStartIdx: 0,
       imageEndIdx: 0,
       currentPage: 0,
@@ -288,6 +339,7 @@ export default {
         large: 4,
         'extra large': 6,
       },
+      selectImageSteps: 1,
     };
   },
   mounted() {
@@ -436,9 +488,9 @@ export default {
     selectImage(idx) {
       if (this.showExtraSettings) {
         const absoluteIdx = this.calcAbsIdx(idx);
-        if (this.imageIdxSelection === 'start') {
+        if (this.selectImageSteps === 1) {
           this.imageStartIdx = absoluteIdx;
-        } else if (this.imageIdxSelection === 'end') {
+        } else if (this.selectImageSteps === 2) {
           this.imageEndIdx = absoluteIdx;
         }
       }
