@@ -170,7 +170,7 @@ def get_split_length(split):
 
     return len(get_image_path(split, None, None))
 
-def getClassifiedSplitLength(split):
+def get_classified_split_length(split):
     """
     Get the length of a data split
 
@@ -180,13 +180,4 @@ def getClassifiedSplitLength(split):
     returns:
         The length of the data split as an integer
     """
-    # if split in ["validation", "test"]:
-    #     all_length = len(getImagePath(split, None, None))
-    #     correct_length = len(getImagePath(split + '_correct', None, None))
-    #     incorrect_length = len(getImagePath(split + '_incorrect', None, None))
-
-    #     test_image_lists = list((all_length, correct_length, incorrect_length))
-    #     return test_image_lists
-    # else:
-    print(split)
-    return [getSplitLength(split),getSplitLength(split+ '_correct'),getSplitLength(split+ '_incorrect')]
+    return list(get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect'))

@@ -9,7 +9,7 @@ from utils.image_utils import (
     get_img_Data,
     get_split_length,
     get_annotated,
-    getClassifiedSplitLength
+    get_classified_split_length
 )
 from utils.path_utils import to_unix
 from flask import Blueprint
@@ -185,7 +185,7 @@ def get_classfied_split_length(split):
               example: Success
     """
     try:
-      response = getClassifiedSplitLength(split)
+      response = get_classified_split_length(split)
       print(response)
     except Exception as e:
       print(e)
