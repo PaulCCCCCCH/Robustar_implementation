@@ -4,7 +4,7 @@
       <div class="sticky-header d-flex mb-4">
         <!-- image list settings -->
         <v-sheet
-          class="d-flex flex-column align-center justify-center rounded px-8 mr-4 elevation-2"
+          class="d-flex flex-column align-start justify-center rounded px-8 pt-4 mr-4 elevation-2"
           color="white"
         >
           <div
@@ -20,21 +20,12 @@
           </div>
 
           <!-- Page navigator -->
-          <div class="d-flex justify-center align-center my-4">
-            <!-- Previous page button -->
-            <v-btn
-              :disabled="currentPage <= 0 || !hasImages"
-              depressed
-              color="primary"
-              @click="currentPage--"
-              data-test="image-list-btn-prev-page"
-            >
-              PREV PAGE
-            </v-btn>
-
+          <div class="d-flex justify-center align-center">
             <!-- Refresh page button & page number -->
-            <div class="d-flex align-center mx-8">
-              <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
+            <div class="d-flex align-center">
+              <v-btn class="mr-4" depressed color="primary" @click="gotoPage">
+                <v-icon class="mr-2">mdi-import</v-icon> GOTO PAGE
+              </v-btn>
               <v-text-field
                 data-test="image-list-input-page-number"
                 v-model="inputPage"
@@ -43,31 +34,43 @@
               ></v-text-field>
             </div>
 
+            <!-- Previous page button -->
+            <v-btn
+              :disabled="currentPage <= 0 || !hasImages"
+              outlined
+              color="primary"
+              @click="currentPage--"
+              data-test="image-list-btn-prev-page"
+              class="mx-8"
+            >
+              <v-icon class="mr-2">mdi-chevron-left</v-icon> PREV PAGE
+            </v-btn>
+
             <!-- Next page button -->
             <v-btn
               data-test="image-list-btn-next-page"
               :disabled="currentPage >= maxPage || !hasImages"
-              depressed
+              outlined
               color="primary"
               @click="currentPage++"
             >
-              NEXT PAGE
+              NEXT PAGE <v-icon class="mr-2">mdi-chevron-right</v-icon>
             </v-btn>
+          </div>
 
-            <v-divider vertical class="mx-8"></v-divider>
-
-            <!-- Class filter -->
-            <div class="d-flex align-center">
-              <v-btn class="mr-4" depressed color="primary" @click="gotoClass"> GOTO CLASS </v-btn>
-              <v-select
-                :items="classNames"
-                v-model="$root.imageClass"
-                label="Class Name"
-                data-test="image-list-select-class-name"
-                clearable
-              >
-              </v-select>
-            </div>
+          <!-- Class filter -->
+          <div class="d-flex align-center mb-6">
+            <v-btn class="mr-4" depressed color="primary" @click="gotoClass">
+              <v-icon class="mr-2">mdi-import</v-icon> GOTO CLASS
+            </v-btn>
+            <v-select
+              :items="classNames"
+              v-model="$root.imageClass"
+              label="Class Name"
+              data-test="image-list-select-class-name"
+              clearable
+            >
+            </v-select>
           </div>
 
           <!-- row & col settings -->
@@ -78,6 +81,7 @@
               label="Number of image per page"
               class="mr-8"
               outlined
+              dense
               @change="resetImageList"
               data-test="image-list-input-num-per-page"
             >
@@ -88,6 +92,7 @@
               v-model="imageSize"
               label="Image size"
               outlined
+              dense
               @change="setImageSize"
             >
             </v-select>
@@ -95,7 +100,7 @@
             <v-btn
               v-if="$route.params.split === 'annotated'"
               depressed
-              color="primary"
+              color="warning"
               @click="clearAnnotatedImage"
               data-test="image-list-btn-clear-annotated-imgs"
             >
@@ -105,7 +110,11 @@
         </v-sheet>
 
         <!-- influence calculation & auto annotate -->
-        <v-sheet class="d-flex align-center justify-center rounded px-4 elevation-2" color="white">
+        <v-sheet
+          v-if="$root.imageSplit !== 'annotated'"
+          class="d-flex align-center justify-center rounded px-4 elevation-2"
+          color="white"
+        >
           <v-stepper v-if="showExtraSettings" v-model="selectImageSteps" tile flat vertical>
             <v-stepper-step :complete="selectImageSteps > 1" step="1">
               Select starting point
@@ -195,7 +204,7 @@
                 <v-icon v-else>mdi-chevron-double-left</v-icon>
               </v-btn>
             </template>
-            <span>Select images</span>
+            <span>process a batch of selected images</span>
           </v-tooltip>
         </v-sheet>
       </div>
@@ -226,13 +235,7 @@
           </div>
           <v-hover :disabled="showExtraSettings" v-slot="{ hover }">
             <v-badge
-              :value="
-                showExtraSettings &&
-                (calcAbsIdx(idx) === imageStartIdx ||
-                  (imageEndIdx >= imageStartIdx &&
-                    calcAbsIdx(idx) >= imageStartIdx &&
-                    calcAbsIdx(idx) <= imageEndIdx))
-              "
+              :value="isImageSelected(idx)"
               :color="calcAbsIdx(idx) < imageEndIdx ? 'warning' : 'success'"
               :dot="calcAbsIdx(idx) > imageStartIdx && calcAbsIdx(idx) < imageEndIdx"
               bordered
@@ -253,6 +256,7 @@
                     </v-progress-circular>
                   </v-row>
                 </template>
+                <div v-if="isImageSelected(idx)" class="fill-height repeating-gradient"></div>
                 <v-expand-transition>
                   <div
                     v-if="hover"
@@ -498,6 +502,15 @@ export default {
     calcAbsIdx(idx) {
       return this.currentPage * this.imagePerPage + idx;
     },
+    isImageSelected(idx) {
+      return (
+        this.showExtraSettings &&
+        (this.calcAbsIdx(idx) === this.imageStartIdx ||
+          (this.imageEndIdx >= this.imageStartIdx &&
+            this.calcAbsIdx(idx) >= this.imageStartIdx &&
+            this.calcAbsIdx(idx) <= this.imageEndIdx))
+      );
+    },
   },
 };
 </script>
@@ -521,5 +534,15 @@ export default {
   position: sticky;
   top: 80px;
   z-index: 9;
+}
+
+.repeating-gradient {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(147, 176, 231, 0.25),
+    rgba(147, 176, 231, 0.25) 5px,
+    rgba(0, 89, 255, 0.25) 5px,
+    rgba(0, 89, 255, 0.25) 10px
+  );
 }
 </style>
