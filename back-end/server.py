@@ -1,21 +1,51 @@
-from email.mime import base
-import torchvision.datasets as dset
 import json
 import os.path as osp
 import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
+from objects.RModelWrapper import RModelWrapper
 from objects.RAutoAnnotator import RAutoAnnotator
-from utils.train import initialize_model
 from utils.path_utils import to_unix, to_absolute
-
+from flask import Flask
 import argparse
+from flask_socketio import emit, SocketIO
+from apis import blueprints
+
+
+def start_flask_app():
+    def after_request(resp):
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Allow-Headers"] = "*"
+        return resp
+
+    app = Flask(__name__)
+    app.after_request(after_request)
+
+    # register all api routes
+    for bp in blueprints:
+        # TODO: use /api/<version> prefix
+        # app.register_blueprint(bp, url_prefix='/api/v1')
+        app.register_blueprint(bp)
+
+    socket = SocketIO(app, cors_allowed_origins="*")
+
+    return app, socket
+
+
+# Get server listener objects
+app, socket = start_flask_app()
+
+# Init socket connection
+@socket.on("connect")
+def test_connect():
+    print("Successfully connected to frontend with socket")
+    emit("afterConnect", {"data": "Lets dance"})
 
 
 def precheck():
     def check_num_classes_consistency():
-        configs = RServer.getServerConfigs()
-        data_manager = RServer.getDataManager()
+        configs = RServer.get_server_configs()
+        data_manager = RServer.get_data_manager()
         trainset = data_manager.trainset
         testset = data_manager.testset
         validationset = data_manager.validationset
@@ -44,63 +74,72 @@ def precheck():
     check_num_classes_consistency()
 
 
-def start_server(basedir):
-    baseDir = to_unix(basedir)
-    datasetDir = to_unix(osp.join(baseDir, "dataset"))
-    ckptDir = to_unix(osp.join(baseDir, "checkpoints"))
-    dbPath = to_unix(osp.join(baseDir, "generated", "data.db"))
+def new_server_object(base_dir):
+    base_dir = to_unix(base_dir)
+    dataset_dir = to_unix(osp.join(base_dir, "dataset"))
+    ckpt_dir = to_unix(osp.join(base_dir, "checkpoints"))
+    db_path = to_unix(osp.join(base_dir, "generated", "data.db"))
 
-    with open(osp.join(baseDir, "configs.json")) as jsonfile:
+
+    with open(osp.join(base_dir, "configs.json")) as jsonfile:
         configs = json.load(jsonfile)
 
-    class2labelPath = osp.join(baseDir, "class2label.json")
-    class2labelMapping = {}
-    if osp.exists(class2labelPath):
+    class2label_path = osp.join(base_dir, "class2label.json")
+    class2label_mapping = {}
+    if osp.exists(class2label_path):
         try:
-            with open(class2labelPath) as jsonfile:
-                class2labelMapping = json.load(jsonfile)
+            with open(class2label_path) as jsonfile:
+                class2label_mapping = json.load(jsonfile)
                 print("Class to label file loaded!")
         except Exception as e:
             print("Class to label file invalid!")
-            class2labelMapping = {}
+            class2label_mapping = {}
     else:
         print("Class to label file not found!")
 
-    # Create server
-
-    # Set data manager
-    server = RServer.createServer(
-        configs=configs, baseDir=baseDir, datasetDir=datasetDir, ckptDir=ckptDir
+    """ CREATE SERVER """
+    server = RServer.create_server(
+        configs=configs,
+        base_dir=base_dir,
+        dataset_dir=dataset_dir,
+        ckpt_dir=ckpt_dir,
+        app=app,
+        socket=socket,
     )
-    dataManager = RDataManager(
-        baseDir,
-        datasetDir,
-        dbPath,
+
+    """ SETUP DATA MANAGER """
+    data_manager = RDataManager(
+        base_dir,
+        dataset_dir,
+        db_path,
         batch_size=configs["batch_size"],
         shuffle=configs["shuffle"],
         num_workers=configs["num_workers"],
         image_size=configs["image_size"],
         image_padding=configs["image_padding"],
-        class2label_mapping=class2labelMapping,
+        class2label_mapping=class2label_mapping,
     )
-    RServer.setDataManager(dataManager)
+    RServer.set_data_manager(data_manager)
 
-    # Set model (used for prediction)
-    model = initialize_model()
-    RServer.setModel(model)
+    """ SETUP MODEL """
+    serverConfigs = RServer.get_server_configs()
+    model = RModelWrapper(
+        network_type=serverConfigs["model_arch"],
+        net_path=to_unix(os.path.join(ckpt_dir, serverConfigs["weight_to_load"])),
+        device=serverConfigs["device"],
+        pretrained=serverConfigs["pre_trained"],
+        num_classes=serverConfigs["num_classes"],
+    )
+    RServer.set_model(model)
 
-    # Set auto annotator
-    # TODO: model_name and checkpoint hard-coded for now
+    """ SETUP AUTO ANNOTATOR """
     checkpoint_name = "u2net.pth"
     annotator = RAutoAnnotator(
         configs["device"],
-        checkpoint=osp.join(baseDir, checkpoint_name),
+        checkpoint=osp.join(base_dir, checkpoint_name),
         model_name="u2net",
     )
-    RServer.setAutoAnnotator(annotator)
-
-    # register all api routes
-    RServer.registerAPIs()
+    RServer.set_auto_annotator(annotator)
 
     # Check file state consistency
     precheck()
@@ -114,18 +153,22 @@ def get_args():
         help="path to base directory for data folder (default: /Robustar2)",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_known_args()[0]
     return args
 
 
-if __name__ == "__main__":
+def create_app():
     args = get_args()
 
     # Get basedir
     basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
     print("Current working directory is {}".format(os.getcwd()))
     print("Absolute basedir is {}".format(basedir))
-    start_server(basedir)
+    new_server_object(basedir)
 
+    return RServer.get_server().get_flask_app()
+
+
+if __name__ == "__main__":
     # Start server
-    RServer.getServer().run(port="8000", host="0.0.0.0", debug=False)
+    create_app().run(port="8000", host="0.0.0.0", debug=False)

@@ -6,26 +6,23 @@ from objects.RImageFolder import REvalImageFolder
 from os import path as osp
 from objects.RTask import RTask, TaskType
 
-server = RServer.getServer()
-dataManager = server.dataManager
-predictBuffer = dataManager.predictBuffer
-modelWrapper = RServer.getModelWrapper()
-
 
 class TestThread(threading.Thread):
     def __init__(self, split):
         super(TestThread, self).__init__()
 
-        if split == 'validation':
-            self.dataset: REvalImageFolder = dataManager.validationset
-        elif split == 'test':
-            self.dataset: REvalImageFolder = dataManager.testset
+        self.dataManager = RServer.get_data_manager()
+        if split == "validation":
+            self.dataset: REvalImageFolder = self.dataManager.validationset
+        elif split == "test":
+            self.dataset: REvalImageFolder = self.dataManager.testset
         else:
-            raise NotImplementedError('Test called with wrong data split')
+            raise NotImplementedError("Test called with wrong data split")
 
         self.stop = False
 
     def run(self):
+        print("Starting testing thread")
         self.startTestThread()
 
     def stop(self):
@@ -43,8 +40,12 @@ class TestThread(threading.Thread):
 
         for img_path, label in samples:
 
-            output = get_image_prediction(modelWrapper, img_path, dataManager.image_size,
-                                          argmax=False)
+            output = get_image_prediction(
+                RServer.get_model_wrapper(),
+                img_path,
+                self.dataManager.image_size,
+                argmax=False,
+            )
             output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
             # TODO: replace this snippet with numpy argmax function
@@ -57,7 +58,7 @@ class TestThread(threading.Thread):
                     max_index = index
                 index += 1
 
-            is_correct = (max_index == label)
+            is_correct = max_index == label
             if is_correct:
                 correct_buffer.append((img_path, label))
             else:
@@ -74,6 +75,7 @@ class TestThread(threading.Thread):
 
         self.dataset.add_records(correct_buffer, True)
         self.dataset.add_records(incorrect_buffer, False)
+        print("Testing complete")
 
 
 def start_test(split):
@@ -82,5 +84,3 @@ def start_test(split):
         test_thread.start()
     except Exception as e:
         raise e
-
-

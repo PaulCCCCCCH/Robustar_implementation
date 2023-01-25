@@ -3,11 +3,12 @@ from flask import request
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 from utils.test import start_test
+from flask import Blueprint
 
-app = RServer.getServer().getFlaskBluePrint()
+test_api = Blueprint("test_api", __name__)
 
 
-@app.route('/test', methods=['POST'])
+@test_api.route("/test", methods=["POST"])
 def start_testing():
     """
     Starts the test thread
@@ -46,8 +47,8 @@ def start_testing():
     # print("DEBUG: Testing request received! ...")
 
     json_data = request.get_json()
-    split = json_data['split']
-    if split not in ['validation', 'test']:
+    split = json_data["split"]
+    if split not in ["validation", "test"]:
         RResponse.abort(400, "Wrong split chosen for test")
     # print(split)
 

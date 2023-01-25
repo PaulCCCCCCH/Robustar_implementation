@@ -1,20 +1,12 @@
 import collections
-from genericpath import exists
 import pickle
 import sqlite3
-import torchvision
 import os.path as osp
 import os
 from utils.path_utils import get_paired_path, split_path, to_unix
 import torch
 from torchvision import transforms
-from .RImageFolder import (
-    RImageFolder,
-    RAnnotationFolder,
-    REvalImageFolder,
-    RTrainImageFolder,
-)
-from PIL import Image
+from .RImageFolder import RAnnotationFolder, REvalImageFolder, RTrainImageFolder
 import torchvision.transforms.functional as transF
 
 
@@ -26,8 +18,8 @@ class RDataManager:
     def __init__(
         self,
         baseDir,
-        datasetDir,
-        dbPath,
+        dataset_dir,
+        db_path,
         batch_size=32,
         shuffle=True,
         num_workers=8,
@@ -38,9 +30,9 @@ class RDataManager:
 
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
-        self.data_root = datasetDir
+        self.data_root = dataset_dir
         self.base_dir = baseDir
-        self.db_path = dbPath
+        self.db_path = db_path
         self.batch_size = image_size
         self.shuffle = shuffle
         self.num_workers = num_workers
@@ -59,7 +51,7 @@ class RDataManager:
             with open(self.influence_file_path, "rb") as f:
                 try:
                     # TODO: Check image_url -> image_path consistency here!
-                    self.influenceBuffer = pickle.load(f)
+                    self.influence_buffer = pickle.load(f)
                 except Exception as e:
                     print(
                         "Influence function file not read because it is contaminated. \
@@ -70,7 +62,7 @@ class RDataManager:
             print("No influence dictionary found!")
 
     def get_influence_dict(self):
-        return self.influenceBuffer
+        return self.influence_buffer
 
     def _init_transforms(self):
         # Build transforms
@@ -163,14 +155,14 @@ class RDataManager:
 
         self._init_folders()
 
-        self.datasetFileQueue = collections.deque()
-        self.datasetFileQueueLen = 1000
-        self.datasetFileBuffer = {}
+        self.dataset_file_queue = collections.deque()
+        self.dataset_file_queue_len = 1000
+        self.dataset_file_buffer = {}
 
-        self.predictBuffer = {}
-        self.influenceBuffer = {}
+        self.predict_buffer = {}
+        self.influence_buffer = {}
 
-        self.proposedAnnotationBuffer = set()  # saves (train image id)
+        self.proposed_annotation_buffer = set()  # saves (train image id)
 
         self.proposedset: RAnnotationFolder = RAnnotationFolder(
             self.proposed_annotation_root,
@@ -257,8 +249,11 @@ class RDataManager:
         return self.db_cursor
 
 
-# Return a square image
 class SquarePad:
+    """
+    A transform that takes a PIL image and pad it into a square
+    """
+
     image_padding = "constant"
 
     def __init__(self, image_padding):
@@ -267,9 +262,10 @@ class SquarePad:
     def __call__(self, image):
         # Reference: https://discuss.pytorch.org/t/how-to-resize-and-pad-in-a-torchvision-transforms-compose/71850/10
         if self.image_padding == "none":
+            # Does not pad
             return image
         elif self.image_padding == "short_side":
-            # Calculate the size of paddings
+            # Calculate the size of paddings required to make a square
             max_size = max(image.size)
             pad_left, pad_top = [(max_size - size) // 2 for size in image.size]
             pad_right, pad_bottom = [
@@ -278,7 +274,5 @@ class SquarePad:
             ]
             padding = (pad_left, pad_top, pad_right, pad_bottom)
             return transF.pad(image, padding, 0, "constant")
-
-        # TODO: Support more padding modes. E.g. pad both sides to given image size
         else:
             raise NotImplementedError

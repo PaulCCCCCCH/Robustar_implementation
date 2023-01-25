@@ -5,24 +5,8 @@ from utils.path_utils import to_unix
 import base64
 import mimetypes
 
-dataManager = RServer.getDataManager()
 
-datasetDir = dataManager.data_root
-
-trainset = dataManager.trainset
-testset = dataManager.testset
-validationset = dataManager.validationset
-pairedset = dataManager.pairedset
-proposedset = dataManager.proposedset
-
-datasetFileBuffer = dataManager.datasetFileBuffer
-
-datasetFileQueue = dataManager.datasetFileQueue
-datasetFileBuffer = dataManager.datasetFileBuffer
-datasetFileQueueLen = dataManager.datasetFileQueueLen
-
-
-def getImagePath(split, start=None, end=None):
+def get_image_path(split, start=None, end=None):
     """
     Get the real paths of the images in the range start-end
     args:
@@ -31,7 +15,7 @@ def getImagePath(split, start=None, end=None):
     returns:
         imagePath:  The real path to the image, e.g. '/Robustar2/dataset/train/cat/1002.jpg'
     """
-
+    dataManager = RServer.get_data_manager()
     if split == "validation_correct":
         return dataManager.validationset.get_record(correct=True, start=start, end=end)
     if split == "validation_incorrect":
@@ -45,7 +29,23 @@ def getImagePath(split, start=None, end=None):
     raise NotImplementedError("Invalid data split")
 
 
-def getNextImagePath(split, path):
+def get_annotated(split: str, path: str):
+
+    dataManager = RServer.get_data_manager()
+    if split == "annotated":
+        paired_path = path
+    elif split == "train":
+        paired_path = dataManager.pairedset.get_paired_by_train(path)
+    else:
+        return ""
+
+    if paired_path is None:
+        return ""
+    return ""
+
+
+def get_next_image_path(split, path):
+    dataManager = RServer.get_data_manager()
     allowed_splits = ["train", "annotated", "proposed"]
     if split not in allowed_splits:
         raise NotImplementedError("Split {} not supported".format(split))
@@ -53,7 +53,12 @@ def getNextImagePath(split, path):
     return dataManager.split_dict[split].get_next_image(path)
 
 
-def getClassStart(split):
+def get_class_start(split):
+    data_manager = RServer.get_data_manager()
+    trainset = data_manager.trainset
+    testset = data_manager.testset
+    validationset = data_manager.validationset
+
     if split == "train" or split == "annotated":
         dataset = trainset
     elif (
@@ -73,36 +78,37 @@ def getClassStart(split):
     if split in ["train", "annotated", "validation", "test"]:
         buffer = dataset.samples
     elif split == "validation_correct":
-        buffer = dataManager.validationset.buffer_correct
+        buffer = data_manager.validationset.buffer_correct
     elif split == "validation_incorrect":
-        buffer = dataManager.validationset.buffer_incorrect
+        buffer = data_manager.validationset.buffer_incorrect
     elif split == "test_correct":
-        buffer = dataManager.testset.buffer_correct
+        buffer = data_manager.testset.buffer_correct
     elif split == "test_incorrect":
-        buffer = dataManager.testset.buffer_incorrect
+        buffer = data_manager.testset.buffer_incorrect
     else:
         raise NotImplementedError("Data split not supported")
 
     for i in range(len(class_ls)):
-        num = binarySearchLeftBorder(buffer, i)
+        num = binary_search_left_border(buffer, i)
         class_starts[class_ls[i]] = num
 
     return class_starts
 
 
-def getImgData(dataset_img_path):
+def get_img_Data(dataset_img_path):
+    dataset_file_buffer = RServer.get_data_manager().dataset_file_buffer
     normal_path = to_unix(dataset_img_path)
 
     if osp.exists(normal_path):
-        if normal_path not in datasetFileBuffer:
-            refreshImgData(normal_path)
-        image_data = datasetFileBuffer[normal_path]
+        if normal_path not in dataset_file_buffer:
+            refresh_img_data(normal_path)
+        image_data = dataset_file_buffer[normal_path]
         return image_data
     else:
         raise Exception
 
 
-def imageToBase64String(path: str) -> str:
+def image_to_base64_string(path: str) -> str:
     """
     Convert an image to it's base64 string
     args:
@@ -119,17 +125,22 @@ def imageToBase64String(path: str) -> str:
     return image_data
 
 
-def refreshImgData(path: str):
+def refresh_img_data(path: str):
+    data_manager = RServer.get_data_manager()
+    dataset_file_queue = data_manager.dataset_file_queue
+    dataset_file_buffer = data_manager.dataset_file_buffer
+    dataset_file_queue_len = data_manager.dataset_file_queue_len
+
     normal_path = to_unix(path)
-    image_data = imageToBase64String(normal_path)
-    datasetFileQueue.append(normal_path)
-    if len(datasetFileQueue) > datasetFileQueueLen:
-        temp_path = datasetFileQueue.popleft()
-        del datasetFileBuffer[temp_path]
-    datasetFileBuffer[normal_path] = image_data
+    image_data = image_to_base64_string(normal_path)
+    dataset_file_queue.append(normal_path)
+    if len(dataset_file_queue) > dataset_file_queue_len:
+        temp_path = dataset_file_queue.popleft()
+        del dataset_file_buffer[temp_path]
+    dataset_file_buffer[normal_path] = image_data
 
 
-def binarySearchLeftBorder(ls, target: int):
+def binary_search_left_border(ls, target: int):
     """
     Args
         ls: Image.samples, a list of (image_path, class_index) pairs
@@ -146,7 +157,7 @@ def binarySearchLeftBorder(ls, target: int):
     return left
 
 
-def getSplitLength(split):
+def get_split_length(split):
     """
     Get the length of a data split
 
@@ -157,4 +168,4 @@ def getSplitLength(split):
         The length of the data split as an integer
     """
 
-    return len(getImagePath(split, None, None))
+    return len(get_image_path(split, None, None))

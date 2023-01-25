@@ -1,5 +1,5 @@
 <template>
-  <v-sheet rounded width="800" elevation="3" class="my-8 pa-4" style="margin: 0 auto">
+  <v-sheet rounded width="800" elevation="3" class="my-8 pa-8" style="margin: 0 auto">
     <div class="text-h4 text-center font-weight-medium">Configuration</div>
     <v-divider class="mt-4 mb-8"></v-divider>
     <v-simple-table class="pad">

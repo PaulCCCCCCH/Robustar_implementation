@@ -5,16 +5,21 @@ from objects.RServer import RServer
 from objects.RResponse import RResponse
 from flask import request
 import base64
-from utils.edit_utils import propose_edit, save_edit, start_auto_annotate
+from utils.edit_utils import (
+    propose_edit,
+    save_edit,
+    start_auto_annotate,
+    remove_edit,
+    clear_edit,
+)
 from utils.path_utils import to_unix
-from utils.image_utils import imageToBase64String
+from flask import Blueprint
+from utils.image_utils import image_to_base64_string
 
-server = RServer.getServer()
-app = server.getFlaskBluePrint()
-dataManager = server.getDataManager()
+edit_api = Blueprint("edit_api", __name__)
 
 
-@app.route("/edit/<split>", methods=["POST"])
+@edit_api.route("/edit/<split>", methods=["POST"])
 def api_user_edit(split):
     """
     Save user's edit for an image
@@ -77,20 +82,20 @@ def api_user_edit(split):
         RResponse.abort(500, str(e))
 
 
-@app.route("/edit/<split>", methods=["DELETE"])
+@edit_api.route("/edit/<split>", methods=["DELETE"])
 def api_delete_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
-    dataManager.pairedset.remove_image(path)
+    remove_edit(path)
     return RResponse.ok("Success!")
 
 
-@app.route("/edit/clear", methods=["DELETE"])
+@edit_api.route("/edit/clear", methods=["DELETE"])
 def api_clear_edit():
-    dataManager.pairedset.clear_images()
+    clear_edit()
     return RResponse.ok("Success!")
 
 
-@app.route("/propose/<split>")
+@edit_api.route("/propose/<split>")
 def api_propose_edit(split):
     """
     Get edited image proposed by auto annotator
@@ -114,14 +119,14 @@ def api_propose_edit(split):
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)
-    base64 = imageToBase64String(proposed_image_path)
+    base64 = image_to_base64_string(proposed_image_path)
 
     response = {"path": proposed_image_path, "base64": base64}
 
     return RResponse.ok(response)
 
 
-@app.route("/auto-annotate/<split>", methods=["POST"])
+@edit_api.route("/auto-annotate/<split>", methods=["POST"])
 def api_auto_annotate(split):
     """ """
 
