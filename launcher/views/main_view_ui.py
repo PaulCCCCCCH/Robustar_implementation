@@ -238,7 +238,7 @@ class Ui_main_widget(object):
         self.create_widget.setObjectName(u"create_widget")
         self.layoutWidget2 = QWidget(self.create_widget)
         self.layoutWidget2.setObjectName(u"layoutWidget2")
-        self.layoutWidget2.setGeometry(QRect(21, 11, 761, 529))
+        self.layoutWidget2.setGeometry(QRect(21, 11, 774, 529))
         self.create_h_layout = QHBoxLayout(self.layoutWidget2)
         self.create_h_layout.setSpacing(9)
         self.create_h_layout.setObjectName(u"create_h_layout")
@@ -249,10 +249,10 @@ class Ui_main_widget(object):
         self.docker_data_v_layout.setContentsMargins(-1, 0, -1, -1)
         self.docker_group_box = QGroupBox(self.layoutWidget2)
         self.docker_group_box.setObjectName(u"docker_group_box")
-        sizePolicy.setHeightForWidth(self.docker_group_box.sizePolicy().hasHeightForWidth())
-        self.docker_group_box.setSizePolicy(sizePolicy)
-        self.docker_group_box.setMinimumSize(QSize(0, 169))
-        self.docker_group_box.setMaximumSize(QSize(16777215, 168))
+        sizePolicy1.setHeightForWidth(self.docker_group_box.sizePolicy().hasHeightForWidth())
+        self.docker_group_box.setSizePolicy(sizePolicy1)
+        self.docker_group_box.setMinimumSize(QSize(375, 169))
+        self.docker_group_box.setMaximumSize(QSize(373, 169))
         self.docker_group_box.setFont(font)
         self.layoutWidget3 = QWidget(self.docker_group_box)
         self.layoutWidget3.setObjectName(u"layoutWidget3")
@@ -342,18 +342,16 @@ class Ui_main_widget(object):
 
         self.docker_data_v_layout.addWidget(self.docker_group_box)
 
-        self.docker_data_v_spacer = QSpacerItem(20, 132, QSizePolicy.Minimum, QSizePolicy.Maximum)
-
-        self.docker_data_v_layout.addItem(self.docker_data_v_spacer)
-
         self.data_group_box = QGroupBox(self.layoutWidget2)
         self.data_group_box.setObjectName(u"data_group_box")
-        self.data_group_box.setMinimumSize(QSize(0, 0))
-        self.data_group_box.setMaximumSize(QSize(16777215, 232))
+        sizePolicy1.setHeightForWidth(self.data_group_box.sizePolicy().hasHeightForWidth())
+        self.data_group_box.setSizePolicy(sizePolicy1)
+        self.data_group_box.setMinimumSize(QSize(375, 356))
+        self.data_group_box.setMaximumSize(QSize(375, 356))
         self.data_group_box.setFont(font)
         self.layoutWidget4 = QWidget(self.data_group_box)
         self.layoutWidget4.setObjectName(u"layoutWidget4")
-        self.layoutWidget4.setGeometry(QRect(10, 20, 361, 201))
+        self.layoutWidget4.setGeometry(QRect(10, 20, 361, 343))
         self.data_v_layout = QVBoxLayout(self.layoutWidget4)
         self.data_v_layout.setSpacing(9)
         self.data_v_layout.setObjectName(u"data_v_layout")
@@ -464,7 +462,7 @@ class Ui_main_widget(object):
         self.test_push_button.setFont(font)
 
         self.test_h_layout.addWidget(self.test_push_button)
-        
+
 
         self.data_v_layout.addLayout(self.test_h_layout)
 
@@ -622,8 +620,8 @@ class Ui_main_widget(object):
         self.model_group_box.setObjectName(u"model_group_box")
         sizePolicy1.setHeightForWidth(self.model_group_box.sizePolicy().hasHeightForWidth())
         self.model_group_box.setSizePolicy(sizePolicy1)
-        self.model_group_box.setMinimumSize(QSize(372, 525))
-        self.model_group_box.setMaximumSize(QSize(372, 525))
+        self.model_group_box.setMinimumSize(QSize(375, 525))
+        self.model_group_box.setMaximumSize(QSize(375, 525))
         self.model_group_box.setFont(font)
         self.layoutWidget_2 = QWidget(self.model_group_box)
         self.layoutWidget_2.setObjectName(u"layoutWidget_2")
@@ -1088,7 +1086,7 @@ class Ui_main_widget(object):
 #if QT_CONFIG(tooltip)
         self.gen_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the generated files", None))
 #endif // QT_CONFIG(tooltip)
-        self.gen_label.setText(QCoreApplication.translate("main_widget", u"Generated Files", None))
+        self.gen_label.setText(QCoreApplication.translate("main_widget", u"Generated Set", None))
         self.gen_line_edit.setText("")
         self.gen_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
 #if QT_CONFIG(tooltip)

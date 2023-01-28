@@ -569,7 +569,7 @@ QPushButton:hover {
              <rect>
               <x>21</x>
               <y>11</y>
-              <width>761</width>
+              <width>774</width>
               <height>529</height>
              </rect>
             </property>
@@ -578,7 +578,7 @@ QPushButton:hover {
               <number>9</number>
              </property>
              <item>
-              <layout class="QVBoxLayout" name="docker_data_v_layout" stretch="0,0,0">
+              <layout class="QVBoxLayout" name="docker_data_v_layout" stretch="0,0">
                <property name="spacing">
                 <number>0</number>
                </property>
@@ -588,21 +588,21 @@ QPushButton:hover {
                <item>
                 <widget class="QGroupBox" name="docker_group_box">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>375</width>
                    <height>169</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>168</height>
+                   <width>373</width>
+                   <height>169</height>
                   </size>
                  </property>
                  <property name="font">
@@ -869,33 +869,23 @@ QPushButton:hover {
                 </widget>
                </item>
                <item>
-                <spacer name="docker_data_v_spacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Maximum</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>132</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
                 <widget class="QGroupBox" name="data_group_box">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
-                   <height>0</height>
+                   <width>375</width>
+                   <height>356</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>232</height>
+                   <width>375</width>
+                   <height>356</height>
                   </size>
                  </property>
                  <property name="font">
@@ -916,7 +906,7 @@ QPushButton:hover {
                     <x>10</x>
                     <y>20</y>
                     <width>361</width>
-                    <height>201</height>
+                    <height>343</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="data_v_layout">
@@ -1725,13 +1715,13 @@ QPushButton:hover {
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>372</width>
+                   <width>375</width>
                    <height>525</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>372</width>
+                   <width>375</width>
                    <height>525</height>
                   </size>
                  </property>
