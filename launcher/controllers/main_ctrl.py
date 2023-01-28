@@ -80,6 +80,22 @@ class MainController(QObject):
         if path:
             self.model.test_path = path
 
+    def set_m_paired_path(self):
+        path = QFileDialog.getExistingDirectory(
+            self.main_view, "Choose Paired Set Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.paired_path = path
+
+    def set_m_gen_path(self):
+        path = QFileDialog.getExistingDirectory(
+            self.main_view, "Choose Generated Files Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.gen_path = path
+
     def set_m_ckpt_path(self):
         path = QFileDialog.getExistingDirectory(
             self.main_view, "Choose Checkpoints Path", self.model.cwd
@@ -199,6 +215,12 @@ class MainController(QObject):
 
     def set_v_test_path(self, val):
         self.main_view.ui.test_line_edit.setText(val)
+
+    def set_v_paired_path(self, val):
+        self.main_view.ui.paired_line_edit.setText(val)
+
+    def set_v_gen_path(self, val):
+        self.main_view.ui.gen_line_edit.setText(val)
 
     def set_v_ckpt_path(self, val):
         self.main_view.ui.ckpt_line_edit.setText(val)

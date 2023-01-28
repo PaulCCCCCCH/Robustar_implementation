@@ -17,6 +17,8 @@ class MainView(QWidget):
         self.ui.train_push_button.clicked.connect(self.ctrl.set_m_train_path)
         self.ui.val_push_button.clicked.connect(self.ctrl.set_m_val_path)
         self.ui.test_push_button.clicked.connect(self.ctrl.set_m_test_path)
+        self.ui.paired_push_button.clicked.connect(self.ctrl.set_m_paired_path)
+        self.ui.gen_push_button.clicked.connect(self.ctrl.set_m_gen_path)
         self.ui.ckpt_push_button.clicked.connect(self.ctrl.set_m_ckpt_path)
         self.ui.inf_push_button.clicked.connect(self.ctrl.set_m_inf_path)
 

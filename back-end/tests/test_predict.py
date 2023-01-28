@@ -57,7 +57,7 @@ class TestPredict:
             assert len(data[1]) == 9
             assert sum((0 <= x <= 1) for x in data[1]) == 9
             assert data[2] == [
-                f"{RServer.get_server().base_dir}/visualize_images/{to_snake_path(RServer.get_server().base_dir)}_dataset_train_bird_1_JPEG_{idx}.png"
+                f"{RServer.get_server().base_dir}/generated/visualize_images/{to_snake_path(RServer.get_server().base_dir)}_dataset_train_bird_1_JPEG_{idx}.png"
                 for idx in range(4)
             ]
             # TODO: [test] other splits

@@ -15,9 +15,11 @@ OPT_NAME=robustar
 RUN_MODE='HELP'
 TRAIN_FOLDER='./'
 TEST_FOLDER='./'
+PAIR_FOLDER='./'
 VALIDATION_FOLDER='./'
 INFLU_FOLDER='./'
 CHECK_FOLDER='./'
+GENERATED_FOLDER='./'
 CONFIG_FILE='configs.json'
 CUDA_VERSION=''
 
@@ -54,8 +56,10 @@ function HELP {
   echo "${REV}-t${NORM}  --Sets the path of ${BOLD}training images folder${NORM}. Currently only supports the PyTorch DataLoader folder structure as following"
   echo $'\t\t images/\n \t\t\t dogs/\n \t\t\t\t 1.png\n \t\t\t\t 2.png\n \t\t\t cats/\n \t\t\t\t adc.png\n \t\t\t\t eqx.png'
   echo "${REV}-e${NORM}  --Sets the path of ${BOLD}testing images folder${NORM}. Currently only supports the PyTorch DataLoader folder structure"
+  echo "${REV}-d${NORM}  --Sets the path of ${BOLD}paired images folder${NORM}. Currently only supports the PyTorch DataLoader folder structure"
   echo "${REV}-i${NORM}  --Sets the path of ${BOLD}the calculation result of the influence function${NORM}."
   echo "${REV}-c${NORM}  --Sets the path of ${BOLD}model check points folder${NORM}."
+  echo "${REV}-g${NORM}  --Sets the path of ${BOLD}the folder for all generated files${NORM}."
   echo "${REV}-o${NORM}  --Sets the path of ${BOLD}configuration file${NORM}. Default is ${BOLD}${CONFIG_FILE}${NORM}."
   echo -e "${REV}-h${NORM}  --Displays this help message. No further functions are performed."\\n
   # echo -e "Example: ${BOLD}$SCRIPT -p 8000 -t tag1 -n foo run${NORM}"\\n
@@ -71,9 +75,11 @@ function RUN {
     -p 127.0.0.1:${OPT_PORT}:80 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
+    --mount type=bind,source=${PAIR_FOLDER},target=/Robustar2/dataset/paired \
     --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
+    --mount type=bind,source=${GENERATED_FOLDER},target=/Robustar2/generated \
     -v $CONFIG_FILE:/Robustar2/configs.json \
     $IMAGE_NAME && echo "Robustar is available at http://localhost:$OPT_PORT "
     # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
@@ -85,9 +91,11 @@ function RUN_GPU {
     -p 127.0.0.1:${OPT_PORT}:80 \
     --mount type=bind,source=${TRAIN_FOLDER},target=/Robustar2/dataset/train \
     --mount type=bind,source=${TEST_FOLDER},target=/Robustar2/dataset/test \
+    --mount type=bind,source=${PAIR_FOLDER},target=/Robustar2/dataset/paired \
     --mount type=bind,source=${VALIDATION_FOLDER},target=/Robustar2/dataset/validation \
     --mount type=bind,source=${INFLU_FOLDER},target=/Robustar2/influence_images \
     --mount type=bind,source=${CHECK_FOLDER},target=/Robustar2/checkpoint_images \
+    --mount type=bind,source=${GENERATED_FOLDER},target=/Robustar2/generated \
     -v $CONFIG_FILE:/Robustar2/configs.json \
     $IMAGE_NAME && echo "Robustar is available at http://localhost:$OPT_PORT "
     # /bin/bash /run.sh && xdg-open "http://${IP}:${OPT_PORT}" \
@@ -103,7 +111,7 @@ function RUN_GPU {
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get my unrecognized option code to work.
 
-while getopts :m:p:a:n:t:e:i:c:o:h FLAG; do
+while getopts :m:p:a:n:t:e:r:d:i:c:g:o:h FLAG; do
   case $FLAG in
     m) 
       RUN_MODE=$OPTARG
@@ -123,6 +131,9 @@ while getopts :m:p:a:n:t:e:i:c:o:h FLAG; do
     e)
       TEST_FOLDER=$OPTARG
       ;;
+    r)
+      PAIR_FOLDER=$OPTARG
+      ;;
     d)
       VALIDATION_FOLDER=$OPTARG
       ;;
@@ -131,6 +142,9 @@ while getopts :m:p:a:n:t:e:i:c:o:h FLAG; do
       ;;
     c)
       CHECK_FOLDER=$OPTARG
+      ;;
+    g)
+      GENERATED_FOLDER=$OPTARG
       ;;
     o)
       CONFIG_FILE=$OPTARG
