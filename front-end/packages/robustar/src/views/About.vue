@@ -1,115 +1,83 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '0')">
-      testPredictionViewer /train/0
-    </v-btn>
-    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '2000')">
-      test /train/2000
-    </v-btn>
-    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('train', '4000')">
-      test /train/4000
-    </v-btn>
-    <v-btn depressed color="primary" class="mx-auto" @click="view_prediction('test', '100')">
-      test /test/100
-    </v-btn>
+  <div class="d-flex flex-column align-center">
+    <v-card elevation="2" outlined class="my-8 pa-8">
+      <v-card-title> <h2>Robustar Version: v0.2.0</h2> </v-card-title>
+      <v-card-subtitle> Released: Jan 15, 2023 </v-card-subtitle>
 
-    <PredView :dataArr="predDataArr" :config="predViewConfig" style="padding-left: 500px" />
+      <!-- Resources -->
+      <v-divider class="mt-4"></v-divider>
 
-    <div v-for="(url, index) in predImgUrl" :key="index" style="padding-left: 500px">
-      <img :src="url" style="width: 100px" />
-    </div>
+      <v-card-text>
+        <h2 class="mb-2">Resources</h2>
+        <v-btn
+          text
+          href="https://haohanwang.github.io/Robustar/"
+          target="_blank"
+          depressed
+          color="primary"
+        >
+          Documentation and Tutorial
+        </v-btn>
+        <br />
 
-    <v-btn depressed color="primary" class="mx-auto" @click="get_influence('test', '0')">
-      influ: test/0
-    </v-btn>
+        <v-btn
+          text
+          href="https://github.com/PaulCCCCCCH/Robustar_implementation"
+          target="_blank"
+          depressed
+          color="primary"
+        >
+          Source Code
+        </v-btn>
+      </v-card-text>
 
-    <v-btn depressed color="primary" class="mx-auto" @click="get_influence('test', '1')">
-      influ: test/1
-    </v-btn>
+      <!-- Bug report -->
+      <v-divider class="mt-4"></v-divider>
 
-    <v-btn depressed color="primary" class="mx-auto" @click="get_influence('test', '2')">
-      influ: test/2
-    </v-btn>
+      <v-card-text>
+        <h2 class="mb-2">Saw a bug?</h2>
 
-    <v-btn depressed color="primary" class="mx-auto" @click="get_influence('test', '30')">
-      influ: test/30
-    </v-btn>
+        <v-btn text href="mailto:chonghac@andrew.cmu.edu" target="_blank" depressed color="primary">
+          Send us an email
+        </v-btn>
 
-    <div v-for="(url, index) in influImgUrl" :key="index" style="padding-left: 500px">
-      <img :src="url" style="width: 100px" />
-    </div>
+        or
+        <v-btn
+          text
+          href="https://github.com/PaulCCCCCCH/Robustar_implementation/issues/new"
+          target="_blank"
+          depressed
+          color="primary"
+        >
+          Raise an issue here
+        </v-btn>
+      </v-card-text>
+
+      <!-- More about us -->
+      <v-divider class="mt-4"></v-divider>
+
+      <v-card-text>
+        <h2 class="mb-4">More about us</h2>
+        We are a group of enthusiastic open-source contributors based off the USA, UK and China.
+        <br />
+        Follow us on:
+
+        <v-btn class="mb-4" icon>
+          <v-icon>mdi-github</v-icon>
+        </v-btn>
+
+        <v-btn class="mb-4" icon>
+          <v-icon>mdi-twitter</v-icon>
+        </v-btn>
+
+        <v-btn class="mb-4" icon>
+          <v-icon>mdi-instagram</v-icon>
+        </v-btn>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
-<script>
-import PredView from '@/components/prediction-viewer/PredView.vue';
-import { APIPredict, APIGetInfluenceImages } from '@/services/predict';
-import { configs } from '@/configs.js';
+<script></script>
 
-export default {
-  components: { PredView },
-  data() {
-    return {
-      predDataArr: [
-        ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'],
-        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-      ],
-      predImgUrl: [],
-      influImgUrl: [],
-      predViewConfig: {
-        componentWidth: 300,
-        figHeight: 200,
-        figWidth: 200,
-        // posColor: "#234567",
-        // negColor: "#67891a",
-        // lineColor: "#abcedf",
-        dataRange: [0, 1],
-      },
-      configs: configs,
-    };
-  },
-  methods: {
-    view_prediction(split, imageId) {
-      const success = (response) => {
-        let responseData = response.data.data;
-        this.predDataArr = [responseData[0], responseData[1]];
-        this.predImgUrl = [];
-        for (let i = 0; i < 4; i++) {
-          this.predImgUrl.push(`${configs.serverUrl}/visualize` + responseData[2][i]);
-        }
-      };
-      const failed = (err) => {
-        console.log(err);
-        alert('Server error. Check console.');
-      };
-      APIPredict(split, imageId, success, failed);
-    },
-    get_influence(split, imageId) {
-      const success = (response) => {
-        // If influence not predicted:
-        if (response.data.code == -1) {
-          this.influImgUrl = [];
-          return;
-        }
-
-        const responseData = response.data.data;
-        this.influImgUrl = [];
-        for (let i = 0; i < 4; i++) {
-          const url = responseData[i];
-          this.influImgUrl.push(`${configs.serverUrl}/dataset/${url}`);
-        }
-      };
-
-      const failed = (err) => {
-        console.log(err);
-      };
-
-      APIGetInfluenceImages(split, imageId, success, failed);
-    },
-  },
-};
-</script>
-
-<style></style>
+<style scoped></style>

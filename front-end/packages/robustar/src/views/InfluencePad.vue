@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center">
-    <v-sheet rounded width="800" elevation="3" class="my-8 pa-4">
+    <v-sheet rounded width="800" elevation="3" class="my-8 pa-8">
       <div class="text-h4 text-center font-weight-medium">Influence Calculation</div>
       <v-divider class="mt-4 mb-8"></v-divider>
       <v-form v-model="valid" ref="form" lazy-validation>
