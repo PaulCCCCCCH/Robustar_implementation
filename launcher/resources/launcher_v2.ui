@@ -567,9 +567,9 @@ QPushButton:hover {
            <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
-              <x>21</x>
+              <x>4</x>
               <y>11</y>
-              <width>774</width>
+              <width>791</width>
               <height>529</height>
              </rect>
             </property>
@@ -2586,10 +2586,10 @@ QPushButton:hover {
            <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>10</y>
-              <width>771</width>
-              <height>401</height>
+              <width>781</width>
+              <height>501</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="manage_h_layout">
@@ -2614,8 +2614,8 @@ QPushButton:hover {
                    <rect>
                     <x>10</x>
                     <y>30</y>
-                    <width>361</width>
-                    <height>161</height>
+                    <width>367</width>
+                    <height>206</height>
                    </rect>
                   </property>
                   <property name="sizePolicy">
@@ -2626,14 +2626,14 @@ QPushButton:hover {
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>361</width>
-                    <height>161</height>
+                    <width>367</width>
+                    <height>206</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>361</width>
-                    <height>161</height>
+                    <width>367</width>
+                    <height>206</height>
                    </size>
                   </property>
                  </widget>
@@ -2658,8 +2658,8 @@ QPushButton:hover {
                    <rect>
                     <x>10</x>
                     <y>20</y>
-                    <width>361</width>
-                    <height>171</height>
+                    <width>367</width>
+                    <height>216</height>
                    </rect>
                   </property>
                   <property name="sizePolicy">
@@ -2670,14 +2670,14 @@ QPushButton:hover {
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>361</width>
-                    <height>171</height>
+                    <width>367</width>
+                    <height>216</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>361</width>
-                    <height>171</height>
+                    <width>367</width>
+                    <height>216</height>
                    </size>
                   </property>
                  </widget>
@@ -2704,8 +2704,8 @@ QPushButton:hover {
                  <rect>
                   <x>10</x>
                   <y>30</y>
-                  <width>361</width>
-                  <height>361</height>
+                  <width>367</width>
+                  <height>461</height>
                  </rect>
                 </property>
                 <property name="sizePolicy">
@@ -2716,14 +2716,14 @@ QPushButton:hover {
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>361</width>
-                  <height>361</height>
+                  <width>367</width>
+                  <height>461</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>361</width>
-                  <height>361</height>
+                  <width>367</width>
+                  <height>461</height>
                  </size>
                 </property>
                </widget>
@@ -2734,8 +2734,8 @@ QPushButton:hover {
            <widget class="QPushButton" name="refresh_push_button">
             <property name="geometry">
              <rect>
-              <x>717</x>
-              <y>416</y>
+              <x>716</x>
+              <y>516</y>
               <width>75</width>
               <height>25</height>
              </rect>
@@ -2810,7 +2810,7 @@ QPushButton:hover {
               <x>0</x>
               <y>0</y>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -2822,13 +2822,13 @@ QPushButton:hover {
             <property name="minimumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
             <property name="styleSheet">
@@ -2846,7 +2846,7 @@ QPushButton:hover {
               <x>0</x>
               <y>0</y>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -2858,13 +2858,13 @@ QPushButton:hover {
             <property name="minimumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
            </widget>
@@ -2879,7 +2879,7 @@ QPushButton:hover {
               <x>0</x>
               <y>0</y>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -2891,13 +2891,13 @@ QPushButton:hover {
             <property name="minimumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>801</width>
-              <height>311</height>
+              <height>297</height>
              </size>
             </property>
            </widget>
