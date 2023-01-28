@@ -9,6 +9,8 @@ class Model(QObject):
     trainPathChanged = Signal(str)
     valPathChanged = Signal(str)
     testPathChanged = Signal(str)
+    pairedPathChanged = Signal(str)
+    genPathChanged = Signal(str)
     ckptPathChanged = Signal(str)
     infPathChanged = Signal(str)
     archChanged = Signal(str)
@@ -35,6 +37,8 @@ class Model(QObject):
             "train_path": "",
             "val_path": "",
             "test_path": "",
+            "paired_path": "",
+            "gen_path": "",
             "ckpt_path": "",
             "inf_path": "",
             "arch": "resnet-18",
@@ -74,6 +78,8 @@ class Model(QObject):
         self.portChanged.connect(self.ctrl.set_v_port)
         self.trainPathChanged.connect(self.ctrl.set_v_train_path)
         self.valPathChanged.connect(self.ctrl.set_v_val_path)
+        self.pairedPathChanged.connect(self.ctrl.set_v_paired_path)
+        self.genPathChanged.connect(self.ctrl.set_v_gen_path)
         self.testPathChanged.connect(self.ctrl.set_v_test_path)
         self.ckptPathChanged.connect(self.ctrl.set_v_ckpt_path)
         self.infPathChanged.connect(self.ctrl.set_v_inf_path)
@@ -141,6 +147,24 @@ class Model(QObject):
     def test_path(self, val):
         self._profile["test_path"] = val
         self.testPathChanged.emit(val)
+
+    @property
+    def paired_path(self):
+        return self._profile['paired_path']
+
+    @paired_path.setter
+    def paired_path(self, val):
+        self._profile['paired_path'] = val
+        self.pairedPathChanged.emit(val)
+
+    @property
+    def gen_path(self):
+        return self._profile['gen_path']
+
+    @gen_path.setter
+    def gen_path(self, val):
+        self._profile['gen_path'] = val
+        self.genPathChanged.emit(val)
 
     @property
     def ckpt_path(self):
@@ -262,6 +286,8 @@ class Model(QObject):
         self.train_path = val["train_path"]
         self.val_path = val["val_path"]
         self.test_path = val["test_path"]
+        self.paired_path = val["paired_path"]
+        self.gen_path = val["gen_path"]
         self.ckpt_path = val["ckpt_path"]
         self.inf_path = val["inf_path"]
         self.arch = val["arch"]

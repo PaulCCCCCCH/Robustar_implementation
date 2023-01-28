@@ -103,8 +103,13 @@ def _set_up(basedir):
     else:
         print("setup > no database dir, skip copy")
 
-    proposed_dir = to_unix(osp.join(base_dir, "proposed"))
-    proposed_dir_original = to_unix(osp.join(base_dir, "proposed_o"))
+    # create generated folder
+    generated_folder = osp.join(base_dir, "generated")
+    if not osp.exists(generated_folder):
+        os.mkdir(generated_folder)
+
+    proposed_dir = to_unix(osp.join(base_dir, "generated", 'proposed'))
+    proposed_dir_original = to_unix(osp.join(base_dir, "generated", 'proposed_o'))
     if osp.exists(proposed_dir):
         os.rename(proposed_dir, proposed_dir_original)
         os.mkdir(proposed_dir)
@@ -123,14 +128,14 @@ def _set_up(basedir):
     else:
         print("setup > no proposed dir, skip copy")
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
+    db_path = to_unix(osp.join(base_dir, "generated", 'data.db'))
     if osp.exists(db_path):
         print("setup > delete " + db_path)
         os.remove(db_path)
     else:
         print("setup > no db, skip delete")
 
-    visualize_images_dir = to_unix(osp.join(base_dir, "visualize_images"))
+    visualize_images_dir = to_unix(osp.join(base_dir, "generated", 'visualize_images'))
     if osp.exists(visualize_images_dir):
         for name in os.listdir(visualize_images_dir):
             image_path = to_unix(osp.join(visualize_images_dir, name))
@@ -166,8 +171,8 @@ def _clean_up(basedir):
     else:
         print("cleanup > no origin database dir, skip restore")
 
-    proposed_dir = to_unix(osp.join(base_dir, "proposed"))
-    proposed_dir_original = to_unix(osp.join(base_dir, "proposed_o"))
+    proposed_dir = to_unix(osp.join(base_dir, "generated", 'proposed'))
+    proposed_dir_original = to_unix(osp.join(base_dir, "generated", 'proposed_o'))
     if osp.exists(proposed_dir_original):
         for class_name in os.listdir(proposed_dir):
             class_name_dir = to_unix(osp.join(proposed_dir, class_name))
@@ -191,7 +196,7 @@ def _clean_up(basedir):
     # os.rmdir(visualize_images_dir)
     # os.rename(visualize_images_dir_original, visualize_images_dir)
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
+    db_path = to_unix(osp.join(base_dir, "generated", 'data.db'))
     if osp.exists(db_path):
         print("cleanup > delete " + db_path)
         os.remove(db_path)
