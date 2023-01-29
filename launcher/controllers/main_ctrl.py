@@ -88,13 +88,13 @@ class MainController(QObject):
         if path:
             self.model.paired_path = path
 
-    def set_m_gen_path(self):
+    def set_m_out_path(self):
         path = QFileDialog.getExistingDirectory(
-            self.main_view, "Choose Generated Files Path", self.model.cwd
+            self.main_view, "Choose Output Folder Path", self.model.cwd
         )
         self.model.cwd = os.path.dirname(path)
         if path:
-            self.model.gen_path = path
+            self.model.out_path = path
 
     def set_m_ckpt_path(self):
         path = QFileDialog.getExistingDirectory(
@@ -219,8 +219,8 @@ class MainController(QObject):
     def set_v_paired_path(self, val):
         self.main_view.ui.paired_line_edit.setText(val)
 
-    def set_v_gen_path(self, val):
-        self.main_view.ui.gen_line_edit.setText(val)
+    def set_v_out_path(self, val):
+        self.main_view.ui.out_line_edit.setText(val)
 
     def set_v_ckpt_path(self, val):
         self.main_view.ui.ckpt_line_edit.setText(val)
@@ -277,28 +277,38 @@ class MainController(QObject):
 
     def check_profile(self):
         miss_profile_dict = {
+            "name": "container name",
+            "port": "port",
             "train_path": "train set path",
             "val_path": "validation set path",
             "test_path": "test set path",
+            "paired_path": "paired set path",
+            "out_path": "output folder path",
             "inf_path": "influence result path",
             "ckpt_path": "check point path",
             "batch": "batch size",
             "worker": "worker number",
             "cls": "class number",
             "size": "image size",
+            "device": "device"
         }
         miss_profile_prompt = []
 
         for profile_name in [
+            "name",
+            "port",
             "train_path",
             "val_path",
             "test_path",
+            "paired_path",
+            "out_path",
             "inf_path",
             "ckpt_path",
             "batch",
             "worker",
             "cls",
             "size",
+            "device"
         ]:
             if not self.model.profile[profile_name].strip():
                 miss_profile_prompt.append(miss_profile_dict[profile_name])

@@ -502,42 +502,6 @@ class Ui_main_widget(object):
 
         self.data_v_layout.addLayout(self.paired_h_layout)
 
-        self.gen_h_layout = QHBoxLayout()
-        self.gen_h_layout.setObjectName(u"gen_h_layout")
-        self.gen_h_layout.setContentsMargins(-1, -1, 0, -1)
-        self.gen_label = QLabel(self.layoutWidget4)
-        self.gen_label.setObjectName(u"gen_label")
-        sizePolicy1.setHeightForWidth(self.gen_label.sizePolicy().hasHeightForWidth())
-        self.gen_label.setSizePolicy(sizePolicy1)
-        self.gen_label.setMinimumSize(QSize(174, 39))
-        self.gen_label.setMaximumSize(QSize(174, 39))
-        self.gen_label.setFont(font)
-
-        self.gen_h_layout.addWidget(self.gen_label)
-
-        self.gen_line_edit = QLineEdit(self.layoutWidget4)
-        self.gen_line_edit.setObjectName(u"gen_line_edit")
-        sizePolicy1.setHeightForWidth(self.gen_line_edit.sizePolicy().hasHeightForWidth())
-        self.gen_line_edit.setSizePolicy(sizePolicy1)
-        self.gen_line_edit.setMinimumSize(QSize(137, 24))
-        self.gen_line_edit.setMaximumSize(QSize(137, 24))
-        self.gen_line_edit.setFont(font)
-
-        self.gen_h_layout.addWidget(self.gen_line_edit)
-
-        self.gen_push_button = QPushButton(self.layoutWidget4)
-        self.gen_push_button.setObjectName(u"gen_push_button")
-        sizePolicy1.setHeightForWidth(self.gen_push_button.sizePolicy().hasHeightForWidth())
-        self.gen_push_button.setSizePolicy(sizePolicy1)
-        self.gen_push_button.setMinimumSize(QSize(28, 20))
-        self.gen_push_button.setMaximumSize(QSize(28, 20))
-        self.gen_push_button.setFont(font)
-
-        self.gen_h_layout.addWidget(self.gen_push_button)
-
-
-        self.data_v_layout.addLayout(self.gen_h_layout)
-
         self.ckpt_h_layout = QHBoxLayout()
         self.ckpt_h_layout.setObjectName(u"ckpt_h_layout")
         self.ckpt_label = QLabel(self.layoutWidget4)
@@ -607,6 +571,42 @@ class Ui_main_widget(object):
 
 
         self.data_v_layout.addLayout(self.inf_h_layout)
+
+        self.out_h_layout = QHBoxLayout()
+        self.out_h_layout.setObjectName(u"out_h_layout")
+        self.out_h_layout.setContentsMargins(-1, -1, 0, -1)
+        self.out_label = QLabel(self.layoutWidget4)
+        self.out_label.setObjectName(u"out_label")
+        sizePolicy1.setHeightForWidth(self.out_label.sizePolicy().hasHeightForWidth())
+        self.out_label.setSizePolicy(sizePolicy1)
+        self.out_label.setMinimumSize(QSize(174, 39))
+        self.out_label.setMaximumSize(QSize(174, 39))
+        self.out_label.setFont(font)
+
+        self.out_h_layout.addWidget(self.out_label)
+
+        self.out_line_edit = QLineEdit(self.layoutWidget4)
+        self.out_line_edit.setObjectName(u"out_line_edit")
+        sizePolicy1.setHeightForWidth(self.out_line_edit.sizePolicy().hasHeightForWidth())
+        self.out_line_edit.setSizePolicy(sizePolicy1)
+        self.out_line_edit.setMinimumSize(QSize(137, 24))
+        self.out_line_edit.setMaximumSize(QSize(137, 24))
+        self.out_line_edit.setFont(font)
+
+        self.out_h_layout.addWidget(self.out_line_edit)
+
+        self.out_push_button = QPushButton(self.layoutWidget4)
+        self.out_push_button.setObjectName(u"out_push_button")
+        sizePolicy1.setHeightForWidth(self.out_push_button.sizePolicy().hasHeightForWidth())
+        self.out_push_button.setSizePolicy(sizePolicy1)
+        self.out_push_button.setMinimumSize(QSize(28, 20))
+        self.out_push_button.setMaximumSize(QSize(28, 20))
+        self.out_push_button.setFont(font)
+
+        self.out_h_layout.addWidget(self.out_push_button)
+
+
+        self.data_v_layout.addLayout(self.out_h_layout)
 
 
         self.docker_data_v_layout.addWidget(self.data_group_box)
@@ -1084,12 +1084,6 @@ class Ui_main_widget(object):
         self.paired_line_edit.setText("")
         self.paired_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
 #if QT_CONFIG(tooltip)
-        self.gen_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the generated files", None))
-#endif // QT_CONFIG(tooltip)
-        self.gen_label.setText(QCoreApplication.translate("main_widget", u"Generated Set", None))
-        self.gen_line_edit.setText("")
-        self.gen_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
         self.ckpt_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path for all checkpoint files saved by Robustar", None))
 #endif // QT_CONFIG(tooltip)
         self.ckpt_label.setText(QCoreApplication.translate("main_widget", u"Checkpoint", None))
@@ -1101,6 +1095,12 @@ class Ui_main_widget(object):
         self.inf_label.setText(QCoreApplication.translate("main_widget", u"Influence Result", None))
         self.inf_line_edit.setText("")
         self.inf_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
+#if QT_CONFIG(tooltip)
+        self.out_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the generated files", None))
+#endif // QT_CONFIG(tooltip)
+        self.out_label.setText(QCoreApplication.translate("main_widget", u"Output Folder", None))
+        self.out_line_edit.setText("")
+        self.out_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
         self.model_group_box.setTitle(QCoreApplication.translate("main_widget", u"Model", None))
 #if QT_CONFIG(tooltip)
         self.arch_label.setToolTip(QCoreApplication.translate("main_widget", u"The architecture of the model", None))
