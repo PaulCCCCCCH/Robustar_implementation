@@ -186,7 +186,6 @@ def get_classfied_split_length(split):
     """
     try:
       response = get_classified_split_length(split)
-      print(response)
     except Exception as e:
       print(e)
       RResponse.abort(400, "Split {} not supported".format(split))

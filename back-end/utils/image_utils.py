@@ -180,4 +180,4 @@ def get_classified_split_length(split):
     returns:
         The length of the data split as an integer
     """
-    return list(get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect'))
+    return [get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect')]
