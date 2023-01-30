@@ -4,7 +4,7 @@
       <div class="sticky-header d-flex mb-4">
         <!-- image list settings -->
         <v-sheet
-          class="d-flex flex-column align-start justify-center rounded px-8 pt-4 mr-4 elevation-2"
+          class="d-flex flex-column align-start justify-center rounded px-8 pt-4 elevation-2"
           color="white"
         >
           <div
@@ -54,7 +54,7 @@
               color="primary"
               @click="currentPage++"
             >
-              NEXT PAGE <v-icon class="mr-2">mdi-chevron-right</v-icon>
+              NEXT PAGE <v-icon class="ml-2">mdi-chevron-right</v-icon>
             </v-btn>
           </div>
 
@@ -112,7 +112,7 @@
         <!-- influence calculation & auto annotate -->
         <v-sheet
           v-if="$root.imageSplit !== 'annotated'"
-          class="d-flex align-center justify-center rounded px-4 elevation-2"
+          class="d-flex align-center justify-center rounded px-4 mx-4 elevation-2"
           color="white"
         >
           <v-stepper v-if="showExtraSettings" v-model="selectImageSteps" tile flat vertical>
@@ -207,6 +207,16 @@
             <span>process a batch of selected images</span>
           </v-tooltip>
         </v-sheet>
+
+        <v-alert
+          v-if="$root.imageSplit !== 'annotated' && showExtraSettings"
+          text
+          type="primary"
+          height="100"
+          class="pa-8 text-h5"
+        >
+          You've selected <strong>{{ imageEndIdx - imageStartIdx + 1 }}</strong> image(s)
+        </v-alert>
       </div>
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
