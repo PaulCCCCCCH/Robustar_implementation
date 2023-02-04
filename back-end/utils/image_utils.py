@@ -180,4 +180,5 @@ def get_classified_split_length(split):
     returns:
         The length of the data split as an integer
     """
-    return [get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect')]
+    if split in ["validation", "test"]:
+        return [get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect')]

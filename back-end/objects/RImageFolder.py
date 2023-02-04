@@ -248,7 +248,6 @@ class REvalImageFolder(RImageFolder):
         self._init_next_records()
 
     def add_records(self, records: List[Tuple[str, int]], correct: bool):
-        buffer = self.buffer_correct if correct else self.buffer_incorrect
         next_record = self.next_correct if correct else self.next_incorrect
         paths = [to_unix(record[0]) for record in records]
 
@@ -259,18 +258,24 @@ class REvalImageFolder(RImageFolder):
             value_list = [(self.CLS_INCORRECT,) for _ in paths]
         db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), value_list)
 
-        # 2. update buffer
+        # 2. check duplicates
+        to_remove = set(item[0] for item in records)
+        self.buffer_correct = [item for item in self.buffer_correct if item[0] not in to_remove]
+        self.buffer_incorrect = [item for item in self.buffer_incorrect if item[0] not in to_remove]
+
+        # 3. update buffer
+        buffer = self.buffer_correct if correct else self.buffer_incorrect
         if buffer == []:
             buffer.extend(records)
         else:
             dic = dict(buffer)
             dic.update(dict(records))
             buffer = list(dic.items())
-        # 3. update next record datastructure
+        # 4. update next record datastructure
         for (img_path, _), (next_img_path, _) in zip([buffer[-1]] + records, records):
             next_record[img_path] = next_img_path
 
-        # 4. commit
+        # 5. commit
         self.db_conn.commit()
 
     def add_record(self, pair: Tuple[str, int], correct: bool):
