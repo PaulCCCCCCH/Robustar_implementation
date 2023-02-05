@@ -125,7 +125,15 @@
 
             <v-stepper-content step="1">
               <span class="mr-4">Start Index : {{ imageStartIdx }}</span>
-              <v-btn class="mr-4" color="primary" outlined @click="selectImageSteps++">
+              <v-btn
+                class="mr-4"
+                color="primary"
+                outlined
+                @click="
+                  selectImageSteps++;
+                  imageEndIdx = imageStartIdx;
+                "
+              >
                 Continue
               </v-btn>
             </v-stepper-content>
@@ -213,9 +221,12 @@
           text
           type="primary"
           height="100"
-          class="pa-8 text-h5"
+          class="pa-8 text-subtitle-1"
         >
-          You've selected <strong>{{ imageEndIdx - imageStartIdx + 1 }}</strong> image(s)
+          <span class="text-h5 font-weight-medium mr-2">{{
+            Math.max(imageEndIdx - imageStartIdx + 1, 1)
+          }}</span>
+          image(s) selected
         </v-alert>
       </div>
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
