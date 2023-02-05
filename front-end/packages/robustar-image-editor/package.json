@@ -23,13 +23,13 @@
     "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",
     "build": "npm run build:svg && npm run build:prod && npm run build:minify && node tsBannerGenerator.js",
-    "build:editor": "npx lerna run build",
+    "build:editor": "npx lerna@latest run build",
     "build:clean": "rm -rf ./dist || rd /s /q .\\dist",
     "build:prod": "webpack",
     "build:minify": "webpack --env minify",
     "build:svg": "node makesvg.js",
     "serve": "webpack serve",
-    "serve:editor": "npx lerna run serve",
+    "serve:editor": "npx lerna@latest run serve",
     "doc:dev": "tuidoc --serv",
     "doc": "tuidoc",
     "update:wrapper": "node scripts/updateWrapper.js",
@@ -48,8 +48,9 @@
     "not ie <= 9"
   ],
   "dependencies": {
-    "fabric": "^5.2.0",
+    "fabric": "^5.3.0",
     "tui-code-snippet": "^1.5.0",
-    "tui-color-picker": "^2.2.6"
-  }
+    "tui-color-picker": "^2.2.8"
+  },
+  "devDependencies": {}
 }

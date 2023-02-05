@@ -77,17 +77,24 @@
           </v-expansion-panel-content>
         </v-expansion-panel> </v-expansion-panels
     ></v-sheet>
-    <v-btn
-      v-else
-      class="float-button"
-      color="secondary"
-      outlined
-      large
-      @click="open"
-      data-test="visualizer-btn"
-    >
-      <v-icon left>mdi-eye</v-icon>VISUALIZER
-    </v-btn>
+    <v-tooltip v-else left>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="float-button"
+          color="secondary"
+          outlined
+          fab
+          large
+          @click="open"
+          v-bind="attrs"
+          v-on="on"
+          data-test="visualizer-btn"
+        >
+          <v-icon>mdi-eye</v-icon>
+        </v-btn>
+      </template>
+      <span>Visualization Panel</span>
+    </v-tooltip>
   </div>
 </template>
 
@@ -249,13 +256,13 @@ export default {
 <style scoped>
 .float-button {
   position: fixed;
-  right: 10px;
+  right: 5px;
   top: 50vh;
   transform: translate(50%, -50%);
 }
 
 .float-button:hover {
-  transform: translate(0, -50%);
+  transform: translate(0, -55%);
   transition: 0.3s;
 }
 

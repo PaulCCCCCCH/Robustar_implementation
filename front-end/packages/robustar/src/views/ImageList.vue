@@ -4,7 +4,7 @@
       <div class="sticky-header d-flex mb-4">
         <!-- image list settings -->
         <v-sheet
-          class="d-flex flex-column align-center justify-center rounded px-8 mr-4 elevation-2"
+          class="d-flex flex-column align-start justify-center rounded px-8 pt-4 elevation-2"
           color="white"
         >
           <div
@@ -20,21 +20,12 @@
           </div>
 
           <!-- Page navigator -->
-          <div class="d-flex justify-center align-center my-4">
-            <!-- Previous page button -->
-            <v-btn
-              :disabled="currentPage <= 0 || !hasImages"
-              depressed
-              color="primary"
-              @click="currentPage--"
-              data-test="image-list-btn-prev-page"
-            >
-              PREV PAGE
-            </v-btn>
-
+          <div class="d-flex justify-center align-center">
             <!-- Refresh page button & page number -->
-            <div class="d-flex align-center mx-8">
-              <v-btn class="mr-4" depressed color="primary" @click="gotoPage"> GOTO PAGE </v-btn>
+            <div class="d-flex align-center">
+              <v-btn class="mr-4" depressed color="primary" @click="gotoPage">
+                <v-icon class="mr-2">mdi-import</v-icon> GOTO PAGE
+              </v-btn>
               <v-text-field
                 data-test="image-list-input-page-number"
                 v-model="inputPage"
@@ -43,31 +34,43 @@
               ></v-text-field>
             </div>
 
+            <!-- Previous page button -->
+            <v-btn
+              :disabled="currentPage <= 0 || !hasImages"
+              outlined
+              color="primary"
+              @click="currentPage--"
+              data-test="image-list-btn-prev-page"
+              class="mx-8"
+            >
+              <v-icon class="mr-2">mdi-chevron-left</v-icon> PREV PAGE
+            </v-btn>
+
             <!-- Next page button -->
             <v-btn
               data-test="image-list-btn-next-page"
               :disabled="currentPage >= maxPage || !hasImages"
-              depressed
+              outlined
               color="primary"
               @click="currentPage++"
             >
-              NEXT PAGE
+              NEXT PAGE <v-icon class="ml-2">mdi-chevron-right</v-icon>
             </v-btn>
+          </div>
 
-            <v-divider vertical class="mx-8"></v-divider>
-
-            <!-- Class filter -->
-            <div class="d-flex align-center">
-              <v-btn class="mr-4" depressed color="primary" @click="gotoClass"> GOTO CLASS </v-btn>
-              <v-select
-                :items="classNames"
-                v-model="$root.imageClass"
-                label="Class Name"
-                data-test="image-list-select-class-name"
-                clearable
-              >
-              </v-select>
-            </div>
+          <!-- Class filter -->
+          <div class="d-flex align-center mb-6">
+            <v-btn class="mr-4" depressed color="primary" @click="gotoClass">
+              <v-icon class="mr-2">mdi-import</v-icon> GOTO CLASS
+            </v-btn>
+            <v-select
+              :items="classNames"
+              v-model="$root.imageClass"
+              label="Class Name"
+              data-test="image-list-select-class-name"
+              clearable
+            >
+            </v-select>
           </div>
 
           <!-- row & col settings -->
@@ -78,6 +81,7 @@
               label="Number of image per page"
               class="mr-8"
               outlined
+              dense
               @change="resetImageList"
               data-test="image-list-input-num-per-page"
             >
@@ -88,6 +92,7 @@
               v-model="imageSize"
               label="Image size"
               outlined
+              dense
               @change="setImageSize"
             >
             </v-select>
@@ -95,7 +100,7 @@
             <v-btn
               v-if="$route.params.split === 'annotated'"
               depressed
-              color="primary"
+              color="warning"
               @click="clearAnnotatedImage"
               data-test="image-list-btn-clear-annotated-imgs"
             >
@@ -105,49 +110,124 @@
         </v-sheet>
 
         <!-- influence calculation & auto annotate -->
-        <v-sheet class="d-flex align-center justify-center rounded px-8 elevation-2" color="white">
-          <div v-if="showExtraSettings" class="mr-4">
-            <p>Click image to select its index</p>
-            <v-radio-group v-model="imageIdxSelection" mandatory row>
-              <v-radio :label="`Start Index : ${imageStartIdx}`" value="start"></v-radio>
-              <v-radio :label="`End Index : ${imageEndIdx}`" value="end"></v-radio>
-            </v-radio-group>
-            <p v-if="imageEndIdx < imageStartIdx" style="color: red">
-              End Index smaller than Start Index
-            </p>
-            <v-btn
-              depressed
-              outlined
-              color="primary"
-              class="mr-4"
-              @click="
-                $router.push({
-                  name: 'InfluencePad',
-                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
-                })
-              "
+        <v-sheet
+          v-if="$root.imageSplit !== 'annotated'"
+          class="d-flex align-center justify-center rounded px-4 mx-4 elevation-2"
+          color="white"
+        >
+          <v-stepper v-if="showExtraSettings" v-model="selectImageSteps" tile flat vertical>
+            <v-stepper-step :complete="selectImageSteps > 1" step="1">
+              Select starting point
+              <small
+                >Image with a green dot at the top-right corner indicates the starting point
+              </small>
+            </v-stepper-step>
+
+            <v-stepper-content step="1">
+              <span class="mr-4">Start Index : {{ imageStartIdx }}</span>
+              <v-btn
+                class="mr-4"
+                color="primary"
+                outlined
+                @click="
+                  selectImageSteps++;
+                  imageEndIdx = imageStartIdx;
+                "
+              >
+                Continue
+              </v-btn>
+            </v-stepper-content>
+
+            <v-stepper-step :complete="selectImageSteps > 2" step="2">
+              Select end point
+              <small
+                >Images with yellow dots at the top-right corner indicates the range of your
+                selection</small
+              >
+            </v-stepper-step>
+
+            <v-stepper-content step="2">
+              <span class="mr-4">End Index : {{ imageEndIdx }}</span>
+              <v-btn
+                class="mr-4"
+                color="primary"
+                outlined
+                :disabled="imageEndIdx < imageStartIdx"
+                @click="selectImageSteps++"
+              >
+                Continue
+              </v-btn>
+              <v-btn color="warning" outlined @click="selectImageSteps--"> Back </v-btn>
+              <v-alert v-if="imageEndIdx < imageStartIdx" dense text type="error" class="mt-4">
+                End Index smaller than Start Index
+              </v-alert>
+            </v-stepper-content>
+
+            <v-stepper-step :complete="selectImageSteps > 3" step="3"
+              >Apply selection</v-stepper-step
             >
-              <v-icon class="mr-2">mdi-vector-link</v-icon> Influence
-            </v-btn>
-            <v-btn
-              depressed
-              outlined
-              color="primary"
-              @click="
-                $router.push({
-                  name: 'AutoAnnotatePad',
-                  params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
-                })
-              "
-            >
-              <v-icon class="mr-2">mdi-auto-fix</v-icon> Auto Annotate
-            </v-btn>
-          </div>
-          <v-btn icon color="grey" large @click="showExtraSettings = !showExtraSettings">
-            <v-icon v-if="!showExtraSettings">mdi-chevron-double-right</v-icon>
-            <v-icon v-else>mdi-chevron-double-left</v-icon>
-          </v-btn>
+
+            <v-stepper-content step="3">
+              <v-btn
+                depressed
+                outlined
+                color="primary"
+                @click="
+                  $router.push({
+                    name: 'InfluencePad',
+                    params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
+                  })
+                "
+              >
+                <v-icon class="mr-2">mdi-vector-link</v-icon> Influence
+              </v-btn>
+              <v-btn
+                depressed
+                outlined
+                color="primary"
+                class="mx-4"
+                @click="
+                  $router.push({
+                    name: 'AutoAnnotatePad',
+                    params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
+                  })
+                "
+              >
+                <v-icon class="mr-2">mdi-auto-fix</v-icon> Auto Annotate
+              </v-btn>
+              <v-btn color="warning" outlined @click="selectImageSteps--"> Back </v-btn>
+            </v-stepper-content>
+          </v-stepper>
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                color="grey"
+                large
+                @click="showExtraSettings = !showExtraSettings"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon v-if="!showExtraSettings">mdi-chevron-double-right</v-icon>
+                <v-icon v-else>mdi-chevron-double-left</v-icon>
+              </v-btn>
+            </template>
+            <span>process a batch of selected images</span>
+          </v-tooltip>
         </v-sheet>
+
+        <v-alert
+          v-if="$root.imageSplit !== 'annotated' && showExtraSettings"
+          text
+          type="primary"
+          height="100"
+          class="pa-8 text-subtitle-1"
+        >
+          <span class="text-h5 font-weight-medium mr-2">{{
+            Math.max(imageEndIdx - imageStartIdx + 1, 1)
+          }}</span>
+          image(s) selected
+        </v-alert>
       </div>
       <v-divider class="mb-8 mt-4" style="width: 85%"></v-divider>
 
@@ -176,11 +256,7 @@
           </div>
           <v-hover :disabled="showExtraSettings" v-slot="{ hover }">
             <v-badge
-              :value="
-                showExtraSettings &&
-                calcAbsIdx(idx) >= imageStartIdx &&
-                calcAbsIdx(idx) <= imageEndIdx
-              "
+              :value="isImageSelected(idx)"
               :color="calcAbsIdx(idx) < imageEndIdx ? 'warning' : 'success'"
               :dot="calcAbsIdx(idx) > imageStartIdx && calcAbsIdx(idx) < imageEndIdx"
               bordered
@@ -201,6 +277,7 @@
                     </v-progress-circular>
                   </v-row>
                 </template>
+                <div v-if="isImageSelected(idx)" class="fill-height repeating-gradient"></div>
                 <v-expand-transition>
                   <div
                     v-if="hover"
@@ -269,7 +346,6 @@ export default {
     return {
       isLoadingImages: false,
       showExtraSettings: false,
-      imageIdxSelection: 'start',
       imageStartIdx: 0,
       imageEndIdx: 0,
       currentPage: 0,
@@ -288,6 +364,7 @@ export default {
         large: 4,
         'extra large': 6,
       },
+      selectImageSteps: 1,
     };
   },
   mounted() {
@@ -436,15 +513,24 @@ export default {
     selectImage(idx) {
       if (this.showExtraSettings) {
         const absoluteIdx = this.calcAbsIdx(idx);
-        if (this.imageIdxSelection === 'start') {
+        if (this.selectImageSteps === 1) {
           this.imageStartIdx = absoluteIdx;
-        } else if (this.imageIdxSelection === 'end') {
+        } else if (this.selectImageSteps === 2) {
           this.imageEndIdx = absoluteIdx;
         }
       }
     },
     calcAbsIdx(idx) {
       return this.currentPage * this.imagePerPage + idx;
+    },
+    isImageSelected(idx) {
+      return (
+        this.showExtraSettings &&
+        (this.calcAbsIdx(idx) === this.imageStartIdx ||
+          (this.imageEndIdx >= this.imageStartIdx &&
+            this.calcAbsIdx(idx) >= this.imageStartIdx &&
+            this.calcAbsIdx(idx) <= this.imageEndIdx))
+      );
     },
   },
 };
@@ -469,5 +555,15 @@ export default {
   position: sticky;
   top: 80px;
   z-index: 9;
+}
+
+.repeating-gradient {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(147, 176, 231, 0.25),
+    rgba(147, 176, 231, 0.25) 5px,
+    rgba(0, 89, 255, 0.25) 5px,
+    rgba(0, 89, 255, 0.25) 10px
+  );
 }
 </style>

@@ -136,15 +136,15 @@ export default {
   name: 'TrainPad',
   data() {
     return {
-      model_options: [
-        'resnet-18-32x32',
-        'resnet-18',
-        'resnet-34',
-        'resnet-50',
-        'resnet-101',
-        'resnet-152',
-        'mobilenet-v2',
-      ],
+      // model_options: [
+      //   'resnet-18-32x32',
+      //   'resnet-18',
+      //   'resnet-34',
+      //   'resnet-50',
+      //   'resnet-101',
+      //   'resnet-152',
+      //   'mobilenet-v2',
+      // ],
       mixture_methods: [
         'pure_black',
         'noise',
@@ -155,7 +155,6 @@ export default {
         'vstrips',
         'mixture',
       ],
-
       // Training configs
       configs: {
         model_name: 'my-test-model',
