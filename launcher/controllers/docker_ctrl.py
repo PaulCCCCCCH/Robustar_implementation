@@ -3,6 +3,7 @@ import json
 import os
 import re
 import uuid
+import ctypes
 
 from sys import platform
 from PySide2.QtCore import QObject
@@ -20,10 +21,16 @@ class DockerController(QObject):
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
+        home_dir = os.path.expanduser("~")
         if platform == "linux" or platform == "linux2":
             self.api_client = docker.APIClient(base_url="unix://var/run/docker.sock")
+            self.root = os.path.join(home_dir, ".RobustarLauncher")
         elif platform == "win32":
             self.api_client = docker.APIClient(base_url="tcp://localhost:2375")
+            self.root = os.path.join(home_dir, "AppData", "Local", "RobustarLauncher")
+        elif platform == "darwin":
+            self.root = os.path.join(home_dir, ".RobustarLauncher")
+            pass
 
         # Synchronize the record data
         self.sync_record()
@@ -42,10 +49,10 @@ class DockerController(QObject):
                                          "Unexpected error encountered during record synchronization. See more in <i>Details</i> page")
             self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-        if os.path.exists("./RecordData"):
-            if os.path.exists("./RecordData/config_record.json"):
+        if os.path.exists(self.root):
+            if os.path.exists(os.path.join(self.root, "config_record.json")):
                 new_match_dict = {}
-                with open("./RecordData/config_record.json", "r") as f:
+                with open(os.path.join(self.root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
                     for name in match_dict.keys():
                         if name in name_lst:
@@ -53,7 +60,7 @@ class DockerController(QObject):
                         else:
                             file_name = match_dict[name]
                             os.remove(file_name)
-                with open("./RecordData/config_record.json", "w") as f:
+                with open(os.path.join(self.root, "config_record.json"), "w") as f:
                     json.dump(new_match_dict, f)
 
     def get_selection(self, for_start=False):
@@ -123,21 +130,27 @@ class DockerController(QObject):
         }
 
         # Create folder to store record data
-        if not os.path.exists("./RecordData"):
-            os.makedirs("./RecordData")
+        if not os.path.exists(self.root):
+            os.makedirs(self.root)
+            if platform == "win32":
+                FILE_ATTRIBUTE_HIDDEN = 0x02
+                ret = ctypes.windll.kernel32.SetFileAttributesW(self.root,
+                                                                FILE_ATTRIBUTE_HIDDEN)
+                if not ret:
+                    print("Failed to hide the record folder")
 
-        file_name = f"./RecordData/config_{uuid.uuid4().hex}.json"
+        file_name = os.path.join(self.root, f"config_{uuid.uuid4().hex}.json")
         with open(file_name, "w") as f:
             f.write(json.dumps(config))
         config_file = os.path.join(os.getcwd(), file_name)
 
         # Store the (container - config file) mapping
-        if not os.path.exists("./RecordData/config_record.json"):
+        if not os.path.exists(os.path.join(self.root, "config_record.json")):
             match_dict = {}
         else:
-            with open("./RecordData/config_record.json", "r") as f:
+            with open(os.path.join(self.root, "config_record.json"), "r") as f:
                 match_dict = json.load(f)
-        with open("./RecordData/config_record.json", "w") as f:
+        with open(os.path.join(self.root, "config_record.json"), "w") as f:
             match_dict[self.model.profile["name"]] = file_name
             json.dump(match_dict, f)
 
@@ -167,9 +180,9 @@ class DockerController(QObject):
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
                                              "Unexpected error encountered. See more in <i>Details</i> page")
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
-                with open("./RecordData/config_record.json", "r") as f:
+                with open(os.path.join(self.root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
-                with open("./RecordData/config_record.json", "w") as f:
+                with open(os.path.join(self.root, "config_record.json"), "w") as f:
                     file_name = match_dict.pop(self.model.profile["name"])
                     os.remove(file_name)
                     json.dump(match_dict, f)
@@ -338,9 +351,9 @@ class DockerController(QObject):
                 elif self.model.container.status == "exited":
                     self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
 
-                with open("./RecordData/config_record.json", "r") as f:
+                with open(os.path.join(self.root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
-                with open("./RecordData/config_record.json", "w") as f:
+                with open(os.path.join(self.root, "config_record.json"), "w") as f:
                     file_name = match_dict.pop(self.model.temp_name)
                     os.remove(file_name)
                     json.dump(match_dict, f)
@@ -394,7 +407,7 @@ class DockerController(QObject):
 
             # Get the name and port setting
             name = ct.name
-            with open("./RecordData/config_record.json", "r") as f:
+            with open(os.path.join(self.root, "config_record.json"), "r") as f:
                 match_dict = json.load(f)
                 file_name = match_dict[name]
             with open(file_name) as f:

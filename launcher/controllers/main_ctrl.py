@@ -333,7 +333,7 @@ class MainController(QObject):
         )
 
     def update_success_view(self):
-        with open("./RecordData/config_record.json", "r") as f:
+        with open(os.path.join(self.docker_ctrl.root, "config_record.json"), "r") as f:
             match_dict = json.load(f)
             file_name = match_dict[self.model.temp_name]
         with open(file_name) as f:
