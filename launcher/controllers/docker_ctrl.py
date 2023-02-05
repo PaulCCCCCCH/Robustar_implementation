@@ -29,7 +29,7 @@ class DockerController(QObject):
             self.api_client = docker.APIClient(base_url="tcp://localhost:2375")
             self.root = os.path.join(home_dir, "AppData", "Local", "RobustarLauncher")
         elif platform == "darwin":
-            self.root = os.path.join(home_dir, ".RobustarLauncher")
+            self.root = os.path.join(home_dir, "Library", "Containers", "RobustarLauncher")
             pass
 
         # Synchronize the record data
