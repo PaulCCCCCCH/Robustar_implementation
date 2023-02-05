@@ -19,15 +19,14 @@ class TestThread(threading.Thread):
         else:
             raise NotImplementedError("Test called with wrong data split")
 
-        self.stop = False
-
     def run(self):
         print("Starting testing thread")
-        self.startTestThread()
-
-    def stop(self):
-        print("Setting trainer stop flag...")
-        self.stop = True
+        try:
+            self.startTestThread()
+        except Exception as e:
+            raise e
+        finally:
+            RServer.get_model_wrapper().release_model()
 
     def startTestThread(self):
         samples = self.dataset.samples
@@ -37,7 +36,6 @@ class TestThread(threading.Thread):
         incorrect_buffer = []
 
         task = RTask(TaskType.Test, dataset_length)
-
         for img_path, label in samples:
 
             output = get_image_prediction(
@@ -75,12 +73,20 @@ class TestThread(threading.Thread):
 
         self.dataset.add_records(correct_buffer, True)
         self.dataset.add_records(incorrect_buffer, False)
+
         print("Testing complete")
 
 
 def start_test(split):
+    model_wrapper = RServer.get_model_wrapper()
     try:
-        test_thread = TestThread(split)
-        test_thread.start()
+        if model_wrapper.acquire_model():
+            test_thread = TestThread(split)
+            test_thread.start()
+        else:
+            raise Exception(
+                "Cannot start testing because model is occupied by another thread"
+            )
     except Exception as e:
+        model_wrapper.release_model()
         raise e
