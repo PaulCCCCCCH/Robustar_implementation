@@ -20,7 +20,4 @@ Implemented xxx. Added a yyy to class zzz. Attach screenshots if possible.
 - [ ] Double check the diff between my branch and the target branch. Make sure there's nothing unexpected.
 - [ ] Tag relevant issues and PRs in the first section of this form.
 - [ ] All CI tests are passed.
-
-If any of the `package-lock.json` or `package.json` files are changed:
-
-- [ ] add a new section `Dependency Changes` to the form stating what library changes are introduced and why.
+- [ ] No `package-lock.json` or `package.json` changes are pushed. If you do, add a new section `Dependency Changes` to the form stating what library changes are introduced and why.
