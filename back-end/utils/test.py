@@ -79,14 +79,14 @@ class TestThread(threading.Thread):
 
 def start_test(split):
     model_wrapper = RServer.get_model_wrapper()
+    if not model_wrapper.acquire_model():
+        raise Exception(
+            "Cannot start testing because model is occupied by another thread"
+        )
+
     try:
-        if model_wrapper.acquire_model():
-            test_thread = TestThread(split)
-            test_thread.start()
-        else:
-            raise Exception(
-                "Cannot start testing because model is occupied by another thread"
-            )
+        test_thread = TestThread(split)
+        test_thread.start()
     except Exception as e:
         model_wrapper.release_model()
         raise e
