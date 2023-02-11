@@ -182,3 +182,5 @@ def get_classified_split_length(split):
     """
     if split in ["validation", "test"]:
         return [get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect')]
+    else:
+        raise NotImplementedError("Split {} not supported".format(split))

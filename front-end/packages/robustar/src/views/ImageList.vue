@@ -16,7 +16,6 @@
                 v-bind:value="classification"
                 @change="resetImageList"
                               data-test="image-list-select-classification"
-
               ></v-select>
 
               <v-menu class="pa-2" :close-on-content-click="false" :nudge-width="5" offset-x>
@@ -379,8 +378,10 @@ export default {
     },
     async initClassifiedImageList() {
       try {
-        const res = await APIGetClassifiedSplitLength(this.$route.params.split);
-        this.testImageList = res.data.data;
+        if (this.$route.params.split == 'validation' || this.$route.params.split == 'test') {
+          const res = await APIGetClassifiedSplitLength(this.$route.params.split);
+          this.testImageList = res.data.data;
+        }
       } catch (error) {
         console.log(error);
         this.$root.alert('error', 'Image list initialization failed');
