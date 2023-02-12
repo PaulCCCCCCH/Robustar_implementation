@@ -2,7 +2,7 @@ describe('Image List', () => {
   beforeEach(() => {});
 
   it('Navigates through training data', () => {
-    cy.visit('http://localhost:8080/#/image-list/train');
+    cy.visit('image-list/train');
     // TODO: What to invoke to get page number? Hard coding 12 for now.
     cy.getBySel('image-list-input-num-per-page')
       .invoke('val')
@@ -59,7 +59,7 @@ describe('Image List', () => {
   });
 
   it('Navigates through validation data', () => {
-    cy.visit('http://localhost:8080/#/image-list/validation');
+    cy.visit('image-list/validation');
 
     // define elements
     cy.getBySel('image-list-select-class-name').as('class-name-dropdown');

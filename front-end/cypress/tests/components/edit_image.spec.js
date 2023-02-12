@@ -1,18 +1,12 @@
 describe('Annotation Pad (Image Editor)', () => {
   before(() => {
-    cy.visit('http://localhost:8080/#/image-list/annotated');
-    cy.clickBySel('image-list-btn-clear-annotated-imgs');
-    cy.wait(500);
-  });
-
-  after(() => {
-    cy.visit('http://localhost:8080/#/image-list/annotated');
+    cy.visit('image-list/annotated');
     cy.clickBySel('image-list-btn-clear-annotated-imgs');
     cy.wait(500);
   });
 
   it('Enables editing images in training set', () => {
-    cy.visit('http://localhost:8080/#/image-list/train');
+    cy.visit('image-list/train');
     cy.reload();
     cy.checkSessionStorage('image_split', 'train');
     cy.getBySel('image-list-img-0').trigger('mouseenter');
