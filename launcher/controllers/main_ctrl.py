@@ -186,10 +186,20 @@ class MainController(QObject):
             t.start()
 
     def stop_server(self):
+        if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
+            self.print_message(
+                self.main_view.ui.prompt_text_browser,
+                "Please select a container on Manage Tab Page."),
+            return
         t = ServerOperationThread(target=self.docker_ctrl.stop_server, ctrl=self)
         t.start()
 
     def delete_server(self):
+        if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
+            self.print_message(
+                self.main_view.ui.prompt_text_browser,
+                "Please select a container on Manage Tab Page."),
+            return
         t = ServerOperationThread(target=self.docker_ctrl.delete_server, ctrl=self)
         t.start()
 
