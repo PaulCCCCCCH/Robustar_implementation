@@ -15,6 +15,22 @@ class MainController(QObject):
 
         self.popup_view = None
         self.main_view = None
+        self.key_to_prompt = {
+            "name": "container name",
+            "port": "port",
+            "train_path": "train set path",
+            "val_path": "validation set path",
+            "test_path": "test set path",
+            "paired_path": "paired set path",
+            "out_path": "output folder path",
+            "inf_path": "influence result path",
+            "ckpt_path": "check point path",
+            "batch": "batch size",
+            "worker": "worker number",
+            "cls": "class number",
+            "size": "image size",
+            "device": "device"
+        }
 
     def set_model(self, model):
         self.model = model
@@ -179,7 +195,7 @@ class MainController(QObject):
             print("The dialog is closed")
 
     def start_server(self):
-        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and self.check_miss_input():
+        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and (self.check_miss_input() or self.check_wrong_input()):
             return
         else:
             t = ServerOperationThread(target=self.docker_ctrl.start_server, ctrl=self)
@@ -286,25 +302,9 @@ class MainController(QObject):
         self.main_view.ui.delete_push_button.setEnabled(False)
 
     def check_miss_input(self):
-        miss_profile_dict = {
-            "name": "container name",
-            "port": "port",
-            "train_path": "train set path",
-            "val_path": "validation set path",
-            "test_path": "test set path",
-            "paired_path": "paired set path",
-            "out_path": "output folder path",
-            "inf_path": "influence result path",
-            "ckpt_path": "check point path",
-            "batch": "batch size",
-            "worker": "worker number",
-            "cls": "class number",
-            "size": "image size",
-            "device": "device"
-        }
-        miss_profile_prompt = []
+        miss_input_prompt = []
 
-        for profile_name in [
+        for key in [
             "name",
             "port",
             "train_path",
@@ -320,19 +320,31 @@ class MainController(QObject):
             "size",
             "device"
         ]:
-            if not self.model.profile[profile_name].strip():
-                miss_profile_prompt.append(miss_profile_dict[profile_name])
+            if not self.model.profile[key].strip():
+                miss_input_prompt.append(self.key_to_prompt[key])
 
-        if len(miss_profile_prompt) != 0:
+        if len(miss_input_prompt) != 0:
             self.print_message(
                 self.main_view.ui.prompt_text_browser,
-                "Please provide {}".format(", ".join(miss_profile_prompt)),
+                "Please provide {}".format(", ".join(miss_input_prompt)),
             )
             return 1
         return 0
 
     def check_wrong_input(self):
-        pass
+        wrong_input_prompt = []
+
+        for key in ["port", "batch", "worker", "cls", "size"]:
+            if not self.model.profile[key].isdigit():
+                wrong_input_prompt.append(self.key_to_prompt[key])
+
+        if len(wrong_input_prompt) != 0:
+            self.print_message(
+                self.main_view.ui.prompt_text_browser,
+                "The input type of {} should be integer".format(", ".join(wrong_input_prompt)),
+            )
+            return 1
+        return 0
 
     def get_item_from_list_widgets(self):
         return (
