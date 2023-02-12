@@ -371,13 +371,14 @@ class Ui_main_widget(object):
 
         self.train_line_edit = QLineEdit(self.layoutWidget4)
         self.train_line_edit.setObjectName(u"train_line_edit")
+        self.train_line_edit.setEnabled(True)
         sizePolicy1.setHeightForWidth(self.train_line_edit.sizePolicy().hasHeightForWidth())
         self.train_line_edit.setSizePolicy(sizePolicy1)
         self.train_line_edit.setMinimumSize(QSize(137, 24))
         self.train_line_edit.setMaximumSize(QSize(137, 24))
         self.train_line_edit.setFont(font)
         self.train_line_edit.setMouseTracking(True)
-        self.train_line_edit.setReadOnly(False)
+        self.train_line_edit.setReadOnly(True)
 
         self.train_h_layout.addWidget(self.train_line_edit)
 
@@ -414,6 +415,7 @@ class Ui_main_widget(object):
         self.val_line_edit.setMinimumSize(QSize(137, 24))
         self.val_line_edit.setMaximumSize(QSize(137, 24))
         self.val_line_edit.setFont(font)
+        self.val_line_edit.setReadOnly(True)
 
         self.val_h_layout.addWidget(self.val_line_edit)
 
@@ -450,6 +452,7 @@ class Ui_main_widget(object):
         self.test_line_edit.setMinimumSize(QSize(137, 24))
         self.test_line_edit.setMaximumSize(QSize(137, 24))
         self.test_line_edit.setFont(font)
+        self.test_line_edit.setReadOnly(True)
 
         self.test_h_layout.addWidget(self.test_line_edit)
 
@@ -486,6 +489,7 @@ class Ui_main_widget(object):
         self.paired_line_edit.setMinimumSize(QSize(137, 24))
         self.paired_line_edit.setMaximumSize(QSize(137, 24))
         self.paired_line_edit.setFont(font)
+        self.paired_line_edit.setReadOnly(True)
 
         self.paired_h_layout.addWidget(self.paired_line_edit)
 
@@ -521,6 +525,7 @@ class Ui_main_widget(object):
         self.ckpt_line_edit.setMinimumSize(QSize(137, 24))
         self.ckpt_line_edit.setMaximumSize(QSize(137, 24))
         self.ckpt_line_edit.setFont(font)
+        self.ckpt_line_edit.setReadOnly(True)
 
         self.ckpt_h_layout.addWidget(self.ckpt_line_edit)
 
@@ -556,6 +561,7 @@ class Ui_main_widget(object):
         self.inf_line_edit.setMinimumSize(QSize(137, 24))
         self.inf_line_edit.setMaximumSize(QSize(137, 24))
         self.inf_line_edit.setFont(font)
+        self.inf_line_edit.setReadOnly(True)
 
         self.inf_h_layout.addWidget(self.inf_line_edit)
 
@@ -592,6 +598,7 @@ class Ui_main_widget(object):
         self.out_line_edit.setMinimumSize(QSize(137, 24))
         self.out_line_edit.setMaximumSize(QSize(137, 24))
         self.out_line_edit.setFont(font)
+        self.out_line_edit.setReadOnly(True)
 
         self.out_h_layout.addWidget(self.out_line_edit)
 

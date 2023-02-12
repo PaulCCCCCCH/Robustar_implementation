@@ -179,7 +179,7 @@ class MainController(QObject):
             print("The dialog is closed")
 
     def start_server(self):
-        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and self.check_profile():
+        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and self.check_miss_input():
             return
         else:
             t = ServerOperationThread(target=self.docker_ctrl.start_server, ctrl=self)
@@ -285,7 +285,7 @@ class MainController(QObject):
         self.main_view.ui.stop_push_button.setEnabled(False)
         self.main_view.ui.delete_push_button.setEnabled(False)
 
-    def check_profile(self):
+    def check_miss_input(self):
         miss_profile_dict = {
             "name": "container name",
             "port": "port",
@@ -330,6 +330,9 @@ class MainController(QObject):
             )
             return 1
         return 0
+
+    def check_wrong_input(self):
+        pass
 
     def get_item_from_list_widgets(self):
         return (

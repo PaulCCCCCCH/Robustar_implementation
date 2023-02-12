@@ -957,6 +957,9 @@ QPushButton:hover {
                      </item>
                      <item>
                       <widget class="QLineEdit" name="train_line_edit">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -991,7 +994,7 @@ QPushButton:hover {
                         <string/>
                        </property>
                        <property name="readOnly">
-                        <bool>false</bool>
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
@@ -1105,6 +1108,9 @@ QPushButton:hover {
                        <property name="text">
                         <string/>
                        </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
+                       </property>
                       </widget>
                      </item>
                      <item>
@@ -1216,6 +1222,9 @@ QPushButton:hover {
                        </property>
                        <property name="text">
                         <string/>
+                       </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
@@ -1329,6 +1338,9 @@ QPushButton:hover {
                        <property name="text">
                         <string/>
                        </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
+                       </property>
                       </widget>
                      </item>
                      <item>
@@ -1438,6 +1450,9 @@ QPushButton:hover {
                        <property name="text">
                         <string/>
                        </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
+                       </property>
                       </widget>
                      </item>
                      <item>
@@ -1546,6 +1561,9 @@ QPushButton:hover {
                        </property>
                        <property name="text">
                         <string/>
+                       </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
@@ -1658,6 +1676,9 @@ QPushButton:hover {
                        </property>
                        <property name="text">
                         <string/>
+                       </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
