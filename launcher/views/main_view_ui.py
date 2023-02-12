@@ -731,17 +731,16 @@ class Ui_main_widget(object):
 
         self.device_h_layout.addWidget(self.device_label)
 
-        self.device_line_edit = QLineEdit(self.layoutWidget_2)
-        self.device_line_edit.setObjectName(u"device_line_edit")
-        sizePolicy1.setHeightForWidth(self.device_line_edit.sizePolicy().hasHeightForWidth())
-        self.device_line_edit.setSizePolicy(sizePolicy1)
-        self.device_line_edit.setMinimumSize(QSize(174, 24))
-        self.device_line_edit.setMaximumSize(QSize(174, 24))
-        self.device_line_edit.setFont(font)
-        self.device_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.device_line_edit.setClearButtonEnabled(True)
+        self.device_combo_box = QComboBox(self.layoutWidget_2)
+        self.device_combo_box.addItem("")
+        self.device_combo_box.setObjectName(u"device_combo_box")
+        sizePolicy1.setHeightForWidth(self.device_combo_box.sizePolicy().hasHeightForWidth())
+        self.device_combo_box.setSizePolicy(sizePolicy1)
+        self.device_combo_box.setMinimumSize(QSize(174, 24))
+        self.device_combo_box.setMaximumSize(QSize(174, 24))
+        self.device_combo_box.setFont(font)
 
-        self.device_h_layout.addWidget(self.device_line_edit)
+        self.device_h_layout.addWidget(self.device_combo_box)
 
 
         self.model_v_layout.addLayout(self.device_h_layout)
@@ -1140,7 +1139,10 @@ class Ui_main_widget(object):
         self.device_label.setToolTip(QCoreApplication.translate("main_widget", u"The device on which the model will be created", None))
 #endif // QT_CONFIG(tooltip)
         self.device_label.setText(QCoreApplication.translate("main_widget", u"Device", None))
-        self.device_line_edit.setText(QCoreApplication.translate("main_widget", u"cpu", None))
+        self.device_combo_box.setItemText(0, QCoreApplication.translate("main_widget", u"cpu", None))
+
+        self.device_combo_box.setCurrentText(QCoreApplication.translate("main_widget", u"cpu", None))
+        self.device_combo_box.setProperty("placeholderText", "")
 #if QT_CONFIG(tooltip)
         self.shuffle_label.setToolTip(QCoreApplication.translate("main_widget", u"Check the box if you want the train data to be shuffled", None))
 #endif // QT_CONFIG(tooltip)

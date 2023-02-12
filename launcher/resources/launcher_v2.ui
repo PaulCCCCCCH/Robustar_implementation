@@ -2072,7 +2072,7 @@ QPushButton:hover {
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="device_line_edit">
+                      <widget class="QComboBox" name="device_combo_box">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -2100,15 +2100,17 @@ QPushButton:hover {
                          <bold>false</bold>
                         </font>
                        </property>
-                       <property name="text">
+                       <property name="currentText">
                         <string>cpu</string>
                        </property>
-                       <property name="alignment">
-                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                       <property name="placeholderText" stdset="0">
+                        <string/>
                        </property>
-                       <property name="clearButtonEnabled">
-                        <bool>true</bool>
-                       </property>
+                       <item>
+                        <property name="text">
+                         <string>cpu</string>
+                        </property>
+                       </item>
                       </widget>
                      </item>
                     </layout>

@@ -266,7 +266,7 @@ class DockerController(QObject):
 
             # Set the device_requests parm
             device_requests=[
-                docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])
+                docker.types.DeviceRequest(counts=-1, device_ids=[self.model.device.split(":")[1]], capabilities=[["gpu"]])
             ]
         )
 

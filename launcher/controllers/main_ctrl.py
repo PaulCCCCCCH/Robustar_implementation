@@ -4,6 +4,7 @@ import os
 import json
 import time
 
+import nvgpu
 from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
 from threading import Thread
@@ -46,6 +47,7 @@ class MainController(QObject):
 
         try:
             self.init_images()
+            self.init_devices()
             self.docker_ctrl = DockerController(self.model, self.main_view, self)
             self.docker_ctrl.refresh_server()
             self.main_view.show()
@@ -143,7 +145,7 @@ class MainController(QObject):
         self.model.weight = self.main_view.ui.weight_combo_box.currentText()
 
     def set_m_device(self):
-        self.model.device = self.main_view.ui.device_line_edit.text()
+        self.model.device = self.main_view.ui.device_combo_box.currentText()
 
     def set_m_shuffle(self):
         if self.main_view.ui.shuffle_check_box.isChecked():
@@ -268,7 +270,7 @@ class MainController(QObject):
         self.main_view.ui.weight_combo_box.setCurrentText(val)
 
     def set_v_device(self, val):
-        self.main_view.ui.device_line_edit.setText(val)
+        self.main_view.ui.device_combo_box.setCurrentText(val)
 
     def set_v_shuffle(self, val):
         if val == "True":
@@ -392,6 +394,14 @@ class MainController(QObject):
                 self.main_view.ui.weight_combo_box.addItem(file)
 
         self.model.weight = self.main_view.ui.weight_combo_box.currentText()
+
+    def init_devices(self):
+        try:
+            ava_gpu_ids = nvgpu.available_gpus()
+            for i in ava_gpu_ids:
+                self.main_view.ui.device_combo_box.addItem(f"cuda:{i}")
+        except FileNotFoundError as e:
+            print(e)
 
     # Other control functions
     @staticmethod
