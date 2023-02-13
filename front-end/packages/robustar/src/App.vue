@@ -4,7 +4,7 @@
     <SideBar></SideBar>
 
     <v-main class="page-content">
-      <TaskPanel :style="{ visibility: isTaskspanelHidden ? 'hidden' : 'visible' }"></TaskPanel>
+      <TaskPanel v-if="!isTaskspanelHidden"></TaskPanel>
       <Notification></Notification>
       <router-view />
     </v-main>
@@ -44,6 +44,7 @@ export default {
 
 #app,
 .page-content {
+  position: relative;
   min-height: 100%;
   width: 100%;
 }
