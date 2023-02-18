@@ -1,4 +1,9 @@
-from utils.path_utils import get_paired_path, split_path, to_unix, create_empty_paired_image
+from utils.path_utils import (
+    get_paired_path,
+    split_path,
+    to_unix,
+    create_empty_paired_image,
+)
 from torchvision.datasets import DatasetFolder, ImageFolder
 from typing import Any, Callable, cast, Dict, List, Optional, Tuple, Union
 import PIL
@@ -10,20 +15,31 @@ from collections import OrderedDict
 import os
 from os import path as osp
 
-IMG_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm', '.tif', '.tiff', '.webp')
+IMG_EXTENSIONS = (
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".ppm",
+    ".bmp",
+    ".pgm",
+    ".tif",
+    ".tiff",
+    ".webp",
+)
 
 
 # Helper functions copied from torchvision.datasets.folder
 def pil_loader(path: str) -> Image.Image:
     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    with open(path, 'rb') as f:
+    with open(path, "rb") as f:
         img = Image.open(f)
-        return img.convert('RGB')
+        return img.convert("RGB")
 
 
 def accimage_loader(path: str) -> Any:
     try:
         import accimage
+
         return accimage.Image(path)
     except IOError:
         # Potentially a decoding problem, fall back to PIL.Image
@@ -32,7 +48,8 @@ def accimage_loader(path: str) -> Any:
 
 def default_loader(path: str) -> Any:
     from torchvision import get_image_backend
-    if get_image_backend() == 'accimage':
+
+    if get_image_backend() == "accimage":
         return accimage_loader(path)
     else:
         return pil_loader(path)
@@ -49,11 +66,11 @@ def get_slice(arr, start, end):
 
 
 SPLIT_TABLE_MAP = {
-    'train': 'train_set',
-    'validation': 'val_set',
-    'test': 'test_set',
-    'annotated': 'paired_set',
-    'proposed': 'proposed'
+    "train": "train_set",
+    "validation": "val_set",
+    "test": "test_set",
+    "annotated": "paired_set",
+    "proposed": "proposed",
 }
 
 
@@ -79,28 +96,32 @@ class RImageFolder(DatasetFolder):
         class_to_idx (dict): Dict with items (class_name, class_index).
         imgs (list): List of (image path, class_index) tuples
     """
+
     CLS_NONE = 0
     CLS_CORRECT = 1
     CLS_INCORRECT = 2
 
     def __init__(
-            self,
-            root: str,
-            split: str,
-            db_conn: Connection,
-            transform: Optional[Callable] = None,
-            target_transform: Optional[Callable] = None,
-            loader: Callable[[str], Any] = default_loader,
-            is_valid_file: Optional[Callable[[str], bool]] = None,
-            force_reindex: bool = False,
-            class2label: dict[str, str] = None
+        self,
+        root: str,
+        split: str,
+        db_conn: Connection,
+        transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        loader: Callable[[str], Any] = default_loader,
+        is_valid_file: Optional[Callable[[str], bool]] = None,
+        force_reindex: bool = False,
+        class2label: dict[str, str] = None,
     ):
 
-        super(RImageFolder, self).__init__(root, loader,
-                                           IMG_EXTENSIONS if is_valid_file is None else None,
-                                           transform=transform,
-                                           target_transform=target_transform,
-                                           is_valid_file=is_valid_file)
+        super(RImageFolder, self).__init__(
+            root,
+            loader,
+            IMG_EXTENSIONS if is_valid_file is None else None,
+            transform=transform,
+            target_transform=target_transform,
+            is_valid_file=is_valid_file,
+        )
 
         # Change all paths to unix
         for i in range(len(self.samples)):
@@ -129,7 +150,7 @@ class RImageFolder(DatasetFolder):
             keys = ("path", "classified")
             values = [(path, self.CLS_NONE) for path, _ in self.imgs]
         else:  # Do not re-index for other splits
-            print('Not populating the db table {}'.format(self.table_name))
+            print("Not populating the db table {}".format(self.table_name))
             return
 
         print("Populating the db table {} for split {}".format(self.table_name, split))
@@ -147,28 +168,30 @@ class RImageFolder(DatasetFolder):
 
 
 class RTrainImageFolder(RImageFolder):
-
     def __init__(
-            self,
-            root: str,
-            split: str,
-            db_conn: Connection,
-            transform: Optional[Callable] = None,
-            target_transform: Optional[Callable] = None,
-            loader: Callable[[str], Any] = default_loader,
-            is_valid_file: Optional[Callable[[str], bool]] = None,
-            force_reindex: bool = False,
-            class2label: dict[str, str] = None
+        self,
+        root: str,
+        split: str,
+        db_conn: Connection,
+        transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        loader: Callable[[str], Any] = default_loader,
+        is_valid_file: Optional[Callable[[str], bool]] = None,
+        force_reindex: bool = False,
+        class2label: dict[str, str] = None,
     ):
 
-        super(RTrainImageFolder, self).__init__(root, split, db_conn,
-                                                transform=transform,
-                                                target_transform=target_transform,
-                                                loader=loader,
-                                                is_valid_file=is_valid_file,
-                                                force_reindex=force_reindex,
-                                                class2label=class2label
-                                                )
+        super(RTrainImageFolder, self).__init__(
+            root,
+            split,
+            db_conn,
+            transform=transform,
+            target_transform=target_transform,
+            loader=loader,
+            is_valid_file=is_valid_file,
+            force_reindex=force_reindex,
+            class2label=class2label,
+        )
 
         self._init_next_imgs()
         self._init_buffer()
@@ -179,9 +202,13 @@ class RTrainImageFolder(RImageFolder):
         paired_paths = [to_unix(paired_path) for paired_path in paired_paths]
 
         # 1. update database
-        db_update_many_by_paths(self.db_conn, self.table_name, train_paths,
-                                keys=("paired_path",),
-                                values_list=[(paired_path,) for paired_path in paired_paths])
+        db_update_many_by_paths(
+            self.db_conn,
+            self.table_name,
+            train_paths,
+            keys=("paired_path",),
+            values_list=[(paired_path,) for paired_path in paired_paths],
+        )
 
         # 2. update buffer
         for train_path, paired_path in zip(train_paths, paired_paths):
@@ -216,70 +243,71 @@ class RTrainImageFolder(RImageFolder):
 
 class REvalImageFolder(RImageFolder):
     """
-        An extended version of RImageFolder that supports the following:
-        - Separate buffers for correctly and incorrectly classified samples
+    An extended version of RImageFolder that supports the following:
+    - Separate buffers for correctly and incorrectly classified samples
     """
 
     def __init__(
-            self,
-            root: str,
-            split: str,
-            db_conn: Connection,
-            transform: Optional[Callable] = None,
-            target_transform: Optional[Callable] = None,
-            loader: Callable[[str], Any] = default_loader,
-            is_valid_file: Optional[Callable[[str], bool]] = None,
-            force_reindex: bool = False,
-            class2label: dict[str, str] = None
+        self,
+        root: str,
+        split: str,
+        db_conn: Connection,
+        transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        loader: Callable[[str], Any] = default_loader,
+        is_valid_file: Optional[Callable[[str], bool]] = None,
+        force_reindex: bool = False,
+        class2label: dict[str, str] = None,
     ):
 
-        super(REvalImageFolder, self).__init__(root, split, db_conn,
-                                               transform=transform,
-                                               target_transform=target_transform,
-                                               loader=loader,
-                                               is_valid_file=is_valid_file,
-                                               force_reindex=force_reindex,
-                                               class2label=class2label
-                                               )
+        super(REvalImageFolder, self).__init__(
+            root,
+            split,
+            db_conn,
+            transform=transform,
+            target_transform=target_transform,
+            loader=loader,
+            is_valid_file=is_valid_file,
+            force_reindex=force_reindex,
+            class2label=class2label,
+        )
 
         self.buffer_correct = []
         self.buffer_incorrect = []
         self._populate_buffers()
         self._init_next_records()
 
-    def add_records(self, records: List[Tuple[str, int]], correct: bool):
-        next_record = self.next_correct if correct else self.next_incorrect
-        paths = [to_unix(record[0]) for record in records]
+    def post_records(self, correct_records: List[Tuple[str, int]], incorrect_records):
+        correct_paths = [to_unix(record[0]) for record in correct_records]
+        incorrect_paths = [to_unix(record[0]) for record in incorrect_records]
 
         # 1. update db with the result
-        if correct:
-            value_list = [(self.CLS_CORRECT,) for _ in paths]
-        else:
-            value_list = [(self.CLS_INCORRECT,) for _ in paths]
-        db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), value_list)
-
-        # 2. check duplicates
-        to_remove = set(records)
-        self.buffer_correct = [item for item in self.buffer_correct]
-        self.buffer_incorrect = [item for item in self.buffer_incorrect if item[0] not in to_remove]
+        correct_value_list = [(self.CLS_CORRECT,) for _ in correct_paths]
+        incorrect_value_list = [(self.CLS_INCORRECT,) for _ in incorrect_paths]
+        db_update_many_by_paths(
+            self.db_conn,
+            self.table_name,
+            correct_paths,
+            ("classified",),
+            correct_value_list,
+        )
+        db_update_many_by_paths(
+            self.db_conn,
+            self.table_name,
+            incorrect_paths,
+            ("classified",),
+            incorrect_value_list,
+        )
 
         # 3. update buffer
-        buffer = self.buffer_correct if correct else self.buffer_incorrect
-        if buffer == []:
-            buffer.extend(records)
-        else:
-            dic = dict(buffer)
-            dic.update(dict(records))
-            buffer = list(dic.items())
+        self.buffer_correct = correct_records
+        self.buffer_incorrect = incorrect_records
+
         # 4. update next record datastructure
-        for (img_path, _), (next_img_path, _) in zip([buffer[-1]] + records, records):
-            next_record[img_path] = next_img_path
+        self._init_next_records()
 
         # 5. commit
         self.db_conn.commit()
-
-    def add_record(self, pair: Tuple[str, int], correct: bool):
-        self.add_records([(to_unix(pair[0]), pair[1])], correct)
 
     def get_next_record(self, path, correct: bool):
         next_record = self.next_correct if correct else self.next_incorrect
@@ -291,12 +319,15 @@ class REvalImageFolder(RImageFolder):
             self.next_imgs[img_path] = next_img_path
 
         self.next_correct = dict()
-        for (img_path, _), (next_img_path, _) in zip(self.buffer_correct, self.buffer_correct[1:]):
+        for (img_path, _), (next_img_path, _) in zip(
+            self.buffer_correct, self.buffer_correct[1:]
+        ):
             self.next_correct[img_path] = next_img_path
 
         self.next_incorrect = dict()
-        for (img_path, _), (next_img_path, _) in zip(self.buffer_incorrect,
-                                                     self.buffer_incorrect[1:]):
+        for (img_path, _), (next_img_path, _) in zip(
+            self.buffer_incorrect, self.buffer_incorrect[1:]
+        ):
             self.next_incorrect[img_path] = next_img_path
 
     def get_record(self, correct: bool, start=None, end=None):
@@ -311,9 +342,9 @@ class REvalImageFolder(RImageFolder):
         # assert(len(db_data) == len(self.samples)) # TODO: for test use
 
         for (imgpath, label), (path, classified) in zip(self.imgs, db_data):
-            # paths must be in the same order, i.e., folder and database 
+            # paths must be in the same order, i.e., folder and database
             # must be consistent
-            assert (imgpath == path)
+            assert imgpath == path
 
             path = to_unix(path)
             if classified == self.CLS_CORRECT:
@@ -324,24 +355,24 @@ class REvalImageFolder(RImageFolder):
 
 class RAnnotationFolder(RImageFolder):
     """
-        An extended version of RImageFolder that supports the following:
-        - O(1) Image lookup 
-        - O(1) Image deletion
-        - O(1) Image append
+    An extended version of RImageFolder that supports the following:
+    - O(1) Image lookup
+    - O(1) Image deletion
+    - O(1) Image append
 
     """
 
     def __init__(
-            self,
-            root: str,
-            train_root: str,
-            split: str,
-            db_conn: Connection,
-            transform: Optional[Callable] = None,
-            target_transform: Optional[Callable] = None,
-            loader: Callable[[str], Any] = default_loader,
-            is_valid_file: Optional[Callable[[str], bool]] = None,
-            class2label: dict[str, str] = None
+        self,
+        root: str,
+        train_root: str,
+        split: str,
+        db_conn: Connection,
+        transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        loader: Callable[[str], Any] = default_loader,
+        is_valid_file: Optional[Callable[[str], bool]] = None,
+        class2label: dict[str, str] = None,
     ):
 
         self.root = root
@@ -350,13 +381,16 @@ class RAnnotationFolder(RImageFolder):
         if not osp.exists(root) or not os.listdir(root):
             self._init_root_dir()
 
-        super(RAnnotationFolder, self).__init__(root, split, db_conn,
-                                                transform=transform,
-                                                target_transform=target_transform,
-                                                loader=loader,
-                                                is_valid_file=is_valid_file,
-                                                class2label=class2label
-                                                )
+        super(RAnnotationFolder, self).__init__(
+            root,
+            split,
+            db_conn,
+            transform=transform,
+            target_transform=target_transform,
+            loader=loader,
+            is_valid_file=is_valid_file,
+            class2label=class2label,
+        )
 
         # Do not use these from original ImageFolder, because random deletion will mess them up
         del self.imgs
@@ -416,22 +450,31 @@ class RAnnotationFolder(RImageFolder):
         # 4. commit
         self.db_conn.commit()
 
-    def save_annotated_image(self, train_path, image_data: Union[Image.Image, bytes],
-                             image_height=None, image_width=None):
+    def save_annotated_image(
+        self,
+        train_path,
+        image_data: Union[Image.Image, bytes],
+        image_height=None,
+        image_width=None,
+    ):
         train_path = to_unix(train_path)
         paired_path = get_paired_path(train_path, self.train_root, self.root)
 
         # 1. insert new paired path to db if image not already annotated
         if train_path not in self._train2paired:
-            db_insert(self.db_conn, self.table_name, ("path", "train_path"),
-                      (paired_path, train_path))
+            db_insert(
+                self.db_conn,
+                self.table_name,
+                ("path", "train_path"),
+                (paired_path, train_path),
+            )
 
             # 2. dump the image file to disk
         if isinstance(image_data, Image.Image):  # If image_data is PIL Image
-            image_data.save(paired_path, format='png')
+            image_data.save(paired_path, format="png")
         else:  # If image_data is an array of bytes
-            if image_height is None or image_width is None: raise ValueError(
-                "must specify image height and width")
+            if image_height is None or image_width is None:
+                raise ValueError("must specify image height and width")
             self._dump_image_data(paired_path, image_data, image_height, image_width)
 
         # 3. update buffers
@@ -499,7 +542,7 @@ class RAnnotationFolder(RImageFolder):
         with Image.open(BytesIO(image_data)) as img:
             to_save = img.resize((image_width, image_height))
             # to_save = to_save.convert('RGB') # in case image comming from canvas is RGBA
-            to_save.save(dump_path, format='png')
+            to_save.save(dump_path, format="png")
 
     def _init_buffers(self):
         self._train2paired = OrderedDict()

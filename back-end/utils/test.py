@@ -73,8 +73,7 @@ class TestThread(threading.Thread):
             # task.exit()
             pass
 
-        self.dataset.add_records(correct_buffer, True)
-        self.dataset.add_records(incorrect_buffer, False)
+        self.dataset.post_records(correct_buffer, incorrect_buffer)
         print("Testing complete")
 
 
