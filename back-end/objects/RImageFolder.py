@@ -259,8 +259,8 @@ class REvalImageFolder(RImageFolder):
         db_update_many_by_paths(self.db_conn, self.table_name, paths, ('classified',), value_list)
 
         # 2. check duplicates
-        to_remove = set(item[0] for item in records)
-        self.buffer_correct = [item for item in self.buffer_correct if item[0] not in to_remove]
+        to_remove = set(records)
+        self.buffer_correct = [item for item in self.buffer_correct]
         self.buffer_incorrect = [item for item in self.buffer_incorrect if item[0] not in to_remove]
 
         # 3. update buffer
