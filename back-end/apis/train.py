@@ -115,7 +115,11 @@ def start_training():
     print("DEBUG: Training request received! Setting up training...")
 
     # start the training thread
-    train_thread = start_train(configs)
+    train_thread = None
+    try:
+        train_thread = start_train(configs)
+    except Exception as e:
+        RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
 
     # Return error if training cannot be started
     if not train_thread:
