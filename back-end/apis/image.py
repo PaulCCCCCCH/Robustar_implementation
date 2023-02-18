@@ -9,6 +9,7 @@ from utils.image_utils import (
     get_img_Data,
     get_split_length,
     get_annotated,
+    get_classified_split_length
 )
 from utils.path_utils import to_unix
 from flask import Blueprint
@@ -30,8 +31,10 @@ def get_image_list(split, start, num_per_page):
         ls_image_path_data = list(zip(ls_image_path, ls_image_data))
         return RResponse.ok(ls_image_path_data)
     except (ValueError, NotImplementedError) as e:
+        print(e)
         RResponse.abort(400, "{}".format(str(e)))
     except Exception as e:
+        print(e)
         RResponse.abort(500, str(e))
 
 
@@ -151,6 +154,41 @@ def api_get_split_length(split):
         print(e)
         RResponse.abort(400, "Split not supported")
 
+    return RResponse.ok(response)
+
+@image_api.route('/image/classified/<split>')
+def get_classfied_split_length(split):
+    """
+    Gets the length of all/correctly classified/incorrectly classified split lengt
+    ---
+    tags:
+      - image
+    parameters:
+      - name: "split"
+        in: "path"
+        description: "name of the split"
+        required: true
+        type: "string"
+    responses:
+      200:
+        description: The length of the split
+        schema:
+          properties:
+            code:
+              type: integer
+              example: 0
+            data:
+              type: string
+              example: 9468
+            msg:
+              type: string
+              example: Success
+    """
+    try:
+      response = get_classified_split_length(split)
+    except Exception as e:
+      print(e)
+      RResponse.abort(400, "Split {} not supported".format(split))
     return RResponse.ok(response)
 
 

@@ -169,3 +169,18 @@ def get_split_length(split):
     """
 
     return len(get_image_path(split, None, None))
+
+def get_classified_split_length(split):
+    """
+    Get the length of a data split
+
+    args: 
+        split:  e.g. 'train', 'validation', 'test_correct'
+
+    returns:
+        The length of the data split as an integer
+    """
+    if split in ["validation", "test"]:
+        return [get_split_length(split),get_split_length(split+ '_correct'),get_split_length(split+ '_incorrect')]
+    else:
+        raise NotImplementedError("Split {} not supported".format(split))
