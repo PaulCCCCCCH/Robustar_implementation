@@ -9,7 +9,11 @@ import logging
 
 from pathlib import Path
 from pytorch_influence_functions.utils import save_json, display_progress
-from torch_influence import BaseObjective, LiSSAInfluenceModule, AutogradInfluenceModule, CGInfluenceModule
+
+import sys, os
+sys.path.append(os.path.dirname(__file__))
+print(sys.path)
+from torch_influence.modules import BaseObjective, LiSSAInfluenceModule
 
 def calc_influence_single(model, module, train_loader, test_loader, test_id_num, gpu,
                           recursion_depth, r, s_test_vec=None,
