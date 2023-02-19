@@ -119,10 +119,12 @@ def start_training():
     try:
         train_thread = start_train(configs)
     except Exception as e:
+        print(e)
         RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
 
     # Return error if training cannot be started
     if not train_thread:
+        print(e)
         RResponse.abort(500, "Failed to start training thread", -1)
 
     # Training started succesfully!

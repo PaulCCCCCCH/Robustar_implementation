@@ -14,6 +14,7 @@ describe('The Test Page', () => {
 
     // wait for maximum 120 seconds for the test to finish
     cy.get('[data-test=task-panel-task-done]', { timeout: 120 * 1000 }).click();
+    cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
   it('can set correctly and incorrectly classified samples in image list', () => {
