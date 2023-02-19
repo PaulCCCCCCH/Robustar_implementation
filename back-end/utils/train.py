@@ -33,12 +33,14 @@ class TrainThread(threading.Thread):
 
 def setup_training(configs):
     # Configs from training pad
+    dataManager = RServer.get_data_manager()
+
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
     image_size = int(configs["image_size"])
     classes_path = configs["class_path"]
-    trainset = configs["train_path"]
-    testset = configs["test_path"]
+    trainset = dataManager.train_root
+    testset = dataManager.test_root
     user_edit_buffering = configs["user_edit_buffering"]
     model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
