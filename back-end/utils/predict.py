@@ -113,15 +113,16 @@ def calculate_influence(
     for key in max_influence_dicts.keys():
         train_img_paths = []
 
-        testId = "test/" + key
-        test_img_path = imageURLToPath(testId)
+        test_id = int(key)
+        test_img_path = data_manager.testset.get_image_list(test_id, test_id + 1)[0]
 
         max_influence_dict = max_influence_dicts[key]
         trainIds = list(max_influence_dict.keys())
 
         for j in range(4):
             trainUrl = "train/" + str(trainIds[j])
-            train_img_path = imageURLToPath(trainUrl)
+            train_id = int(trainIds[j])
+            train_img_path = data_manager.trainset.get_image_list(train_id, train_id + 1)[0]
             # TODO: Stores both image path and image url.
             # Adding / removing samples to training set will cause inconsistency
             # Need to check consistency in data manager when loading.
