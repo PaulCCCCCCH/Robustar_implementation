@@ -9,14 +9,29 @@
         >
           <div
             v-if="$route.params.split === 'validation' || $route.params.split === 'test'"
-            style="width: 200px"
+            style="height: 50px"
           >
-            <v-select
-              v-model="$root.imageSplit"
-              :items="classification"
-              @change="resetImageList"
-              data-test="image-list-select-classification"
-            ></v-select>
+            <v-row no-gutters class="mb-6">
+              <v-select
+                class="pa-2"
+                v-model="$root.imageSplit"
+                :items="classification"
+                v-bind:value="classification"
+                @change="resetImageList"
+                data-test="image-list-select-classification"
+              ></v-select>
+
+              <v-menu class="pa-2" :close-on-content-click="false" :nudge-width="5" offset-x>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn v-bind="attrs" v-on="on"> SPLIT STATISTICS </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <div>Accuracy: {{ accuarcy.value }}</div>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-row>
           </div>
 
           <!-- Page navigator -->
@@ -330,7 +345,12 @@
 import { configs } from '@/configs.js';
 import { getPageNumber } from '@/utils/imageUtils';
 import { APIDeleteEdit, APIClearEdit } from '@/services/edit';
-import { APIGetImageList, APIGetSplitLength, APIGetClassNames } from '@/services/images';
+import {
+  APIGetImageList,
+  APIGetSplitLength,
+  APIGetClassifiedSplitLength,
+  APIGetClassNames,
+} from '@/services/images';
 import Visualizer from '@/components/prediction-viewer/Visualizer';
 import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 import pDebounce from 'p-debounce';
@@ -353,8 +373,14 @@ export default {
       maxPage: 0,
       imageList: [],
       splitLength: 1000,
+      allImageLength: 1000,
+      correctImageLength: -1,
+      incorrectImageLength: 1000,
       classNames: [''],
       classStartIdx: {},
+      testImageList: {},
+      selectedClass: 0,
+      split: 'test_correct',
       imagePerPage: 0,
       imageSize: configs.imageSize,
       imageSizeMap: {
@@ -371,11 +397,14 @@ export default {
     this.handleRouteChange();
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
+    this.initClassifiedImageList();
   },
   watch: {
     $route() {
       this.handleRouteChange();
       this.initImageList();
+      this.initClassifiedImageList();
+
       this.$root.imageURL = ''; // Reset current image url for visualizaer
     },
     currentPage() {
@@ -391,6 +420,11 @@ export default {
         { text: 'Correctly Classified', value: this.$route.params.split + '_correct' },
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
+    },
+    accuarcy() {
+      const allImageLength = this.testImageList[0];
+      const correctImageLength = this.testImageList[1];
+      return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
     },
     hasImages() {
       return this.imageList.length > 0;
@@ -422,12 +456,25 @@ export default {
       this.getClassNames();
       this.loadImages();
     },
+    async initClassifiedImageList() {
+      try {
+        if (this.$route.params.split == 'validation' || this.$route.params.split == 'test') {
+          const res = await APIGetClassifiedSplitLength(this.$route.params.split);
+          this.testImageList = res.data.data;
+        }
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Image list initialization failed');
+        this.imageList = [];
+      }
+    },
     resetImageList() {
       this.currentPage = 0;
       this.classNames = [''];
       this.classStartIdx = {};
       this.$root.imageClass = '';
       this.initImageList();
+      this.initClassifiedImageList();
     },
     async getClassNames() {
       try {
@@ -443,6 +490,7 @@ export default {
       try {
         await APIDeleteEdit(this.$root.imageSplit, getImageUrlFromFullUrl(url));
         this.initImageList();
+        this.initClassifiedImageList();
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || 'Image deletion failed');
       }

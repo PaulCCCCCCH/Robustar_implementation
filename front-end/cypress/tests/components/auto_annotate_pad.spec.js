@@ -12,8 +12,9 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
 
     // This will wait for max 120 seconds until the task is finished
-    cy.getBySel('task-panel-task-done', { timeout: 120 * 1000 }).click();
-    cy.getBySel('task-center-p-no-task');
+    cy.getBySel('header-toggle-tasks-panel').click();
+    cy.get('[data-test=task-panel-task-done]', { timeout: 120 * 1000 }).click();
+    cy.get('[data-test=task-center-p-no-task]');
 
     cy.contains('Inspect Data').click();
     cy.contains('Annotated Data').click();
@@ -28,7 +29,8 @@ describe('Auto Annotate Pad', () => {
   it('Delete the Only One Task', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('500');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.clickBySel('header-toggle-tasks-panel');
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
     cy.getBySel('task-panel-stop-task').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
@@ -37,14 +39,16 @@ describe('Auto Annotate Pad', () => {
   it('Test Input Zero', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('0');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
   it('Test Input Zero Before Integer', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('0999').click();
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-panel-progress-linear').should('contain', '999');
     cy.getBySel('task-panel-stop-task').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
@@ -53,7 +57,8 @@ describe('Auto Annotate Pad', () => {
   it('Test Input Big Integer', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('9999');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-panel-item-name').children().should('have.length', 1);
     cy.getBySel('task-panel-progress-linear').should('contain', '9000');
     cy.getBySel('task-panel-stop-task').click();
@@ -63,7 +68,8 @@ describe('Auto Annotate Pad', () => {
   it('Test Input Floating Point Number', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('9.9');
-    cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.clickBySel('auto-annotate-pad-start-auto-annotation');
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
@@ -71,6 +77,7 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-start-index').clear().type('-1');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
@@ -78,6 +85,7 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('auto-annotate-end-index').clear().type('-2');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 
@@ -86,6 +94,7 @@ describe('Auto Annotate Pad', () => {
     cy.getBySel('auto-annotate-start-index').clear().type('99999');
     cy.getBySel('auto-annotate-end-index').clear().type('99998');
     cy.getBySel('auto-annotate-pad-start-auto-annotation').click();
+    cy.getBySel('header-toggle-tasks-panel').click();
     cy.getBySel('task-center-p-no-task').should('be.visible');
   });
 });

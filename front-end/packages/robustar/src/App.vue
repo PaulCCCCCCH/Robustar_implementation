@@ -4,7 +4,7 @@
     <SideBar></SideBar>
 
     <v-main class="page-content">
-      <TaskPanel v-if="!isTaskspanelHidden"></TaskPanel>
+      <TaskPanel v-if="!isTaskspanelHidden" v-click-outside="onClickOutside"></TaskPanel>
       <Notification></Notification>
       <router-view />
     </v-main>
@@ -29,6 +29,11 @@ export default {
   methods: {
     toggleTaskspanel() {
       this.isTaskspanelHidden = !this.isTaskspanelHidden;
+    },
+    onClickOutside() {
+      if (this.isTaskspanelHidden == false) {
+        this.isTaskspanelHidden = true;
+      }
     },
   },
   data() {
