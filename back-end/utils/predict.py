@@ -1,5 +1,6 @@
-from modules.visualize_module.flashtorch_.utils import apply_transforms, load_image
+from modules.visualize_module.flashtorch_.utils import load_image
 from objects.RModelWrapper import RModelWrapper
+from objects.RServer import RServer
 import torch
 import modules.influence_module as ptif
 import threading
@@ -33,9 +34,11 @@ def get_image_prediction(
         imgpath:    Path to the image to be predicted
         imgsize:    Resize (scale) the input image to imgsize*imgsize.
     """
+    data_manager = RServer.get_data_manager()
     try:
         image = load_image(imgpath)
-        image = apply_transforms(image, imgsize)
+        # TODO
+        image = data_manager.transforms(image)
         image = image.to(model_wrapper.device)
 
         model = model_wrapper.model
