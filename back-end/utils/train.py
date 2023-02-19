@@ -37,8 +37,7 @@ def setup_training(configs):
 
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
-    image_size = int(configs["image_size"])
-    classes_path = configs["class_path"]
+    image_size = dataManager.image_size
     trainset = dataManager.train_root
     testset = dataManager.test_root
     user_edit_buffering = configs["user_edit_buffering"]
@@ -57,19 +56,13 @@ def setup_training(configs):
             paired_data_path,
             image_size,
             transforms,
-            classes_path,
             paired_train_mixture,
             user_edit_buffering,
         )
     else:
-        train_set = DataSet(trainset, image_size, transforms, classes_path)
+        train_set = DataSet(trainset, image_size, transforms)
 
-    test_set = DataSet(
-        testset,
-        int(configs["image_size"]),
-        transforms,
-        classes_path=configs["class_path"],
-    )
+    test_set = DataSet(testset, int(configs["image_size"]), transforms)
 
     # Model will be initialized with server config
     model_wrapper = RServer.get_model_wrapper()
