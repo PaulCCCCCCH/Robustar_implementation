@@ -26,10 +26,6 @@ class RModelWrapper:
         else:
             print("Checkpoint file not found: {}".format(net_path))
 
-        # Duplicated code
-        # if 'cuda' in device:
-        #     self.apply_cuda()
-
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
             self.model = torchvision.models.resnet18(
@@ -81,15 +77,3 @@ class RModelWrapper:
             self.model.load_state_dict(torch.load(path, map_location=self.device))
         else:
             print("weight file not found")
-
-    def initialize_model(server_configs):
-        # Configs given at server boot time
-        model_arch = server_configs["model_arch"]
-        weight_to_load = server_configs["weight_to_load"]
-        device = server_configs["device"]
-        pre_trained = server_configs["pre_trained"]
-        num_classes = server_configs["num_classes"]
-
-        net_path = to_unix(os.path.join(RServer.getServer().ckptDir, weight_to_load))
-
-        return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
