@@ -37,8 +37,9 @@ def get_image_prediction(
     data_manager = RServer.get_data_manager()
     try:
         image = load_image(imgpath)
-        # TODO
+
         image = data_manager.transforms(image)
+        image = image.unsqueeze(0)  # The model requires a batch dimension
         image = image.to(model_wrapper.device)
 
         model = model_wrapper.model
