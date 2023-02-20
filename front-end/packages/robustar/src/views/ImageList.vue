@@ -130,7 +130,14 @@
           class="d-flex align-center justify-center rounded px-4 mx-4 elevation-2"
           color="white"
         >
-          <v-stepper v-if="showExtraSettings" v-model="selectImageSteps" tile flat vertical>
+          <v-stepper
+            v-if="showExtraSettings"
+            v-model="selectImageSteps"
+            tile
+            flat
+            vertical
+            data-test="image-list-extra-settings"
+          >
             <v-stepper-step :complete="selectImageSteps > 1" step="1">
               Select starting point
               <small
@@ -139,7 +146,9 @@
             </v-stepper-step>
 
             <v-stepper-content step="1">
-              <span class="mr-4">Start Index : {{ imageStartIdx }}</span>
+              <span class="mr-4" data-test="image-list-start-index"
+                >Start Index : {{ imageStartIdx }}</span
+              >
               <v-btn
                 class="mr-4"
                 color="primary"
@@ -148,6 +157,7 @@
                   selectImageSteps++;
                   imageEndIdx = imageStartIdx;
                 "
+                data-test="image-list-start-continue-btn"
               >
                 Continue
               </v-btn>
@@ -162,17 +172,27 @@
             </v-stepper-step>
 
             <v-stepper-content step="2">
-              <span class="mr-4">End Index : {{ imageEndIdx }}</span>
+              <span class="mr-4" data-test="image-list-end-index"
+                >End Index : {{ imageEndIdx }}</span
+              >
               <v-btn
                 class="mr-4"
                 color="primary"
                 outlined
                 :disabled="imageEndIdx < imageStartIdx"
                 @click="selectImageSteps++"
+                data-test="image-list-end-continue-btn"
               >
                 Continue
               </v-btn>
-              <v-btn color="warning" outlined @click="selectImageSteps--"> Back </v-btn>
+              <v-btn
+                color="warning"
+                outlined
+                @click="selectImageSteps--"
+                data-test="image-list-end-back-btn"
+              >
+                Back
+              </v-btn>
               <v-alert v-if="imageEndIdx < imageStartIdx" dense text type="error" class="mt-4">
                 End Index smaller than Start Index
               </v-alert>
@@ -193,6 +213,7 @@
                     params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
                   })
                 "
+                data-test="image-list-influence-btn"
               >
                 <v-icon class="mr-2">mdi-vector-link</v-icon> Influence
               </v-btn>
@@ -207,6 +228,7 @@
                     params: { startIdx: imageStartIdx, endIdx: imageEndIdx },
                   })
                 "
+                data-test="image-list-annotate-btn"
               >
                 <v-icon class="mr-2">mdi-auto-fix</v-icon> Auto Annotate
               </v-btn>
@@ -222,6 +244,7 @@
                 @click="showExtraSettings = !showExtraSettings"
                 v-bind="attrs"
                 v-on="on"
+                data-test="image-list-show-selection-btn"
               >
                 <v-icon v-if="!showExtraSettings">mdi-chevron-double-right</v-icon>
                 <v-icon v-else>mdi-chevron-double-left</v-icon>
@@ -238,9 +261,11 @@
           height="100"
           class="pa-8 text-subtitle-1"
         >
-          <span class="text-h5 font-weight-medium mr-2">{{
-            Math.max(imageEndIdx - imageStartIdx + 1, 1)
-          }}</span>
+          <span
+            class="text-h5 font-weight-medium mr-2"
+            data-test="image-list-selected-images-num"
+            >{{ Math.max(imageEndIdx - imageStartIdx + 1, 1) }}</span
+          >
           image(s) selected
         </v-alert>
       </div>
@@ -278,6 +303,9 @@
               icon="mdi-check"
               overlap
               style="width: 100%; height: 100%"
+              :data-test="`image-list-img-badge-${idx}-${
+                calcAbsIdx(idx) === imageStartIdx ? 'start' : 'end'
+              }`"
             >
               <v-img
                 :src="url_and_binary[1]"

@@ -17,6 +17,7 @@
           min="0"
           hint="A value of 0 means the beginning of test samples"
           required
+          data-test="influence-pad-start-index-field"
         ></v-text-field>
         <!-- Set end index of test samples per class for which we calculate influence-->
         <v-text-field
@@ -30,6 +31,7 @@
           min="-1"
           hint="A value of -1 means the end of test samples"
           required
+          data-test="influence-pad-end-index-field"
         ></v-text-field>
         <!-- Set r_averaging -->
         <v-text-field
