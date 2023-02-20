@@ -104,22 +104,35 @@ def predict(split):
         output_object = predict_buffer[image_path]
     else:
         # get predict results
+
+        if not model_wrapper.acquire_model():
+            RResponse.abort(
+                500,
+                "Cannot start inferencing because model is occupied by another thread",
+            )
+
         try:
-            model_wrapper.lock.acquire()
             output = get_image_prediction(
                 model_wrapper, image_path, dataManager.image_size, argmax=False
             )
+
+            output_array = convert_predict_to_array(output.cpu().detach().numpy())
+
+            # get visualize images
+            image_name = to_snake_path(image_path)
+            output = visualize(
+                model_wrapper,
+                image_path,
+                dataManager.image_size,
+                server.configs["device"],
+            )
+
         except Exception as e:
+            print(e)
             RResponse.abort(400, "Invalid image path {}".format(image_path))
         finally:
-            model_wrapper.lock.release()
-        output_array = convert_predict_to_array(output.cpu().detach().numpy())
+            model_wrapper.release_model()
 
-        # get visualize images
-        image_name = to_snake_path(image_path)
-        output = visualize(
-            model_wrapper, image_path, dataManager.image_size, server.configs["device"]
-        )
         if len(output) != 4:
             RResponse.abort(
                 500, "[Unexpected] Invalid number of predict visualize figures"

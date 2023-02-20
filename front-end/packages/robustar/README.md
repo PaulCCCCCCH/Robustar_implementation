@@ -29,7 +29,7 @@ Developed with `Vue2`
 
 ## Test With browser
 
-Make sure you are under `front-end` directory. Run selected test cases with a UI:
+Make sure you are under `front-end` directory. Run selected test cases with a UI (choose E2E test type):
 
 ```
     npx cypress open

@@ -404,8 +404,14 @@ export default {
       allImageLength: 1000,
       correctImageLength: -1,
       incorrectImageLength: 1000,
+      allImageLength: 1000,
+      correctImageLength: -1,
+      incorrectImageLength: 1000,
       classNames: [''],
       classStartIdx: {},
+      testImageList: {},
+      selectedClass: 0,
+      split: 'test_correct',
       testImageList: {},
       selectedClass: 0,
       split: 'test_correct',
@@ -426,11 +432,14 @@ export default {
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
     this.initClassifiedImageList();
+    this.initClassifiedImageList();
   },
   watch: {
     $route() {
       this.handleRouteChange();
       this.initImageList();
+      this.initClassifiedImageList();
+
       this.initClassifiedImageList();
 
       this.$root.imageURL = ''; // Reset current image url for visualizaer
@@ -496,12 +505,25 @@ export default {
         this.imageList = [];
       }
     },
+    async initClassifiedImageList() {
+      try {
+        if (this.$route.params.split == 'validation' || this.$route.params.split == 'test') {
+          const res = await APIGetClassifiedSplitLength(this.$route.params.split);
+          this.testImageList = res.data.data;
+        }
+      } catch (error) {
+        console.log(error);
+        this.$root.alert('error', 'Image list initialization failed');
+        this.imageList = [];
+      }
+    },
     resetImageList() {
       this.currentPage = 0;
       this.classNames = [''];
       this.classStartIdx = {};
       this.$root.imageClass = '';
       this.initImageList();
+      this.initClassifiedImageList();
       this.initClassifiedImageList();
     },
     async getClassNames() {
@@ -518,6 +540,7 @@ export default {
       try {
         await APIDeleteEdit(this.$root.imageSplit, getImageUrlFromFullUrl(url));
         this.initImageList();
+        this.initClassifiedImageList();
         this.initClassifiedImageList();
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || 'Image deletion failed');
