@@ -5,6 +5,17 @@ from threading import Lock
 
 IMAGENET_OUTPUT_SIZE = 1000
 
+MODEL_INPUT_SHAPE = {
+    "resnet-18": 224,
+    "resnet-34": 224,
+    "resnet-50": 224,
+    "resnet-101": 224,
+    "resnet-152": 224,
+    "mobilenet-v2": 224,
+    "resnet-18-32x32": 32,
+    "alexnet": 227,
+}
+
 
 class RModelWrapper:
 
