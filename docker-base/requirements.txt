@@ -1,16 +1,17 @@
-Flask==2.0.1
-importlib_resources==5.2.2
-lib==3.0.0
-matplotlib==3.4.2
-numpy==1.21.2
-Pillow==8.4.0
+# lib
+pytest==7.2.1
 webunit==1.3.10
 Werkzeug==2.0.1
-tensorboard==2.6.0
-scipy==1.7.1
-setuptools==58.0.4
+
+# Pytorch related
+tensorboard==2.12.0
+
+# Flask
 flasgger==0.9.5
-protobuf=3.20.0
+Flask==2.0.1
+
+# Required for socketio
 Flask-SocketIO==4.3.1
 python-engineio==3.13.2
 python-socketio==4.6.0
+protobuf=3.20.0
