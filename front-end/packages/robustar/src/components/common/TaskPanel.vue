@@ -64,7 +64,6 @@ export default {
     afterConnect(data) {
       console.log(data);
     },
-
     // get digest from backend
     digest(data) {
       this.digest = data.digest;
@@ -98,7 +97,7 @@ export default {
         await Promise.all(this.digest.map((task) => this.stopTask(task[4])));
       } catch (error) {
         console.log(error);
-        this.$root.alert('error', 'Failed to stop task');
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to stop task');
       }
     },
   },

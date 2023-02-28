@@ -13,7 +13,7 @@
 
       <v-expansion-panels :multiple="true" v-model="panels" style="width: auto">
         <!-- Model Prediction -->
-        <v-expansion-panel @click="toggle_panel" v-if="show">
+        <v-expansion-panel @click="togglePanel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-prediction">
             Model Prediction
           </v-expansion-panel-header>
@@ -39,7 +39,7 @@
             </div>
           </div>
         </v-expansion-panel>
-        <v-expansion-panel @change="toggle_panel" v-if="show">
+        <v-expansion-panel @change="togglePanel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="model-focus">
             Model Focus
             <template v-slot:actions>
@@ -55,7 +55,7 @@
         </v-expansion-panel>
 
         <!-- View Influence -->
-        <v-expansion-panel @change="toggle_panel" v-if="show">
+        <v-expansion-panel @change="togglePanel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="influence-images">
             Influence Images
           </v-expansion-panel-header>
@@ -65,7 +65,7 @@
         </v-expansion-panel>
 
         <!-- View Proposed Annotation -->
-        <v-expansion-panel @change="toggle_panel" v-if="show">
+        <v-expansion-panel @change="togglePanel" v-if="show">
           <v-expansion-panel-header expand-icon="mdi-menu-down" data-test="proposed-annotation">
             Proposed annotation
           </v-expansion-panel-header>
@@ -114,7 +114,7 @@ export default {
       type: String,
       default: () => '',
     },
-    image_url: {
+    imageURL: {
       type: String,
       default: () => '',
     },
@@ -144,11 +144,11 @@ export default {
     };
   },
   watch: {
-    image_url: function () {
-      this.get_visualize_data();
+    imageURL: function () {
+      this.getVisualizeData();
     },
     split: function () {
-      this.get_visualize_data();
+      this.getVisualizeData();
     },
   },
   mounted() {
@@ -156,22 +156,21 @@ export default {
     if (panels) {
       this.panels = JSON.parse(panels);
     }
-    this.get_visualize_data();
   },
   methods: {
     showCount: function () {
       this.show = !this.show;
     },
-    get_visualize_data() {
-      if (this.split && this.image_url) {
-        this.view_prediction(this.split, this.image_url);
-        this.get_influence(this.split, this.image_url);
-        this.get_proposed_edit(this.split, this.image_url);
+    getVisualizeData() {
+      if (this.split && this.imageURL) {
+        this.viewPrediction(this.split, this.imageURL);
+        this.getInfluence(this.split, this.imageURL);
+        this.getProposedEdit(this.split, this.imageURL);
       }
     },
-    async get_proposed_edit(split, image_url) {
+    async getProposedEdit(split, imageURL) {
       try {
-        const res = await APIGetProposedEdit(split, image_url);
+        const res = await APIGetProposedEdit(split, imageURL);
         if (res.data.code === -1) {
           this.proposedEditBase64 = '';
           return;
@@ -180,25 +179,26 @@ export default {
         this.proposedEditBase64 = base64;
       } catch (error) {
         console.log(error);
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
-    async view_prediction(split, image_url) {
+    async viewPrediction(split, imageURL) {
       try {
-        const res = await APIPredict(split, image_url);
+        const res = await APIPredict(split, imageURL);
         let cap = 10;
         let responseData = res.data.data;
-        let temp_buffer = responseData[0].map((e, i) => {
+        let tempBuffer = responseData[0].map((e, i) => {
           return [e, responseData[1][i]];
         });
-        temp_buffer.sort((a, b) => {
+        tempBuffer.sort((a, b) => {
           return b[1] - a[1];
         });
-        if (temp_buffer.length > cap) temp_buffer = temp_buffer.slice(0, cap);
+        if (tempBuffer.length > cap) tempBuffer = tempBuffer.slice(0, cap);
         this.predDataArr = [
-          temp_buffer.map((e) => {
+          tempBuffer.map((e) => {
             return e[0];
           }),
-          temp_buffer.map((e) => {
+          tempBuffer.map((e) => {
             return e[1];
           }),
         ];
@@ -214,9 +214,9 @@ export default {
       }
     },
 
-    async get_influence(split, image_url) {
+    async getInfluence(split, imageURL) {
       try {
-        const res = await APIGetInfluenceImages(split, image_url);
+        const res = await APIGetInfluenceImages(split, imageURL);
         // If influence not predicted:
         if (res.data.code == -1) {
           this.influImgUrl = [];
@@ -225,7 +225,7 @@ export default {
         const responseData = res.data.data;
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
-          // responseData[i] is a length 2 array [image_path, image_url]
+          // responseData[i] is a length 2 array [image_path, imageURL]
           const url = responseData[i][1];
           this.influImgUrl.push(
             `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`
@@ -233,10 +233,11 @@ export default {
         }
       } catch (error) {
         console.log(error);
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
 
-    toggle_panel() {
+    togglePanel() {
       setTimeout(() => {
         sessionStorage.setItem('visualizer_panels', JSON.stringify(this.panels));
       }, 0);
@@ -244,6 +245,7 @@ export default {
 
     open() {
       this.isActive = true;
+      this.getVisualizeData();
     },
 
     close() {

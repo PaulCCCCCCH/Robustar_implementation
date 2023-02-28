@@ -47,7 +47,7 @@
 
         <v-divider class="mt-4 mb-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
+          <v-btn depressed color="primary" class="mx-auto" @click="startCalculation">
             START CALCULATION
           </v-btn>
         </div>
@@ -95,7 +95,7 @@ export default {
     });
   },
   methods: {
-    async start_calculation() {
+    async startCalculation() {
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -107,9 +107,9 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('success', 'Influence calculation succeeded');
       } catch (error) {
-        alert('Server error. Check console.');
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Influence calculation failed');
+        console.log(error);
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
   },

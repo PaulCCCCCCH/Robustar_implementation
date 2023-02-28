@@ -363,7 +363,7 @@
     <Visualizer
       v-if="hasImages"
       ref="visualizer"
-      :image_url="$root.imageURL"
+      :imageURL="$root.imageURL"
       :split="$root.imageSplit"
     />
   </div>
