@@ -1,5 +1,6 @@
 import torch
 import time
+from torchattacks import PGD
 import os
 from objects.RTask import RTask, TaskType
 from objects.RServer import RServer
@@ -51,7 +52,7 @@ class Trainer:
 
     def start_train(self, call_back, epochs, auto_save):
         self.updateInfo = call_back
-        self.train(epochs, auto_save=auto_save)
+        self.train(epochs, auto_save=auto_save, pgd=False)
 
     def update_gui(self):
         self.updateInfo(self.statusInfo)
@@ -106,10 +107,16 @@ class Trainer:
             self.storeArr.append(data)
         return self.storeArr
 
-    def train(self, epoch, auto_save=True, merge=1):
+    def returna(self, a, b):
+        return a
+
+    def train(self, epoch, auto_save=True, pgd=False, merge=1):
         starttime = time.time()
         loader = self.trainloader
         criterion = torch.nn.CrossEntropyLoss()
+        pgd_attack = (
+            PGD(self.net, eps=0.2, alpha=2 / 255, iters=2) if pgd else self.returna
+        )
         optimizer = torch.optim.SGD(
             self.net.parameters(), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4
         )
@@ -136,6 +143,7 @@ class Trainer:
                 else:
                     inputs, labels = data
 
+                inputs = pgd_attack(inputs, labels)
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
                 # forward + backward
