@@ -35,6 +35,7 @@ class MainView(QWidget):
 
         self.ui.load_push_button.clicked.connect(self.ctrl.load_profile)
         self.ui.save_push_button.clicked.connect(self.ctrl.save_profile)
+        self.ui.create_push_button.clicked.connect(self.ctrl.create_server)
         self.ui.start_push_button.clicked.connect(self.ctrl.start_server)
         self.ui.stop_push_button.clicked.connect(self.ctrl.stop_server)
         self.ui.delete_push_button.clicked.connect(self.ctrl.delete_server)

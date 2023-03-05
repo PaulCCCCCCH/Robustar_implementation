@@ -63,55 +63,36 @@ class DockerController(QObject):
                 with open(os.path.join(self.root, "config_record.json"), "w") as f:
                     json.dump(new_match_dict, f)
 
-    def get_selection(self, for_start=False):
-        if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
-            self.model.made_on_create = True
-            self.model.temp_name = self.model.profile["name"]
-            if for_start is True:
-                self.model.temp_image = self.model.profile["image"]
-                self.model.temp_port = self.model.profile["port"]
-            return self.get_container_by_name(self.model.temp_name, for_start=for_start)
+    def is_invalid_selection(self):
+        items = self.main_ctrl.get_item_from_list_widgets()
+        if len(items) == 0:
+            self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Please select a container first")
+            return 1
         else:
-            self.model.made_on_create = False
-            items = self.main_ctrl.get_item_from_list_widgets()
-            if len(items) == 0:
-                self.model.temp_name = None
-                self.model.container = None
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Please select a container first")
-                return 1
-            else:
-                item = items[0]
-                self.model.temp_name = item.text()
-                return self.get_container_by_name(self.model.temp_name, for_start=for_start)
+            item = items[0]
+            self.model.temp_name = item.text()
+            return self.no_container_with_name(self.model.temp_name)
 
-    def get_container_by_name(self, name, for_start):
+    def no_container_with_name(self, name):
         try:
             self.model.container = self.client.containers.get(name)
             return 0
         except docker.errors.NotFound:
-            if self.model.made_on_create and for_start is True:
-                self.model.container = None
-                return 0
-            else:
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Can not find {}. Refresh <i>Manage</i> page "
-                                             "to check the latest information".format(self.model.temp_name))
-                return 1
+            self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                         "Can not find {}. Refresh <i>Manage</i> page "
+                                         "to check the latest information".format(self.model.temp_name))
+            return 1
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
                                          "Unexpected error encountered. See more in <i>Details</i> page")
             self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
             return 1
 
-    def start_server(self):
-        if self.get_selection(for_start=True):
-            return
-        if self.model.container is None:
-            self.start_new_server()
-        else:
-            self.start_exist_server()
+    def create_server(self):
+        self.model.temp_name = self.model.profile["name"]
+        self.model.temp_image = self.model.profile["image"]
+        self.model.temp_port = self.model.profile["port"]
 
-    def start_new_server(self):
         image = "paulcccccch/robustar:" + self.model.profile["image"]
 
         # save backend relevant configs in a json file
@@ -156,9 +137,9 @@ class DockerController(QObject):
 
         try:
             if "cuda" in self.model.device:
-                self.start_new_cuda_server(image, config_file)
+                self.create_new_cuda_server(image, config_file)
             elif "cpu" in self.model.device:
-                self.start_new_cpu_server(image, config_file)
+                self.create_new_cpu_server(image, config_file)
 
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "Running {}".format(
                 self.model.temp_image))
@@ -171,11 +152,19 @@ class DockerController(QObject):
             if "port is already allocated" in str(api_error):
                 self.main_ctrl.add_item(self.main_view.ui.create_list_widget, self.model.temp_name)
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is created but fails to run "
-                                                                                    "because port is already allocated."
+                                                                                    "because the port is already in "
+                                                                                    "use by another container."
                                                                                     " See more in <i>Details</i> page"
                                              .format(self.model.temp_name))
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
+            elif "You have to remove (or rename) that container to be able to reuse that name" in str(api_error):
+                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} can not be created because the "
+                                                                                    "name is already in use by "
+                                                                                    "another container."
+                                                                                    " See more in <i>Details</i> page"
+                                             .format(self.model.temp_name))
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
                                              "Unexpected error encountered. See more in <i>Details</i> page")
@@ -187,7 +176,7 @@ class DockerController(QObject):
                     os.remove(file_name)
                     json.dump(match_dict, f)
 
-    def start_new_cpu_server(self, image, config_file):
+    def create_new_cpu_server(self, image, config_file):
         self.download_image(image)
 
         self.model.container = self.client.containers.run(
@@ -226,7 +215,7 @@ class DockerController(QObject):
                 get_system_path(config_file) + ":/Robustar2/configs.json"]
         )
 
-    def start_new_cuda_server(self, image, config_file):
+    def create_new_cuda_server(self, image, config_file):
         self.download_image(image)
 
         self.model.container = self.client.containers.run(
@@ -266,49 +255,54 @@ class DockerController(QObject):
 
             # Set the device_requests parm
             device_requests=[
-                docker.types.DeviceRequest(counts=-1, device_ids=[self.model.device.split(":")[1]], capabilities=[["gpu"]])
+                docker.types.DeviceRequest(counts=-1, device_ids=[self.model.device.split(":")[1]],
+                                           capabilities=[["gpu"]])
             ]
         )
 
-    def start_exist_server(self):
-        try:
-            if self.model.container.status == "exited":
-                self.model.container.restart()
-                self.main_ctrl.update_success_view()
-                self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
+    def start_server(self):
+        if self.is_invalid_selection():
+            return
+        else:
+            try:
+                if self.model.container.status == "exited":
+                    self.model.container.restart()
+                    self.main_ctrl.update_success_view()
+                    self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
 
-                self.print_log(self.model.container)
+                    self.print_log(self.model.container)
 
-            elif self.model.container.status == "created":
-                self.model.container.start()
-                self.main_ctrl.update_success_view()
-                self.main_ctrl.remove_item(self.main_view.ui.create_list_widget, self.model.temp_name)
+                elif self.model.container.status == "created":
+                    self.model.container.start()
+                    self.main_ctrl.update_success_view()
+                    self.main_ctrl.remove_item(self.main_view.ui.create_list_widget, self.model.temp_name)
 
-                self.print_log(self.model.container)
+                    self.print_log(self.model.container)
 
-            elif self.model.container.status == "running":
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is running".format(
-                    self.model.temp_name))
+                elif self.model.container.status == "running":
+                    self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is running".format(
+                        self.model.temp_name))
 
-            else:
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Illegal container status encountered")
-        except docker.errors.APIError as api_error:
-            if "port is already allocated" in str(api_error):
+                else:
+                    self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                                 "Illegal container status encountered")
+            except docker.errors.APIError as api_error:
+                if "port is already allocated" in str(api_error):
 
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} fails to run because port is "
-                                                                                    "already allocated. See more in"
-                                                                                    " <i>Details</i> page".format(
-                    self.model.temp_name))
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                    self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                                 "{} fails to run because the port is "
+                                                 "already in use by another container. "
+                                                 "See more in <i>Details</i> page".format(
+                                                     self.model.temp_name))
+                    self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-            else:
-                self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Unexpected error encountered. See more in <i>Details</i> page")
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                else:
+                    self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
+                                                 "Unexpected error encountered. See more in <i>Details</i> page")
+                    self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
     def stop_server(self):
-        if self.get_selection():
+        if self.is_invalid_selection():
             return
         try:
             if self.model.container.status == "exited":
@@ -335,7 +329,7 @@ class DockerController(QObject):
             self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
     def delete_server(self):
-        if self.get_selection():
+        if self.is_invalid_selection():
             return
         try:
             if self.model.container.status == "running" or self.model.container.status == "created" or \

@@ -196,12 +196,16 @@ class MainController(QObject):
         except FileNotFoundError:
             print("The dialog is closed")
 
-    def start_server(self):
-        if self.main_view.ui.cm_tab_widget.currentIndex() == 0 and (self.check_miss_input() or self.check_wrong_input()):
+    def create_server(self):
+        if self.check_miss_input() or self.check_wrong_input():
             return
         else:
-            t = ServerOperationThread(target=self.docker_ctrl.start_server, ctrl=self)
+            t = ServerOperationThread(target=self.docker_ctrl.create_server, ctrl=self)
             t.start()
+
+    def start_server(self):
+        t = ServerOperationThread(target=self.docker_ctrl.start_server, ctrl=self)
+        t.start()
 
     def stop_server(self):
         if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
@@ -294,14 +298,18 @@ class MainController(QObject):
         self.main_view.ui.cls_line_edit.setText(val)
 
     def enable_control(self):
+        self.main_view.ui.create_push_button.setEnabled(True)
         self.main_view.ui.start_push_button.setEnabled(True)
         self.main_view.ui.stop_push_button.setEnabled(True)
         self.main_view.ui.delete_push_button.setEnabled(True)
+        self.main_view.ui.refresh_push_button.setEnabled(True)
 
     def disable_control(self):
+        self.main_view.ui.create_push_button.setEnabled(False)
         self.main_view.ui.start_push_button.setEnabled(False)
         self.main_view.ui.stop_push_button.setEnabled(False)
         self.main_view.ui.delete_push_button.setEnabled(False)
+        self.main_view.ui.refresh_push_button.setEnabled(False)
 
     def check_miss_input(self):
         miss_input_prompt = []
