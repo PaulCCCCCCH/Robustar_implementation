@@ -6,9 +6,9 @@ import scipy.sparse.linalg as L
 import torch
 from torch import nn
 from torch.utils import data
+from objects.RTask import RTask
 
 from torch_influence.base import BaseInfluenceModule, BaseObjective
-
 
 class AutogradInfluenceModule(BaseInfluenceModule):
     r"""An influence module that computes inverse-Hessian vector products
@@ -218,6 +218,7 @@ class LiSSAInfluenceModule(BaseInfluenceModule):
             repeat: int,
             depth: int,
             scale: float,
+            task: RTask,
             gnh: bool = False,
             debug_callback: Optional[Callable[[int, int, torch.Tensor], None]] = None
     ):
@@ -236,11 +237,17 @@ class LiSSAInfluenceModule(BaseInfluenceModule):
         self.depth = depth
         self.scale = scale
         self.debug_callback = debug_callback
+        self.task = task
 
     def inverse_hvp(self, vec):
 
         params = self._model_make_functional()
         flat_params = self._flatten_params_like(params)
+
+        def cleanup():
+            with torch.no_grad():
+                self._model_reinsert_params(self._reshape_like_params(flat_params), register=True)
+
 
         ihvp = 0.0
 
@@ -259,9 +266,13 @@ class LiSSAInfluenceModule(BaseInfluenceModule):
                 if self.debug_callback is not None:
                     self.debug_callback(r, t, h_est)
 
+                task_update_res = self.task.update()
+                if not task_update_res:
+                    cleanup()
+                    raise StopIteration("Influence calculated stopped by the user")
+
             ihvp = ihvp + h_est / self.scale
 
-        with torch.no_grad():
-            self._model_reinsert_params(self._reshape_like_params(flat_params), register=True)
+        cleanup()
 
         return ihvp / self.repeat

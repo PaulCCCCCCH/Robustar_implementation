@@ -9,11 +9,10 @@ import logging
 
 from pathlib import Path
 from pytorch_influence_functions.utils import save_json, display_progress
-
-import sys, os
+import os, sys
 sys.path.append(os.path.dirname(__file__))
-print(sys.path)
 from torch_influence.modules import BaseObjective, LiSSAInfluenceModule
+from objects.RTask import RTask, TaskType
 
 def calc_influence_single(model, module, train_loader, test_loader, test_id_num, gpu,
                           recursion_depth, r, s_test_vec=None,
@@ -122,6 +121,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
 
     DEVICE = torch.device("cpu" if config['gpu'] == -1 else "cuda")
 
+    task = RTask(
+        TaskType.Test,
+        (test_end_index - test_start_index) * config['recursion_depth'] * config['r_averaging']
+    )
     module = LiSSAInfluenceModule(
         model=model,
         objective=Objective(),
@@ -133,6 +136,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
         repeat=config['r_averaging'],
         # TODO Add support for modifying scale
         scale=5000,
+        task=task,
     )
 
     # Main loop for calculating the influence function one test sample per
