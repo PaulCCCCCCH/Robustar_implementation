@@ -7,6 +7,30 @@ import threading
 import multiprocessing
 
 
+class TrainThread(threading.Thread):
+    def __init__(self, trainer, configs):
+        super(TrainThread, self).__init__()
+        self.trainer = trainer
+        self.configs = configs
+
+    def run(self):
+        try:
+            self.trainer.start_train(
+                call_back=lambda status_dict: self.update_info(status_dict),
+                epochs=int(self.configs["epoch"]),
+                auto_save=self.configs["auto_save_model"] == "yes",
+            )
+        except Exception as e:
+            raise e
+        finally:
+            RServer.get_model_wrapper().release_model()
+
+    def update_info(self, status_dict):
+        return """This is a placeholder function. If anything needs to be done
+        after each iteration, put it here.
+        """
+
+
 def setup_training(configs):
     # Configs from training pad
     use_paired_train = configs["use_paired_train"]
@@ -69,12 +93,6 @@ def setup_training(configs):
     return train_set, test_set, model, trainer
 
 
-def update_info(status_dict):
-    return """This is a placeholder function. If anything needs to be done
-    after each iteration, put it here.
-    """
-
-
 def start_tensorboard(logdir):
     """
     Starts updating tensorboard.
@@ -93,9 +111,14 @@ def start_train(configs):
 
     print("configs:", configs)
 
-    train_set, test_set, model, trainer = setup_training(configs)
+    model_wrapper = RServer.get_model_wrapper()
+    if not model_wrapper.acquire_model():
+        raise Exception(
+            "Cannot start training because the model is occupied by another thread"
+        )
 
     try:
+        train_set, test_set, model, trainer = setup_training(configs)
         # Set up tensorboard log directory
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
         if not os.path.exists("runs"):
@@ -111,19 +134,13 @@ def start_train(configs):
         t.start()
         trainer.set_tb_process(t)
 
+        train_thread = TrainThread(trainer, configs)
+
         # Start training on a new thread
-        train_thread = threading.Thread(
-            target=trainer.start_train,
-            args=(
-                update_info,
-                int(configs["epoch"]),
-                configs["auto_save_model"] == "yes",
-            ),
-        )
         train_thread.start()
 
     except Exception as e:
-        e.with_traceback()
-        return None
+        model_wrapper.release_model()
+        raise e
 
     return train_thread

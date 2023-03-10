@@ -18,10 +18,6 @@ MODEL_INPUT_SHAPE = {
 
 
 class RModelWrapper:
-
-    lock = Lock()
-
-    # model=Model("resnet-18-32x32",'./model/weight/resnet18_cifar_model.pth','cpu')
     def __init__(self, network_type, net_path, device, pretrained, num_classes):
         # self.device = torch.device(device)
         if pretrained:
@@ -31,6 +27,9 @@ class RModelWrapper:
         self.device = device  # We keep device as string to allow for easy comparison
         self.init_model(network_type, pretrained, num_classes)
         self.modelwork_type = network_type
+        self._lock = Lock()
+        self._model_available = True
+
         if os.path.exists(net_path):
             print("Loading previous checkpoint at {}".format(net_path))
             self.load_net(net_path)
@@ -88,3 +87,32 @@ class RModelWrapper:
             self.model.load_state_dict(torch.load(path, map_location=self.device))
         else:
             print("weight file not found")
+<<<<<<< HEAD
+=======
+
+    def acquire_model(self):
+        """
+        A thread-safe way to acquire access to the model. This is to make sure that only one
+        thread can own the model at a time to avoid conflicts in gradient calculation. Always call
+        this function before using the model (e.g., training, inferencing, ...)
+
+        Return True if the model is available, False otherwise.
+        """
+        self._lock.acquire()
+
+        if self._model_available:
+            self._model_available = False
+            self._lock.release()
+            return True
+
+        self._lock.release()
+        return False
+
+    def release_model(self):
+        """
+        Release the model so that other threads can use it
+        """
+        self._lock.acquire()
+        self._model_available = True
+        self._lock.release()
+>>>>>>> dev

@@ -7,7 +7,6 @@ import torch
 # https://github.com/MisaOgura/flashtorch#saliency-maps-flashtorchsaliency
 def visualize(model_wrapper: RModelWrapper, imgpath, imgsize, device):
     mymodel = model_wrapper.model
-    model_wrapper.lock.acquire()
     images = []
     try:
         backprop = Backprop(mymodel)
@@ -25,7 +24,5 @@ def visualize(model_wrapper: RModelWrapper, imgpath, imgsize, device):
         backprop.unregister_hooks()
     except Exception as e:
         print(str(e))
-    finally:
-        model_wrapper.lock.release()
 
     return images
