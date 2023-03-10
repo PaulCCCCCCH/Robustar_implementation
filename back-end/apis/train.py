@@ -1,3 +1,10 @@
+'''
+Author: Chonghan Chen (paulcccccch@gmail.com)
+-----
+Last Modified: Friday, 10th March 2023 5:03:19 pm
+Modified By: Chonghan Chen (paulcccccch@gmail.com)
+-----
+'''
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse
@@ -119,10 +126,12 @@ def start_training():
     try:
         train_thread = start_train(configs)
     except Exception as e:
+        print(e)
         RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
 
     # Return error if training cannot be started
     if not train_thread:
+        print(e)
         RResponse.abort(500, "Failed to start training thread", -1)
 
     # Training started succesfully!

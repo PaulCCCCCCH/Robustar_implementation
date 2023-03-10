@@ -16,7 +16,6 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
-
 class RModelWrapper:
     def __init__(self, network_type, net_path, device, pretrained, num_classes):
         # self.device = torch.device(device)
@@ -87,8 +86,6 @@ class RModelWrapper:
             self.model.load_state_dict(torch.load(path, map_location=self.device))
         else:
             print("weight file not found")
-<<<<<<< HEAD
-=======
 
     def acquire_model(self):
         """
@@ -115,4 +112,3 @@ class RModelWrapper:
         self._lock.acquire()
         self._model_available = True
         self._lock.release()
->>>>>>> dev

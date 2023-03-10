@@ -41,7 +41,7 @@ class ImageFolderNoTransform(ImageFolder):
 
 
 class DataSet(Dataset):
-    def __init__(self, data_folder, image_size, transforms, classes_path=None):
+    def __init__(self, data_folder, image_size, transforms):
         self.data_folder = data_folder
         self.image_size = image_size
         self.dataset = ImageFolderNoTransform(root=data_folder)
@@ -76,13 +76,10 @@ class PairedDataset(DataSet):
         paired_data_folder,
         image_size,
         transforms,
-        classes_path,
         mode,
         user_edit_buffering=False,
     ):
-        super(PairedDataset, self).__init__(
-            data_folder, image_size, transforms, classes_path
-        )
+        super(PairedDataset, self).__init__(data_folder, image_size, transforms)
 
         loader = (
             self.paired_loader_with_buffer

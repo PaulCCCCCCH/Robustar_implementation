@@ -29,13 +29,13 @@ class TestThread(threading.Thread):
     def run(self):
         print("Starting testing thread")
         try:
-            self.startTestThread()
+            self.start_test_thread()
         except Exception as e:
             raise e
         finally:
             RServer.get_model_wrapper().release_model()
 
-    def startTestThread(self):
+    def start_test_thread(self):
         samples = self.dataset.samples
         dataset_length = len(samples)
 
