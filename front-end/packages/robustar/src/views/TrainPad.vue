@@ -120,7 +120,7 @@
             color="primary"
             class="mx-auto"
             @click="startTraining"
-            data-test="train-pad-start-btn"
+            data-test="train-pad-btn-start-training"
           >
             START TRAINING
           </v-btn>
@@ -131,7 +131,7 @@
             color="primary"
             class="mx-auto"
             @click="stopTraining"
-            data-test="train-pad-stop-btn"
+            data-test="train-pad-btn-stop-training"
           >
             STOP TRAINING
           </v-btn>
