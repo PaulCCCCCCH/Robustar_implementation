@@ -1,3 +1,10 @@
+'''
+Author: Chonghan Chen (paulcccccch@gmail.com)
+-----
+Last Modified: Friday, 10th March 2023 4:48:58 pm
+Modified By: Chonghan Chen (paulcccccch@gmail.com)
+-----
+'''
 import threading
 from objects.RServer import RServer
 from utils.path_utils import to_unix
@@ -71,9 +78,7 @@ class TestThread(threading.Thread):
             # task.exit()
             pass
 
-        self.dataset.add_records(correct_buffer, True)
-        self.dataset.add_records(incorrect_buffer, False)
-
+        self.dataset.post_records(correct_buffer, incorrect_buffer)
         print("Testing complete")
 
 

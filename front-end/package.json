@@ -2,11 +2,11 @@
   "name": "robustar",
   "private": true,
   "scripts": {
-    "postinstall": "npx lerna init && npx lerna bootstrap",
-    "build": "npx lerna run build",
-    "build:editor": "npx lerna run --scope @robustar/image-editor build --stream",
-    "serve:editor": "npx lerna run --scope @robustar/image-editor serve --stream",
-    "serve:main": "npx lerna run --scope @robustar/robustar serve --stream",
+    "postinstall": "npx lerna@latest init && npx lerna@latest bootstrap",
+    "build": "npx lerna@latest run build",
+    "build:editor": "npx lerna@latest run --scope @robustar/image-editor build --stream",
+    "serve:editor": "npx lerna@latest run --scope @robustar/image-editor serve --stream",
+    "serve:main": "npx lerna@latest run --scope @robustar/robustar serve --stream",
     "cypress:open": "npx cypress open --browser chrome",
     "cypress:run": "npx cypress run --browser chrome",
     "cypress:component": "npx cypress open-ct"
@@ -41,7 +41,7 @@
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
-    "lerna": "^4.0.0",
+    "lerna": "^6.4.1",
     "mini-css-extract-plugin": "^2.2.2",
     "mkdirp": "^1.0.4",
     "node-fetch": "^3.0.0",
@@ -62,8 +62,5 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4",
     "cypress-real-events": "^1.7.0"
-  },
-  "workspaces": [
-    "apps/*"
-  ]
+  }
 }

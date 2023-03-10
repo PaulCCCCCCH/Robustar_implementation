@@ -12,6 +12,10 @@ export const APIGetSplitLength = async (split) => {
   return getRequest(`/image/${split}`);
 };
 
+export const APIGetClassifiedSplitLength = async (split) => {
+  return getRequest(`/image/classified/${split}`);
+};
+
 /**
  * @param {string} split
  */
