@@ -87,8 +87,6 @@ class RModelWrapper:
             self.model.load_state_dict(torch.load(path, map_location=self.device))
         else:
             print("weight file not found")
-<<<<<<< HEAD
-=======
 
     def acquire_model(self):
         """
@@ -115,4 +113,3 @@ class RModelWrapper:
         self._lock.acquire()
         self._model_available = True
         self._lock.release()
->>>>>>> dev
