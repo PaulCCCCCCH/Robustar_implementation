@@ -9,7 +9,7 @@
             depressed
             color="primary"
             class="mx-auto"
-            @click="start_testing('validation')"
+            @click="startTesting('validation')"
             data-test="test-pad-btn-test-on-validation-set"
           >
             START TESTING ON VALIDATION SET
@@ -20,7 +20,7 @@
             depressed
             color="primary"
             class="mx-auto"
-            @click="start_testing('test')"
+            @click="startTesting('test')"
             data-test="test-pad-btn-test-on-test-set"
           >
             START TESTING ON TEST SET
@@ -39,7 +39,7 @@ export default {
     return {};
   },
   methods: {
-    async start_testing(split) {
+    async startTesting(split) {
       this.$root.startProcessing('The test is going on. Please wait...');
       try {
         const res = await APIStartTest({

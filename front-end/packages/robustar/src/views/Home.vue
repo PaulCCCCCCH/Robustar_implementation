@@ -10,8 +10,6 @@
             class="feature-item"
             v-for="(item, i) in items"
             :key="i"
-            @mouseover="hoverIdx = i"
-            @mouseout="hoverIdx = -1"
           >
             <v-list-item
               :data-test="`home-${item.text}-entrance`"
@@ -23,7 +21,7 @@
                   <v-icon v-text="item.icon"></v-icon>
                 </v-list-item-icon>
               </div>
-              <div :class="{ hoverbg: i == hoverIdx }">
+              <div class="card-text">
                 <v-list-item-content
                   class="font-weight-medium"
                   v-text="item.text"
@@ -72,7 +70,6 @@ export default {
           explain: 'The users can use the drawing tools to brush out the superficial pixels',
         },
       ],
-      hoverIdx: -1,
     };
   },
   methods: {
@@ -97,7 +94,7 @@ export default {
 .container {
   text-align: center;
 }
-.hoverbg {
+.card-text:hover {
   color: #1976d2;
 }
 </style>
