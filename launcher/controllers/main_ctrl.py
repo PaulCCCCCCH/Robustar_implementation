@@ -180,7 +180,7 @@ class MainController(QObject):
             "JSON Files (*.json);;All Files (*)",
         )
 
-        if not path.strip():
+        if path.strip():
             self.model.cwd = os.path.dirname(path)
             try:
                 with open(path, "r") as f:
@@ -198,7 +198,7 @@ class MainController(QObject):
             "JSON Files (*.json);;All Files (*)",
         )
 
-        if not path.strip():
+        if path.strip():
             self.model.cwd = os.path.dirname(path)
             with open(path, "w") as f:
                 json.dump(self.model.profile, f)
