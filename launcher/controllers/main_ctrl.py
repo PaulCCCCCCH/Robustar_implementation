@@ -54,16 +54,18 @@ class MainController(QObject):
             self.docker_ctrl.refresh_server()
             self.main_view.show()
         except requests.RequestException as e:
-            self.popup_view.ui.warning_label.setText(
-                f"Failed to fetch image versions online!\nPlease check your network!"
-            )
+            text = f"Failed to fetch image versions online!\nPlease check your network!"
+            self.popup_view.ui.warning_label.setText(text)
+            LoggerManager.append_log("prompt", "warning", text)
             self.popup_view.ui.exception_label.setText(str(e))
+            LoggerManager.append_log("detail", "warning", str(e))
             self.popup_view.show()
         except docker.errors.DockerException as e:
-            self.popup_view.ui.warning_label.setText(
-                "Docker is not running!\nPlease start Docker first!"
-            )
+            text = "Docker is not running or running properly!\n"
+            self.popup_view.ui.warning_label.setText(text)
+            LoggerManager.append_log("prompt", "warning", text)
             self.popup_view.ui.exception_label.setText(str(e))
+            LoggerManager.append_log("detail", "warning", str(e))
             self.popup_view.show()
 
     # Slot functions to change the model
@@ -412,10 +414,14 @@ class MainController(QObject):
                 self.main_view.ui.device_combo_box.addItem(f"cuda:{i}")
         except FileNotFoundError as e:
             print(e)
+            LoggerManager.append_log("app", "info", e)
 
     # Other control functions
     @staticmethod
-    def print_message(text_browser, message, timestamp=True):
+    def print_message(text_browser, message, level="info", timestamp=True):
+        logger_name = text_browser.objectName.split("_")[0]
+        LoggerManager.append_log(logger_name, level, message)
+
         if timestamp is True:
             current_time = time.strftime("%H:%M:%S", time.localtime())
             message = current_time + " - - " + message + "\n"
