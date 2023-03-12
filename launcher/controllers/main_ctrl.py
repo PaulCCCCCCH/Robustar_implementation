@@ -179,12 +179,16 @@ class MainController(QObject):
             self.model.cwd,
             "JSON Files (*.json);;All Files (*)",
         )
-        self.model.cwd = os.path.dirname(path)
-        try:
-            with open(path, "r") as f:
-                self.model.profile = json.load(f)
-        except FileNotFoundError:
-            print("Load path not found")
+
+        if not path.strip():
+            self.model.cwd = os.path.dirname(path)
+            try:
+                with open(path, "r") as f:
+                    self.model.profile = json.load(f)
+            except FileNotFoundError:
+                self.print_message(
+                    self.main_view.ui.prompt_text_browser,
+                    "Fail to find the profile file.", level="warning")
 
     def save_profile(self):
         path, _ = QFileDialog.getSaveFileName(
@@ -193,12 +197,11 @@ class MainController(QObject):
             self.model.cwd,
             "JSON Files (*.json);;All Files (*)",
         )
-        self.model.cwd = os.path.dirname(path)
-        try:
+
+        if not path.strip():
+            self.model.cwd = os.path.dirname(path)
             with open(path, "w") as f:
                 json.dump(self.model.profile, f)
-        except FileNotFoundError:
-            print("The dialog is closed")
 
     def create_server(self):
         if self.check_miss_input() or self.check_wrong_input():
