@@ -3,7 +3,7 @@ import docker
 import os
 import json
 import time
-
+import logging
 import nvgpu
 from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
@@ -11,7 +11,7 @@ from threading import Thread
 
 
 class MainController(QObject):
-    def __init__(self):
+    def __init__(self, app_root):
         super().__init__()
 
         self.popup_view = None
@@ -33,6 +33,8 @@ class MainController(QObject):
             "device": "device"
         }
 
+        self.app_root = app_root
+
     def set_model(self, model):
         self.model = model
 
@@ -48,7 +50,7 @@ class MainController(QObject):
         try:
             self.init_images()
             self.init_devices()
-            self.docker_ctrl = DockerController(self.model, self.main_view, self)
+            self.docker_ctrl = DockerController(self.model, self.main_view, self, self.app_root)
             self.docker_ctrl.refresh_server()
             self.main_view.show()
         except requests.RequestException as e:
@@ -368,7 +370,7 @@ class MainController(QObject):
         )
 
     def update_success_view(self):
-        with open(os.path.join(self.docker_ctrl.root, "config_record.json"), "r") as f:
+        with open(os.path.join(self.docker_ctrl.app_root, "config_record.json"), "r") as f:
             match_dict = json.load(f)
             file_name = match_dict[self.model.temp_name]
         with open(file_name) as f:
