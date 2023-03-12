@@ -1,3 +1,10 @@
+'''
+Author: Chonghan Chen (paulcccccch@gmail.com)
+-----
+Last Modified: Friday, 10th March 2023 5:03:19 pm
+Modified By: Chonghan Chen (paulcccccch@gmail.com)
+-----
+'''
 from flask import request
 from utils.train import start_train
 from objects.RResponse import RResponse

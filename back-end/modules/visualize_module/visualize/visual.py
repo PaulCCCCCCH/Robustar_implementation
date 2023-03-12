@@ -1,10 +1,7 @@
 from objects.RModelWrapper import RModelWrapper
 from ..flashtorch_.utils import apply_transforms, load_image
 from ..flashtorch_.saliency import Backprop
-import torch, matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+import torch
 
 
 # https://github.com/MisaOgura/flashtorch#saliency-maps-flashtorchsaliency
