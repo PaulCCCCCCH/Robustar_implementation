@@ -3,8 +3,8 @@ import docker
 import os
 import json
 import time
-import logging
 import nvgpu
+from logger_manager import LoggerManager
 from PySide2.QtCore import QObject, Qt
 from PySide2.QtWidgets import QFileDialog
 from threading import Thread
