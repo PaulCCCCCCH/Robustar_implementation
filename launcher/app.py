@@ -1,9 +1,9 @@
 import os
 import sys
 import ctypes
+import json
 from sys import platform
 from PySide2.QtWidgets import QApplication
-
 from logger_manager import LoggerManager
 from model.model import Model
 from controllers.main_ctrl import MainController
@@ -25,8 +25,10 @@ class App(QApplication):
 
         if not os.path.exists(self.app_root):
             os.makedirs(self.app_root)
-            os.makedirs(os.path.join(self.app_root, 'configs'))
-            os.makedirs(os.path.join(self.app_root, 'logs'))
+            os.makedirs(os.path.join(self.app_root, "configs"))
+            os.makedirs(os.path.join(self.app_root, "logs"))
+            with open(os.path.join(self.app_root, "configs", "config_record.json"), "w") as f:
+                json.dump({}, f)
 
             if platform == "win32":
                 FILE_ATTRIBUTE_HIDDEN = 0x02
@@ -52,6 +54,6 @@ class App(QApplication):
         self.mainCtrl.init()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App(sys.argv)
     sys.exit(app.exec_())

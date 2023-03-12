@@ -3,7 +3,6 @@ import json
 import os
 import re
 import uuid
-import ctypes
 
 from sys import platform
 from PySide2.QtCore import QObject
@@ -19,6 +18,7 @@ class DockerController(QObject):
         self.main_view = view
         self.main_ctrl = ctrl
         self.app_root = app_root
+        self.config_root = os.path.join(self.app_root, 'configs')
 
         # Initialize the client to communicate with the Docker daemon
         self.client = docker.from_env()
@@ -47,19 +47,17 @@ class DockerController(QObject):
                                          "Unexpected error encountered during record synchronization. See more in <i>Details</i> page")
             self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
-        if os.path.exists(self.app_root):
-            if os.path.exists(os.path.join(self.app_root, "config_record.json")):
-                new_match_dict = {}
-                with open(os.path.join(self.app_root, "config_record.json"), "r") as f:
-                    match_dict = json.load(f)
-                    for name in match_dict.keys():
-                        if name in name_lst:
-                            new_match_dict[name] = match_dict[name]
-                        else:
-                            file_name = match_dict[name]
-                            os.remove(file_name)
-                with open(os.path.join(self.app_root, "config_record.json"), "w") as f:
-                    json.dump(new_match_dict, f)
+        new_match_dict = {}
+        with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
+            match_dict = json.load(f)
+            for name in match_dict.keys():
+                if name in name_lst:
+                    new_match_dict[name] = match_dict[name]
+                else:
+                    config_file = match_dict[name]
+                    os.remove(config_file)
+        with open(os.path.join(self.config_root, "config_record.json"), "w") as f:
+            json.dump(new_match_dict, f)
 
     def is_invalid_selection(self):
         items = self.main_ctrl.get_item_from_list_widgets()
@@ -108,19 +106,15 @@ class DockerController(QObject):
             "port": int(self.model.port)
         }
 
-        file_name = os.path.join(self.app_root, f"config_{uuid.uuid4().hex}.json")
-        with open(file_name, "w") as f:
-            f.write(json.dumps(config))
-        config_file = os.path.join(os.getcwd(), file_name)
+        config_file = os.path.join(self.config_root, f"config_{uuid.uuid4().hex}.json")
+        with open(config_file, "w") as f:
+            json.dump(config, f)
 
         # Store the (container - config file) mapping
-        if not os.path.exists(os.path.join(self.app_root, "config_record.json")):
-            match_dict = {}
-        else:
-            with open(os.path.join(self.app_root, "config_record.json"), "r") as f:
-                match_dict = json.load(f)
-        with open(os.path.join(self.app_root, "config_record.json"), "w") as f:
-            match_dict[self.model.profile["name"]] = file_name
+        with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
+            match_dict = json.load(f)
+        with open(os.path.join(self.config_root, "config_record.json"), "w") as f:
+            match_dict[self.model.profile["name"]] = config_file
             json.dump(match_dict, f)
 
         try:
@@ -157,11 +151,11 @@ class DockerController(QObject):
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
                                              "Unexpected error encountered. See more in <i>Details</i> page")
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
-                with open(os.path.join(self.app_root, "config_record.json"), "r") as f:
+                with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
-                with open(os.path.join(self.app_root, "config_record.json"), "w") as f:
-                    file_name = match_dict.pop(self.model.profile["name"])
-                    os.remove(file_name)
+                with open(os.path.join(self.config_root, "config_record.json"), "w") as f:
+                    config_file = match_dict.pop(self.model.profile["name"])
+                    os.remove(config_file)
                     json.dump(match_dict, f)
 
     def create_new_cpu_server(self, image, config_file):
@@ -333,11 +327,11 @@ class DockerController(QObject):
                 elif self.model.container.status == "exited":
                     self.main_ctrl.remove_item(self.main_view.ui.exit_list_widget, self.model.temp_name)
 
-                with open(os.path.join(self.app_root, "config_record.json"), "r") as f:
+                with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
-                with open(os.path.join(self.app_root, "config_record.json"), "w") as f:
-                    file_name = match_dict.pop(self.model.temp_name)
-                    os.remove(file_name)
+                with open(os.path.join(self.config_root, "config_record.json"), "w") as f:
+                    config_file = match_dict.pop(self.model.temp_name)
+                    os.remove(config_file)
                     json.dump(match_dict, f)
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
@@ -389,10 +383,10 @@ class DockerController(QObject):
 
             # Get the name and port setting
             name = ct.name
-            with open(os.path.join(self.app_root, "config_record.json"), "r") as f:
+            with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
                 match_dict = json.load(f)
-                file_name = match_dict[name]
-            with open(file_name) as f:
+                config_file = match_dict[name]
+            with open(config_file) as f:
                 config = json.load(f)
                 port = config["port"]
 
