@@ -422,7 +422,7 @@ class MainController(QObject):
     # Other control functions
     @staticmethod
     def print_message(text_browser, message, level="info", timestamp=True):
-        logger_name = text_browser.objectName.split("_")[0]
+        logger_name = text_browser.objectName().split("_")[0]
         LoggerManager.append_log(logger_name, level, message)
 
         if timestamp is True:
