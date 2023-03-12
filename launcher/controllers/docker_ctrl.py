@@ -44,8 +44,10 @@ class DockerController(QObject):
 
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                         "Unexpected error encountered during record synchronization. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                         "Unexpected error encountered during record synchronization. "
+                                         "See more in <i>Details</i> page",
+                                         level="error")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
 
         new_match_dict = {}
         with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
@@ -80,8 +82,8 @@ class DockerController(QObject):
             return 1
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                         "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                         "Unexpected error encountered. See more in <i>Details</i> page", level="error")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
             return 1
 
     def create_server(self):
@@ -149,8 +151,9 @@ class DockerController(QObject):
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Unexpected error encountered. See more in <i>Details</i> page")
-                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                             "Unexpected error encountered. See more in <i>Details</i> page",
+                                             level="error")
+                self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
                 with open(os.path.join(self.config_root, "config_record.json"), "r") as f:
                     match_dict = json.load(f)
                 with open(os.path.join(self.config_root, "config_record.json"), "w") as f:
@@ -267,7 +270,7 @@ class DockerController(QObject):
 
                 else:
                     self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                 "Illegal container status encountered")
+                                                 "Illegal container status encountered", level="error")
             except docker.errors.APIError as api_error:
                 if "port is already allocated" in str(api_error):
 
@@ -280,8 +283,9 @@ class DockerController(QObject):
 
                 else:
                     self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                 "Unexpected error encountered. See more in <i>Details</i> page")
-                    self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                                 "Unexpected error encountered. See more in <i>Details</i> page",
+                                                 level="error")
+                    self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
 
     def stop_server(self):
         if self.is_invalid_selection():
@@ -304,11 +308,13 @@ class DockerController(QObject):
 
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Illegal container status encountered")
+                                             "Illegal container status encountered",
+                                             level="error")
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                         "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                         "Unexpected error encountered. See more in <i>Details</i> page",
+                                         level="error")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
 
     def delete_server(self):
         if self.is_invalid_selection():
@@ -335,11 +341,11 @@ class DockerController(QObject):
                     json.dump(match_dict, f)
             else:
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                             "Illegal container status encountered")
+                                             "Illegal container status encountered", level="error")
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                         "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                         "Unexpected error encountered. See more in <i>Details</i> page", level="error")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
 
     def refresh_server(self):
         for list_widget in self.main_view.list_widget_lst:
@@ -359,11 +365,11 @@ class DockerController(QObject):
                         self.main_ctrl.add_item(self.main_view.ui.create_list_widget, container.name)
                     else:
                         self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                     "Illegal container status encountered")
+                                                     "Illegal container status encountered", level="error")
         except docker.errors.APIError as api_error:
             self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                         "Unexpected error encountered. See more in <i>Details</i> page")
-            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
+                                         "Unexpected error encountered. See more in <i>Details</i> page", level="error")
+            self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error), level="error")
 
     def download_image(self, image):
         image_lst = [x.tags[0] for x in self.client.images.list() if x.tags != []]
