@@ -2,7 +2,6 @@
 
 import torch
 import time
-import datetime
 import numpy as np
 import copy
 import logging
@@ -85,12 +84,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
     outdir = Path(config['outdir'])
     outdir.mkdir(exist_ok=True, parents=True)
 
-    test_dataset_iter_len = len(test_loader.dataset)
-
     # Set up logging and save the metadata conf file
     logging.info(f"Running on: {test_sample_num} images per class.")
-    logging.info(f"Starting at img number: {test_start_index} per class.")
-    # influences_meta['test_sample_index_list'] = sample_list
+    logging.info(f"Calculating influence from image index {test_start_index} to {test_end_index}")
+
     influences_meta_fn = f"influences_results_meta_{test_start_index}-" \
                          f"{test_sample_num}.json"
     influences_meta_path = outdir.joinpath(influences_meta_fn)
@@ -122,7 +119,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
     DEVICE = torch.device("cpu" if config['gpu'] == -1 else "cuda")
 
     task = RTask(
-        TaskType.Test,
+        TaskType.Influence,
         (test_end_index - test_start_index) * config['recursion_depth'] * config['r_averaging']
     )
     module = LiSSAInfluenceModule(
@@ -131,11 +128,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
         train_loader=train_loader,
         test_loader=test_loader,
         device=DEVICE,
-        damp=0.001,
+        damp=config['damp'],
         depth=config['recursion_depth'],
         repeat=config['r_averaging'],
-        # TODO Add support for modifying scale
-        scale=5000,
+        scale=config['scale'],
         task=task,
     )
 

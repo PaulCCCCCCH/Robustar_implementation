@@ -218,7 +218,7 @@ export default {
       try {
         const res = await APIGetInfluenceImages(split, imageURL);
         // If influence not predicted:
-        if (res.data.code == -1) {
+        if (res.status !== 200 || res.data.code == -1) {
           this.influImgUrl = [];
           return;
         }
@@ -245,7 +245,7 @@ export default {
 
     open() {
       this.isActive = true;
-      this.getVisualizeData();
+      // this.getVisualizeData();
     },
 
     close() {

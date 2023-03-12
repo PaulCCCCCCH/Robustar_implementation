@@ -153,7 +153,6 @@ class RDataManager:
         self.dataset_file_queue_len = 1000
         self.dataset_file_buffer = {}
 
-        self.predict_buffer = {}
         self.influence_buffer = {}
 
         self.proposed_annotation_buffer = set()  # saves (train image id)

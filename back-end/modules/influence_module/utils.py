@@ -121,16 +121,13 @@ def get_default_config():
         'outdir': 'influence_list',
         'seed': 42,
         'gpu': 0,
-        'dataset': 'CIFAR10',
-        'num_classes': 10,
         'test_sample_num': 1,
         'test_start_index': 0,
+        'test_end_index': 0,
         'recursion_depth': 1,
         'r_averaging': 1,
-        'scale': None,
-        'damp': None,
-        'calc_method': 'img_wise',
-        'log_filename': None,
+        'scale': 5000,
+        'damp': 0.001,
     }
 
     return config

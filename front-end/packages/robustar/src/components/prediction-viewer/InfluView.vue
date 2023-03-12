@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
 
 export default {
   props: {
