@@ -4,17 +4,6 @@
       <div class="text-h4 text-center font-weight-medium">Auto Annotation</div>
       <v-divider class="mt-4 mb-8"></v-divider>
       <v-form v-model="valid" ref="form" lazy-validation>
-        <!-- <v-select
-          v-model="configs.split"
-          :items="[
-            { text: 'train', value: 'train' },
-            { text: 'test', value: 'test' },
-            { text: 'validation', value: 'validation' },
-          ]"
-          label="Which dataset do we annotate?"
-          outlined
-        ></v-select>
-        -->
         <v-text-field
           v-model="configs.start_idx_to_gen"
           :rules="startIdxRules"

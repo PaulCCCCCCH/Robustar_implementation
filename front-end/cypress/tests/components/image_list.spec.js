@@ -2,7 +2,7 @@ describe('Image List', () => {
   beforeEach(() => {});
 
   it('Navigates through training data', () => {
-    cy.visit('http://localhost:8080/#/image-list/train');
+    cy.visit('image-list/train');
     // TODO: What to invoke to get page number? Hard coding 12 for now.
     cy.getBySel('image-list-input-num-per-page')
       .invoke('val')
@@ -59,7 +59,7 @@ describe('Image List', () => {
   });
 
   it('Navigates through validation data', () => {
-    cy.visit('http://localhost:8080/#/image-list/validation');
+    cy.visit('image-list/validation');
 
     // define elements
     cy.getBySel('image-list-select-class-name').as('class-name-dropdown');
@@ -97,5 +97,53 @@ describe('Image List', () => {
 
     // cy.getBySel('image-list-div-all-imgs').children().should('have.length', 0);
     cy.get('@page-num').should('have.value', 0);
+  });
+
+  const selectImages = () => {
+    cy.visit('image-list/train');
+    cy.getBySel('image-list-show-selection-btn').click();
+    cy.getBySel('image-list-extra-settings');
+    cy.getBySel('image-list-selected-images-num').contains('1');
+    cy.getBySel('image-list-start-index').contains('0');
+
+    // select start image
+    cy.getBySel('image-list-img-2').click();
+    cy.getBySel('image-list-img-badge-2-start');
+    cy.getBySel('image-list-selected-images-num').contains('1');
+    cy.getBySel('image-list-start-index').contains('2');
+
+    cy.getBySel('image-list-start-continue-btn').click();
+
+    // select end image
+    cy.getBySel('image-list-selected-images-num').contains('1');
+    cy.getBySel('image-list-end-index').contains('2');
+    // end index < start index
+    cy.getBySel('image-list-img-1').click();
+    cy.getBySel('image-list-end-continue-btn').should('be.disabled');
+
+    cy.getBySel('image-list-btn-next-page').click();
+    cy.getBySel('image-list-img-2').click();
+    cy.getBySel('image-list-img-badge-2-end');
+    cy.getBySel('image-list-selected-images-num').contains('13');
+    cy.getBySel('image-list-end-index').contains('14');
+
+    cy.getBySel('image-list-end-back-btn').click();
+    cy.getBySel('image-list-start-continue-btn').click();
+    cy.getBySel('image-list-img-2').click();
+    cy.getBySel('image-list-end-continue-btn').click();
+  };
+
+  it('Selects images and then calculates influence', () => {
+    selectImages();
+    cy.getBySel('image-list-influence-btn').click();
+    cy.getBySel('influence-pad-start-index-field').should('have.value', 2);
+    cy.getBySel('influence-pad-end-index-field').should('have.value', 14);
+  });
+
+  it('Selects images and then auto annotate', () => {
+    selectImages();
+    cy.getBySel('image-list-annotate-btn').click();
+    cy.getBySel('auto-annotate-start-index').should('have.value', 2);
+    cy.getBySel('auto-annotate-end-index').should('have.value', 14);
   });
 });

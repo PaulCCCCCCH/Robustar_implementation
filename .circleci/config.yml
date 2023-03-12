@@ -24,7 +24,7 @@ jobs:
           command: |
             echo "Files in directory: $(ls)"
             npm install
-            npx lerna run build
+            npm run build
 
       - run:
           name: Download dataset
@@ -53,11 +53,14 @@ jobs:
           command: |
             echo "Files in directory: $(ls)"
             # Installing cypress dependencies, following suggestions from https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
-            npm install --save-dev cypress 
+            # npm install --save-dev cypress 
             sudo apt-get update
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+            # Install Chrome
+            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt-get install ./google-chrome-stable_current_amd64.deb
             # Run frontend
-            npx lerna run serve:main &
+            npm run serve:main &
             pip install -r ../back-end/requirements.txt
             # Run backend
             cd ../back-end
@@ -66,7 +69,7 @@ jobs:
             sleep 10
             # Run frontend tests
             cd ../front-end
-            npx cypress run
+            npm run cypress:run
 
       - run:
           name: Build frontend

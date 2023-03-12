@@ -24,7 +24,7 @@ import 'cypress-real-events/support';
  * Hide all fetch/XHR requests in Cy console, toggle via cypress.json
  * reference: https://gist.github.com/simenbrekken/3d2248f9e50c1143bf9dbe02e67f5399
  */
-if (Cypress.config('hideXHR')) {
+if (Cypress.env('hideXHR')) {
   const app = window.top;
   if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
     const style = app.document.createElement('style');

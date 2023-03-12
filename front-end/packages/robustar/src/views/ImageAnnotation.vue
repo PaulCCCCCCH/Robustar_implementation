@@ -310,7 +310,7 @@
         </v-sheet>
       </div>
     </div>
-    <Visualizer :image_url="$root.imageURL" :split="$root.imageSplit" />
+    <Visualizer :imageURL="$root.imageURL" :split="$root.imageSplit" />
   </div>
 </template>
 <script>

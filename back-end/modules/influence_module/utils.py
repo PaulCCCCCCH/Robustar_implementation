@@ -8,7 +8,6 @@ from datetime import datetime as dt
 def save_json(json_obj, json_path, append_if_exists=False,
               overwrite_if_exists=False, unique_fn_if_exists=True):
     """Saves a json file
-
     Arguments:
         json_obj: json, json object
         json_path: Path, path including the file name where the json object
@@ -58,7 +57,6 @@ def display_progress(text, current_step, last_step, enabled=True,
                      fix_zero_start=True):
     """Draws a progress indicator on the screen with the text preceeding the
     progress
-
     Arguments:
         test: str, text displayed to describe the task being executed
         current_step: int, current step of the iteration
@@ -102,7 +100,6 @@ def display_progress(text, current_step, last_step, enabled=True,
 
 def init_logging(filename=None):
     """Initialises log/stdout output
-
     Arguments:
         filename: str, a filename can be set to output the log information to
             a file instead of stdout"""

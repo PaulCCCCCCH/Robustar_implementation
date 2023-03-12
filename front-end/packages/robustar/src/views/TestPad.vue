@@ -5,12 +5,24 @@
       <v-divider class="mt-4 mb-8"></v-divider>
       <v-form>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="start_testing('validation')">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="startTesting('validation')"
+            data-test="test-pad-btn-test-on-validation-set"
+          >
             START TESTING ON VALIDATION SET
           </v-btn>
         </div>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="start_testing('test')">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="startTesting('test')"
+            data-test="test-pad-btn-test-on-test-set"
+          >
             START TESTING ON TEST SET
           </v-btn>
         </div>
@@ -27,7 +39,7 @@ export default {
     return {};
   },
   methods: {
-    async start_testing(split) {
+    async startTesting(split) {
       this.$root.startProcessing('The test is going on. Please wait...');
       try {
         const res = await APIStartTest({

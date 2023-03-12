@@ -8,10 +8,14 @@
 
     <v-spacer></v-spacer>
 
+    <div v-click-outside="onClickOutside">
+      <v-btn icon color="primary" @click="toggleTaskspanel" data-test="header-toggle-tasks-panel">
+        <v-icon>mdi-format-list-bulleted-type</v-icon>
+      </v-btn>
+      <TaskPanel v-show="showTaskPanel"></TaskPanel>
+    </div>
+
     <!-- Full screen button -->
-    <v-btn icon color="primary" @click="toggleTaskspanel" data-test="header-toggle-tasks-panel">
-      <v-icon>mdi-format-list-bulleted-type</v-icon>
-    </v-btn>
     <v-btn icon color="primary" @click="toggleFullscreen">
       <v-icon v-if="!isFullscreen">mdi-fullscreen</v-icon>
       <v-icon v-else>mdi-fullscreen-exit</v-icon>
@@ -20,18 +24,17 @@
 </template>
 
 <script>
+import TaskPanel from '@/components/common/TaskPanel';
+
 export default {
   name: 'Header',
-
-  props: {
-    isTaskspanelHidden: {
-      type: Boolean,
-      default: true,
-    },
+  components: {
+    TaskPanel,
   },
   data() {
     return {
       isFullscreen: false,
+      showTaskPanel: false,
     };
   },
   methods: {
@@ -46,7 +49,12 @@ export default {
       this.isFullscreen = !this.isFullscreen;
     },
     toggleTaskspanel() {
-      this.$emit('toggleTaskspanel');
+      this.showTaskPanel = !this.showTaskPanel;
+    },
+    onClickOutside() {
+      if (this.showTaskPanel == true) {
+        this.showTaskPanel = false;
+      }
     },
   },
 };
