@@ -113,7 +113,11 @@ export default {
     },
     async loadImageFromURL() {
       const { path, name } = this.image;
-      await this.editorInstance.loadImageFromURL(path, name);
+      try{
+        await this.editorInstance.loadImageFromURL(path, name);
+      } catch (error) {
+        this.$root.alert('error', error.response?.data?.detail || 'Image loading failed');
+      }
     },
     getRootElement() {
       return this.$refs.tuiImageEditor;
