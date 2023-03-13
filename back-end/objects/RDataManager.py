@@ -110,6 +110,10 @@ class RDataManager:
         self.influence_file_path = to_unix(
             osp.join(self.influence_root, "influence_images.pkl")
         )
+        self.influence_log_path = to_unix(
+            osp.join(self.influence_root, "logs")
+        )
+
 
     def _init_data_records(self):
         self.testset: REvalImageFolder = REvalImageFolder(

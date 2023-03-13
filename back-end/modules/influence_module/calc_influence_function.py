@@ -55,6 +55,7 @@ def calc_influence_single(model, module, train_loader, test_loader, test_id_num,
     # Populate max_influence_dict
     for i in all_train_idxs:
         max_influence_dict[i] = influences[i]
+
     max_influence_dict = dict(sorted(max_influence_dict.items(), key=lambda kv: abs(kv[1]), reverse=True))
 
     def dict_slice(adict, start, end):
@@ -120,7 +121,8 @@ def calc_img_wise(config, model, train_loader, test_loader):
 
     task = RTask(
         TaskType.Influence,
-        (test_end_index - test_start_index) * config['recursion_depth'] * config['r_averaging']
+        (test_end_index - test_start_index) * \
+        (config['recursion_depth'] * config['r_averaging'] + len(train_loader.dataset))
     )
     module = LiSSAInfluenceModule(
         model=model,
@@ -141,6 +143,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
         # If we calculate evenly per class, choose the test img indicies
         # from the sample_list instead
         start_time = time.time()
+
         max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
             model, module, train_loader, test_loader, test_id_num=i, gpu=config['gpu'],
             recursion_depth=config['recursion_depth'], r=config['r_averaging'])

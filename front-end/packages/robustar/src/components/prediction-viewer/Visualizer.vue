@@ -226,10 +226,7 @@ export default {
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, imageURL]
-          const url = responseData[i][1];
-          this.influImgUrl.push(
-            `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`
-          );
+          this.influImgUrl.push(responseData[i]);
         }
       } catch (error) {
         console.log(error);

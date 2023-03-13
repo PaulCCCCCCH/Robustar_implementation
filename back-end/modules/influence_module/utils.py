@@ -98,23 +98,6 @@ def display_progress(text, current_step, last_step, enabled=True,
     sys.stdout.flush()
 
 
-def init_logging(filename=None):
-    """Initialises log/stdout output
-    Arguments:
-        filename: str, a filename can be set to output the log information to
-            a file instead of stdout"""
-    log_lvl = logging.INFO
-    log_format = '%(asctime)s: %(message)s'
-    if filename:
-        logging.basicConfig(handlers=[logging.FileHandler(filename),
-                                      logging.StreamHandler(sys.stdout)],
-                            level=log_lvl,
-                            format=log_format)
-    else:
-        logging.basicConfig(stream=sys.stdout, level=log_lvl,
-                            format=log_format)
-
-
 def get_default_config():
     """Returns a default config file"""
     config = {

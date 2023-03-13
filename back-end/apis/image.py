@@ -58,7 +58,7 @@ def get_next_image(split):
 
 
 @image_api.route("/image/annotated/<split>")
-def get_annotated(split):
+def api_get_annotated(split):
     """
     Gets paired image path corresponding to given training path, if exists
     ---

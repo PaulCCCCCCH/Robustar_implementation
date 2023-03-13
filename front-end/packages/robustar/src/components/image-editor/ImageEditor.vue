@@ -115,6 +115,9 @@ export default {
       const { path, name } = this.image;
       await this.editorInstance.loadImageFromURL(path, name);
     },
+    async getCanvasSize() {
+      return await this.editorInstance.getCanvasSize();
+    },
     getRootElement() {
       return this.$refs.tuiImageEditor;
     },
