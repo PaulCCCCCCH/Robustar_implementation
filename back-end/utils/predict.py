@@ -77,8 +77,6 @@ def calculate_influence(
     """
 
     INFLUENCES_SAVE_PATH = data_manager.influence_file_path
-    influences = {}
-
     trainloader = data_manager.trainloader
     testloader = data_manager.testloader
 
@@ -110,22 +108,36 @@ def calculate_influence(
 
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
-    max_influence_dicts = ptif.calc_img_wise(
-        config, model_wrapper.model, trainloader, testloader
-    )
+
+
+    # TODO: Now max_influence_dicts will be empty if user stops the influence calculation
+    # (i.e., all previous results are thrown away because we only return the full result when
+    # influence is calculated for all specified images). Maybe we should instead return influence
+    # for each image one by one to build the dictionary slowly, so that when calculation stops,
+    # we can save what has been calculated.
+
+    influences = {}
+    max_influence_dicts = {}
+    try:
+        max_influence_dicts = ptif.calc_img_wise(
+            config, model_wrapper.model, trainloader, testloader
+        )
+    except StopIteration:
+        print("Influence calculation stopped!")
 
     for key in max_influence_dicts.keys():
         train_img_paths = []
 
-        testId = "test/" + key
-        test_img_path = imageURLToPath(testId)
+        test_id = int(key)
+        test_img_path = data_manager.testset.get_image_list(test_id, test_id + 1)[0]
 
         max_influence_dict = max_influence_dicts[key]
         trainIds = list(max_influence_dict.keys())
 
         for j in range(4):
             trainUrl = "train/" + str(trainIds[j])
-            train_img_path = imageURLToPath(trainUrl)
+            train_id = int(trainIds[j])
+            train_img_path = data_manager.trainset.get_image_list(train_id, train_id + 1)[0]
             # TODO: Stores both image path and image url.
             # Adding / removing samples to training set will cause inconsistency
             # Need to check consistency in data manager when loading.
@@ -133,8 +145,9 @@ def calculate_influence(
 
         influences[test_img_path] = train_img_paths
 
-    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
-        pickle.dump(influences, influence_file)
+    if influences:
+        with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
+            pickle.dump(influences, influence_file)
 
 
 class CalcInfluenceThread(threading.Thread):
