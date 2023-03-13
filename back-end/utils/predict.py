@@ -145,7 +145,6 @@ def calculate_influence(
             pickle.dump(data_manager.get_influence_dict(), influence_file)
             print("Influence calculation done.")
 
-
 def get_calc_influence_thread(configs):
     # Parse the following fields from string to integer
     for key in ["test_start_index", "test_end_index", "recursion_depth", "r_averaging", "scale"]:

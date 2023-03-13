@@ -482,10 +482,20 @@ export default {
         const res = await APIGetSplitLength(this.$root.imageSplit);
         this.splitLength = res.data.data;
       } catch (error) {
-        this.$root.alert(
-          'error',
-          error.response?.data?.detail || 'Image list initialization failed'
-        );
+        if (error.responses) {
+          if (error.responses.status == 404) {
+            this.$root.alert('error', 'The image split could not be found');
+          } else {
+            this.$root.alert(
+              'error',
+              error.response?.data?.detail || 'Image list initialization failed'
+            );
+          }
+        } else if (error.request) {
+          this.$root.alert('error', 'Unable to connect to the server');
+        } else {
+          this.$root.alert('error', error.message || 'Unknown error occurred');
+        }
         this.imageList = [];
         this.splitLength = 0;
       }

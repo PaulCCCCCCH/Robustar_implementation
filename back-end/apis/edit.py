@@ -85,14 +85,20 @@ def api_user_edit(split):
 @edit_api.route("/edit/<split>", methods=["DELETE"])
 def api_delete_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
-    remove_edit(path)
-    return RResponse.ok("Success!")
+    try:
+      remove_edit(path)
+      return RResponse.ok("Success!")
+    except Exception as e:
+        RResponse.abort(500, f"Failed to delete edit path. ({e})", -1)
 
 
 @edit_api.route("/edit/clear", methods=["DELETE"])
 def api_clear_edit():
-    clear_edit()
-    return RResponse.ok("Success!")
+    try:
+      clear_edit()
+      return RResponse.ok("Success!")
+    except Exception as e:
+      RResponse.abort(500, f"Failed to clear edit path. ({e})", -1)
 
 
 @edit_api.route("/propose/<split>")
