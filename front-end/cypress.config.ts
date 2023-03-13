@@ -1,11 +1,13 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
-  chromeWebSecurity: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  hideXHR: true,
   video: false,
+
+  env: {
+    hideXHR: true,
+  },
 
   e2e: {
     // We've imported your old cypress plugins here.
@@ -15,6 +17,14 @@ export default defineConfig({
     },
     baseUrl: "http://localhost:8080/#/",
     specPattern: "cypress/tests/components/*spec.{js,jsx,ts,tsx}",
+    retries: {
+      // Configure retry attempts for `cypress run`
+      // Default is 0
+      runMode: 2,
+      // Configure retry attempts for `cypress open`
+      // Default is 0
+      openMode: 0
+    }
   },
 
   component: {
@@ -22,9 +32,6 @@ export default defineConfig({
     viewportHeight: 600,
     viewportWidth: 800,
     specPattern: "packages/robustar/src/**/*spec.{js,jsx,ts,tsx}",
-  },
-
-  component: {
     devServer: {
       framework: "vue-cli",
       bundler: "webpack",

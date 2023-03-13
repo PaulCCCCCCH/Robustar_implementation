@@ -50,7 +50,6 @@ def start_testing():
     split = json_data["split"]
     if split not in ["validation", "test"]:
         RResponse.abort(400, "Wrong split chosen for test")
-    # print(split)
 
     try:
         start_test(split)

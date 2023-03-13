@@ -3,9 +3,10 @@ import os.path as osp
 import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
-from objects.RModelWrapper import RModelWrapper
+from objects.RModelWrapper import RModelWrapper, MODEL_INPUT_SHAPE
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.path_utils import to_unix, to_absolute
+from utils.predict import get_image_prediction
 from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
@@ -43,12 +44,14 @@ def test_connect():
 
 
 def precheck():
+    configs = RServer.get_server_configs()
+    data_manager = RServer.get_data_manager()
+    model_wrapper = RServer.get_model_wrapper()
+    trainset = data_manager.trainset
+    testset = data_manager.testset
+    validationset = data_manager.validationset
+
     def check_num_classes_consistency():
-        configs = RServer.get_server_configs()
-        data_manager = RServer.get_data_manager()
-        trainset = data_manager.trainset
-        testset = data_manager.testset
-        validationset = data_manager.validationset
 
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
@@ -71,7 +74,25 @@ def precheck():
             )
         assert len(errors) == 0, "\n".join(errors)
 
+    def check_image_size_consistency():
+        try:
+            get_image_prediction(
+                model_wrapper, trainset.get_image_list()[0], data_manager.image_size
+            )
+        except Exception as e:
+            mapping = [f"{model}: {size}" for model, size in MODEL_INPUT_SHAPE.items()]
+            print(
+                f"""
+            Image size consistency check failed. This is likely to be caused by a mismatch between image_size and model architecture configurations. Different models require input images of different sizes.
+            The mapping is {mapping}
+            \n
+            raw error message: {(e)}
+            """
+            )
+            raise
+
     check_num_classes_consistency()
+    check_image_size_consistency()
 
 
 def new_server_object(base_dir):
@@ -96,6 +117,12 @@ def new_server_object(base_dir):
     else:
         print("Class to label file not found!")
 
+    network_type = configs["model_arch"]
+    expected_input_shape = MODEL_INPUT_SHAPE.get(network_type)
+    image_size = (
+        configs["image_size"] if expected_input_shape is None else expected_input_shape
+    )
+
     """ CREATE SERVER """
     server = RServer.create_server(
         configs=configs,
@@ -114,20 +141,19 @@ def new_server_object(base_dir):
         batch_size=configs["batch_size"],
         shuffle=configs["shuffle"],
         num_workers=configs["num_workers"],
-        image_size=configs["image_size"],
+        image_size=image_size,
         image_padding=configs["image_padding"],
         class2label_mapping=class2label_mapping,
     )
     RServer.set_data_manager(data_manager)
 
     """ SETUP MODEL """
-    serverConfigs = RServer.get_server_configs()
     model = RModelWrapper(
-        network_type=serverConfigs["model_arch"],
-        net_path=to_unix(os.path.join(ckpt_dir, serverConfigs["weight_to_load"])),
-        device=serverConfigs["device"],
-        pretrained=serverConfigs["pre_trained"],
-        num_classes=serverConfigs["num_classes"],
+        network_type=network_type,
+        net_path=to_unix(os.path.join(ckpt_dir, configs["weight_to_load"])),
+        device=configs["device"],
+        pretrained=configs["pre_trained"],
+        num_classes=configs["num_classes"],
     )
     RServer.set_model(model)
 

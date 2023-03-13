@@ -5,12 +5,18 @@ from threading import Lock
 
 IMAGENET_OUTPUT_SIZE = 1000
 
+MODEL_INPUT_SHAPE = {
+    "resnet-18": 224,
+    "resnet-34": 224,
+    "resnet-50": 224,
+    "resnet-101": 224,
+    "resnet-152": 224,
+    "mobilenet-v2": 224,
+    "resnet-18-32x32": 32,
+    "alexnet": 227,
+}
 
 class RModelWrapper:
-
-    lock = Lock()
-
-    # model=Model("resnet-18-32x32",'./model/weight/resnet18_cifar_model.pth','cpu')
     def __init__(self, network_type, net_path, device, pretrained, num_classes):
         # self.device = torch.device(device)
         if pretrained:
@@ -20,15 +26,14 @@ class RModelWrapper:
         self.device = device  # We keep device as string to allow for easy comparison
         self.init_model(network_type, pretrained, num_classes)
         self.modelwork_type = network_type
+        self._lock = Lock()
+        self._model_available = True
+
         if os.path.exists(net_path):
             print("Loading previous checkpoint at {}".format(net_path))
             self.load_net(net_path)
         else:
             print("Checkpoint file not found: {}".format(net_path))
-
-        # Duplicated code
-        # if 'cuda' in device:
-        #     self.apply_cuda()
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
@@ -82,14 +87,28 @@ class RModelWrapper:
         else:
             print("weight file not found")
 
-    def initialize_model(server_configs):
-        # Configs given at server boot time
-        model_arch = server_configs["model_arch"]
-        weight_to_load = server_configs["weight_to_load"]
-        device = server_configs["device"]
-        pre_trained = server_configs["pre_trained"]
-        num_classes = server_configs["num_classes"]
+    def acquire_model(self):
+        """
+        A thread-safe way to acquire access to the model. This is to make sure that only one
+        thread can own the model at a time to avoid conflicts in gradient calculation. Always call
+        this function before using the model (e.g., training, inferencing, ...)
 
-        net_path = to_unix(os.path.join(RServer.getServer().ckptDir, weight_to_load))
+        Return True if the model is available, False otherwise.
+        """
+        self._lock.acquire()
 
-        return RModelWrapper(model_arch, net_path, device, pre_trained, num_classes)
+        if self._model_available:
+            self._model_available = False
+            self._lock.release()
+            return True
+
+        self._lock.release()
+        return False
+
+    def release_model(self):
+        """
+        Release the model so that other threads can use it
+        """
+        self._lock.acquire()
+        self._model_available = True
+        self._lock.release()

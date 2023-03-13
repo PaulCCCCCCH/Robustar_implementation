@@ -17,6 +17,7 @@
           min="0"
           hint="A value of 0 means the beginning of test samples"
           required
+          data-test="influence-pad-start-index-field"
         ></v-text-field>
         <!-- Set end index of test samples per class for which we calculate influence-->
         <v-text-field
@@ -30,6 +31,7 @@
           min="-1"
           hint="A value of -1 means the end of test samples"
           required
+          data-test="influence-pad-end-index-field"
         ></v-text-field>
         <!-- Set r_averaging -->
         <v-text-field
@@ -45,7 +47,7 @@
 
         <v-divider class="mt-4 mb-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="start_calculation">
+          <v-btn depressed color="primary" class="mx-auto" @click="startCalculation">
             START CALCULATION
           </v-btn>
         </div>
@@ -93,7 +95,7 @@ export default {
     });
   },
   methods: {
-    async start_calculation() {
+    async startCalculation() {
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -105,9 +107,9 @@ export default {
         this.$root.finishProcessing();
         this.$root.alert('success', 'Influence calculation succeeded');
       } catch (error) {
-        alert('Server error. Check console.');
         this.$root.finishProcessing();
-        this.$root.alert('error', 'Influence calculation failed');
+        console.log(error);
+        this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
       }
     },
   },

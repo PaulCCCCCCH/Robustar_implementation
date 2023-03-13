@@ -127,7 +127,6 @@ export default {
         // the maximan border and the minimun border
         dataRange: [0, 1],
       },
-
       arrLength: 0,
       maxNegative: 0,
     };
@@ -142,7 +141,6 @@ export default {
       return Math.max(...this.dataArr[1]);
     },
   },
-
   mounted() {
     this.arrLength = this.dataArr[0].length;
     this.maxNegative = 0;

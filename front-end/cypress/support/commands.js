@@ -66,3 +66,12 @@ Cypress.Commands.add('checkSessionStorageSubString', (key, val) => {
 Cypress.Commands.add('removeSessionStorage', (key) => {
   cy.window().its('sessionStorage').invoke({ timeout: 5000 }, 'removeItem', key);
 });
+
+// if exists then do something
+Cypress.Commands.add('existsThenClick', (selector) => {
+  cy.get('body').then(($body) => {
+    if ($body.find(`[data-test*=${selector}]`).length > 0) {
+      cy.getBySel(selector).click();
+    }
+  });
+});

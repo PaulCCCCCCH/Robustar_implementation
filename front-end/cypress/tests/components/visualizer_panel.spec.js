@@ -86,6 +86,7 @@ describe('Visualizer', () => {
   });
 
   it('Test the expansion/closing of panels during image conversion', () => {
+    cy.getBySel('model-prediction').click();
     cy.getBySel('model-prediction-sheet').should('be.visible');
   });
 
@@ -93,6 +94,7 @@ describe('Visualizer', () => {
     cy.visit('image-list/test').wait(500);
     cy.getBySel('image-list-img-0').trigger('mouseenter').wait(500);
     cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
+    cy.getBySel('model-focus').click();
     cy.getBySel('model-focus-panel').should('be.visible');
   });
 });

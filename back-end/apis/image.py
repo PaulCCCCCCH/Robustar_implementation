@@ -9,7 +9,7 @@ from utils.image_utils import (
     get_img_Data,
     get_split_length,
     get_annotated,
-    get_classified_split_length
+    get_classified_split_length,
 )
 from utils.path_utils import to_unix
 from flask import Blueprint
@@ -156,7 +156,8 @@ def api_get_split_length(split):
 
     return RResponse.ok(response)
 
-@image_api.route('/image/classified/<split>')
+
+@image_api.route("/image/classified/<split>")
 def get_classfied_split_length(split):
     """
     Gets the length of all/correctly classified/incorrectly classified split lengt
@@ -185,10 +186,10 @@ def get_classfied_split_length(split):
               example: Success
     """
     try:
-      response = get_classified_split_length(split)
+        response = get_classified_split_length(split)
     except Exception as e:
-      print(e)
-      RResponse.abort(400, "Split {} not supported".format(split))
+        print(e)
+        RResponse.abort(400, "Split {} not supported".format(split))
     return RResponse.ok(response)
 
 
