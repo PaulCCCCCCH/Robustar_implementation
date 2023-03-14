@@ -1,4 +1,4 @@
-from ml import DataSet, PairedDataset, Trainer
+from modules.ml import DataSet, PairedDataset, Trainer
 import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter

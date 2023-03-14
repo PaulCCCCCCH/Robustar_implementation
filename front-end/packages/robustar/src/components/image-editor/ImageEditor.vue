@@ -119,6 +119,9 @@ export default {
         this.$root.alert('error', error.response?.data?.detail || 'Image loading failed');
       }
     },
+    async getCanvasSize() {
+      return await this.editorInstance.getCanvasSize();
+    },
     getRootElement() {
       return this.$refs.tuiImageEditor;
     },

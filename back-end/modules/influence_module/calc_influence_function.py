@@ -2,7 +2,6 @@
 
 import torch
 import time
-import datetime
 import numpy as np
 import copy
 import logging
@@ -56,6 +55,7 @@ def calc_influence_single(model, module, train_loader, test_loader, test_id_num,
     # Populate max_influence_dict
     for i in all_train_idxs:
         max_influence_dict[i] = influences[i]
+
     max_influence_dict = dict(sorted(max_influence_dict.items(), key=lambda kv: abs(kv[1]), reverse=True))
 
     def dict_slice(adict, start, end):
@@ -85,12 +85,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
     outdir = Path(config['outdir'])
     outdir.mkdir(exist_ok=True, parents=True)
 
-    test_dataset_iter_len = len(test_loader.dataset)
-
     # Set up logging and save the metadata conf file
     logging.info(f"Running on: {test_sample_num} images per class.")
-    logging.info(f"Starting at img number: {test_start_index} per class.")
-    # influences_meta['test_sample_index_list'] = sample_list
+    logging.info(f"Calculating influence from image index {test_start_index} to {test_end_index}")
+
     influences_meta_fn = f"influences_results_meta_{test_start_index}-" \
                          f"{test_sample_num}.json"
     influences_meta_path = outdir.joinpath(influences_meta_fn)
@@ -122,8 +120,9 @@ def calc_img_wise(config, model, train_loader, test_loader):
     DEVICE = torch.device("cpu" if config['gpu'] == -1 else "cuda")
 
     task = RTask(
-        TaskType.Test,
-        (test_end_index - test_start_index) * config['recursion_depth'] * config['r_averaging']
+        TaskType.Influence,
+        (test_end_index - test_start_index) * \
+        (config['recursion_depth'] * config['r_averaging'] + len(train_loader.dataset))
     )
     module = LiSSAInfluenceModule(
         model=model,
@@ -131,11 +130,10 @@ def calc_img_wise(config, model, train_loader, test_loader):
         train_loader=train_loader,
         test_loader=test_loader,
         device=DEVICE,
-        damp=0.001,
+        damp=config['damp'],
         depth=config['recursion_depth'],
         repeat=config['r_averaging'],
-        # TODO Add support for modifying scale
-        scale=5000,
+        scale=config['scale'],
         task=task,
     )
 
@@ -145,6 +143,7 @@ def calc_img_wise(config, model, train_loader, test_loader):
         # If we calculate evenly per class, choose the test img indicies
         # from the sample_list instead
         start_time = time.time()
+
         max_influence_dict, influence, harmful, helpful, _ = calc_influence_single(
             model, module, train_loader, test_loader, test_id_num=i, gpu=config['gpu'],
             recursion_depth=config['recursion_depth'], r=config['r_averaging'])

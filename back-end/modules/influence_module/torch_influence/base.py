@@ -1,5 +1,6 @@
 import abc
 from typing import Any, List, Optional
+from objects.RTask import RTask 
 
 import numpy as np
 import torch
@@ -139,7 +140,8 @@ class BaseInfluenceModule(abc.ABC):
             objective: BaseObjective,
             train_loader: data.DataLoader,
             test_loader: data.DataLoader,
-            device: torch.device
+            device: torch.device,
+            task: RTask
     ):
         model.eval()
         self.model = model.to(device)
@@ -152,6 +154,8 @@ class BaseInfluenceModule(abc.ABC):
         self.objective = objective
         self.train_loader = train_loader
         self.test_loader = test_loader
+
+        self.task = task
 
     @abc.abstractmethod
     def inverse_hvp(self, vec: torch.Tensor) -> torch.Tensor:
@@ -249,6 +253,9 @@ class BaseInfluenceModule(abc.ABC):
         for grad_z, _ in self._loss_grad_loader_wrapper(batch_size=1, subset=train_idxs, train=True):
             s = grad_z @ stest
             scores.append(s)
+            task_update_res = self.task.update()
+            if not task_update_res:
+                raise StopIteration("Influence calculated stopped by the user")
         return torch.tensor(scores) / len(self.train_loader.dataset)
 
     # ====================================================

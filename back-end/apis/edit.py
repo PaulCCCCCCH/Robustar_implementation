@@ -121,7 +121,7 @@ def api_propose_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
     if split not in ["annotated", "train"]:
-        RResponse.abort(400, "Cannot propose edit to a wrong split {}".format(split))
+        return RResponse.ok({}, "Cannot propose edit to a wrong split {}".format(split), -1)
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)

@@ -45,6 +45,7 @@ class AutogradInfluenceModule(BaseInfluenceModule):
             test_loader: data.DataLoader,
             device: torch.device,
             damp: float,
+            task: RTask,
             check_eigvals: bool = False
     ):
         super().__init__(
@@ -53,6 +54,7 @@ class AutogradInfluenceModule(BaseInfluenceModule):
             train_loader=train_loader,
             test_loader=test_loader,
             device=device,
+            task=task
         )
 
         self.damp = damp
@@ -121,6 +123,7 @@ class CGInfluenceModule(BaseInfluenceModule):
             test_loader: data.DataLoader,
             device: torch.device,
             damp: float,
+            task: RTask,
             gnh: bool = False,
             **kwargs
     ):
@@ -130,6 +133,7 @@ class CGInfluenceModule(BaseInfluenceModule):
             train_loader=train_loader,
             test_loader=test_loader,
             device=device,
+            task=task
         )
 
         self.damp = damp
@@ -229,6 +233,7 @@ class LiSSAInfluenceModule(BaseInfluenceModule):
             train_loader=train_loader,
             test_loader=test_loader,
             device=device,
+            task=task
         )
 
         self.damp = damp
@@ -237,7 +242,6 @@ class LiSSAInfluenceModule(BaseInfluenceModule):
         self.depth = depth
         self.scale = scale
         self.debug_callback = debug_callback
-        self.task = task
 
     def inverse_hvp(self, vec):
 

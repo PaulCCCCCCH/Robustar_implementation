@@ -11,6 +11,9 @@ from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
+import logging 
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARNING)
 
 
 def start_flask_app():

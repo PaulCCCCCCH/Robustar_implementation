@@ -67,13 +67,9 @@ class TestPredict:
             response = client.get(
                 "/influence/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0"
             )
-            assert response.status_code == 400
+            assert response.status_code == 200
             rv = response.get_json()
-            assert rv["error_code"] == -1
-            assert (
-                rv["detail"]
-                == "Image is not found or influence for that image is not calculated"
-            )
+            assert rv["code"] == -1
 
         def test_get_influence_fail_invalid_path(self, client):
             response = client.get(
@@ -83,13 +79,9 @@ class TestPredict:
                 + RServer.get_server().base_dir
                 + "dataset/train/bird/10000.JPEG"
             )
-            assert response.status_code == 400
+            assert response.status_code == 200
             rv = response.get_json()
-            assert rv["error_code"] == -1
-            assert (
-                rv["detail"]
-                == "Image is not found or influence for that image is not calculated"
-            )
+            assert rv["code"] == -1
 
         def test_get_influence_success(self, client):
             assert True
