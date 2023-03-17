@@ -55,5 +55,9 @@ class App(QApplication):
 
 
 if __name__ == "__main__":
-    app = App(sys.argv)
-    sys.exit(app.exec_())
+    try:
+        app = App(sys.argv)
+        sys.exit(app.exec_())
+    except Exception as e:
+        print(e)
+        LoggerManager.append_log("app", "critical", e)
