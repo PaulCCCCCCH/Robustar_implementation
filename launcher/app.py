@@ -41,6 +41,8 @@ class App(QApplication):
         self.logger_manager = LoggerManager(self.app_root)
         self.logger_manager.init_loggers()
 
+        sys.excepthook = App.except_hook
+
         self.mainCtrl = MainController(self.app_root)
 
         self.model = Model(self.mainCtrl)
@@ -54,13 +56,13 @@ class App(QApplication):
 
         self.mainCtrl.init()
 
-
-if __name__ == "__main__":
+    @staticmethod
     def except_hook(cls, excp, tb):
-        LoggerManager.append_log("app", "critical", f'{cls.__name__}: {excp}\n\t Traceback: {traceback.format_tb(tb)[0].strip()}')
+        LoggerManager.append_log("app", "critical",
+                                 f'{cls.__name__}: {excp}\n\t Traceback: {traceback.format_tb(tb)[0].strip()}')
         sys.__excepthook__(cls, excp, tb)
 
-    sys.excepthook = except_hook
 
+if __name__ == "__main__":
     app = App(sys.argv)
     sys.exit(app.exec_())
