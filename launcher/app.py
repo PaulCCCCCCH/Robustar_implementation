@@ -2,6 +2,7 @@ import os
 import sys
 import ctypes
 import json
+import traceback
 from sys import platform
 from PySide2.QtWidgets import QApplication
 from logger_manager import LoggerManager
@@ -55,9 +56,11 @@ class App(QApplication):
 
 
 if __name__ == "__main__":
-    try:
-        app = App(sys.argv)
-        sys.exit(app.exec_())
-    except Exception as e:
-        print(e)
-        LoggerManager.append_log("app", "critical", e)
+    def except_hook(cls, excp, tb):
+        LoggerManager.append_log("app", "critical", f'{cls.__name__}: {excp}\n\t Traceback: {traceback.format_tb(tb)[0].strip()}')
+        sys.__excepthook__(cls, excp, tb)
+
+    sys.excepthook = except_hook
+
+    app = App(sys.argv)
+    sys.exit(app.exec_())
