@@ -42,35 +42,45 @@ class App(QApplication):
         self.logger_manager = LoggerManager(self.app_root)
         self.logger_manager.init_loggers()
 
-        sys.excepthook = App.sys_except_hook
-        threading.excepthook = App.thread_except_hook
+        sys.excepthook = lambda cls, excp, tb: App.sys_except_hook(self, cls, excp, tb)
+        threading.excepthook = lambda args: App.thread_except_hook(self, args)
 
-        self.mainCtrl = MainController(self.app_root)
+        self.main_ctrl = MainController(self.app_root)
 
-        self.model = Model(self.mainCtrl)
+        self.model = Model(self.main_ctrl)
 
-        self.mainView = MainView(self.mainCtrl)
-        self.popupView = PopupView()
+        self.main_view = MainView(self.main_ctrl)
+        self.popup_view = PopupView()
 
-        self.mainCtrl.set_model(self.model)
-        self.mainCtrl.set_main_view(self.mainView)
-        self.mainCtrl.set_popup_view(self.popupView)
+        self.main_ctrl.set_model(self.model)
+        self.main_ctrl.set_main_view(self.main_view)
+        self.main_ctrl.set_popup_view(self.popup_view)
 
-        self.mainCtrl.init()
+        self.main_ctrl.init()
 
-    @staticmethod
-    def sys_except_hook(cls, excp, tb):
+    def sys_except_hook(self, cls, excp, tb):
         tb = '\n\t\t'.join([x.strip() for x in traceback.format_tb(tb)])
         LoggerManager.append_log("app", "critical",
                                  f'{cls.__name__}: {excp}\n\t Traceback:\n\t\t {tb}')
         sys.__excepthook__(cls, excp, tb)
+        self.main_ctrl.print_message(
+            self.main_view.ui.prompt_text_browser,
+            f"An unexpected error occurred. You may close the launcher and restart it.\n"
+            f"More information can be found in {os.path.join(self.logger_manager.logs_root, 'app.log')}",
+            level="critical"
+        )
 
-    @staticmethod
-    def thread_except_hook(args):
+    def thread_except_hook(self, args):
         tb = '\n\t\t'.join([x.strip() for x in traceback.format_tb(args.exc_traceback)])
         LoggerManager.append_log("app", "critical",
                                  f'{args.exc_type.__name__}: {args.exc_value}\n\t Traceback:\n\t\t {tb}')
         sys.__excepthook__(args.exc_type, args.exc_value, args.exc_traceback)
+        self.main_ctrl.print_message(
+            self.main_view.ui.prompt_text_browser,
+            f"An unexpected error occurred. You may close the launcher and restart it.\n"
+            f"More information can be found in {os.path.join(self.logger_manager.logs_root, 'app.log')}",
+            level="critical"
+        )
 
 
 if __name__ == "__main__":

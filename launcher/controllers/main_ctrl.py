@@ -188,7 +188,7 @@ class MainController(QObject):
             except FileNotFoundError:
                 self.print_message(
                     self.main_view.ui.prompt_text_browser,
-                    "Fail to find the profile file.", level="warning")
+                    "Failed to find the profile file.", level="warning")
 
     def save_profile(self):
         path, _ = QFileDialog.getSaveFileName(
