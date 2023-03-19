@@ -3,6 +3,7 @@ import sys
 import ctypes
 import json
 import traceback
+import threading
 from sys import platform
 from PySide2.QtWidgets import QApplication
 from logger_manager import LoggerManager
@@ -41,7 +42,8 @@ class App(QApplication):
         self.logger_manager = LoggerManager(self.app_root)
         self.logger_manager.init_loggers()
 
-        sys.excepthook = App.except_hook
+        sys.excepthook = App.sys_except_hook
+        threading.excepthook = App.thread_except_hook
 
         self.mainCtrl = MainController(self.app_root)
 
@@ -57,10 +59,18 @@ class App(QApplication):
         self.mainCtrl.init()
 
     @staticmethod
-    def except_hook(cls, excp, tb):
+    def sys_except_hook(cls, excp, tb):
+        tb = '\n\t\t'.join([x.strip() for x in traceback.format_tb(tb)])
         LoggerManager.append_log("app", "critical",
-                                 f'{cls.__name__}: {excp}\n\t Traceback: {traceback.format_tb(tb)[0].strip()}')
+                                 f'{cls.__name__}: {excp}\n\t Traceback:\n\t\t {tb}')
         sys.__excepthook__(cls, excp, tb)
+
+    @staticmethod
+    def thread_except_hook(args):
+        tb = '\n\t\t'.join([x.strip() for x in traceback.format_tb(args.exc_traceback)])
+        LoggerManager.append_log("app", "critical",
+                                 f'{args.exc_type.__name__}: {args.exc_value}\n\t Traceback:\n\t\t {tb}')
+        sys.__excepthook__(args.exc_type, args.exc_value, args.exc_traceback)
 
 
 if __name__ == "__main__":
