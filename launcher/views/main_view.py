@@ -41,6 +41,8 @@ class MainView(QWidget):
         self.ui.delete_push_button.clicked.connect(self.ctrl.delete_server)
         self.ui.refresh_push_button.clicked.connect(self.ctrl.refresh_server)
 
+        self.ui.cm_tab_widget.currentChanged.connect(lambda x: self.ctrl.refresh_server() if x == 1 else 0)
+
         # Set the listWidgets so that only one entry in them can be selected at a time
         self.list_widget_lst = [
             self.ui.run_list_widget,
