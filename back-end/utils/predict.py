@@ -61,9 +61,7 @@ def get_image_prediction(
 def calculate_influence(
     model_wrapper: RModelWrapper,
     data_manager: RDataManager,
-    start_idx,
-    end_idx,
-    r_averaging=1,
+    in_config
 ):
     """
     Calculate the influence function for the model.
@@ -75,26 +73,23 @@ def calculate_influence(
         num:    Number of test samples for which we calculate influence. If set to -1, it calculates
                 influence for the entire dataset.
     """
-
-    INFLUENCES_SAVE_PATH = data_manager.influence_file_path
-    influences = {}
-
+    
     trainloader = data_manager.trainloader
     testloader = data_manager.testloader
+    config = ptif.get_default_config()
+    config.update(in_config)
 
+    end_idx = config["test_end_index"]
     if end_idx == -1:
         end_idx = len(testloader.dataset)
     else:
         end_idx = min(len(testloader.dataset), end_idx)
 
-    config = ptif.get_default_config()
     config["gpu"] = -1 if model_wrapper.device == "cpu" else 0
-    config["test_start_index"] = start_idx
-    config["test_end_index"] = end_idx
-    config["test_sample_num"] = end_idx - start_idx
-    config["r_averaging"] = r_averaging
-    config["recursion_depth"] = int(len(trainloader.dataset) / config["r_averaging"])
-    ptif.init_logging("logfile.log")
+    config["test_sample_num"] = end_idx - config["test_start_index"]
+    config["outdir"] = data_manager.influence_log_path
+
+    print(f"Starting influence calculation with the following configuration: \n {config}")
 
     # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
     #   e.g.    {
@@ -110,55 +105,78 @@ def calculate_influence(
 
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
-    max_influence_dicts = ptif.calc_img_wise(
-        config, model_wrapper.model, trainloader, testloader
-    )
+
+
+    # TODO: Now max_influence_dicts will be empty if user stops the influence calculation
+    # (i.e., all previous results are thrown away because we only return the full result when
+    # influence is calculated for all specified images). Maybe we should instead return influence
+    # for each image one by one to build the dictionary slowly, so that when calculation stops,
+    # we can save what has been calculated.
+
+    influences = {}
+    max_influence_dicts = {}
+    try:
+        max_influence_dicts = ptif.calc_img_wise(
+            config, model_wrapper.model, trainloader, testloader
+        )
+    except StopIteration:
+        print("Influence calculation stopped!")
 
     for key in max_influence_dicts.keys():
         train_img_paths = []
 
-        testId = "test/" + key
-        test_img_path = imageURLToPath(testId)
+        test_id = int(key)
+        test_img_path = data_manager.testset.get_image_list(test_id, test_id + 1)[0]
 
         max_influence_dict = max_influence_dicts[key]
-        trainIds = list(max_influence_dict.keys())
+        train_ids = list(max_influence_dict.keys())
 
         for j in range(4):
-            trainUrl = "train/" + str(trainIds[j])
-            train_img_path = imageURLToPath(trainUrl)
-            # TODO: Stores both image path and image url.
-            # Adding / removing samples to training set will cause inconsistency
-            # Need to check consistency in data manager when loading.
-            train_img_paths.append((train_img_path, trainUrl))
+            train_id = int(train_ids[j])
+            train_img_path = data_manager.trainset.get_image_list(train_id, train_id + 1)[0]
+            train_img_paths.append(train_img_path)
 
         influences[test_img_path] = train_img_paths
+    
 
-    with open(INFLUENCES_SAVE_PATH, "wb") as influence_file:
-        pickle.dump(influences, influence_file)
+    data_manager.get_influence_dict().update(influences)
+    if influences:
+        with open(data_manager.influence_file_path, "wb") as influence_file:
+            pickle.dump(data_manager.get_influence_dict(), influence_file)
+            print("Influence calculation done.")
 
+def get_calc_influence_thread(configs):
+    # Parse the following fields from string to integer
+    for key in ["test_start_index", "test_end_index", "recursion_depth", "r_averaging", "scale"]:
+        configs[key] = int(configs[key]) 
+
+    return CalcInfluenceThread(
+        RServer.get_model_wrapper(),
+        RServer.get_data_manager(),
+        configs
+    )
 
 class CalcInfluenceThread(threading.Thread):
     def __init__(
         self,
         model_wrapper: RModelWrapper,
-        dataManager: RDataManager,
-        start_idx,
-        end_idx,
-        r_averaging,
+        data_manager: RDataManager,
+        config,
     ):
         super(CalcInfluenceThread, self).__init__()
         self.model_wrapper = model_wrapper
-        self.dataManager = dataManager
-        self.start_idx = start_idx
-        self.end_idx = end_idx
-        self.r_averaging = r_averaging
-        self.stop = True
+        self.dataManager = data_manager
+        self.config = config
 
     def run(self):
-        calculate_influence(
-            self.model_wrapper,
-            self.dataManager,
-            self.start_idx,
-            self.end_idx,
-            self.r_averaging,
-        )
+        try:
+            calculate_influence(
+                self.model_wrapper,
+                self.dataManager,
+                self.config,
+            )
+        except Exception as e:
+            raise e
+        finally:
+            RServer.get_model_wrapper().release_model()
+

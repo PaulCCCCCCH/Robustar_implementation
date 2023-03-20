@@ -9,7 +9,7 @@
     <div v-else>
       <div v-for="(url, index) in influImgUrl" :key="index">
         <button @click="() => gotoImage(url)">
-          <img :src="url" style="width: 15vh" />
+          <img :src="toFullImgUrl(url)" style="width: 15vh" />
         </button>
       </div>
     </div>
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { getImageUrlFromFullUrl } from '@/utils/imageUtils';
+import { configs } from '@/configs.js';
 
 export default {
   props: {
@@ -25,10 +25,15 @@ export default {
   },
   methods: {
     gotoImage(url) {
-      this.imageSplit = 'train';
-      this.imageURL = url;
+
+      this.$root.imageURL = url;
+      this.$root.imageSplit = 'train';
+      this.$root.imageURL = url;
       this.$router.push({ name: 'ImageAnnotation' });
     },
+    toFullImgUrl(url) {
+      return `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`;
+    }
   },
 };
 </script>

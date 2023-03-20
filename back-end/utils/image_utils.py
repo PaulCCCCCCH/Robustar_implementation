@@ -41,7 +41,7 @@ def get_annotated(split: str, path: str):
 
     if paired_path is None:
         return ""
-    return ""
+    return paired_path
 
 
 def get_next_image_path(split, path):

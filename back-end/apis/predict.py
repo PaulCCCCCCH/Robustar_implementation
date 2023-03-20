@@ -8,8 +8,8 @@ from objects.RResponse import RResponse
 from utils.path_utils import to_unix, to_snake_path
 from utils.predict import (
     convert_predict_to_array,
-    CalcInfluenceThread,
     get_image_prediction,
+    get_calc_influence_thread,
 )
 from flask import Blueprint
 
@@ -82,7 +82,6 @@ def predict(split):
     """
     server = RServer.get_server()
     dataManager = server.data_manager
-    predict_buffer = dataManager.predict_buffer
     model_wrapper = RServer.get_model_wrapper()
 
     # get attributes
@@ -100,54 +99,49 @@ def predict(split):
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
 
-    if image_path in predict_buffer:
-        output_object = predict_buffer[image_path]
-    else:
-        # get predict results
+    # get predict results
+    if not model_wrapper.acquire_model():
+        RResponse.abort(
+            500,
+            "Cannot start inferencing because model is occupied by another thread",
+        )
 
-        if not model_wrapper.acquire_model():
-            RResponse.abort(
-                500,
-                "Cannot start inferencing because model is occupied by another thread",
-            )
+    try:
+        output = get_image_prediction(
+            model_wrapper, image_path, dataManager.image_size, argmax=False
+        )
 
-        try:
-            output = get_image_prediction(
-                model_wrapper, image_path, dataManager.image_size, argmax=False
-            )
+        output_array = convert_predict_to_array(output.cpu().detach().numpy())
 
-            output_array = convert_predict_to_array(output.cpu().detach().numpy())
+        # get visualize images
+        image_name = to_snake_path(image_path)
+        output = visualize(
+            model_wrapper,
+            image_path,
+            dataManager.image_size,
+            server.configs["device"],
+        )
 
-            # get visualize images
-            image_name = to_snake_path(image_path)
-            output = visualize(
-                model_wrapper,
-                image_path,
-                dataManager.image_size,
-                server.configs["device"],
-            )
+    except Exception as e:
+        print(e)
+        RResponse.abort(400, "Invalid image path {}".format(image_path))
+    finally:
+        model_wrapper.release_model()
 
-        except Exception as e:
-            print(e)
-            RResponse.abort(400, "Invalid image path {}".format(image_path))
-        finally:
-            model_wrapper.release_model()
+    if len(output) != 4:
+        RResponse.abort(
+            500, "[Unexpected] Invalid number of predict visualize figures"
+        )
 
-        if len(output) != 4:
-            RResponse.abort(
-                500, "[Unexpected] Invalid number of predict visualize figures"
-            )
+    predict_fig_routes = []
+    for i, fig in enumerate(output):
+        predict_fig_route = "{}/{}_{}.png".format(
+            visualize_root, image_name, str(i)
+        )
+        fig.savefig(predict_fig_route)
+        predict_fig_routes.append(predict_fig_route)
 
-        predict_fig_routes = []
-        for i, fig in enumerate(output):
-            predict_fig_route = "{}/{}_{}.png".format(
-                visualize_root, image_name, str(i)
-            )
-            fig.savefig(predict_fig_route)
-            predict_fig_routes.append(predict_fig_route)
-
-        output_object = [output_array, predict_fig_routes]
-        predict_buffer[image_path] = output_object
+    output_object = [output_array, predict_fig_routes]
 
     # combine and return
     return_value = [attribute, output_object[0], output_object[1]]
@@ -194,8 +188,8 @@ def get_influence(split):
     image_path = request.args.get(PARAM_NAME_IMAGE_PATH)
     image_path = to_unix(image_path)
     if image_path not in influence_dict:
-        RResponse.abort(
-            400, "Image is not found or influence for that image is not calculated"
+        return RResponse.ok(
+            {}, "Image is not found or influence for that image is not calculated", -1
         )
     return RResponse.ok(influence_dict[image_path], "Success")
 
@@ -221,9 +215,13 @@ def calculate_influence():
             configs:
               type: object
               example: {
-                test_sample_start_idx: 2,
-                test_sample_end_idx: 5,
-                r_averaging: 10
+                test_start_index: 2,
+                test_end_index: 5,
+                r_averaging: 10,
+                r_averaging: 1,
+                recursion_depth: 9000,
+                scale: 5000,
+
               }
     responses:
       200:
@@ -240,14 +238,23 @@ def calculate_influence():
               type: string
               example: "Influence calculation started!"
     """
+    model_wrapper = RServer.get_model_wrapper()
+    if not model_wrapper.acquire_model():
+        raise Exception(
+            "Cannot start calculating influence because the model is occupied by another thread"
+        )
+
     json_data = request.get_json()
-    configs = json_data["configs"]
-    calcInfluenceThread = CalcInfluenceThread(
-        RServer.get_model_wrapper(),
-        RServer.get_data_manager(),
-        start_idx=int(configs["test_sample_start_idx"]),
-        end_idx=int(configs["test_sample_end_idx"]),
-        r_averaging=int(configs["r_averaging"]),
-    )
-    calcInfluenceThread.start()
+    raw_configs = json_data["configs"]
+
+    try:
+        calc_influence_thread = get_calc_influence_thread(raw_configs)
+    except KeyError as e:
+        model_wrapper.release_model()
+        RResponse.abort(400, f"Invalid input. ({e})")
+    except Exception as e:
+        model_wrapper.release_model()
+        RResponse.abort(500, f"Failed to create influence calculation thread. ({e})")
+    
+    calc_influence_thread.start()
     return RResponse.ok({}, "Influence calculation started!")

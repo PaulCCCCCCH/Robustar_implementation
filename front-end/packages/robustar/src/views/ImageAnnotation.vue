@@ -447,7 +447,6 @@ export default {
         this.url = proposed_url;
         this.split = 'proposed';
         await this.$refs['editor'].loadImageFromURL();
-        await this.$refs['editor'].loadImageFromURL();
         this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
@@ -468,8 +467,7 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_height = sessionStorage.getItem('image_height');
-      const image_width = sessionStorage.getItem('image_width');
+      const { width: image_width, height: image_height } = await this.$refs['editor'].getCanvasSize();
       try {
         const image_base64 = this.$refs['editor'].invoke('toDataURL');
         await APISendEdit({

@@ -218,7 +218,7 @@ export default {
       try {
         const res = await APIGetInfluenceImages(split, imageURL);
         // If influence not predicted:
-        if (res.data.code == -1) {
+        if (res.status !== 200 || res.data.code == -1) {
           this.influImgUrl = [];
           return;
         }
@@ -226,10 +226,7 @@ export default {
         this.influImgUrl = [];
         for (let i = 0; i < 4; i++) {
           // responseData[i] is a length 2 array [image_path, imageURL]
-          const url = responseData[i][1];
-          this.influImgUrl.push(
-            `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`
-          );
+          this.influImgUrl.push(responseData[i]);
         }
       } catch (error) {
         console.log(error);
@@ -245,7 +242,7 @@ export default {
 
     open() {
       this.isActive = true;
-      this.getVisualizeData();
+      // this.getVisualizeData();
     },
 
     close() {
