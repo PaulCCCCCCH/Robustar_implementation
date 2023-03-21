@@ -167,7 +167,12 @@ class MainController(QObject):
         self.model.size = self.main_view.ui.size_line_edit.text()
 
     def set_m_pad(self):
-        self.model.pad = self.main_view.ui.pad_combo_box.currentText()
+        # To align with the backend
+        match_dict = {
+            'short side': 'short_side',
+            'none': 'none'
+        }
+        self.model.pad = match_dict[self.main_view.ui.pad_combo_box.currentText()]
 
     def set_m_cls(self):
         self.model.cls = self.main_view.ui.cls_line_edit.text()
@@ -299,7 +304,10 @@ class MainController(QObject):
         self.main_view.ui.size_line_edit.setText(val)
 
     def set_v_pad(self, val):
-        self.main_view.ui.pad_combo_box.setCurrentText(val)
+        # To align with the backend
+        match_dict = {'short_side': 'short side',
+                      'none': 'none'}
+        self.main_view.ui.pad_combo_box.setCurrentText(match_dict[val])
 
     def set_v_cls(self, val):
         self.main_view.ui.cls_line_edit.setText(val)

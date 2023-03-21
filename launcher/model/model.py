@@ -49,7 +49,7 @@ class Model(QObject):
             "batch": "",
             "worker": "",
             "size": "",
-            "pad": "short side",
+            "pad": "short_side",
             "cls": ""
         }
 
