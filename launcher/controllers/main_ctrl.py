@@ -125,8 +125,7 @@ class MainController(QObject):
         self.model.cwd = os.path.dirname(path)
         if path:
             self.model.ckpt_path = path
-
-        self.init_weights()
+            self.init_ckpts()
 
     def set_m_inf_path(self):
         path = QFileDialog.getExistingDirectory(
@@ -268,7 +267,7 @@ class MainController(QObject):
 
     def set_v_ckpt_path(self, val):
         self.main_view.ui.ckpt_line_edit.setText(val)
-        self.init_weights()
+        self.init_ckpts()
 
     def set_v_inf_path(self, val):
         self.main_view.ui.inf_line_edit.setText(val)
@@ -408,7 +407,7 @@ class MainController(QObject):
         self.model.image = self.main_view.ui.image_combo_box.currentText()
 
     # Scan the checkpoint directory to add checkpoint files to the weight file combobox and initiates model's weight file
-    def init_weights(self):
+    def init_ckpts(self):
         self.main_view.ui.weight_combo_box.clear()
         self.main_view.ui.weight_combo_box.addItem("None")
 
