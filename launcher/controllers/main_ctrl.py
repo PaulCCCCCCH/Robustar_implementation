@@ -452,6 +452,7 @@ class MainController(QObject):
             row = list_widget.row(item)
             list_widget.takeItem(row)
         else:
+            LoggerManager.append_log("app", "info", "The container to be removed changed its state")
             return
 
 
