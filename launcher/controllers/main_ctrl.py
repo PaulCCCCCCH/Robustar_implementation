@@ -447,9 +447,12 @@ class MainController(QObject):
     @staticmethod
     def remove_item(list_widget, name):
         items = list_widget.findItems(name, Qt.MatchExactly)
-        item = items[0]
-        row = list_widget.row(item)
-        list_widget.takeItem(row)
+        if len(items):
+            item = items[0]
+            row = list_widget.row(item)
+            list_widget.takeItem(row)
+        else:
+            return
 
 
 class ServerOperationThread(Thread):
