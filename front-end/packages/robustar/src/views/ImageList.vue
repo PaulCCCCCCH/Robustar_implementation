@@ -574,6 +574,7 @@ export default {
     gotoImage(url, base64, componentName) {
       this.$root.imageURL = url;
       this.$root.imageBase64 = base64;
+      this.$root.updateSessionStorage();
       this.$router.push({
         name: componentName,
       });

@@ -67,7 +67,7 @@ export default {
   computed: {
     image() {
       return {
-        path: `${configs.imagePathServerUrl}?image_url=${this.base64}`,
+        path: `${configs.imagePathServerUrl}?image_url=${this.url}`,
         // path: this.base64,
         name: this.url,
       };

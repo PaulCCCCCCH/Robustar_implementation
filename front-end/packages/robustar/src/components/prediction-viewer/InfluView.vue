@@ -28,7 +28,7 @@ export default {
 
       this.$root.imageURL = url;
       this.$root.imageSplit = 'train';
-      this.$root.imageURL = url;
+      this.$root.updateSessionStorage();
       this.$router.push({ name: 'ImageAnnotation' });
     },
     toFullImgUrl(url) {

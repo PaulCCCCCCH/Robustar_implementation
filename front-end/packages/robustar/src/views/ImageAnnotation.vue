@@ -173,7 +173,7 @@
         :options="options"
         :cursor="cursorIcon"
         :url="url ? url : $root.imageURL"
-        :base64="url ? url : $root.imageURL"
+        :base64="url ? url : $root.imageBase64"
         @mousedown="mousedown"
         @objectMoved="_doOperation('move', 'mdi-gesture-tap')"
       ></ImageEditor>
@@ -443,8 +443,9 @@ export default {
       this.$root.startProcessing('Auto-annotating...');
       try {
         const res = await APIGetProposedEdit(this.$root.imageSplit, this.$root.imageURL);
-        const proposed_url = res.data.data;
-        this.url = proposed_url;
+        const {base64, path: url} = res.data.data;
+        this.url = url;
+        this.base64 = base64;
         this.split = 'proposed';
         await this.$refs['editor'].loadImageFromURL();
         this._doOperation('auto edit', 'mdi-auto-fix');
@@ -482,10 +483,12 @@ export default {
       } catch (error) {
         this.$root.finishProcessing();
         this.$root.alert('error', error.response?.data?.detail || 'Sending failed');
+        return
       }
       try {
         const res = await APIGetNextImage(this.$root.imageSplit, this.$root.imageURL);
         this.$root.imageURL = res.data.data;
+        this.$root.updateSessionStorage();
         this.url = res.data.data;
         await this.$refs['editor'].loadImageFromURL();
         this._reset();
