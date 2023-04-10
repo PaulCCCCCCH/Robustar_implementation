@@ -443,10 +443,10 @@ export default {
       this.$root.startProcessing('Auto-annotating...');
       try {
         const res = await APIGetProposedEdit(this.$root.imageSplit, this.$root.imageURL);
-        const proposed_url = res.data.data;
-        this.url = proposed_url;
+        const {base64, path} = res.data.data;
+        this.url = path;
         this.split = 'proposed';
-        await this.$refs['editor'].loadImageFromURL();
+        setTimeout(this.$refs['editor'].loadImageFromURL, 100)
         this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
