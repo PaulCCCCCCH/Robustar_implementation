@@ -1,14 +1,13 @@
-const host = `http://${window.location.host}`; // e.g., http://localhost:8080
-const apiHost = `${host}/api`;
+const baseUrl = process.env.VUE_APP_BASE_URL;
+const clientPort = process.env.VUE_APP_CLIENT_PORT;
 
 export const configs = {
   imageSize: 'small', // 'extra small', 'small', 'medium', 'large', 'extra large'
-  hostUrl: host,
-  serverUrl: apiHost,
-  socketUrl: host,
-  tensorboardUrl: `${host}/tensorboard`,
-  imageServerUrl: `${apiHost}/image`,
-  imagePathServerUrl: `${apiHost}/dataset`,
+  serverUrl: `${baseUrl}:${clientPort}/api`,
+  socketUrl: `${baseUrl}:${clientPort}`,
+  tensorboardUrl: `${baseUrl}:${clientPort}/tensorboard`,
+  imageServerUrl: `${baseUrl}:${clientPort}/api/image`,
+  imagePathServerUrl: `${baseUrl}:${clientPort}/api/dataset`,
   dataBaseDir: '/Robustar2',
   imagePathParamName: 'image_url',
 };

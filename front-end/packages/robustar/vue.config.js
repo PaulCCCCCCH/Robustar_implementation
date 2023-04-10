@@ -11,7 +11,7 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: process.env.VUE_APP_BASE_URL,
+        target: `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_SERVER_PORT}`,
         ws: true,
         changeOrigin: true,
         pathRewrite: {
@@ -19,12 +19,12 @@ module.exports = {
         },
       },
       '/socket.io': {
-        target: process.env.VUE_APP_BASE_URL,
+        target: `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_SERVER_PORT}`,
         ws: true,
         changeOrigin: true,
       },
       '/tensorboard': {
-        target: process.env.VUE_APP_TENSORBOARD_URL,
+        target: `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_TENSORBOARD_PORT}`,
         ws: true,
         changeOrigin: true,
         pathRewrite: {
