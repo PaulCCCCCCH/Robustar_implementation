@@ -1,6 +1,7 @@
 ![Robustar](logo2.png "Robustar")
 
 # To Run Backend
+
 ```
 cd back-end # If you are not already in this folder
 pip install -r requirements.txt
@@ -14,10 +15,10 @@ pip install black
 ```
 
 # Run test cases
+
 ```
 python -m pytest
 ```
-
 
 # Robustar
 
@@ -27,12 +28,11 @@ https://hub.docker.com/repository/docker/paulcccccch/robustar
 
 [Sample dataset and config Folder (Google Drive)](https://drive.google.com/drive/u/1/folders/16z0qYdQSF6t5j8ve5BoA_yB7AX90ZdZH) 
 
-
 # Notes
 
 - `user-edit`: is a json of `{<dataset_type>/<img_id>: <img_data>}`, where `<dataset_type>` is usually `train`, `<img_id>` is `0` to `len(dataset) - 1` and `<img_data>` is a comma-separated 1D array (in a string) of length `img_width * img_width * 4` (rgba representation of image, flattened). An example key-value paired is `{"train/0": "124, 126, 54, 255, ..."}`
 
-# Dev 
+# Dev
 
 Robustar reads from the following directories (absolute path, i.e. `Robustar2` folder is placed immediatly under `/` of your file system. Specifically, for linux and MacOS, put the folder under `/` directory. For Windows, put it directly under the volumn your operating system is installed (usually `C:`).
 
@@ -47,5 +47,19 @@ Robustar reads from the following directories (absolute path, i.e. `Robustar2` f
 
 You can download our example folder [here](https://drive.google.com/drive/u/1/folders/16z0qYdQSF6t5j8ve5BoA_yB7AX90ZdZH)
 Or use `pip install gdown` and `gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-`
+
+### For MacOS users
+
+From Catalina version onwards,  the root directory becomes read-only. This means it is not immediately possible to create new folders here. In order to get around that, the system provides what is known as synthetic firm links. This allows you to create what appears to be folders at the root of the file system.
+
+1. You need to create the file `/etc/synthetic.conf`, which should be owned by root and group wheel with permissions 0644.
+   
+   > When you try to save this file using , you may encounter `E212 Can't open file for writing.`. Then you should use command `:w !sudo tee %` and type `L` to load.
+
+2. The contents in this file should look like this: `Robustar2    absolute_path_to_Robustar2_folder`
+   
+   > **NOTE**: It is important to ensure that the space between the two folder names is a **TAB** character, and not just a number of space.
+
+3. After creating the file above with the specified contents, you need to reboot the system. After rebooting, you'll see the `/Robustar2` folder.
 
 

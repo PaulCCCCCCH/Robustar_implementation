@@ -33,7 +33,7 @@ class RDataManager:
         self.data_root = dataset_dir
         self.base_dir = baseDir
         self.db_path = db_path
-        self.batch_size = image_size
+        self.batch_size = batch_size
         self.shuffle = shuffle
         self.num_workers = num_workers
         self.image_size = image_size

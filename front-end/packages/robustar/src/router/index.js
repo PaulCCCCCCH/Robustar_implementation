@@ -21,43 +21,43 @@ const routes = [
   {
     path: '/image-list/:split',
     name: 'ImageList',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/ImageList.vue'),
+    component: () => import(/* webpackChunkName: "image-list" */ '@/views/ImageList.vue'),
   },
   {
     path: '/train-pad',
     name: 'TrainPad',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/TrainPad.vue'),
+    component: () => import(/* webpackChunkName: "train-pad" */ '@/views/TrainPad.vue'),
   },
   {
     path: '/edit',
     name: 'ImageAnnotation',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/ImageAnnotation.vue'),
+    component: () => import(/* webpackChunkName: "edit" */ '@/views/ImageAnnotation.vue'),
     props: true,
   },
   {
     path: '/test',
     name: 'TestPad',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/TestPad.vue'),
+    component: () => import(/* webpackChunkName: "test" */ '@/views/TestPad.vue'),
   },
   {
     path: '/influence-pad',
     name: 'InfluencePad',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/InfluencePad.vue'),
+    component: () => import(/* webpackChunkName: "influence-pad" */ '@/views/InfluencePad.vue'),
   },
   {
     path: '/predict',
     name: 'Prediction',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/Prediction.vue'),
+    component: () => import(/* webpackChunkName: "predict" */ '@/views/Prediction.vue'),
   },
   {
     path: '/config',
     name: 'Config',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/Configuration.vue'),
+    component: () => import(/* webpackChunkName: "config" */ '@/views/Configuration.vue'),
   },
   {
     path: '/auto-annotate',
     name: 'AutoAnnotatePad',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/AutoAnnotatePad.vue'),
+    component: () => import(/* webpackChunkName: "auto-annotate" */ '@/views/AutoAnnotatePad.vue'),
   },
 ];
 

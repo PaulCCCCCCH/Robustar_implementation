@@ -1,10 +1,9 @@
 <template>
   <v-app>
-    <Header @toggleTaskspanel="toggleTaskspanel"></Header>
+    <Header></Header>
     <SideBar></SideBar>
 
     <v-main class="page-content">
-      <TaskPanel :style="{ visibility: isTaskspanelHidden ? 'hidden' : 'visible' }"></TaskPanel>
       <Notification></Notification>
       <router-view />
     </v-main>
@@ -16,7 +15,6 @@
 import Header from '@/components/common/Header';
 import SideBar from '@/components/common/SideBar';
 import Notification from '@/components/common/Notification';
-import TaskPanel from '@/components/common/TaskPanel';
 
 export default {
   name: 'App',
@@ -24,17 +22,6 @@ export default {
     Header,
     SideBar,
     Notification,
-    TaskPanel,
-  },
-  methods: {
-    toggleTaskspanel() {
-      this.isTaskspanelHidden = !this.isTaskspanelHidden;
-    },
-  },
-  data() {
-    return {
-      isTaskspanelHidden: true,
-    };
   },
 };
 </script>
@@ -44,6 +31,7 @@ export default {
 
 #app,
 .page-content {
+  position: relative;
   min-height: 100%;
   width: 100%;
 }

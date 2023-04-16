@@ -29,7 +29,6 @@ def load_image(image_path):
 
 
 def apply_transforms(image, size=224):
-    # TODO: Make this transform global
     """Transforms a PIL image to torch.Tensor.
 
     Applies a series of tranformations on PIL image including a conversion

@@ -115,12 +115,24 @@
         </div>
         <v-divider class="my-8"></v-divider>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="startTraining">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="startTraining"
+            data-test="train-pad-btn-start-training"
+          >
             START TRAINING
           </v-btn>
         </div>
         <div class="d-flex flex-column align-center my-4">
-          <v-btn depressed color="primary" class="mx-auto" @click="stopTraining">
+          <v-btn
+            depressed
+            color="primary"
+            class="mx-auto"
+            @click="stopTraining"
+            data-test="train-pad-btn-stop-training"
+          >
             STOP TRAINING
           </v-btn>
         </div>
@@ -136,15 +148,15 @@ export default {
   name: 'TrainPad',
   data() {
     return {
-      model_options: [
-        'resnet-18-32x32',
-        'resnet-18',
-        'resnet-34',
-        'resnet-50',
-        'resnet-101',
-        'resnet-152',
-        'mobilenet-v2',
-      ],
+      // model_options: [
+      //   'resnet-18-32x32',
+      //   'resnet-18',
+      //   'resnet-34',
+      //   'resnet-50',
+      //   'resnet-101',
+      //   'resnet-152',
+      //   'mobilenet-v2',
+      // ],
       mixture_methods: [
         'pure_black',
         'noise',
@@ -155,7 +167,6 @@ export default {
         'vstrips',
         'mixture',
       ],
-
       // Training configs
       configs: {
         model_name: 'my-test-model',
