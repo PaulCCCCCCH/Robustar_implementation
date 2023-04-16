@@ -104,15 +104,9 @@ class RDataManager:
         self.train_root = to_unix(osp.join(self.data_root, "train"))
         self.paired_root = to_unix(osp.join(self.data_root, "paired"))
         self.validation_root = to_unix(osp.join(self.data_root, "validation"))
-        self.visualize_root = to_unix(
-            osp.join(self.base_dir, "generated", "visualize_images")
-        )
-        self.influence_root = to_unix(
-            osp.join(self.base_dir, "generated", "influence_images")
-        )
-        self.proposed_annotation_root = to_unix(
-            osp.join(self.base_dir, "generated", "proposed")
-        )
+        self.visualize_root = to_unix(osp.join(self.base_dir, "visualize_images"))
+        self.influence_root = to_unix(osp.join(self.base_dir, "influence_images"))
+        self.proposed_annotation_root = to_unix(osp.join(self.base_dir, "proposed"))
         self.influence_file_path = to_unix(
             osp.join(self.influence_root, "influence_images.pkl")
         )

@@ -99,8 +99,7 @@ def new_server_object(base_dir):
     base_dir = to_unix(base_dir)
     dataset_dir = to_unix(osp.join(base_dir, "dataset"))
     ckpt_dir = to_unix(osp.join(base_dir, "checkpoints"))
-    db_path = to_unix(osp.join(base_dir, "generated", "data.db"))
-
+    db_path = to_unix(osp.join(base_dir, "data.db"))
 
     with open(osp.join(base_dir, "configs.json")) as jsonfile:
         configs = json.load(jsonfile)
