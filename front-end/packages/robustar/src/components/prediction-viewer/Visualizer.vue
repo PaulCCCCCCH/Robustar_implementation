@@ -242,7 +242,7 @@ export default {
 
     open() {
       this.isActive = true;
-      // this.getVisualizeData();
+      this.getVisualizeData();
     },
 
     close() {
