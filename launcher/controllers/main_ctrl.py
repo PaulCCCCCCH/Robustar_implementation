@@ -422,7 +422,7 @@ class MainController(QObject):
             for gpu_info in nvgpu.gpu_info():
                 if gpu_info["mem_used_percent"] < 100:
                     self.main_view.ui.device_combo_box.addItem(f"cuda:{gpu_info['index']}")
-        except FileNotFoundError as e:
+        except Exception as e:
             print(e)
             LoggerManager.append_log("app", "info", e)
 
