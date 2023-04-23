@@ -3,6 +3,7 @@ import json
 import os
 import re
 import uuid
+import time
 
 from sys import platform
 from PySide2.QtCore import QObject
@@ -404,8 +405,9 @@ class DockerController(QObject):
                     # Remove the color of log
                     log = re.sub(".\[\d+m", "", log)
 
-                    # Add the name and port information
-                    log = f"{name} - - " + log[:log.find(" - -")] + f":{port}" + log[log.find(" - -"):]
+                    # Add the name, port and timestamp information
+                    current_time = time.strftime("%H:%M:%S", time.localtime())
+                    log = current_time + " - - " + f"{name}({port}) - -" + log[:log.find(" - -")] + log[log.find(" - -"):]
 
                     self.main_ctrl.print_message(self.main_view.ui.log_text_browser, log, timestamp=False)
             except StopIteration:
