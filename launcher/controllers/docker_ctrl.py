@@ -134,11 +134,11 @@ class DockerController(QObject):
 
         except docker.errors.APIError as api_error:
 
-            if "port is already allocated" in str(api_error):
+            if "port is already allocated" in str(api_error) or "Ports are not available" in str(api_error):
                 self.main_ctrl.add_item(self.main_view.ui.create_list_widget, self.model.temp_name)
                 self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser, "{} is created but fails to run "
-                                                                                    "because the port is already in "
-                                                                                    "use by another container."
+                                                                                    "because the port is "
+                                                                                    "not available."
                                                                                     " See more in <i>Details</i> page"
                                              .format(self.model.temp_name))
                 self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
@@ -273,13 +273,13 @@ class DockerController(QObject):
                     self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
                                                  "Illegal container status encountered", level="error")
             except docker.errors.APIError as api_error:
-                if "port is already allocated" in str(api_error):
-
+                if "port is already allocated" in str(api_error) or "Ports are not available" in str(api_error):
                     self.main_ctrl.print_message(self.main_view.ui.prompt_text_browser,
-                                                 "{} fails to run because the port is "
-                                                 "already in use by another container. "
-                                                 "See more in <i>Details</i> page".format(
-                                                     self.model.temp_name))
+                                                 "{} fails to run "
+                                                 "because the port is "
+                                                 "not available."
+                                                 " See more in <i>Details</i> page"
+                                                 .format(self.model.temp_name))
                     self.main_ctrl.print_message(self.main_view.ui.detail_text_browser, str(api_error))
 
                 else:
