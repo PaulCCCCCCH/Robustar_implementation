@@ -157,6 +157,11 @@ describe('Image List', () => {
     cy.wait(500).then(() => {
       cy.get('@predict.all').should('have.length', 1);
     });
+    cy.get('[data-test=image-list-img-1]', { timeout: 120 * 1000 }).trigger('mouseenter');
+    cy.getBySel('image-list-btn-predict-image-1').click().wait(500);
+    cy.wait(500).then(() => {
+      cy.get('@predict.all').should('have.length', 2);
+    });
   });
 });
 
