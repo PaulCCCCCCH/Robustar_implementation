@@ -1,5 +1,5 @@
 describe('Image List', () => {
-  beforeEach(() => {});
+  beforeEach(() => { });
 
   it('Navigates through training data', () => {
     cy.visit('image-list/train');
@@ -146,4 +146,17 @@ describe('Image List', () => {
     cy.getBySel('auto-annotate-start-index').should('have.value', 2);
     cy.getBySel('auto-annotate-end-index').should('have.value', 14);
   });
+  it('Clicks PREDICT button and calls predict API once', () => {
+    cy.intercept('GET', '/api/predict/**').as('predict');
+    cy.visit('image-list/train');
+    cy.get('[data-test=image-list-img-0]', { timeout: 120 * 1000 }).trigger('mouseenter');
+    cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
+    cy.wait('@predict').then((interception) => {
+      expect(interception.response.statusCode).to.equal(200);
+    });
+    cy.wait(500).then(() => {
+      cy.get('@predict.all').should('have.length', 1);
+    });
+  });
 });
+
