@@ -74,7 +74,7 @@ def setup_training(configs):
         testset=test_set,
         batch_size=int(configs["batch_size"]),
         shuffle=configs["shuffle"],
-        num_workers=int(configs["thread"]),
+        num_workers=int(configs["num_workers"]),
         device=device,
         learn_rate=float(configs["learn_rate"]),
         auto_save=configs["auto_save_model"],

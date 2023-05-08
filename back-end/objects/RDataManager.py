@@ -20,9 +20,7 @@ class RDataManager:
         baseDir,
         dataset_dir,
         db_path,
-        batch_size=32,
         shuffle=True,
-        num_workers=8,
         image_size=32,
         image_padding="short_side",
         class2label_mapping=None,
@@ -33,9 +31,7 @@ class RDataManager:
         self.data_root = dataset_dir
         self.base_dir = baseDir
         self.db_path = db_path
-        self.batch_size = batch_size
         self.shuffle = shuffle
-        self.num_workers = num_workers
         self.image_size = image_size
         self.image_padding = image_padding
         self.class2label = class2label_mapping
@@ -132,25 +128,6 @@ class RDataManager:
                 transform=self.transforms,
             )
 
-        self.testloader = torch.utils.data.DataLoader(
-            self.testset,
-            batch_size=self.batch_size,
-            shuffle=False,
-            num_workers=self.num_workers,
-        )
-        self.trainloader = torch.utils.data.DataLoader(
-            self.trainset,
-            batch_size=self.batch_size,
-            shuffle=self.shuffle,
-            num_workers=self.num_workers,
-        )
-        self.validationloader = torch.utils.data.DataLoader(
-            self.validationset,
-            batch_size=self.batch_size,
-            shuffle=False,
-            num_workers=self.num_workers,
-        )
-
         self._init_folders()
 
         self.dataset_file_queue = collections.deque()
@@ -182,8 +159,6 @@ class RDataManager:
             db_conn=self.db_conn,
             transform=self.transforms,
         )
-        # self.pairedloader = torch.utils.data.DataLoader(
-        # self.pairedloader, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         self.split_dict = {
             "train": self.trainset,
