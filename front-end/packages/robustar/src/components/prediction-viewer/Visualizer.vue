@@ -152,6 +152,7 @@ export default {
     },
   },
   mounted() {
+    this.getVisualizeData();
     const panels = sessionStorage.getItem('visualizer_panels');
     if (panels) {
       this.panels = JSON.parse(panels);
@@ -242,7 +243,7 @@ export default {
 
     open() {
       this.isActive = true;
-      this.getVisualizeData();
+      // this.getVisualizeData();
     },
 
     close() {
