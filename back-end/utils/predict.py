@@ -73,11 +73,14 @@ def calculate_influence(
         num:    Number of test samples for which we calculate influence. If set to -1, it calculates
                 influence for the entire dataset.
     """
-    
-    trainloader = data_manager.trainloader
-    testloader = data_manager.testloader
+
     config = ptif.get_default_config()
     config.update(in_config)
+
+    batch_size = config['batch_size']
+    num_workers = config['num_workers']
+    testloader = torch.utils.data.DataLoader(data_manager.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    trainloader = torch.utils.data.DataLoader(data_manager.trainset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     end_idx = config["test_end_index"]
     if end_idx == -1:
