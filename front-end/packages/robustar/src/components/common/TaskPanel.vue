@@ -30,11 +30,10 @@
           <v-icon>mdi-chart-line</v-icon>
         </a> -->
         <v-btn v-if="item[0].toLowerCase().includes('training')" icon>
-          <a :href="configs.tensorboardUrl">
+          <a :href="configs.tensorboardUrl" target="_blank">
             <v-icon>mdi-chart-line</v-icon>
           </a>
         </v-btn>
-
       </v-col>
       <v-col cols="12" lg="5" align="center" justify="center">
         <v-progress-linear
@@ -67,7 +66,7 @@ export default {
   data() {
     return {
       digest: [],
-      configs: {}
+      configs: configs,
     };
   },
   sockets: {
