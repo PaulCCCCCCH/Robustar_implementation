@@ -150,18 +150,14 @@ describe('Image List', () => {
     cy.intercept('GET', '/api/predict/**').as('predict');
     cy.visit('image-list/train');
     cy.get('[data-test=image-list-img-0]', { timeout: 120 * 1000 }).trigger('mouseenter');
-    cy.getBySel('image-list-btn-predict-image-0').click().wait(500);
+    cy.getBySel('image-list-btn-predict-image-0').click();
     cy.wait('@predict').then((interception) => {
       expect(interception.response.statusCode).to.equal(200);
     });
-    cy.wait(500).then(() => {
-      cy.get('@predict.all').should('have.length', 1);
-    });
+    cy.get('@predict.all').should('have.length', 1);
     cy.get('[data-test=image-list-img-1]', { timeout: 120 * 1000 }).trigger('mouseenter');
-    cy.getBySel('image-list-btn-predict-image-1').click().wait(500);
-    cy.wait(500).then(() => {
-      cy.get('@predict.all').should('have.length', 2);
-    });
+    cy.getBySel('image-list-btn-predict-image-1').click();
+    cy.get('@predict.all').should('have.length', 2);
   });
 });
 
