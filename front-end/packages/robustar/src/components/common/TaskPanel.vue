@@ -24,7 +24,18 @@
           ><v-icon>mdi-minus-box</v-icon></v-btn
         >
       </v-col>
-      <v-col cols="12" lg="2" align="center" justify="center">{{ item[0] }}</v-col>
+      <v-col cols="12" lg="2" align="center" justify="center">
+        <span> {{ item[0] }} </span>
+        <!-- <a v-if="item[0].toLowerCase().includes('training')" :href="configs.tensorboardUrl">
+          <v-icon>mdi-chart-line</v-icon>
+        </a> -->
+        <v-btn v-if="item[0].toLowerCase().includes('training')" icon>
+          <a :href="configs.tensorboardUrl">
+            <v-icon>mdi-chart-line</v-icon>
+          </a>
+        </v-btn>
+
+      </v-col>
       <v-col cols="12" lg="5" align="center" justify="center">
         <v-progress-linear
           data-test="task-panel-progress-linear"
@@ -49,12 +60,14 @@
 
 <script>
 import { APIStopTask } from '@/services/task';
+import { configs } from '@/configs.js';
 
 export default {
   name: 'TaskPanel',
   data() {
     return {
       digest: [],
+      configs: {}
     };
   },
   sockets: {
