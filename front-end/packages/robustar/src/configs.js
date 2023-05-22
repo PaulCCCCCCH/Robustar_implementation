@@ -1,5 +1,4 @@
 const host = `http://${window?.location?.host ?? ''}`;
-console.log(process.env.NODE_ENV);
 
 export const configs = {
   imageSize: 'small', // 'extra small', 'small', 'medium', 'large', 'extra large'
