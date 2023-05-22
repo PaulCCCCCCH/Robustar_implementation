@@ -8,7 +8,7 @@ export const configs = {
   tensorboardUrl:
     process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
       ? `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_TENSORBOARD_PORT}`
-      : `${host}/tensorboard`,
+      : `${host}/tensorboard/`,
   imageServerUrl: `${host}/api/image`,
   imagePathServerUrl: `${host}/api/dataset`,
   dataBaseDir: '/Robustar2',
