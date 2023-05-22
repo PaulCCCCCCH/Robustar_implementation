@@ -26,14 +26,11 @@
       </v-col>
       <v-col cols="12" lg="2" align="center" justify="center">
         <span> {{ item[0] }} </span>
-        <!-- <a v-if="item[0].toLowerCase().includes('training')" :href="configs.tensorboardUrl">
-          <v-icon>mdi-chart-line</v-icon>
-        </a> -->
-        <v-btn v-if="item[0].toLowerCase().includes('training')" icon>
-          <a :href="configs.tensorboardUrl" target="_blank">
+        <a :href="configs.tensorboardUrl" target="_blank">
+          <v-btn v-if="item[0].toLowerCase().includes('training')" icon>
             <v-icon>mdi-chart-line</v-icon>
-          </a>
-        </v-btn>
+          </v-btn>
+        </a>
       </v-col>
       <v-col cols="12" lg="5" align="center" justify="center">
         <v-progress-linear
