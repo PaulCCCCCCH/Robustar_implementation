@@ -103,7 +103,7 @@ export default {
       if (!this.includeUi) {
         const { path, name } = this.image;
         this.editorInstance
-          .loadImageFromURL(path, name)
+          .loadImageFromURL(path, name) 
           .then(() => {
             this.editorInstance.clearUndoStack();
           })
