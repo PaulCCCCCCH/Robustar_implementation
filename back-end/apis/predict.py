@@ -221,7 +221,8 @@ def calculate_influence():
                 r_averaging: 1,
                 recursion_depth: 9000,
                 scale: 5000,
-
+                batch_size: 16,
+                num_workers: 5, 
               }
     responses:
       200:

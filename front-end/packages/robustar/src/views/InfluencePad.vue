@@ -33,7 +33,23 @@
           required
           data-test="influence-pad-end-index-field"
         ></v-text-field>
-
+        <v-divider class="mt-4 mb-8"></v-divider>
+        <div class="text-h5 mb-8"> Data Loader Configs </div>
+        <v-text-field
+          v-model="configs.batch_size"
+          value="128"
+          label="Batch size"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <v-text-field
+          v-model="configs.num_workers"
+          label="Number of dataloader workers"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
         <v-divider class="mt-4 mb-8"></v-divider>
         <div class="text-h5 mb-8"> Algorithm Parameters </div>
         <!-- Set r_averaging -->
@@ -107,6 +123,8 @@ export default {
         recursion_depth: 1,
         scale: 5000,
         damp: 0.001,
+        num_workers: 8,
+        batch_size: 8
       },
     };
   },
