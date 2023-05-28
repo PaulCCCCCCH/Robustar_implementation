@@ -43,7 +43,7 @@
 
         <!-- Set num of dataloader workers -->
         <v-text-field
-          v-model="configs.thread"
+          v-model="configs.num_workers"
           label="Number of dataloader workers"
           outlined
           clearable
@@ -187,7 +187,7 @@ export default {
         paired_train_reg_coeff: 0.001,
         image_size: 32,
         epoch: 20,
-        thread: 8,
+        num_workers: 8,
         pretrain: false,
       },
     };

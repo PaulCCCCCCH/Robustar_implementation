@@ -111,6 +111,8 @@ def get_default_config():
         'r_averaging': 1,
         'scale': 5000,
         'damp': 0.001,
+        'batch_size': 8,
+        'num_workers': 8,
     }
 
     return config
