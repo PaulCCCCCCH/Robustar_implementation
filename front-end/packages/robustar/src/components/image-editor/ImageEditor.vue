@@ -63,13 +63,6 @@ export default {
         this.editorInstance.changeCursor(this.cursor);
       }
     },
-    $route: {
-      handler: function () {
-        if (this.editorInstance) this.editorInstance();
-      },
-      deep: true,
-      immediate: true,
-    },
   },
   computed: {
     image() {
