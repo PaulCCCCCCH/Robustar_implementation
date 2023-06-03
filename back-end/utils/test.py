@@ -43,10 +43,12 @@ class TestThread(threading.Thread):
         incorrect_buffer = []
 
         task = RTask(TaskType.Test, dataset_length)
+        model_wrapper = RServer.get_model_wrapper()
+        model_wrapper.model.eval()
         for img_path, label in samples:
 
             output = get_image_prediction(
-                RServer.get_model_wrapper(),
+                model_wrapper,
                 img_path,
                 self.dataManager.image_size,
                 argmax=False,
