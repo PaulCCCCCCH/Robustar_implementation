@@ -70,7 +70,6 @@ export default {
       return {
         path: `${configs.imagePathServerUrl}?image_url=${this.base64}&timestamp=${timestamp}`,
         name: this.url,
-        // path: this.base64,
       };
     },
   },
