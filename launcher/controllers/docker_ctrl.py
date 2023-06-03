@@ -407,7 +407,7 @@ class DockerController(QObject):
 
                     # Add the name, port and timestamp information
                     current_time = time.strftime("%H:%M:%S", time.localtime())
-                    log = current_time + " - - " + f"{name}({port}) - -" + log[:log.find(" - -")] + log[log.find(" - -"):]
+                    log = current_time + " - - " + f"{name}({port}) - - " + log[:log.find(" - -")] + log[log.find(" - -"):]
 
                     self.main_ctrl.print_message(self.main_view.ui.log_text_browser, log, timestamp=False)
             except StopIteration:
