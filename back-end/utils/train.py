@@ -93,7 +93,7 @@ def start_tensorboard(logdir):
     Starts updating tensorboard.
     """
 
-    os.system("tensorboard --logdir={}".format(os.path.abspath(logdir)))
+    os.system("tensorboard --logdir={} --port=6006".format(os.path.abspath(logdir)))
 
 
 def start_train(configs):
@@ -115,17 +115,18 @@ def start_train(configs):
     try:
         train_set, test_set, model, trainer = setup_training(configs)
         # Set up tensorboard log directory
+        tb_dir = "runs" 
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
-        if not os.path.exists("runs"):
-            os.mkdir("runs")
-        logdir = os.path.join("runs", "run_{}".format(date))
-        writer = SummaryWriter(logdir)
+        if not os.path.exists(tb_dir):
+            os.mkdir(tb_dir)
+        run_dir = os.path.join(tb_dir, "run_{}".format(date))
+        writer = SummaryWriter(run_dir)
         trainer.writer = writer
         writer.add_scalar("train accuracy", 0, 0)
         writer.add_scalar("loss", 0, 0)
 
         # Start the tensorboard writer as a new process
-        t = multiprocessing.Process(target=start_tensorboard, args=(logdir,))
+        t = multiprocessing.Process(target=start_tensorboard, args=(tb_dir,))
         t.start()
         trainer.set_tb_process(t)
 
