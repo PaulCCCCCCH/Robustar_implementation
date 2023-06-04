@@ -82,9 +82,6 @@ export default {
     },
   },
   methods: {
-    // toggleTaskspanel() {
-    //   this.isTaskspanelHidden = !this.isTaskspanelHidden;
-    // },
     getProgressColor(successPercent) {
       let colorBar = '';
       if (successPercent < 50) {

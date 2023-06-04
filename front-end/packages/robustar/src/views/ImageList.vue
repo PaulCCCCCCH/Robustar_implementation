@@ -27,7 +27,7 @@
                 </template>
                 <v-list>
                   <v-list-item>
-                    <div>Accuracy: {{ accuarcy.value }}</div>
+                    <div>Accuracy: {{ accuracy.value }}</div>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -432,16 +432,12 @@ export default {
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
     this.initClassifiedImageList();
-    this.initClassifiedImageList();
   },
   watch: {
     $route() {
       this.handleRouteChange();
       this.initImageList();
       this.initClassifiedImageList();
-
-      this.initClassifiedImageList();
-
       this.$root.imageURL = ''; // Reset current image url for visualizaer
     },
     currentPage() {
@@ -458,7 +454,7 @@ export default {
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
     },
-    accuarcy() {
+    accuracy() {
       const allImageLength = this.testImageList[0];
       const correctImageLength = this.testImageList[1];
       return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };

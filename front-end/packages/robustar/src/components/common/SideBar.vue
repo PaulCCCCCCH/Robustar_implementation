@@ -80,19 +80,11 @@ export default {
               text: 'Validation Data',
               icon: '',
               link: 'image-list/validation',
-              // children: [
-              //   { text: 'Correctly Classified', link: 'image-list/validation_correct' },
-              //   { text: 'Incorrectly Classified', link: 'image-list/validation_incorrect' },
-              // ],
             },
             {
               text: 'Test Data',
               icon: '',
               link: 'image-list/test',
-              // children: [
-              //   { text: 'Correctly Classified', link: 'image-list/test_correct' },
-              //   { text: 'Incorrectly Classified', link: 'image-list/test_incorrect' },
-              // ],
             },
           ],
         },
