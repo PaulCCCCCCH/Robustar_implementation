@@ -511,18 +511,6 @@ export default {
         this.imageList = [];
       }
     },
-    async initClassifiedImageList() {
-      try {
-        if (this.$route.params.split == 'validation' || this.$route.params.split == 'test') {
-          const res = await APIGetClassifiedSplitLength(this.$route.params.split);
-          this.testImageList = res.data.data;
-        }
-      } catch (error) {
-        console.log(error);
-        this.$root.alert('error', 'Image list initialization failed');
-        this.imageList = [];
-      }
-    },
     resetImageList() {
       this.currentPage = 0;
       this.classNames = [''];
