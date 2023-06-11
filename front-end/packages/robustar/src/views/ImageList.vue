@@ -27,7 +27,7 @@
                 </template>
                 <v-list>
                   <v-list-item>
-                    <div>Accuracy: {{ accuarcy.value }}</div>
+                    <div>Accuracy: {{ accuracy.value }}</div>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -432,16 +432,12 @@ export default {
     this.imagePerPage = this.imagePerPageOptions[1];
     this.initImageList();
     this.initClassifiedImageList();
-    this.initClassifiedImageList();
   },
   watch: {
     $route() {
       this.handleRouteChange();
       this.initImageList();
       this.initClassifiedImageList();
-
-      this.initClassifiedImageList();
-
       this.$root.imageURL = ''; // Reset current image url for visualizaer
     },
     currentPage() {
@@ -458,7 +454,7 @@ export default {
         { text: 'Incorrectly Classified', value: this.$route.params.split + '_incorrect' },
       ];
     },
-    accuarcy() {
+    accuracy() {
       const allImageLength = this.testImageList[0];
       const correctImageLength = this.testImageList[1];
       return { value: Math.round((correctImageLength / allImageLength) * 100) / 100 };
@@ -502,18 +498,6 @@ export default {
       this.maxPage = getPageNumber(Math.max(this.splitLength - 1, 0), this.imagePerPage);
       this.getClassNames();
       this.loadImages();
-    },
-    async initClassifiedImageList() {
-      try {
-        if (this.$route.params.split == 'validation' || this.$route.params.split == 'test') {
-          const res = await APIGetClassifiedSplitLength(this.$route.params.split);
-          this.testImageList = res.data.data;
-        }
-      } catch (error) {
-        console.log(error);
-        this.$root.alert('error', 'Image list initialization failed');
-        this.imageList = [];
-      }
     },
     async initClassifiedImageList() {
       try {
