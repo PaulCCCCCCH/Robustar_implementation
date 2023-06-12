@@ -26,8 +26,6 @@ class MainController(QObject):
             "out_path": "output folder path",
             "inf_path": "influence result path",
             "ckpt_path": "check point path",
-            "batch": "batch size",
-            "worker": "worker number",
             "cls": "class number",
             "size": "image size",
             "device": "device"
@@ -155,12 +153,6 @@ class MainController(QObject):
             self.model.shuffle = "True"
         else:
             self.model.shuffle = "False"
-
-    def set_m_batch(self):
-        self.model.batch = self.main_view.ui.batch_line_edit.text()
-
-    def set_m_worker(self):
-        self.model.worker = self.main_view.ui.worker_line_edit.text()
 
     def set_m_size(self):
         self.model.size = self.main_view.ui.size_line_edit.text()
@@ -293,12 +285,6 @@ class MainController(QObject):
         else:
             self.main_view.ui.shuffle_check_box.setChecked(False)
 
-    def set_v_batch(self, val):
-        self.main_view.ui.batch_line_edit.setText(val)
-
-    def set_v_worker(self, val):
-        self.main_view.ui.worker_line_edit.setText(val)
-
     def set_v_size(self, val):
         self.main_view.ui.size_line_edit.setText(val)
 
@@ -338,8 +324,6 @@ class MainController(QObject):
             "out_path",
             "inf_path",
             "ckpt_path",
-            "batch",
-            "worker",
             "cls",
             "size",
             "device"
@@ -358,7 +342,7 @@ class MainController(QObject):
     def check_wrong_input(self):
         wrong_input_prompt = []
 
-        for key in ["port", "batch", "worker", "cls", "size"]:
+        for key in ["port", "cls", "size"]:
             if not self.model.profile[key].isdigit():
                 wrong_input_prompt.append(self.key_to_prompt[key])
 

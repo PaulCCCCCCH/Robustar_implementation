@@ -615,60 +615,6 @@ class Ui_main_widget(object):
 
         self.model_v_layout.addLayout(self.shuffle_h_layout)
 
-        self.batch_h_layout = QHBoxLayout()
-        self.batch_h_layout.setObjectName(u"batch_h_layout")
-        self.batch_lable = QLabel(self.layoutWidget_2)
-        self.batch_lable.setObjectName(u"batch_lable")
-        sizePolicy1.setHeightForWidth(self.batch_lable.sizePolicy().hasHeightForWidth())
-        self.batch_lable.setSizePolicy(sizePolicy1)
-        self.batch_lable.setMinimumSize(QSize(200, 39))
-        self.batch_lable.setMaximumSize(QSize(200, 39))
-        self.batch_lable.setFont(font)
-
-        self.batch_h_layout.addWidget(self.batch_lable)
-
-        self.batch_line_edit = QLineEdit(self.layoutWidget_2)
-        self.batch_line_edit.setObjectName(u"batch_line_edit")
-        sizePolicy1.setHeightForWidth(self.batch_line_edit.sizePolicy().hasHeightForWidth())
-        self.batch_line_edit.setSizePolicy(sizePolicy1)
-        self.batch_line_edit.setMinimumSize(QSize(200, 24))
-        self.batch_line_edit.setMaximumSize(QSize(200, 24))
-        self.batch_line_edit.setFont(font)
-        self.batch_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.batch_line_edit.setClearButtonEnabled(True)
-
-        self.batch_h_layout.addWidget(self.batch_line_edit)
-
-
-        self.model_v_layout.addLayout(self.batch_h_layout)
-
-        self.worker_h_layout = QHBoxLayout()
-        self.worker_h_layout.setObjectName(u"worker_h_layout")
-        self.worker_h_layout_2 = QLabel(self.layoutWidget_2)
-        self.worker_h_layout_2.setObjectName(u"worker_h_layout_2")
-        sizePolicy1.setHeightForWidth(self.worker_h_layout_2.sizePolicy().hasHeightForWidth())
-        self.worker_h_layout_2.setSizePolicy(sizePolicy1)
-        self.worker_h_layout_2.setMinimumSize(QSize(200, 39))
-        self.worker_h_layout_2.setMaximumSize(QSize(200, 39))
-        self.worker_h_layout_2.setFont(font)
-
-        self.worker_h_layout.addWidget(self.worker_h_layout_2)
-
-        self.worker_line_edit = QLineEdit(self.layoutWidget_2)
-        self.worker_line_edit.setObjectName(u"worker_line_edit")
-        sizePolicy1.setHeightForWidth(self.worker_line_edit.sizePolicy().hasHeightForWidth())
-        self.worker_line_edit.setSizePolicy(sizePolicy1)
-        self.worker_line_edit.setMinimumSize(QSize(200, 24))
-        self.worker_line_edit.setMaximumSize(QSize(200, 24))
-        self.worker_line_edit.setFont(font)
-        self.worker_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.worker_line_edit.setClearButtonEnabled(True)
-
-        self.worker_h_layout.addWidget(self.worker_line_edit)
-
-
-        self.model_v_layout.addLayout(self.worker_h_layout)
-
         self.cls_h_layout = QHBoxLayout()
         self.cls_h_layout.setObjectName(u"cls_h_layout")
         self.cls_label = QLabel(self.layoutWidget_2)
@@ -1105,16 +1051,6 @@ class Ui_main_widget(object):
 #endif // QT_CONFIG(tooltip)
         self.shuffle_label.setText(QCoreApplication.translate("main_widget", u"Shuffle", None))
         self.shuffle_check_box.setText("")
-#if QT_CONFIG(tooltip)
-        self.batch_lable.setToolTip(QCoreApplication.translate("main_widget", u"The batch size of the data", None))
-#endif // QT_CONFIG(tooltip)
-        self.batch_lable.setText(QCoreApplication.translate("main_widget", u"Batch Size", None))
-        self.batch_line_edit.setText("")
-#if QT_CONFIG(tooltip)
-        self.worker_h_layout_2.setToolTip(QCoreApplication.translate("main_widget", u"The number of workers for the data loader", None))
-#endif // QT_CONFIG(tooltip)
-        self.worker_h_layout_2.setText(QCoreApplication.translate("main_widget", u"Worker Number", None))
-        self.worker_line_edit.setText("")
 #if QT_CONFIG(tooltip)
         self.cls_label.setToolTip(QCoreApplication.translate("main_widget", u"The number of classes of the data", None))
 #endif // QT_CONFIG(tooltip)

@@ -27,8 +27,6 @@ class MainView(QWidget):
         self.ui.weight_combo_box.currentIndexChanged.connect(self.ctrl.set_m_weight)
         self.ui.device_combo_box.currentIndexChanged.connect(self.ctrl.set_m_device)
         self.ui.shuffle_check_box.stateChanged.connect(self.ctrl.set_m_shuffle)
-        self.ui.batch_line_edit.textEdited.connect(self.ctrl.set_m_batch)
-        self.ui.worker_line_edit.textEdited.connect(self.ctrl.set_m_worker)
         self.ui.size_line_edit.textEdited.connect(self.ctrl.set_m_size)
         self.ui.pad_combo_box.currentIndexChanged.connect(self.ctrl.set_m_pad)
         self.ui.cls_line_edit.textEdited.connect(self.ctrl.set_m_cls)

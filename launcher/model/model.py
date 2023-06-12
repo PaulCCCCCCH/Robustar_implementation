@@ -18,8 +18,6 @@ class Model(QObject):
     weightChanged = Signal(str)
     deviceChanged = Signal(str)
     shuffleChanged = Signal(str)
-    batchChanged = Signal(str)
-    workerChanged = Signal(str)
     sizeChanged = Signal(str)
     padChanged = Signal(str)
     clsChanged = Signal(str)
@@ -46,8 +44,6 @@ class Model(QObject):
             "weight": "",
             "device": "cpu",
             "shuffle": "False",
-            "batch": "",
-            "worker": "",
             "size": "",
             "pad": "short_side",
             "cls": ""
@@ -88,8 +84,6 @@ class Model(QObject):
         self.weightChanged.connect(self.ctrl.set_v_weight)
         self.deviceChanged.connect(self.ctrl.set_v_device)
         self.shuffleChanged.connect(self.ctrl.set_v_shuffle)
-        self.batchChanged.connect(self.ctrl.set_v_batch)
-        self.workerChanged.connect(self.ctrl.set_v_worker)
         self.sizeChanged.connect(self.ctrl.set_v_size)
         self.padChanged.connect(self.ctrl.set_v_pad)
         self.clsChanged.connect(self.ctrl.set_v_cls)
@@ -230,24 +224,6 @@ class Model(QObject):
         self.shuffleChanged.emit(val)
 
     @property
-    def batch(self):
-        return self._profile["batch"]
-
-    @batch.setter
-    def batch(self, val):
-        self._profile["batch"] = val
-        self.batchChanged.emit(val)
-
-    @property
-    def worker(self):
-        return self._profile["worker"]
-
-    @worker.setter
-    def worker(self, val):
-        self._profile["worker"] = val
-        self.workerChanged.emit(val)
-
-    @property
     def size(self):
         return self._profile["size"]
 
@@ -295,8 +271,6 @@ class Model(QObject):
         self.weight = val["weight"]
         self.device = val["device"]
         self.shuffle = val["shuffle"]
-        self.batch = val["batch"]
-        self.worker = val["worker"]
         self.size = val["size"]
         self.pad = val["pad"]
         self.cls = val["cls"]

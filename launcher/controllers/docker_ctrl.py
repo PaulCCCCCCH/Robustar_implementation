@@ -101,8 +101,6 @@ class DockerController(QObject):
             "weight_to_load": self.model.weight,
             "device": self.model.device,
             "shuffle": True if self.model.shuffle == "True" else False,
-            "batch_size": int(self.model.batch),
-            "num_workers": int(self.model.worker),
             "image_size": int(self.model.size),
             "image_padding": self.model.pad,
             "num_classes": int(self.model.cls),
