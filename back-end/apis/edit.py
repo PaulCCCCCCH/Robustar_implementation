@@ -85,14 +85,20 @@ def api_user_edit(split):
 @edit_api.route("/edit/<split>", methods=["DELETE"])
 def api_delete_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
-    remove_edit(path)
-    return RResponse.ok("Success!")
+    try:
+      remove_edit(path)
+      return RResponse.ok("Success!")
+    except Exception as e:
+        RResponse.abort(500, f"Failed to delete edit path. ({e})", -1)
 
 
 @edit_api.route("/edit/clear", methods=["DELETE"])
 def api_clear_edit():
-    clear_edit()
-    return RResponse.ok("Success!")
+    try:
+      clear_edit()
+      return RResponse.ok("Success!")
+    except Exception as e:
+      RResponse.abort(500, f"Failed to clear edit path. ({e})", -1)
 
 
 @edit_api.route("/propose/<split>")
@@ -115,7 +121,7 @@ def api_propose_edit(split):
     path = request.args.get(PARAM_NAME_IMAGE_PATH)
 
     if split not in ["annotated", "train"]:
-        RResponse.abort(400, "Cannot propose edit to a wrong split {}".format(split))
+        return RResponse.ok({}, "Cannot propose edit to a wrong split {}".format(split), -1)
 
     path = to_unix(path)
     proposed_image_path, _ = propose_edit(split, path)

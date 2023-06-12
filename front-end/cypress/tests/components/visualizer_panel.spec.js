@@ -62,6 +62,55 @@ describe('Visualizer', () => {
       });
   });
 
+  it('Test Model Annottaion Panel', () => {
+    cy.getBySel('model-prediction').click();
+    cy.get('[data-test=image-list-img-0]', { timeout: 120 * 1000 }).trigger('mouseenter');
+    cy.getBySel('image-list-btn-edit-image-0').click().wait(500);
+    cy.getBySel('visualizer-btn').click().wait(500);
+    cy.getBySel('visualizer-sheet').should('be.visible');
+    cy.getBySel('model-prediction-sheet')
+      .find('.num')
+      .invoke('text')
+      .then(parseFloat)
+      .should('be.lte', 1)
+      .wait(500);
+
+    cy.get('li:nth-child(1)');
+
+    let intialLength = 0;
+    cy.getBySel('table')
+      .find('li')
+      .then((li) => {
+        intialLength = li.length;
+      });
+
+    cy.getBySel('table')
+      .find('li')
+      .then((res) => {
+        console.log('li', res);
+        var down = 0;
+        var up = 0;
+        for (let i = 0; i < intialLength - 1; i++) {
+          cy.getBySel(`item-${i}`)
+            .invoke('attr', 'title')
+            .then((res) => {
+              up = parseFloat(res);
+
+              cy.getBySel(`item-${i}`)
+                .parent()
+                .next()
+                .children(`[data-test=item-${i + 1}]`)
+                .invoke('attr', 'title')
+                .then((res) => {
+                  down = parseFloat(res);
+                  expect(up).to.be.least(down);
+                });
+            });
+        }
+      });
+
+  });
+
   it('Test Model Focus Panel', () => {
     cy.getBySel('model-focus').click();
     cy.getBySel('model-focus-panel').should('be.visible');

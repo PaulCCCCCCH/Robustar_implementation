@@ -1,4 +1,4 @@
-from ml import DataSet, PairedDataset, Trainer
+from modules.ml import DataSet, PairedDataset, Trainer
 import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
@@ -74,7 +74,7 @@ def setup_training(configs):
         testset=test_set,
         batch_size=int(configs["batch_size"]),
         shuffle=configs["shuffle"],
-        num_workers=int(configs["thread"]),
+        num_workers=int(configs["num_workers"]),
         device=device,
         learn_rate=float(configs["learn_rate"]),
         auto_save=configs["auto_save_model"],
@@ -93,7 +93,7 @@ def start_tensorboard(logdir):
     Starts updating tensorboard.
     """
 
-    os.system("tensorboard --logdir={}".format(os.path.abspath(logdir)))
+    os.system("tensorboard --logdir={} --port=6006".format(os.path.abspath(logdir)))
 
 
 def start_train(configs):
@@ -115,17 +115,18 @@ def start_train(configs):
     try:
         train_set, test_set, model, trainer = setup_training(configs)
         # Set up tensorboard log directory
+        tb_dir = "runs" 
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
-        if not os.path.exists("runs"):
-            os.mkdir("runs")
-        logdir = os.path.join("runs", "run_{}".format(date))
-        writer = SummaryWriter(logdir)
+        if not os.path.exists(tb_dir):
+            os.mkdir(tb_dir)
+        run_dir = os.path.join(tb_dir, "run_{}".format(date))
+        writer = SummaryWriter(run_dir)
         trainer.writer = writer
         writer.add_scalar("train accuracy", 0, 0)
         writer.add_scalar("loss", 0, 0)
 
         # Start the tensorboard writer as a new process
-        t = multiprocessing.Process(target=start_tensorboard, args=(logdir,))
+        t = multiprocessing.Process(target=start_tensorboard, args=(tb_dir,))
         t.start()
         trainer.set_tb_process(t)
 

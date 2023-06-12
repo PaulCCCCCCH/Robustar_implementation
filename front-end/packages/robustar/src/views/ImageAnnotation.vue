@@ -220,28 +220,6 @@
             </v-slider>
           </div>
           <v-checkbox v-model="lockAspectRatio" label="Lock Aspect Ratio" hide-details></v-checkbox>
-          <!-- <div class="mt-6 mb-8">
-            <v-btn
-              text
-              @click="
-                imageWidth = tempWidth;
-                imageHeight = tempHeight;
-                mode = '';
-              "
-            >
-              <v-icon class="mr-2">mdi-check</v-icon>Apply
-            </v-btn>
-            <v-btn
-              text
-              color="grey"
-              @click="
-                $refs.editor.resize({ width: imageWidth, height: imageHeight });
-                mode = '';
-              "
-            >
-              <v-icon class="mr-2">mdi-close</v-icon>Cancel
-            </v-btn>
-          </div> -->
         </div>
         <div v-if="mode === 'draw'" class="d-flex align-center" style="width: 500px">
           <span class="mr-4 font-weight-medium" style="width: 100px">Brush Width</span>
@@ -443,11 +421,10 @@ export default {
       this.$root.startProcessing('Auto-annotating...');
       try {
         const res = await APIGetProposedEdit(this.$root.imageSplit, this.$root.imageURL);
-        const proposed_url = res.data.data;
-        this.url = proposed_url;
+        const { base64, path } = res.data.data;
+        this.url = path;
         this.split = 'proposed';
-        await this.$refs['editor'].loadImageFromURL();
-        await this.$refs['editor'].loadImageFromURL();
+        setTimeout(this.$refs['editor'].loadImageFromURL, 100);
         this._doOperation('auto edit', 'mdi-auto-fix');
         this.$root.finishProcessing();
         this.$root.alert('success', 'Automatic annotation applied.');
@@ -468,8 +445,9 @@ export default {
       this.$root.startProcessing(
         'The editing information of this image is being sent. Please wait...'
       );
-      const image_height = sessionStorage.getItem('image_height');
-      const image_width = sessionStorage.getItem('image_width');
+      const { width: image_width, height: image_height } = await this.$refs[
+        'editor'
+      ].getCanvasSize();
       try {
         const image_base64 = this.$refs['editor'].invoke('toDataURL');
         await APISendEdit({

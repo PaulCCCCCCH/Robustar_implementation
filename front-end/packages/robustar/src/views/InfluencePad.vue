@@ -4,10 +4,10 @@
       <div class="text-h4 text-center font-weight-medium">Influence Calculation</div>
       <v-divider class="mt-4 mb-8"></v-divider>
       <v-form v-model="valid" ref="form" lazy-validation>
-        <div class="text-h5 mb-8">settings</div>
+        <div class="text-h5 mb-8"> Image Index Range </div>
         <!-- Set start index of test samples per class for which we calculate influence-->
         <v-text-field
-          v-model="configs.test_sample_start_idx"
+          v-model="configs.test_start_index"
           :rules="startIdxRules"
           class="mb-4"
           label="Start index of test samples"
@@ -21,7 +21,7 @@
         ></v-text-field>
         <!-- Set end index of test samples per class for which we calculate influence-->
         <v-text-field
-          v-model="configs.test_sample_end_idx"
+          v-model="configs.test_end_index"
           :rules="endIdxRules"
           class="mb-4"
           label="End index of test samples"
@@ -33,6 +33,25 @@
           required
           data-test="influence-pad-end-index-field"
         ></v-text-field>
+        <v-divider class="mt-4 mb-8"></v-divider>
+        <div class="text-h5 mb-8"> Data Loader Configs </div>
+        <v-text-field
+          v-model="configs.batch_size"
+          value="128"
+          label="Batch size"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <v-text-field
+          v-model="configs.num_workers"
+          label="Number of dataloader workers"
+          outlined
+          clearable
+          type="number"
+        ></v-text-field>
+        <v-divider class="mt-4 mb-8"></v-divider>
+        <div class="text-h5 mb-8"> Algorithm Parameters </div>
         <!-- Set r_averaging -->
         <v-text-field
           v-model="configs.r_averaging"
@@ -40,8 +59,29 @@
           outlined
           clearable
           type="number"
-          hint="Number of iterations of which to take the avg.
-            of the h_estimate calculation; recursion_depth = len(train_data) / r."
+          hint="Run the algorithm r times and take the average. Increasing this 
+          results in better accuracy and longer training time."
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="configs.recursion_depth"
+          label="recursion_depth (integer)"
+          outlined
+          clearable
+          type="number"
+          hint="Number of batches we sample from the training data; 
+          Increasing this results in better accuracy and longer training time.
+          It is recommended to have recursion_depth * r = size of training data"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="configs.scale"
+          label="scale"
+          outlined
+          clearable
+          type="number"
+          hint="The scale of the influence value. Tune this number for the dataset
+          and model you use if you see NaN values in the results."
           required
         ></v-text-field>
 
@@ -71,15 +111,20 @@ export default {
         (v) => (!v && v !== 0 ? 'End index is required' : true),
         (v) => v >= -1 || 'end index should be greater than or equal to -1',
         (v) =>
-          v >= Number(this.configs.test_sample_start_idx) ||
+          v >= Number(this.configs.test_start_index) ||
           Number(v) === -1 ||
           'end index should be greater than start index or equal to -1',
       ],
       // influence calculation settings
       configs: {
-        test_sample_start_idx: 0,
-        test_sample_end_idx: 9,
+        test_start_index: 0,
+        test_end_index: 9,
         r_averaging: 1,
+        recursion_depth: 1,
+        scale: 5000,
+        damp: 0.001,
+        num_workers: 8,
+        batch_size: 8
       },
     };
   },
@@ -87,10 +132,10 @@ export default {
     next((vm) => {
       const { startIdx, endIdx } = vm.$route.params;
       if (startIdx) {
-        vm.configs.test_sample_start_idx = startIdx;
+        vm.configs.test_start_index = startIdx;
       }
       if (endIdx) {
-        vm.configs.test_sample_end_idx = endIdx;
+        vm.configs.test_end_index = endIdx;
       }
     });
   },

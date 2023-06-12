@@ -103,7 +103,7 @@ export default {
       if (!this.includeUi) {
         const { path, name } = this.image;
         this.editorInstance
-          .loadImageFromURL(path, name)
+          .loadImageFromURL(path, name) 
           .then(() => {
             this.editorInstance.clearUndoStack();
           })
@@ -113,7 +113,14 @@ export default {
     },
     async loadImageFromURL() {
       const { path, name } = this.image;
-      await this.editorInstance.loadImageFromURL(path, name);
+      try{
+        await this.editorInstance.loadImageFromURL(path, name);
+      } catch (error) {
+        this.$root.alert('error', error.response?.data?.detail || 'Image loading failed');
+      }
+    },
+    async getCanvasSize() {
+      return await this.editorInstance.getCanvasSize();
     },
     getRootElement() {
       return this.$refs.tuiImageEditor;
