@@ -25,6 +25,9 @@ export default {
       name: null,
     };
   },
+  beforeMount() {
+    this.startGettingConfig();
+  },
   methods: {
     async startGettingConfig() {
       try {
@@ -35,9 +38,6 @@ export default {
         this.configs = undefined;
       }
     },
-  },
-  beforeMount() {
-    this.startGettingConfig();
   },
 };
 </script>

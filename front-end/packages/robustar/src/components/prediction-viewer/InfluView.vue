@@ -25,15 +25,13 @@ export default {
   },
   methods: {
     gotoImage(url) {
-
       this.$root.imageURL = url;
       this.$root.imageSplit = 'train';
-      this.$root.imageURL = url;
       this.$router.push({ name: 'ImageAnnotation' });
     },
     toFullImgUrl(url) {
       return `${configs.imagePathServerUrl}?${configs.imagePathParamName}=${url}`;
-    }
+    },
   },
 };
 </script>

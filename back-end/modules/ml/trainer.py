@@ -199,7 +199,6 @@ class Trainer:
                     print("Training stopped!")
                     return
 
-            # save_net(net)
             print("Epoch Finish!")
             eepoch = time.time()
             print(
