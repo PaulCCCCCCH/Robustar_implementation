@@ -45,6 +45,20 @@
                 </v-list-item-content>
               </template>
               <!-- third level -->
+              <v-list-item v-if="!item.children" color="primary" :to="{ path: '/' + item.link }">
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title> </v-list-item-content
+              ></v-list-item>
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </template>
+
+              <!-- fourth level -->
               <v-list-item
                 v-for="desc in child.children"
                 :key="desc.text"
@@ -69,6 +83,7 @@ export default {
       items: [
         { text: 'Train', icon: 'mdi-chart-line', link: 'train-pad' },
         { text: 'Annotate', icon: 'mdi-draw', link: 'edit' },
+        { text: 'Models', icon: 'mdi-oolbox', link: 'model' },
         { text: 'Influence', icon: 'mdi-vector-link', link: 'influence-pad' },
         {
           text: 'Inspect Data',
@@ -76,6 +91,7 @@ export default {
           children: [
             { text: 'Training Data', icon: '', link: 'image-list/train' },
             { text: 'Annotated Data', icon: '', link: 'image-list/annotated' },
+            { text: 'Training Model', icon: '', link: 'image-list/model' },
             {
               text: 'Validation Data',
               icon: '',
