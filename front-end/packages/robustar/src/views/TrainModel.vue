@@ -1,14 +1,9 @@
 <template>
   <div class="d-flex flex-column align-center">
-    <v-sheet rounded width="800" elevation="3" class="my-8 pa-8">
-      <!-- <v-container> -->
+    <v-sheet rounded width="1000" elevation="3" class="mt-8 pa-4">
       <v-row class="d-flex flex-column align-center">
-        <v-col cols="8">
-          <v-card-title class="text-h4 text-center font-weight-medium text--primary"
-            >current model: ResNet</v-card-title
-          >
-          <v-divider class="mt-4 mb-8"></v-divider>
-          <v-card-subtitle class="text-h5 mb-4">Current model: ResNet</v-card-subtitle>
+        <v-col cols="12">
+          <v-card-title>Current model: ResNet</v-card-title>
           <v-row justify="space-between">
             <v-col cols="2">Created time:</v-col>
             <v-col cols="2">Last trained:</v-col>
@@ -20,22 +15,15 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <v-sheet rounded width="800" elevation="3" class="my-8 pa-8">
+    <v-sheet rounded width="1000" elevation="3" class="mt-4 pa-4">
       <v-row class="d-flex flex-column align-center">
-        <v-col cols="8">
+        <v-col cols="12">
           <v-card-title>All models</v-card-title>
-          <v-row justify="space-between" align="center">
-            <v-col cols="4"
-              ><v-select :items="model_options" v-model="$root.imageClass" clearable></v-select
-            ></v-col>
-            <v-col cols="2"
-              ><v-btn :true-value="true" :false-value="false" class="mt-n2 mb-1"
-                >Upload New Model</v-btn
-              ></v-col
-            >
-          </v-row>
+          <div class="d-flex">
+            <v-select :items="['a', 'b', 'c']" label="Model" hint="" outlined dense></v-select>
+            <ModelUploader />
+          </div>
           <v-divider class="mt-4 mb-8"></v-divider>
-          <v-card-text>{{ $root.imageClass }}</v-card-text>
           <v-row justify="space-between">
             <v-col cols="3">Created time:</v-col>
             <v-col cols="3">Last trained:</v-col>
@@ -53,7 +41,17 @@
           </v-row>
         </v-col>
       </v-row>
-      <!-- </v-container> -->
     </v-sheet>
   </div>
 </template>
+
+<script>
+import ModelUploader from '@/components/ModelUploader';
+
+export default {
+  name: 'TrainModel',
+  components: {
+    ModelUploader,
+  },
+};
+</script>

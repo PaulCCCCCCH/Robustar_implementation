@@ -83,7 +83,7 @@ export default {
       items: [
         { text: 'Train', icon: 'mdi-chart-line', link: 'train-pad' },
         { text: 'Annotate', icon: 'mdi-draw', link: 'edit' },
-        { text: 'Models', icon: 'mdi-oolbox', link: 'model' },
+        { text: 'Models', icon: 'mdi-function-variant', link: 'model' },
         { text: 'Influence', icon: 'mdi-vector-link', link: 'influence-pad' },
         {
           text: 'Inspect Data',
