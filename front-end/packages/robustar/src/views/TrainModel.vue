@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center">
-    <v-sheet rounded width="1000" elevation="3" class="mt-8 pa-4">
+    <v-sheet rounded width="800" elevation="3" class="mt-8 pa-4">
       <v-row class="d-flex flex-column align-center">
         <v-col cols="12">
           <v-card-title>Current model: ResNet</v-card-title>
@@ -15,7 +15,7 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <v-sheet rounded width="1000" elevation="3" class="mt-4 pa-4">
+    <v-sheet rounded width="800" elevation="3" class="mt-4 pa-4">
       <v-row class="d-flex flex-column align-center">
         <v-col cols="12">
           <v-card-title>All models</v-card-title>
@@ -32,12 +32,12 @@
           </v-row>
           <v-card-text>Description:</v-card-text>
           <v-card-text>Architecture:</v-card-text>
-          <v-row justify="space-between">
-            <v-col cols="2" color="primary"><v-btn>Delete</v-btn></v-col>
-            <v-col cols="2"><v-btn>Duplicate</v-btn></v-col>
-            <v-col cols="2"><v-btn>Set a current model</v-btn></v-col>
-            <v-col cols="2"><v-btn>Train</v-btn></v-col>
-            <v-col cols="2"><v-btn>Save changes</v-btn></v-col>
+          <v-row class="row" row-gap="2">
+            <v-col><v-btn block>Delete</v-btn></v-col>
+            <v-col><v-btn block>Duplicate</v-btn></v-col>
+            <v-col><v-btn block>Set a current model</v-btn></v-col>
+            <v-col><v-btn block>Train</v-btn></v-col>
+            <v-col><v-btn block>Save changes</v-btn></v-col>
           </v-row>
         </v-col>
       </v-row>
