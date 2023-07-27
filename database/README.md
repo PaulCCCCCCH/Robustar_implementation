@@ -25,3 +25,46 @@ Download `SQLiteStudio` from https://sqlitestudio.pl/ (which is a handy GUI-clie
 2. Run the backend. A new `/Robustar/data.db` will be generated.
 3. Replacing `database/robustar-latest.db` with the newly generated `/Robustar/data.db`.
 4. Push the changes.
+
+## V0.3 schema change notes
+
+- **(new)** visuals
+  - image_path (index 1, part-of-pk)
+  - model_id (index 1, part-of-pk)
+  - visual_path (index 1, part-of-pk)
+- visual_images
+  - path (pk)
+- influ_rel
+  - **(new)** model_id (index 1, part-of-pk)
+  - image_path (index 1, part-of-pk)
+  - influ_path
+- paired_set (no change)
+- proposed (no change)
+- split (no change)
+- train_set (no change)
+- val_set (no change)
+  - path (pk)
+  - ~~classified~~
+- test_set
+  - path (pk)
+  - ~~classified~~
+- **(new)** test_result
+  - model_id (index 1, part-of-pk)
+  - path (index 1, part-of-pk)
+  - result
+- **(new)** val_result
+  - model_id (index 1, part-of-pk)
+  - path (index 1, part-of-pk)
+  - result
+- **(new)** model
+  - model_id (pk, index 1)
+  - model_name (index 2)
+  - description
+  - architecture
+  - tags
+  - created_time
+  - weight_path
+  - code_path
+  - accuracies
+  - epoch
+  - last_tested
