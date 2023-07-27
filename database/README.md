@@ -26,21 +26,21 @@ Download `SQLiteStudio` from https://sqlitestudio.pl/ (which is a handy GUI-clie
 3. Replacing `database/robustar-latest.db` with the newly generated `/Robustar/data.db`.
 4. Push the changes.
 
-## V0.3 schema change notes
+# V0.3 schema change notes
+
+## Design
 
 - **(new)** visuals
   - image_path (index 1, part-of-pk)
   - model_id (index 1, part-of-pk)
   - visual_path (index 1, part-of-pk)
-- visual_images
-  - path (pk)
 - influ_rel
   - **(new)** model_id (index 1, part-of-pk)
   - image_path (index 1, part-of-pk)
   - influ_path
 - paired_set (no change)
 - proposed (no change)
-- split (no change)
+- ~~split~~
 - train_set (no change)
 - val_set (no change)
   - path (pk)
@@ -48,15 +48,15 @@ Download `SQLiteStudio` from https://sqlitestudio.pl/ (which is a handy GUI-clie
 - test_set
   - path (pk)
   - ~~classified~~
-- **(new)** test_result
+- **(new)** test_results
   - model_id (index 1, part-of-pk)
-  - path (index 1, part-of-pk)
+  - test_path (index 1, part-of-pk)
   - result
-- **(new)** val_result
+- **(new)** val_results
   - model_id (index 1, part-of-pk)
-  - path (index 1, part-of-pk)
+  - val_path (index 1, part-of-pk)
   - result
-- **(new)** model
+- **(new)** models
   - model_id (pk, index 1)
   - model_name (index 2)
   - description
@@ -65,6 +65,96 @@ Download `SQLiteStudio` from https://sqlitestudio.pl/ (which is a handy GUI-clie
   - created_time
   - weight_path
   - code_path
-  - accuracies
+  - train_accuracy
+  - dev_accuracy
+  - last_eval_on_dev_set
+  - test_accuracy
+  - last_eval_on_test_set
   - epoch
-  - last_tested
+
+## Diagram from `dbdiagram.io`
+
+![](robustar-v0.3.png)
+
+DBML Code:
+
+```
+Table visuals {
+  image_path string [primary key]
+  model_id integer [primary key]
+  visual_path string [primary key]
+}
+
+Table influ_rel {
+  model_id integer [primary key]
+  image_path string [primary key]
+  influ_path string
+}
+
+Table paired_set {
+  path string [primary key]
+  train_path string
+}
+
+Table proposed {
+  path string [primary key]
+  train_path string
+}
+
+Table train_set {
+  path string [primary key]
+  paired_path string
+}
+
+Table val_set {
+  path string [primary key]
+}
+
+Table test_set {
+  path string [primary key]
+}
+
+Table test_results {
+  model_id integer [primary key]
+  test_path string [primary key]
+  result integer
+}
+
+Table val_results {
+  model_id integer [primary key]
+  val_path string [primary key]
+  result integer
+}
+
+Table models {
+  model_id string [primary key]
+  model_name string
+  description string
+  architecture string
+  tags string
+  created_time timestamp
+  weight_path string
+  code_path string
+  epoch integer
+  train_accuracy float
+  dev_accuracy float
+  last_eval_on_dev_set timestamp
+  test_accuracy float
+  last_eval_on_test_set timestamp
+}
+
+// path relations
+Ref: paired_set.train_path > train_set.path
+Ref: proposed.train_path > train_set.path
+Ref: test_results.test_path > test_set.path
+Ref: val_results.val_path > val_set.path
+Ref: visuals.image_path > train_set.path
+Ref: visuals.image_path > val_set.path
+Ref: visuals.image_path > test_set.path
+Ref: influ_rel.image_path > test_set.path
+
+// model relations
+Ref: val_results.model_id > models.model_id
+Ref: test_results.model_id > models.model_id
+
+```
