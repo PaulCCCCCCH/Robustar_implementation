@@ -3,7 +3,7 @@ import os
 import torch
 from flask import request
 from flask import Blueprint
-from utils.model_utils import init_model_from_def, val_model, save_model
+from utils.model_utils import init_model, val_model, save_model
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 
@@ -117,7 +117,7 @@ def UploadModel():
 
     # Initialize the model
     try:
-        model = init_model_from_def(code_path)
+        model = init_model(code_path, arch)
     except Exception as e:
         return RResponse.abort(400, f"Failed to initialize the model. {e}")
 

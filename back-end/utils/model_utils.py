@@ -1,8 +1,15 @@
-def init_model_from_def(def_file_path):
-    """ Initialize the model from the definition file
+import importlib
+
+
+def init_model(code_path, arch):
+    """ Initialize the model by importing the class named arch in the file specified by code_path
     """
     try:
-        pass
+        spec = importlib.util.spec_from_file_location("model_def", code_path)
+        model_def = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(model_def)
+        model = getattr(model_def, arch)()
+        return model
     except Exception as e:
         print("Failed to initialize the model.")
         print(e)
