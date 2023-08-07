@@ -92,53 +92,54 @@ def UploadModel():
     """
     print("Requested to upload a model")
 
+    # Get the model's metadata
+    name = request.form.get('model_name')
+    desc = request.form.get('desc')
+    arch = request.form.get('arch')
+    tags = request.form.get('tags')
+    created_time = request.form.get('created_time')
+    epoch = request.form.get('epoch')
+    train_acc = request.form.get('train_acc')
+    dev_acc = request.form.get('dev_acc')
+    last_eval_on_dev_set = request.form.get('last_eval_on_dev_set')
+    test_acc = request.form.get('test_acc')
+    last_eval_on_test_set = request.form.get('last_eval_on_test_set')
+
     # Get the model definition code and save it to a temporary file
-    model_def = request.form.get('model_def')
+    code = request.form.get('code')
     # TODO: discuss with team the path to save the temp file
-    def_file_path = os.path.join(RServer.get_server().base_dir, 'temp_def.py')
+    code_path = os.path.join(RServer.get_server().base_dir, 'temp_code.py')
     try:
-        with open(def_file_path, 'w') as temp_file:
-            temp_file.write(model_def)
+        with open(code_path, 'w') as code_file:
+            code_file.write(code)
     except Exception as e:
-        # Delete the temporary definition file and return
-        os.remove(def_file_path)
         return RResponse.abort(500, f"Failed to save the model definition. {e}")
 
     # Initialize the model
     try:
-        model = init_model_from_def(def_file_path)
+        model = init_model_from_def(code_path)
     except Exception as e:
-        # Delete the temporary definition file and return
-        os.remove(def_file_path)
         return RResponse.abort(400, f"Failed to initialize the model. {e}")
 
     # Get the weight file and save it to a temporary location if it exists
     weight_file = request.files.get('weight_file')
     if weight_file is not None:
         try:
-            weight_file_path = os.path.join(RServer.get_server().base_dir, 'temp_weights.pth')
-            weight_file.save(weight_file_path)
+            weights_path = os.path.join(RServer.get_server().base_dir, 'temp_weights.pth')
+            weight_file.save(weights_path)
         except Exception as e:
-            # Delete the weight file
-            os.remove(weight_file_path)
             return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
     # Load the weights from the file
     try:
-        model.load_state_dict(torch.load(weight_file_path))
+        model.load_state_dict(torch.load(weights_path))
     except Exception as e:
-        # Delete the temp files
-        os.remove(def_file_path)
-        os.remove(weight_file_path)
-        return RResponse.abort(400, f"Failed to load the weight. {e}")
+        return RResponse.abort(400, f"Failed to load the weights. {e}")
 
     # Validate the model
     try:
         val_model(model)
     except Exception as e:
-        # Delete the temp files
-        os.remove(def_file_path)
-        os.remove(weight_file_path)
         return RResponse.abort(400, f"The model is invalid. {e}")
 
     # TODO: generate a real model id
@@ -148,18 +149,12 @@ def UploadModel():
     try:
         save_model(model)
     except Exception as e:
-        # Delete the temp files
-        os.remove(def_file_path)
-        os.remove(weight_file_path)
         return RResponse.abort(500, f"Failed to save the model. {e}")
 
     # Set the current model to the newly uploaded model
     try:
         SetCurrModel(model_id)
     except Exception as e:
-        # Delete the temp files
-        os.remove(def_file_path)
-        os.remove(weight_file_path)
         return RResponse.abort(500, f"Failed to set the current model. {e}")
 
     # TODO: return real data as specified in the docstring
