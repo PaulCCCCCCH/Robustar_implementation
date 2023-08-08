@@ -1,9 +1,10 @@
+import json
 import string
 import os
 import torch
 from flask import request
 from flask import Blueprint
-from utils.model_utils import init_model, val_model, save_model
+from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 
@@ -54,9 +55,14 @@ def UploadModel():
       - "application/json"
     parameters:
       - in: "formData"        # Use "formData" to indicate multipart/form-data parameters
-        name: "model_def"     # Name of the parameter for the model definition code
+        name: "metadata"      # Name of the parameter for the model metadata
+        description: "The metadata of the model"
+        required: true        # The metadata is required, so set 'required' to true
+        type: "string"        # The type of data for the metadata
+      - in: "formData"        # Use "formData" to indicate multipart/form-data parameters
+        name: "code"          # Name of the parameter for the model definition code
         description: "The definition of the model in Python code"
-        required: true
+        required: false       # The model definition code is optional, so set 'required' to false
         type: "string"        # The type of data for the model definition code
       - in: "formData"        # Use "formData" to indicate multipart/form-data parameters
         name: "weight_file"   # Name of the parameter for the model weight file
@@ -90,64 +96,67 @@ def UploadModel():
               example: "Success"
 
     """
-    print("Requested to upload a model")
-
     # Get the model's metadata
-    name = request.form.get('model_name')
-    desc = request.form.get('desc')
-    arch = request.form.get('arch')
-    tags = request.form.get('tags')
-    created_time = request.form.get('created_time')
-    epoch = request.form.get('epoch')
-    train_acc = request.form.get('train_acc')
-    dev_acc = request.form.get('dev_acc')
-    last_eval_on_dev_set = request.form.get('last_eval_on_dev_set')
-    test_acc = request.form.get('test_acc')
-    last_eval_on_test_set = request.form.get('last_eval_on_test_set')
+    metadata = json.loads(request.form.get('metadata'))
 
-    # Get the model definition code and save it to a temporary file
-    code = request.form.get('code')
-    # TODO: discuss with team the path to save the temp file
-    code_path = os.path.join(RServer.get_server().base_dir, 'temp_code.py')
-    try:
-        with open(code_path, 'w') as code_file:
-            code_file.write(code)
-    except Exception as e:
-        return RResponse.abort(500, f"Failed to save the model definition. {e}")
+    # If it is a new model, validate it and update code_path and weight_path in its metadata
+    if 'code' in request.form:
+        print("Requested to upload a new model")
 
-    # Initialize the model
-    try:
-        model = init_model(code_path, arch)
-    except Exception as e:
-        return RResponse.abort(400, f"Failed to initialize the model. {e}")
+        # Get the model id
+        model_id = metadata.get('model_id')
 
-    # Get the weight file and save it to a temporary location if it exists
-    weight_file = request.files.get('weight_file')
-    if weight_file is not None:
+        # Get the model definition code and save it to a temporary file
+        code = request.form.get('code')
+        # TODO: discuss with team the path to save the definition and weight file
+        code_path = os.path.join(RServer.get_server().base_dir, f'{model_id}.py')
         try:
-            weights_path = os.path.join(RServer.get_server().base_dir, 'temp_weights.pth')
-            weight_file.save(weights_path)
+            with open(code_path, 'w') as code_file:
+                code_file.write(code)
         except Exception as e:
-            return RResponse.abort(500, f"Failed to save the weight file. {e}")
+            clear_model_temp_files(model_id)
+            return RResponse.abort(500, f"Failed to save the model definition. {e}")
 
-    # Load the weights from the file
+        # Initialize the model
+        try:
+            model = init_model(code_path, metadata.get('architecture'))
+        except Exception as e:
+            clear_model_temp_files(model_id)
+            return RResponse.abort(400, f"Failed to initialize the model. {e}")
+
+        # Get the weight file and save it to a temporary location if it exists
+        if 'weight_file' in request.files:
+            weight_file = request.files.get('weight_file')
+            try:
+                weight_path = os.path.join(RServer.get_server().base_dir, f'{model_id}.pth')
+                weight_file.save(weight_path)
+            except Exception as e:
+                clear_model_temp_files(model_id)
+                return RResponse.abort(500, f"Failed to save the weight file. {e}")
+
+            # Load the weights from the file
+            try:
+                model.load_state_dict(torch.load(weight_path))
+            except Exception as e:
+                clear_model_temp_files(model_id)
+                return RResponse.abort(400, f"Failed to load the weights. {e}")
+
+        # Validate the model
+        try:
+            val_model(model)
+        except Exception as e:
+            clear_model_temp_files(model_id)
+            return RResponse.abort(400, f"The model is invalid. {e}")
+
+        # Update the metadata
+        metadata['code_path'] = code_path
+        metadata['weight_path'] = weight_path
+    else:
+        print("Requested to upload a trained model")
+
+    # Save the model's metadata to the database
     try:
-        model.load_state_dict(torch.load(weights_path))
-    except Exception as e:
-        return RResponse.abort(400, f"Failed to load the weights. {e}")
-
-    # Validate the model
-    try:
-        val_model(model)
-    except Exception as e:
-        return RResponse.abort(400, f"The model is invalid. {e}")
-
-    # TODO: generate a real model id
-    model_id = "abc123"
-
-    # Save the model to the database
-    try:
-        save_model(model)
+        save_model(metadata)
     except Exception as e:
         return RResponse.abort(500, f"Failed to save the model. {e}")
 
