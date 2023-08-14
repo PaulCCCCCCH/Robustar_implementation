@@ -13,7 +13,7 @@
           </v-row>
           <v-row justify="space-between">
             <v-col cols="2">Created time:</v-col>
-            <v-col cols="2">clone_anonymous_github/plg_proj/plg_on_our_data.ipynbLast trained:</v-col>
+            <v-col cols="2">Trained:</v-col>
             <v-col cols="2">Accuracies:</v-col>
             <v-col cols="2">Epoch:</v-col>
           </v-row>
