@@ -11,8 +11,10 @@ from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
-import logging 
-log = logging.getLogger('werkzeug')
+import logging
+from database.models import *
+
+log = logging.getLogger("werkzeug")
 log.setLevel(logging.WARNING)
 
 
@@ -137,10 +139,16 @@ def new_server_object(base_dir):
     )
 
     """ SETUP DATA MANAGER """
+    # Setup database
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_path
+    from objects.RDataManager import db, init_db
+
+    db.init_app(app)
+    init_db()
+    # Setup data manager
     data_manager = RDataManager(
         base_dir,
         dataset_dir,
-        db_path,
         shuffle=configs["shuffle"],
         image_size=image_size,
         image_padding=configs["image_padding"],

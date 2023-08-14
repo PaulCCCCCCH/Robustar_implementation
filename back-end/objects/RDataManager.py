@@ -4,10 +4,20 @@ import sqlite3
 import os.path as osp
 import os
 from utils.path_utils import get_paired_path, split_path, to_unix
-import torch
+from flask import current_app as app
+from flask_sqlalchemy import SQLAlchemy
 from torchvision import transforms
 from .RImageFolder import RAnnotationFolder, REvalImageFolder, RTrainImageFolder
 import torchvision.transforms.functional as transF
+
+db = SQLAlchemy()
+
+
+def init_db(self):
+    print("Initializing database ... ")
+    db.init_app(app)
+    with app.app_context():
+        self.db.create_all()
 
 
 # The data interface
@@ -17,9 +27,8 @@ class RDataManager:
 
     def __init__(
         self,
-        baseDir,
-        dataset_dir,
-        db_path,
+        baseDir: str,
+        dataset_dir: str,
         shuffle=True,
         image_size=32,
         image_padding="short_side",
@@ -30,16 +39,15 @@ class RDataManager:
         # splits = ['train', 'test']
         self.data_root = dataset_dir
         self.base_dir = baseDir
-        self.db_path = db_path
+        self.db_conn = db
         self.shuffle = shuffle
         self.image_size = image_size
         self.image_padding = image_padding
         self.class2label = class2label_mapping
 
         self._init_paths()
-        self._init_db()
         self._init_transforms()
-        self._init_data_records()
+        # self._init_data_records()
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):
@@ -76,25 +84,6 @@ class RDataManager:
             ]
         )
 
-    def _init_db(self):
-        if osp.exists(self.db_path):
-            print("DB already existed. Skipping initialization.")
-            # TODO: May need to check for concurrency issues.
-            self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
-            self.db_cursor = self.db_conn.cursor()
-            return
-
-        print("DB file not found. Initializing db...")
-        from utils.db import get_init_schema_str
-
-        self.db_conn = sqlite3.connect(self.db_path, check_same_thread=False)
-        self.db_cursor = self.db_conn.cursor()
-        self.db_cursor.executescript(get_init_schema_str())
-
-        # Iterate through folders to construct database
-
-        self.db_conn.commit()
-
     def _init_paths(self):
         self.test_root = to_unix(osp.join(self.data_root, "test"))
         self.train_root = to_unix(osp.join(self.data_root, "train"))
@@ -106,10 +95,7 @@ class RDataManager:
         self.influence_file_path = to_unix(
             osp.join(self.influence_root, "influence_images.pkl")
         )
-        self.influence_log_path = to_unix(
-            osp.join(self.influence_root, "logs")
-        )
-
+        self.influence_log_path = to_unix(osp.join(self.influence_root, "logs"))
 
     def _init_data_records(self):
         self.testset: REvalImageFolder = REvalImageFolder(
@@ -216,9 +202,6 @@ class RDataManager:
 
     def get_db_conn(self):
         return self.db_conn
-
-    def get_db_cursor(self):
-        return self.db_cursor
 
 
 class SquarePad:

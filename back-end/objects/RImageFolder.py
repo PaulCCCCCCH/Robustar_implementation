@@ -10,7 +10,7 @@ import PIL
 from PIL import Image
 from io import BytesIO
 from sqlite3.dbapi2 import Connection
-from utils.db_ops import *
+from database.db_ops import *
 from collections import OrderedDict
 import os
 from os import path as osp
