@@ -140,11 +140,12 @@ def new_server_object(base_dir):
 
     """ SETUP DATA MANAGER """
     # Setup database
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_path
+    db_conn_str = f"sqlite:///{db_path}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_conn_str
     from objects.RDataManager import db, init_db
 
     db.init_app(app)
-    init_db()
+    init_db(app)
     # Setup data manager
     data_manager = RDataManager(
         base_dir,

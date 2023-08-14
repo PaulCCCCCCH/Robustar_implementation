@@ -1,10 +1,8 @@
 import collections
 import pickle
-import sqlite3
 import os.path as osp
 import os
 from utils.path_utils import get_paired_path, split_path, to_unix
-from flask import current_app as app
 from flask_sqlalchemy import SQLAlchemy
 from torchvision import transforms
 from .RImageFolder import RAnnotationFolder, REvalImageFolder, RTrainImageFolder
@@ -13,11 +11,10 @@ import torchvision.transforms.functional as transF
 db = SQLAlchemy()
 
 
-def init_db(self):
+def init_db(app):
     print("Initializing database ... ")
-    db.init_app(app)
     with app.app_context():
-        self.db.create_all()
+        db.create_all()
 
 
 # The data interface

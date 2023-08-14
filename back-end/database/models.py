@@ -29,9 +29,9 @@ class Models(db.Model):
     weight_path = db.Column(db.String)
     code_path = db.Column(db.String)
     epoch = db.Column(db.Integer)
-    train_accuracy = db.Column(db.Double)
-    val_accuracy = db.Column(db.Double)
-    test_accuracy = db.Column(db.Double)
+    train_accuracy = db.Column(db.Float)
+    val_accuracy = db.Column(db.Float)
+    test_accuracy = db.Column(db.Float)
     last_eval_on_dev_set = db.Column(db.DateTime)
     last_eval_on_test_set = db.Column(db.DateTime)
 
@@ -59,7 +59,7 @@ class TestSet(db.Model):
 
 class TrainSet(db.Model):
     path = db.Column(db.String, primary_key=True)
-    paired_path = db.Column(db.String, db.ForeignKey("paired_set.id"))
+    paired_path = db.Column(db.String, db.ForeignKey("paired_set.path"))
 
 
 class ValSet(db.Model):
