@@ -44,7 +44,7 @@ class RDataManager:
 
         self._init_paths()
         self._init_transforms()
-        # self._init_data_records()
+        self._init_data_records()
 
     def reload_influence_dict(self):
         if osp.exists(self.influence_file_path):

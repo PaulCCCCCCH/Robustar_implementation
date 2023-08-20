@@ -6,12 +6,13 @@ from utils.path_utils import (
 )
 from torchvision.datasets import DatasetFolder, ImageFolder
 from typing import Any, Callable, cast, Dict, List, Optional, Tuple, Union
-import PIL
 from PIL import Image
 from io import BytesIO
 from sqlite3.dbapi2 import Connection
 from database.db_ops import *
 from collections import OrderedDict
+from flask_sqlalchemy import SQLAlchemy
+from database.models import *
 import os
 from os import path as osp
 
@@ -66,11 +67,11 @@ def get_slice(arr, start, end):
 
 
 SPLIT_TABLE_MAP = {
-    "train": "train_set",
-    "validation": "val_set",
-    "test": "test_set",
-    "annotated": "paired_set",
-    "proposed": "proposed",
+    "train": TrainSet,
+    "validation": ValSet,
+    "test": TestSet,
+    "annotated": PairedSet,
+    "proposed": Proposed,
 }
 
 
@@ -105,7 +106,7 @@ class RImageFolder(DatasetFolder):
         self,
         root: str,
         split: str,
-        db_conn: Connection,
+        db_conn: SQLAlchemy,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
         loader: Callable[[str], Any] = default_loader,
@@ -172,7 +173,7 @@ class RTrainImageFolder(RImageFolder):
         self,
         root: str,
         split: str,
-        db_conn: Connection,
+        db_conn: SQLAlchemy,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
         loader: Callable[[str], Any] = default_loader,
@@ -251,7 +252,7 @@ class REvalImageFolder(RImageFolder):
         self,
         root: str,
         split: str,
-        db_conn: Connection,
+        db_conn: SQLAlchemy,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
         loader: Callable[[str], Any] = default_loader,
@@ -367,7 +368,7 @@ class RAnnotationFolder(RImageFolder):
         root: str,
         train_root: str,
         split: str,
-        db_conn: Connection,
+        db_conn: SQLAlchemy,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
         loader: Callable[[str], Any] = default_loader,
