@@ -12,7 +12,7 @@
         </v-btn>
       </v-card-title>
 
-      <v-form ref="form" v-model="valid" lazy-validation class="pa-4">
+      <v-form ref="form" lazy-validation class="pa-4">
         <v-text-field
           v-model="name"
           :rules="[rules.required]"
@@ -48,13 +48,27 @@
             label="Weight File (optional)"
             hint="choose file"
           ></v-file-input>
+          <v-file-input
+            v-model="codeFile"
+            :rules="[rules.required]"
+            :loading="isSubmitting"
+            @change="handleCodeFileUpload"
+            prepend-icon="mdi-file-outline"
+            chips
+            clearable
+            dense
+            filled
+            show-size
+            label="Code File"
+            hint="choose file"
+          ></v-file-input>
           <v-textarea
             v-model="code"
             :rules="[rules.required]"
             :loading="isSubmitting"
             prepend-icon="mdi-xml"
             label="Code"
-            hint=""
+            hint="The final code uploaded will be based on the content in this code editor."
             rows="5"
             filled
             clearable
@@ -121,23 +135,43 @@ export default {
       name: '',
       description: '',
       weightFile: null,
+      codeFile: null,
       code: '',
       numClasses: 0,
       architecture: 'a',
       rules: {
-        required: (value) => !!value.trim() || 'Required.',
+        required: (value) => ((value && typeof value === 'string' && !!value.trim()) || (value && value instanceof File)) || 'Required.',
       },
       status: '',
       feedback: '',
     };
   },
   methods: {
+    handleCodeFileUpload(file) {
+      if (!file || !file instanceof File) {
+        this.code = ''
+        return
+      } 
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onloadstart = () => {
+        this.$root.startProcessing('The file is being read. Please wait...');
+      }
+      reader.onload = () => {
+        this.code = reader.result
+        this.$root.finishProcessing();
+      }
+      reader.onerror = () => {
+        this.$root.finishProcessing();
+        this.$root.alert('error', 'Failed to read file');
+      }
+    },
     submit() {
       if (this.$refs.form.validate()) {
         this.isSubmitting = true;
         setTimeout(() => {
           this.isSubmitting = false;
-          this.reset();
+          // this.reset();
           this.status = 'sdfsd';
         }, 3000);
       }
