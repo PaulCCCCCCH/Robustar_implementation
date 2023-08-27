@@ -1,9 +1,13 @@
+import os
 import json
 import string
-import os
+import uuid
 import torch
+import io
+import contextlib
 from flask import request
 from flask import Blueprint
+from datetime import datetime
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
@@ -103,13 +107,12 @@ def UploadModel():
     if 'code' in request.form:
         print("Requested to upload a new model")
 
-        # Get the model id
-        model_id = metadata.get('model_id')
+        # Generate a uuid for the model
+        model_id = str(uuid.uuid4())
 
         # Get the model definition code and save it to a temporary file
         code = request.form.get('code')
-        # TODO: discuss with team the path to save the definition and weight file
-        code_path = os.path.join(RServer.get_server().base_dir, f'{model_id}.py')
+        code_path = os.path.join(RServer.get_server().base_dir, 'generated', f'{model_id}.py')
         try:
             with open(code_path, 'w') as code_file:
                 code_file.write(code)
@@ -119,7 +122,7 @@ def UploadModel():
 
         # Initialize the model
         try:
-            model = init_model(code_path, metadata.get('architecture'))
+            model = init_model(code_path, metadata.get('name'))
         except Exception as e:
             clear_model_temp_files(model_id)
             return RResponse.abort(400, f"Failed to initialize the model. {e}")
@@ -128,7 +131,7 @@ def UploadModel():
         if 'weight_file' in request.files:
             weight_file = request.files.get('weight_file')
             try:
-                weight_path = os.path.join(RServer.get_server().base_dir, f'{model_id}.pth')
+                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', f'{model_id}.pth')
                 weight_file.save(weight_path)
             except Exception as e:
                 clear_model_temp_files(model_id)
@@ -148,11 +151,19 @@ def UploadModel():
             clear_model_temp_files(model_id)
             return RResponse.abort(400, f"The model is invalid. {e}")
 
-        # Update the metadata
+        # Update the code path and weight path info in the metadata
         metadata['code_path'] = code_path
         metadata['weight_path'] = weight_path
+
+        # Save the model's architecture to the metadata
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            print(model)
+        metadata['architecture'] = buffer.getvalue()
     else:
         print("Requested to upload a trained model")
+        # Get the model id
+        model_id = metadata.get('model_id')
 
     # Save the model's metadata to the database
     try:
