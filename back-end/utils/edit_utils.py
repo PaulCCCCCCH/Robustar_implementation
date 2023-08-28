@@ -68,7 +68,6 @@ def save_edit(split, image_path, image_data, image_height, image_width):
         dataManager.pairedset.save_annotated_image(
             train_img_path, image_data, image_height, image_width
         )
-        dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
         refresh_img_data(paired_img_path)
 
 

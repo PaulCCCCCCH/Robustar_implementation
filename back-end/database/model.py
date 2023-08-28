@@ -1,4 +1,4 @@
-from objects.RDataManager import db
+from .db_init import db
 
 
 class EvalResults(db.Model):
@@ -13,7 +13,7 @@ influ_rel = db.Table(
     "influ_rel",
     db.Column("model_id", db.BigInteger, db.ForeignKey("models.id"), primary_key=True),
     db.Column(
-        "image_path", db.Integer, db.ForeignKey("test_set.path"), primary_key=True
+        "image_path", db.Integer, db.ForeignKey("test_set_image.path"), primary_key=True
     ),
     db.Column("influ_path", db.Integer),
 )
@@ -36,34 +36,38 @@ class Models(db.Model):
     last_eval_on_test_set = db.Column(db.DateTime)
 
     influences = db.relationship(
-        "TestSet",
+        "TestSetImage",
         secondary=influ_rel,
         lazy="subquery",
         backref=db.backref("models", lazy=True),
     )
 
 
-class PairedSet(db.Model):
+class PairedSetImage(db.Model):
+    path = db.Column(db.String, primary_key=True)
+    train_path = db.Column(db.String)
+    label = db.Column(db.Integer)
+
+
+class ProposedImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     train_path = db.Column(db.String)
 
 
-class Proposed(db.Model):
+class TestSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
-    train_path = db.Column(db.String)
+    label = db.Column(db.Integer)
 
 
-class TestSet(db.Model):
+class TrainSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
+    paired_path = db.Column(db.String, db.ForeignKey("paired_set_image.path"))
+    label = db.Column(db.Integer)
 
 
-class TrainSet(db.Model):
+class ValSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
-    paired_path = db.Column(db.String, db.ForeignKey("paired_set.path"))
-
-
-class ValSet(db.Model):
-    path = db.Column(db.String, primary_key=True)
+    label = db.Column(db.Integer)
 
 
 class Visuals(db.Model):

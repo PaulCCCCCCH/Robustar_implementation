@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from sqlite3.dbapi2 import Cursor, Connection
+from flask_sqlalchemy import SQLAlchemy
 
 # Note: commit should be done by the caller after flushing in-memory buffer
 # to ensure consistency!
