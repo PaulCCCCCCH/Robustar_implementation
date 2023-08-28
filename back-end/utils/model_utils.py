@@ -1,6 +1,12 @@
 import os
 import importlib
 from objects.RServer import RServer
+from utils.predict import get_image_prediction
+
+
+class DummyModelWrapper:
+    def __init__(self, model):
+        self.model = model
 
 
 def init_model(code_path, name):
@@ -37,7 +43,23 @@ def clear_model_temp_files(model_id):
 def val_model(model):
     """ Validate the model by running the model against a small portion of the validation dataset
     """
-    pass
+    # Get at most 10 samples from the validation dataset
+    data_manager = RServer.get_data_manager()
+    dataset = data_manager.validationset
+    samples = dataset.samples[:10]
+
+    # Create a dummy model wrapper to pass to the predict function
+    dummy_model_wrapper = DummyModelWrapper(model)
+    dummy_model_wrapper.model.eval()
+
+    # Run the model against the samples
+    for img_path, label in samples:
+        get_image_prediction(
+            dummy_model_wrapper,
+            img_path,
+            data_manager.image_size,
+            argmax=False,
+        )
 
 
 def save_model(metadata):
