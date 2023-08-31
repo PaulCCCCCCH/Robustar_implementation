@@ -15,22 +15,23 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 @pytest.fixture()
 def app(request):
     basedir = request.config.getoption("basedir")
+    app = None
+    try:
+        _set_up(basedir)
 
-    _set_up(basedir)
+        if app is None:
+            app, _ = start_flask_app()
+            server = new_server_object(basedir)
+            server = RServer.get_server()
+            app = server.get_flask_app()
 
-    app, _ = start_flask_app()
-    server = new_server_object(basedir)
-    server = RServer.get_server()
-    app = server.get_flask_app()
+        app.config["TESTING"] = True
+        yield app
+        app.config["TESTING"] = False
 
-    app.config["TESTING"] = True
-    yield app
-    app.config["TESTING"] = False
-
-    RServer.get_data_manager().get_db_conn().close()
-    # due to unavailability of close_connection() in fs.py
-
-    _clean_up(basedir)
+    except Exception as e:
+        _clean_up(basedir)
+        raise e
 
     time.sleep(0.1)
 

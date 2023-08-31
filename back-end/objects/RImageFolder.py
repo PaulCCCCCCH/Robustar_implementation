@@ -397,6 +397,13 @@ class RAnnotationFolder(RImageFolder):
         del self.imgs
         del self.samples
 
+        if "annotated" in self.split:
+            self.db_model = PairedSetImage
+        elif "proposed" in self.split:
+            self.db_model = ProposedImage
+        else:
+            raise NotImplemented
+
         # init buffers
         self._init_buffers()
 
@@ -412,7 +419,7 @@ class RAnnotationFolder(RImageFolder):
     def remove_image(self, path):
         path = to_unix(path)
         # 1. delete the paired image in database...
-        image_to_delete = PairedSetImage.query.get(path)
+        image_to_delete = self.db_model.query.get(path)
         if image_to_delete:
             self.db_conn.delete(image_to_delete)
             print(f"Image deleted. Path: {image_to_delete}")
@@ -443,7 +450,7 @@ class RAnnotationFolder(RImageFolder):
 
     def clear_images(self):
         # 1. delete all paired images in database...
-        self.db_conn.session.query(PairedSetImage).delete()
+        self.db_conn.session.query(self.db_model).delete()
 
         # 2. create new paired folder
         # No need to explicitly do this, just let paired images be there.
@@ -470,15 +477,15 @@ class RAnnotationFolder(RImageFolder):
 
         # 1. insert new paired path to db if image not already annotated
         # if train_path not in self._train2paired:
-        new_paired_image = PairedSetImage(path=paired_path, train_path=train_path)
+        new_paired_image = self.db_model(path=paired_path, train_path=train_path)
         self.db_conn.session.merge(new_paired_image)
 
         # 2. update corresponding training image
-        train_image_to_update = TrainSetImage.query.filter_by(path=train_path)
-        train_image_to_update.paired_path = paired_path
+        if self.db_model == PairedSetImage:
+            train_image_to_update = TrainSetImage.query.filter_by(path=train_path)
+            train_image_to_update.paired_path = paired_path
 
-        # 2. update buffer
-        trainset.train2paired[train_path] = paired_path
+            trainset.train2paired[train_path] = paired_path
 
         # 3. dump the image file to disk
         if isinstance(image_data, Image.Image):  # If image_data is PIL Image
@@ -499,7 +506,7 @@ class RAnnotationFolder(RImageFolder):
         self.last_record = paired_path
 
         # 6. commit
-        self.db_conn.commit()
+        self.db_conn.session.commit()
 
     def get_paired_by_train(self, train_path):
         """
@@ -575,8 +582,8 @@ class RAnnotationFolder(RImageFolder):
             create_empty_paired_image(mirrored_img_path)
 
     def _populate_buffers(self):
-        for paired_data in PairedSetImage.query.all():
-            paired_path, train_path = to_unix(paired_data.paired_path), to_unix(
+        for paired_data in self.db_model.query.all():
+            paired_path, train_path = to_unix(paired_data.path), to_unix(
                 paired_data.train_path
             )
             self._train2paired[train_path] = paired_path

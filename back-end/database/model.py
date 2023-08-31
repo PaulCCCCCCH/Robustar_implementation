@@ -46,7 +46,6 @@ class Models(db.Model):
 class PairedSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     train_path = db.Column(db.String)
-    label = db.Column(db.Integer)
 
 
 class ProposedImage(db.Model):

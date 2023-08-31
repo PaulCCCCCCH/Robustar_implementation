@@ -101,7 +101,7 @@ def get_img_Data(dataset_img_path):
 
     if osp.exists(normal_path):
         if normal_path not in dataset_file_buffer:
-            refresh_img_data(normal_path)
+            cache_image(normal_path)
         image_data = dataset_file_buffer[normal_path]
         return image_data
     else:
@@ -125,7 +125,7 @@ def image_to_base64_string(path: str) -> str:
     return image_data
 
 
-def refresh_img_data(path: str):
+def cache_image(path: str):
     data_manager = RServer.get_data_manager()
     dataset_file_queue = data_manager.dataset_file_queue
     dataset_file_buffer = data_manager.dataset_file_buffer

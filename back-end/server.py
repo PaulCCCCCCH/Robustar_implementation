@@ -12,7 +12,6 @@ import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
 import logging
-from database.model import *
 
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.WARNING)
