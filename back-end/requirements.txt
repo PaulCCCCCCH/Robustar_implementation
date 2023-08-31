@@ -15,6 +15,7 @@ tensorboard==2.6.0
 scipy==1.7.1
 flasgger==0.9.5
 pytest==6.2.5
+Flask-SQLAlchemy==3.0.5
 # subject to change
 Flask-SocketIO==5.3.5
 python-engineio==4.5.1
