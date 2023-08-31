@@ -162,6 +162,7 @@ def new_server_object(base_dir):
 
     """ SETUP MODEL """
     model = RModelWrapper(
+        db_conn=db,
         network_type=network_type,
         net_path=to_unix(os.path.join(ckpt_dir, configs["weight_to_load"])),
         device=configs["device"],
