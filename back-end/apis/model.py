@@ -49,7 +49,6 @@ def DeleteModel():
 def UploadModel():
     """
     Should also accept (optionally) a model weight file as argument
-    After training a model, should do the same
     ---
     tags:
       - model
@@ -108,81 +107,112 @@ def UploadModel():
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
-    # If it is a new model, validate it and update code_path and weight_path in its metadata
+    print("Requested to upload a new model")
+
+    # TODO: Discuss with the team about the naming of the model related files if the id is set to autoincrement
+    # Generate a uuid for the model saving
+    saving_id = str(uuid.uuid4())
+
+    metadata_4_save = {'name': None,
+                       'description': None,
+                       'architecture': None,
+                       'tags': None,
+                       'creat_time': None,
+                       'weight_path': None,
+                       'code_path': None,
+                       'epoch': None,
+                       'train_accuracy': None,
+                       'val_accuracy': None,
+                       'test_accuracy': None,
+                       'last_eval_on_dev_set': None,
+                       'last_eval_on_test_set': None
+                       }
+
+    # Get the model name
+    name = metadata.get('name')
+
+    # If the model is custom(i.e. it has code definition)
     if 'code' in request.form:
-        print("Requested to upload a new model")
-
-        # Generate a uuid for the model
-        model_id = str(uuid.uuid4())
-
         # Get the model definition code and save it to a temporary file
         code = request.form.get('code')
-        code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{model_id}.py')
+        code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
         try:
             with open(code_path, 'w') as code_file:
                 code_file.write(code)
         except Exception as e:
-            clear_model_temp_files(model_id)
+            clear_model_temp_files(saving_id)
             return RResponse.abort(500, f"Failed to save the model definition. {e}")
 
-        # Initialize the model
+        # Initialize the custom model
         try:
-            model = init_model(code_path, metadata.get('name'))
+            model = init_custom_model(code_path, name)
         except Exception as e:
-            clear_model_temp_files(model_id)
-            return RResponse.abort(400, f"Failed to initialize the model. {e}")
-
-        # Get the weight file and save it to a temporary location if it exists
-        if 'weight_file' in request.files:
-            weight_file = request.files.get('weight_file')
-            try:
-                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{model_id}.pth')
-                weight_file.save(weight_path)
-            except Exception as e:
-                clear_model_temp_files(model_id)
-                return RResponse.abort(500, f"Failed to save the weight file. {e}")
-
-            # Load the weights from the file
-            try:
-                model.load_state_dict(torch.load(weight_path))
-            except Exception as e:
-                clear_model_temp_files(model_id)
-                return RResponse.abort(400, f"Failed to load the weights. {e}")
-
-        # Validate the model
+            clear_model_temp_files(saving_id)
+            return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
+    else:   # If the model is predefined
+        pretrained = metadata.get('pretrained')
+        num_classes = metadata.get('num_classes')
         try:
-            val_model(model)
+            model = init_predefined_model(name, pretrained, num_classes)
         except Exception as e:
-            clear_model_temp_files(model_id)
-            return RResponse.abort(400, f"The model is invalid. {e}")
+            return RResponse.abort(400, f"Failed to initialize the predefined model. {e}")
 
-        # Update the code path and weight path info in the metadata
-        metadata['code_path'] = code_path
-        metadata['weight_path'] = weight_path
+    # Get the weight file and save it to a temporary location if it exists
+    if 'weight_file' in request.files:
+        weight_file = request.files.get('weight_file')
+        try:
+            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+            weight_file.save(weight_path)
+        except Exception as e:
+            clear_model_temp_files(saving_id)
+            return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
-        # Save the model's architecture to the metadata
-        buffer = io.StringIO()
-        with contextlib.redirect_stdout(buffer):
-            print(model)
-        metadata['architecture'] = buffer.getvalue()
-    else:
-        print("Requested to upload a trained model")
-        # Get the model id
-        model_id = metadata.get('model_id')
+        # Load the weights from the file
+        try:
+            model.load_state_dict(torch.load(weight_path))
+        except Exception as e:
+            clear_model_temp_files(saving_id)
+            return RResponse.abort(400, f"Failed to load the weights. {e}")
+
+    # Validate the model
+    try:
+        val_model(model)
+    except Exception as e:
+        clear_model_temp_files(saving_id)
+        return RResponse.abort(400, f"The model is invalid. {e}")
+
+    # Update the metadata for saving
+    metadata_4_save['name'] = name
+    metadata_4_save['description'] = metadata.get('description')
+    metadata_4_save['tags'] = metadata.get('tags')
+    metadata_4_save['create_time'] = datetime.datetime.now()
+    metadata_4_save['code_path'] = code_path if 'code' in request.form else None
+    metadata_4_save['weight_path'] = weight_path if 'weight_file' in request.files else None
+    metadata_4_save['epoch'] = 0
+    metadata_4_save['train_accuracy'] = None
+    metadata_4_save['val_accuracy'] = None
+    metadata_4_save['test_accuracy'] = None
+    metadata_4_save['last_eval_on_dev_set'] = None
+    metadata_4_save['last_eval_on_test_set'] = None
+
+    # Save the model's architecture to the metadata
+    buffer = io.StringIO()
+    with contextlib.redirect_stdout(buffer):
+        print(model)
+    metadata_4_save['architecture'] = buffer.getvalue()
 
     # Save the model's metadata to the database
     try:
-        save_model(metadata)
+        RServer.get_model_wrapper().create_model(metadata_4_save)
     except Exception as e:
         return RResponse.abort(500, f"Failed to save the model. {e}")
 
     # Set the current model to the newly uploaded model
     try:
-        SetCurrModel(model_id)
+        SetCurrModel(saving_id)
     except Exception as e:
         return RResponse.abort(500, f"Failed to set the current model. {e}")
 
-    # TODO: return real data as specified in the docstring
     return RResponse.ok('Success')
 
 
