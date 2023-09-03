@@ -103,6 +103,11 @@ def UploadModel():
     # Get the model's metadata
     metadata = json.loads(request.form.get('metadata'))
 
+    # Check if the folder for saving models exists, if not, create it
+    models_dir = os.path.join(RServer.get_server().base_dir, 'generated', 'models')
+    if not os.path.exists(models_dir):
+        os.makedirs(models_dir)
+
     # If it is a new model, validate it and update code_path and weight_path in its metadata
     if 'code' in request.form:
         print("Requested to upload a new model")
@@ -112,7 +117,7 @@ def UploadModel():
 
         # Get the model definition code and save it to a temporary file
         code = request.form.get('code')
-        code_path = os.path.join(RServer.get_server().base_dir, 'generated', f'{model_id}.py')
+        code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{model_id}.py')
         try:
             with open(code_path, 'w') as code_file:
                 code_file.write(code)
@@ -131,7 +136,7 @@ def UploadModel():
         if 'weight_file' in request.files:
             weight_file = request.files.get('weight_file')
             try:
-                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', f'{model_id}.pth')
+                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{model_id}.pth')
                 weight_file.save(weight_path)
             except Exception as e:
                 clear_model_temp_files(model_id)
