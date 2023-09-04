@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "serve:main": "npx lerna@7 run --scope @robustar/robustar serve --stream",
-    "build:main": "npx lerna@7 run build --stream",
     "serve:editor": "npx lerna@7 run --scope @robustar/image-editor serve --stream",
+    "build": "npx lerna@7 run build --stream",
     "build:editor": "npx lerna@7 run --scope @robustar/image-editor build --stream",
     "cypress:open": "npx cypress@12 open --browser chrome",
     "cypress:run": "npx cypress@12 run --browser chrome",
