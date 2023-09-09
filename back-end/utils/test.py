@@ -1,10 +1,10 @@
-'''
+"""
 Author: Chonghan Chen (paulcccccch@gmail.com)
 -----
 Last Modified: Friday, 10th March 2023 4:48:58 pm
 Modified By: Chonghan Chen (paulcccccch@gmail.com)
 -----
-'''
+"""
 import threading
 from objects.RServer import RServer
 from utils.path_utils import to_unix
@@ -29,7 +29,11 @@ class TestThread(threading.Thread):
     def run(self):
         print("Starting testing thread")
         try:
-            self.start_test_thread()
+            # TODO(chonghan): If we don't get a flask context here we are going to
+            # get error. Are we going to have concurrency issues if we use the
+            # same context as the main thread?
+            with RServer.get_server().get_flask_app().app_context():
+                self.start_test_thread()
         except Exception as e:
             raise e
         finally:

@@ -10,27 +10,31 @@ from server import start_flask_app, new_server_object
 from utils.path_utils import to_unix
 
 PARAM_NAME_IMAGE_PATH = "image_url"
+flask_app = None
 
 
 @pytest.fixture()
 def app(request):
+    global flask_app
     basedir = request.config.getoption("basedir")
+    try:
+        _set_up(basedir)
 
-    _set_up(basedir)
+        if flask_app is None:
+            flask_app, _ = start_flask_app()
+            server = new_server_object(basedir)
+            server = RServer.get_server()
+            flask_app = server.get_flask_app()
 
-    app, _ = start_flask_app()
-    server = new_server_object(basedir)
-    server = RServer.get_server()
-    app = server.get_flask_app()
+        flask_app.config["TESTING"] = True
+        yield flask_app
+        flask_app.config["TESTING"] = False
 
-    app.config["TESTING"] = True
-    yield app
-    app.config["TESTING"] = False
-
-    RServer.get_data_manager().get_db_conn().close()
-    # due to unavailability of close_connection() in fs.py
-
-    _clean_up(basedir)
+    except Exception as e:
+        _clean_up(basedir)
+        raise e
+    finally:
+        _clean_up(basedir)
 
     time.sleep(0.1)
 

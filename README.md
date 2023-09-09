@@ -78,7 +78,7 @@ docker build . -t <user_id>/<repo>:<version>
 For example,
 
 ```
-docker build . -t paulcccccch/robustar-base:base-0.2.0
+docker build . -t paulcccccch/robustar-base:base-0.3.0
 ```
 
 ---
@@ -92,7 +92,7 @@ docker push <user_id>/<repo>:<version>
 For example,
 
 ```
-docker push paulcccccch/robustar-base:base-0.2.0
+docker push paulcccccch/robustar-base:base-0.3.0
 ```
 
 ## Dev setup
