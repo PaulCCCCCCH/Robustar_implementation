@@ -113,6 +113,9 @@ def UploadModel():
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
+    code_path = None
+    weight_path = None
+
     metadata_4_save = {'name': None,
                        'description': None,
                        'architecture': None,
@@ -174,6 +177,16 @@ def UploadModel():
             clear_model_temp_files(saving_id)
             return RResponse.abort(400, f"Failed to load the weights. {e}")
 
+    # If the model is predefined and pretrained, save the weights
+    if code_path is None:
+        if pretrained:
+            try:
+                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+                torch.save(model.state_dict(), weight_path)
+            except Exception as e:
+                clear_model_temp_files(saving_id)
+                return RResponse.abort(500, f"Failed to save the weight file. {e}")
+
     # Validate the model
     try:
         val_model(model)
@@ -186,8 +199,8 @@ def UploadModel():
     metadata_4_save['description'] = metadata.get('description')
     metadata_4_save['tags'] = metadata.get('tags')
     metadata_4_save['create_time'] = datetime.now()
-    metadata_4_save['code_path'] = code_path if 'code' in request.form else None
-    metadata_4_save['weight_path'] = weight_path if 'weight_file' in request.files else None
+    metadata_4_save['code_path'] = code_path
+    metadata_4_save['weight_path'] = weight_path
     metadata_4_save['epoch'] = 0
     metadata_4_save['train_accuracy'] = None
     metadata_4_save['val_accuracy'] = None
