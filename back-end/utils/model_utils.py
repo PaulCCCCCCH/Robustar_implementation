@@ -46,10 +46,8 @@ def init_predefined_model(name, pretrained, num_classes):
         model = torchvision.models.ResNet(torchvision.models.resnet.BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
         model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-        # TODO: discuss with the team the best way to design the UI for this model which is predefined but
-        #  with no pretrained weights available
         if pretrained:
-            print("Pretrained ResNet18-32x32 is not available.")
+            raise Exception("Pretrained ResNet18-32x32 is not available.")
     elif name == "AlexNet":
         model = torchvision.models.alexnet(pretrained=pretrained, num_classes=num_classes)
 
