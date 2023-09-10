@@ -113,7 +113,7 @@ def UploadModel():
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
-    code_path = None
+    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
     weight_path = None
 
     metadata_4_save = {'name': None,
@@ -138,7 +138,6 @@ def UploadModel():
     if 'code' in request.form:
         # Get the model definition code and save it to a temporary file
         code = request.form.get('code')
-        code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
         try:
             with open(code_path, 'w') as code_file:
                 code_file.write(code)
@@ -157,6 +156,8 @@ def UploadModel():
         num_classes = int(metadata.get('num_classes'))
         try:
             model = init_predefined_model(name, pretrained, num_classes)
+            with open(code_path, 'w') as code_file:
+                code_file.write(f"num_classes = {num_classes}")
         except Exception as e:
             return RResponse.abort(400, f"Failed to initialize the predefined model. {e}")
 
@@ -178,14 +179,13 @@ def UploadModel():
             return RResponse.abort(400, f"Failed to load the weights. {e}")
 
     # If the model is predefined and pretrained, save the weights
-    if code_path is None:
-        if pretrained:
-            try:
-                weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
-                torch.save(model.state_dict(), weight_path)
-            except Exception as e:
-                clear_model_temp_files(saving_id)
-                return RResponse.abort(500, f"Failed to save the weight file. {e}")
+    if 'code' not in request.form and pretrained:
+        try:
+            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+            torch.save(model.state_dict(), weight_path)
+        except Exception as e:
+            clear_model_temp_files(saving_id)
+            return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
     # Validate the model
     try:
