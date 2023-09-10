@@ -12,9 +12,11 @@ PREDEFINED_MODELS = ['ResNet18', 'ResNet34', 'ResNet50', 'ResNet101', 'ResNet152
                      'AlexNet']
 
 
+# TODO: Use real model wrapper instead of dummy model wrapper
 class DummyModelWrapper:
     def __init__(self, model):
-        model = model
+        self.model = model
+        self.device = RServer.get_model_wrapper().device
 
 
 def init_predefined_model(name, pretrained, num_classes):
@@ -92,7 +94,6 @@ def val_model(model):
     data_manager = RServer.get_data_manager()
     dataset = data_manager.validationset
     samples = dataset.samples[:10]
-
     # Create a dummy model wrapper to pass to the predict function
     dummy_model_wrapper = DummyModelWrapper(model)
     dummy_model_wrapper.model.eval()

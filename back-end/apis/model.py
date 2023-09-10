@@ -117,7 +117,7 @@ def UploadModel():
                        'description': None,
                        'architecture': None,
                        'tags': None,
-                       'creat_time': None,
+                       'create_time': None,
                        'weight_path': None,
                        'code_path': None,
                        'epoch': None,
@@ -185,7 +185,7 @@ def UploadModel():
     metadata_4_save['name'] = name
     metadata_4_save['description'] = metadata.get('description')
     metadata_4_save['tags'] = metadata.get('tags')
-    metadata_4_save['create_time'] = datetime.datetime.now()
+    metadata_4_save['create_time'] = datetime.now()
     metadata_4_save['code_path'] = code_path if 'code' in request.form else None
     metadata_4_save['weight_path'] = weight_path if 'weight_file' in request.files else None
     metadata_4_save['epoch'] = 0

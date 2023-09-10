@@ -20,7 +20,7 @@ influ_rel = db.Table(
 
 
 class Models(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
     architecture = db.Column(db.String)
