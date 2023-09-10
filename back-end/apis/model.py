@@ -150,8 +150,8 @@ def UploadModel():
             clear_model_temp_files(saving_id)
             return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
     else:   # If the model is predefined
-        pretrained = metadata.get('pretrained')
-        num_classes = metadata.get('num_classes')
+        pretrained = bool(int(metadata.get('pretrained')))
+        num_classes = int(metadata.get('num_classes'))
         try:
             model = init_predefined_model(name, pretrained, num_classes)
         except Exception as e:
