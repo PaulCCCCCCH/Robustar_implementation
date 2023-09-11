@@ -177,9 +177,7 @@ def UploadModel():
         except Exception as e:
             clear_model_temp_files(saving_id)
             return RResponse.abort(400, f"Failed to load the weights. {e}")
-
-    # If the model is predefined and pretrained, save the weights
-    if 'code' not in request.form and pretrained:
+    else:   # If the weight file is not provided, save the current weights to a temporary location
         try:
             weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
             torch.save(model.state_dict(), weight_path)
