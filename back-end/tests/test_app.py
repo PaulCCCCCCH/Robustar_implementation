@@ -127,12 +127,12 @@ def _set_up(basedir):
     else:
         print("setup > no proposed dir, skip copy")
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("setup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("setup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("setup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("setup > no db, skip delete")
 
     visualize_images_dir = to_unix(osp.join(base_dir, "visualize_images"))
     if osp.exists(visualize_images_dir):
@@ -195,12 +195,12 @@ def _clean_up(basedir):
     # os.rmdir(visualize_images_dir)
     # os.rename(visualize_images_dir_original, visualize_images_dir)
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("cleanup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("cleanup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("cleanup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("cleanup > no db, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))
