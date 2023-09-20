@@ -16,6 +16,7 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
+
 class RModelWrapper:
     def __init__(self, network_type, net_path, device, pretrained, num_classes):
         # self.device = torch.device(device)
@@ -24,7 +25,10 @@ class RModelWrapper:
                 num_classes == IMAGENET_OUTPUT_SIZE
             ), f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output. "
         self.device = device  # We keep device as string to allow for easy comparison
+        self.model = None
+        self.model_id = ""
         self.init_model(network_type, pretrained, num_classes)
+        self.num_classes = num_classes
         self.modelwork_type = network_type
         self._lock = Lock()
         self._model_available = True
@@ -34,6 +38,30 @@ class RModelWrapper:
             self.load_net(net_path)
         else:
             print("Checkpoint file not found: {}".format(net_path))
+
+    def set_current_model(self, model_id: str):
+        # No change if this model is already the current model
+        if model_id == self.model_id:
+            return
+
+        # Free up current model.
+        # TODO: make sure this model is GC'ed
+        if self.model is not None:
+            del self.model
+            self.model = None
+
+        # TODO: read from database
+        AVAILABLE_MODELS = {
+            "model-1": lambda: torchvision.models.resnet18(
+                pretrained=False, num_classes=self.num_classes
+            ).to(self.device),
+            "model-2": lambda: torchvision.models.resnet18(
+                pretrained=False, num_classes=self.num_classes
+            ).to(self.device),
+        }
+        new_model_factory = AVAILABLE_MODELS[model_id]
+        self.model = new_model_factory()
+        print(self.model)
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
