@@ -6,7 +6,7 @@ from .train import train_api
 from .test import test_api
 from .config import config_api
 from .task import task_api
-from .models import model_api
+from .model import model_api
 
 blueprints = [
     edit_api,
