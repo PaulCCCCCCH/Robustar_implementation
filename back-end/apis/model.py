@@ -25,29 +25,29 @@ def GetCurrModel():
         details: string,
     }
     """
-    pass
+    return RResponse.ok(get_current_model_metadata())
 
 
-@model_api.route("/model/current/<model_id>", methods=["POST"])
-def SetCurrModel(model_id: string):
+@model_api.route("/model/current/<model_name>", methods=["POST"])
+def SetCurrModel(model_name: str):
     """return 200 on success"""
     try:
-        RServer.get_model_wrapper().set_current_model(model_id)
+        RServer.get_model_wrapper().set_current_model(model_name)
         return RResponse.ok("Success")
     except Exception as e:
         RResponse.abort(500, "Failed to switch model." + str(e))
 
 
-@model_api.route("/model/<id>", methods=["DELETE"])
-def DeleteModel():
+@model_api.route("/model/<model_name>", methods=["DELETE"])
+def DeleteModel(model_name: str):
     """return data
     {
-        id: string,
+        id: integer,
         name: string,
         details: string,
     }
     """
-    pass
+    return RResponse.ok(delete_model_by_name(model_name))
 
 
 @model_api.route("/model", methods=["POST"])
@@ -253,4 +253,7 @@ def GetAllModels():
         ...
     ]
     """
-    pass
+    try:
+        return list_models()
+    except Exception as e:
+        return RResponse.abort(500, f"Failed to list all models. {e}")

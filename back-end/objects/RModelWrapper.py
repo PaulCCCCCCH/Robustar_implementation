@@ -4,6 +4,7 @@ import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
 from database.model import *
+from utils.model_utils import *
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -31,7 +32,8 @@ class RModelWrapper:
             ), f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output. "
         self.device = device  # We keep device as string to allow for easy comparison
         self.model = None
-        self.model_id = ""
+        self.model_meta_data = None
+        self.model_name = ""
         self.init_model(network_type, pretrained, num_classes)
         self.num_classes = num_classes
         self.modelwork_type = network_type
@@ -44,9 +46,9 @@ class RModelWrapper:
         else:
             print("Checkpoint file not found: {}".format(net_path))
 
-    def set_current_model(self, model_id: str):
+    def set_current_model(self, model_name: str):
         # No change if this model is already the current model
-        if model_id == self.model_id:
+        if model_name == self.model_name:
             return
 
         # Free up current model.
@@ -55,18 +57,7 @@ class RModelWrapper:
             del self.model
             self.model = None
 
-        # TODO: read from database
-        AVAILABLE_MODELS = {
-            "model-1": lambda: torchvision.models.resnet18(
-                pretrained=False, num_classes=self.num_classes
-            ).to(self.device),
-            "model-2": lambda: torchvision.models.resnet18(
-                pretrained=False, num_classes=self.num_classes
-            ).to(self.device),
-        }
-        new_model_factory = AVAILABLE_MODELS[model_id]
-        self.model = new_model_factory()
-        print(self.model)
+        self.model_name, self.model_meta_data = load_model_by_name(model_name)
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
@@ -162,10 +153,18 @@ class RModelWrapper:
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
+            return model_to_delete
         else:
             print(
                 f"Attempting to delete a model that does not exist. Model name: {name}"
             )
+            return None
+
+    def get_current_model(self):
+        return self.model
+
+    def get_current_model_metadata(self):
+        return self.model_meta_data
 
     def get_model_by_name(self, name):
         return Models.query.filter_by(name=name).first()

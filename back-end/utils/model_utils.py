@@ -4,6 +4,7 @@ import torch
 import torchvision
 from objects.RServer import RServer
 from utils.predict import get_image_prediction
+from database.model import *
 
 
 IMAGENET_OUTPUT_SIZE = 1000
@@ -132,3 +133,26 @@ def val_model(model):
             data_manager.image_size,
             argmax=False,
         )
+
+
+def list_models():
+    return RServer.get_model_wrapper().list_models()
+
+
+def delete_model_by_name(model_name: str):
+    return RServer.get_model_wrapper().delete_model_by_name(model_name)
+
+
+def get_model_by_name(model_name: str) -> Models:
+    return RServer.get_model_wrapper().get_model_by_name(model_name)
+
+
+def get_current_model_metadata() -> Models:
+    return RServer.get_model_wrapper().get_current_model_metadata()
+
+
+def load_model_by_name(model_name: str):
+    model_meta_data = get_model_by_name(model_name)
+    model = init_custom_model(model_meta_data.code_path, model_name)
+    model.load_state_dict(torch.load(model_meta_data.weight_path))
+    return model, model_meta_data
