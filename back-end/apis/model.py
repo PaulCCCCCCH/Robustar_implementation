@@ -1,8 +1,6 @@
-import os
 import json
 import string
 import uuid
-import torch
 import io
 import contextlib
 from flask import request
@@ -109,12 +107,10 @@ def UploadModel():
 
     print("Requested to upload a new model")
 
-    # TODO: Discuss with the team about the naming of the model related files if the id is set to autoincrement
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
     code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
-    weight_path = None
 
     metadata_4_save = {'name': None,
                        'description': None,
@@ -194,8 +190,8 @@ def UploadModel():
 
     # Update the metadata for saving
     metadata_4_save['name'] = name
-    metadata_4_save['description'] = metadata.get('description')
-    metadata_4_save['tags'] = metadata.get('tags')
+    metadata_4_save['description'] = metadata.get('description') if metadata.get('description') else None
+    metadata_4_save['tags'] = metadata.get('tags') if metadata.get('tags') else None
     metadata_4_save['create_time'] = datetime.now()
     metadata_4_save['code_path'] = code_path
     metadata_4_save['weight_path'] = weight_path
