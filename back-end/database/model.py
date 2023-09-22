@@ -21,7 +21,8 @@ influ_rel = db.Table(
 
 class Models(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
+    class_name = db.Column(db.String)
+    nickname = db.Column(db.String)
     description = db.Column(db.String)
     architecture = db.Column(db.String)
     tags = db.Column(db.String)
