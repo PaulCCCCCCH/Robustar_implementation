@@ -123,7 +123,18 @@ class RModelWrapper:
         # TODO: Need to validate fields, dump model definition to a file,
         # etc. Either do these here or somewhere else
 
-        model = Models(**fields)
+        tags = fields.pop('tags', [])
+
+        tag_objs = []
+        if tags:
+            for tag_name in tags:
+                tag = self.db_conn.session.query(Tags).filter_by(name=tag_name).first()
+                if tag is None:
+                    tag = Tags(name=tag_name)
+                    self.db_conn.session.add(tag)
+                tag_objs.append(tag)
+
+        model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
         self.db_conn.session.commit()
 
