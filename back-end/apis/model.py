@@ -46,7 +46,7 @@ def DeleteModel():
 @model_api.route("/model", methods=["POST"])
 def UploadModel():
     """
-    Should also accept (optionally) a model weight file as argument
+    Upload a new model to the server
     ---
     tags:
       - model
@@ -70,6 +70,35 @@ def UploadModel():
         description: "The weight file for the trained model (optional)"
         required: false       # The weight file is optional, so set 'required' to false
         type: "file"          # The type of data for the weight file (file upload)
+
+    definitions:
+      Metadata:
+        type: "object"
+        properties:
+          class_name:
+            type: "string"
+            description: "The name of the model class."
+            required: true
+          nickname:
+            type: "string"
+            description: "A nickname for the model."
+            required: true
+          description:
+            type: "string"
+            description: "A description of the model (optional)."
+          tags:
+            type: "array"
+            items:
+              type: "string"
+            description: "A list of tags associated with the model (optional)."
+          pretrained:
+            type: "string"
+            description: |
+              Indicates if a predefined model is being used.
+              "1" represents pretrained, "0" otherwise (required only if users choose to use a predefined model).
+          num_classes:
+            type: "integer"
+            description: "The number of classes (required only if users choose to use a predefined model)."
 
     responses:
       200:
