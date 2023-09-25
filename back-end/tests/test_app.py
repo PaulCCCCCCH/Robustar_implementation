@@ -10,27 +10,31 @@ from server import start_flask_app, new_server_object
 from utils.path_utils import to_unix
 
 PARAM_NAME_IMAGE_PATH = "image_url"
+flask_app = None
 
 
 @pytest.fixture()
 def app(request):
+    global flask_app
     basedir = request.config.getoption("basedir")
+    try:
+        _set_up(basedir)
 
-    _set_up(basedir)
+        if flask_app is None:
+            flask_app, _ = start_flask_app()
+            server = new_server_object(basedir)
+            server = RServer.get_server()
+            flask_app = server.get_flask_app()
 
-    app, _ = start_flask_app()
-    server = new_server_object(basedir)
-    server = RServer.get_server()
-    app = server.get_flask_app()
+        flask_app.config["TESTING"] = True
+        yield flask_app
+        flask_app.config["TESTING"] = False
 
-    app.config["TESTING"] = True
-    yield app
-    app.config["TESTING"] = False
-
-    RServer.get_data_manager().get_db_conn().close()
-    # due to unavailability of close_connection() in fs.py
-
-    _clean_up(basedir)
+    except Exception as e:
+        _clean_up(basedir)
+        raise e
+    finally:
+        _clean_up(basedir)
 
     time.sleep(0.1)
 
@@ -123,12 +127,12 @@ def _set_up(basedir):
     else:
         print("setup > no proposed dir, skip copy")
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("setup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("setup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("setup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("setup > no db, skip delete")
 
     visualize_images_dir = to_unix(osp.join(base_dir, "visualize_images"))
     if osp.exists(visualize_images_dir):
@@ -191,12 +195,12 @@ def _clean_up(basedir):
     # os.rmdir(visualize_images_dir)
     # os.rename(visualize_images_dir_original, visualize_images_dir)
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("cleanup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("cleanup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("cleanup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("cleanup > no db, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))

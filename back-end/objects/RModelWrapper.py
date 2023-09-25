@@ -2,6 +2,9 @@ import torch
 import torchvision
 import os
 from threading import Lock
+from flask_sqlalchemy import SQLAlchemy
+from database.model import *
+from utils.model_utils import *
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -16,15 +19,23 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
+# TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
-    def __init__(self, network_type, net_path, device, pretrained, num_classes):
+    def __init__(
+        self, db_conn, network_type, net_path, device, pretrained, num_classes
+    ):
         # self.device = torch.device(device)
+        self.db_conn: SQLAlchemy = db_conn
         if pretrained:
             assert (
                 num_classes == IMAGENET_OUTPUT_SIZE
             ), f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output. "
         self.device = device  # We keep device as string to allow for easy comparison
+        self.model = None
+        self.model_meta_data = None
+        self.model_name = ""
         self.init_model(network_type, pretrained, num_classes)
+        self.num_classes = num_classes
         self.modelwork_type = network_type
         self._lock = Lock()
         self._model_available = True
@@ -34,6 +45,19 @@ class RModelWrapper:
             self.load_net(net_path)
         else:
             print("Checkpoint file not found: {}".format(net_path))
+
+    def set_current_model(self, model_name: str):
+        # No change if this model is already the current model
+        if model_name == self.model_name:
+            return
+
+        # Free up current model.
+        # TODO: make sure this model is GC'ed
+        if self.model is not None:
+            del self.model
+            self.model = None
+
+        self.model_name, self.model_meta_data = load_model_by_name(model_name)
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
@@ -112,3 +136,35 @@ class RModelWrapper:
         self._lock.acquire()
         self._model_available = True
         self._lock.release()
+
+    def create_model(self, fields: dict):
+        # TODO: Need to validate fields, dump model definition to a file,
+        # etc. Either do these here or somewhere else
+
+        model = Models(**fields)
+        self.db_conn.session.add(model)
+        self.db_conn.session.commit()
+
+    def list_models(self) -> Models:
+        return Models.query.all()
+
+    def delete_model_by_name(self, name):
+        model_to_delete = Models.query.filter_by(name=name).first()
+        if model_to_delete:
+            db.session.delete(model_to_delete)
+            db.session.commit()
+            return model_to_delete
+        else:
+            print(
+                f"Attempting to delete a model that does not exist. Model name: {name}"
+            )
+            return None
+
+    def get_current_model(self):
+        return self.model
+
+    def get_current_model_metadata(self):
+        return self.model_meta_data
+
+    def get_model_by_name(self, name):
+        return Models.query.filter_by(name=name).first()

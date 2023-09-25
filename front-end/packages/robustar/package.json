@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "serve:main": "vue-cli-service serve",
-    "build:main": "vue-cli-service build"
+    "serve": "npx vue-cli-service serve",
+    "build": "npx vue-cli-service build",
+    "lint": "npx npx vue-cli-service lint"
   },
   "dependencies": {
     "@robustar/image-editor": "^0.0.1",
-    "axios": "^1.2.0",
+    "axios": "^1.5.0",
     "core-js": "^3.26.1",
     "lodash": "^4.17.21",
     "p-debounce": "^4.0.0",
@@ -21,16 +19,18 @@
     "vuetify": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.14",
-    "@vue/cli-service": "~4.5.0",
+    "vue-eslint-parser": "^9.3.1",
+    "vue-loader": "^15.9.8",
+    "vue-template-compiler": "^2.6.11",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-plugin-router": "^5.0.8",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
+    "eslint": "^8.48.0",
     "sass": "~1.32.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-socket.io": "^3.0.10",
-    "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.9.2"
   },
   "eslintConfig": {

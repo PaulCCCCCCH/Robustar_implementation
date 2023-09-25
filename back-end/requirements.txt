@@ -1,5 +1,5 @@
 flashtorch==0.1.3
-Flask==2.0.1
+Flask==2.2.5
 importlib_resources==5.2.2
 lib==3.0.0
 matplotlib==3.4.2
@@ -10,12 +10,13 @@ torch==1.9.1
 torchattacks==3.1.0
 torchvision==0.10.1
 webunit==1.3.10
-Werkzeug==2.0.1
+Werkzeug==2.3.6
 tensorboard==2.6.0
 scipy==1.7.1
 flasgger==0.9.5
 pytest==6.2.5
+Flask-SQLAlchemy==3.0.5
 # subject to change
-Flask-SocketIO==4.3.1
-python-engineio==3.13.2
-python-socketio==4.6.0
+Flask-SocketIO==5.3.5
+python-engineio==4.5.1
+python-socketio==5.8.0
