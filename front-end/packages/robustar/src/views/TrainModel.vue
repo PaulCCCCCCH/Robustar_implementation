@@ -1,62 +1,134 @@
 <template>
   <div class="d-flex flex-column align-center">
-    <v-sheet rounded width="800" elevation="3" class="mt-8 pa-4">
-      <v-row>
-        <v-col cols="12">
-          <v-row>
-            <v-col class="d-flex justify-start align-center">
-              <v-card-title class="mb-0">Current model: ResNet</v-card-title>
-            </v-col>
-            <v-col class="d-flex justify-end align-center" cols="2">
-              <v-btn block>Train</v-btn>
-            </v-col>
-          </v-row>
-          <v-row justify="space-between">
-            <v-col cols="2">Created time:</v-col>
-            <v-col cols="2">Last trained:</v-col>
-            <v-col cols="2">Accuracies:</v-col>
-            <v-col cols="2">Epoch:</v-col>
-          </v-row>
-          <v-card-text>Description:</v-card-text>
-          <v-card-text>Architecture:</v-card-text>
-        </v-col>
-      </v-row>
-    </v-sheet>
+    <v-card class="mt-8 mb-4 pa-2" width="1000">
+      <v-card-title class="d-flex justify-space-between mb-2">
+        <span>Current Model: {{ $root.currentModel }}</span>
+        <v-btn depressed color="primary" @click="trainModel">Train</v-btn>
+      </v-card-title>
+      <v-card-text>
+        <div class="d-flex justify-space-between" style="width: 700px">
+          <span>
+            <span class="font-weight-medium">Created time: </span>
+            11/19/1999 16:00
+          </span>
+          <span>
+            <span class="font-weight-medium">Last trained: </span>
+            11/19/1999 16:00
+          </span>
+          <span>
+            <span class="font-weight-medium">Accuracies: </span>
+            50%
+          </span>
+          <span>
+            <span class="font-weight-medium">Epoch: </span>
+            100
+          </span>
+        </div>
+        <div class="my-2">
+          <span class="font-weight-medium">Description: </span>
+        </div>
+        <div>
+          <span class="font-weight-medium">Architecture: </span>
+        </div>
+      </v-card-text>
+    </v-card>
 
-    <v-sheet rounded width="800" elevation="3" class="mt-4 pa-4">
-      <v-row class="d-flex flex-column align-center">
-        <v-col cols="12">
-          <v-card-title>All models</v-card-title>
-
-          <v-row class="d-flex" row-gap="2">
-            <v-col>
-              <v-select :items="['a', 'b', 'c']" label="Model" hint="" outlined dense></v-select>
-            </v-col>
-            <v-col>
-              <ModelUploader />
-            </v-col>
-            <v-col>
-              <v-btn block>Set as current model</v-btn>
-            </v-col>
-          </v-row>
-
-          <v-divider class="mt-4 mb-8"></v-divider>
-          <v-row justify="space-between">
-            <v-col cols="3">Created time:</v-col>
-            <v-col cols="3">Last trained:</v-col>
-            <v-col cols="3">Accuracies:</v-col>
-            <v-col cols="3">Epoch:</v-col>
-          </v-row>
-          <v-card-text>Description:</v-card-text>
-          <v-card-text>Architecture:</v-card-text>
-          <v-row class="row" row-gap="2">
-            <v-col><v-btn block>Delete</v-btn></v-col>
-            <v-col><v-btn block>Duplicate</v-btn></v-col>
-            <v-col><v-btn block>Save changes</v-btn></v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-sheet>
+    <v-card class="pa-2" width="1000">
+      <v-card-title class="mb-2">All Models</v-card-title>
+      <v-card-text>
+        <div class="d-flex justify-space-between">
+          <span style="width: 400px"
+            ><v-select
+              v-model="viewingModel"
+              :loading="isSubmitting"
+              :items="modelList"
+              label="Model"
+              hint=""
+              outlined
+              dense
+            ></v-select
+          ></span>
+          <span
+            ><ModelUploader />
+            <v-btn class="ml-4" depressed color="primary" @click="setCurrentModel"
+              >Set As Current Model</v-btn
+            ></span
+          >
+        </div>
+        <v-divider class="mb-4"></v-divider>
+        <div class="d-flex justify-space-between" style="width: 700px">
+          <div style="width: 200px">
+            <v-text-field
+              :loading="isSubmitting"
+              label="Created time"
+              hint=""
+              outlined
+              clearable
+              dense
+            ></v-text-field>
+          </div>
+          <div style="width: 200px">
+            <v-text-field
+              :loading="isSubmitting"
+              label="Last trained"
+              hint=""
+              outlined
+              clearable
+              dense
+            ></v-text-field>
+          </div>
+          <div style="width: 120px">
+            <v-text-field
+              :loading="isSubmitting"
+              label="Accuracies"
+              hint=""
+              outlined
+              clearable
+              dense
+            ></v-text-field>
+          </div>
+          <div style="width: 100px">
+            <v-text-field
+              :loading="isSubmitting"
+              label="Epoch"
+              hint=""
+              outlined
+              clearable
+              dense
+              type="number"
+            ></v-text-field>
+          </div>
+        </div>
+        <v-textarea
+          :loading="isSubmitting"
+          rows="1"
+          label="Description"
+          hint=""
+          auto-grow
+          outlined
+          clearable
+          dense
+        ></v-textarea>
+        <v-textarea
+          :loading="isSubmitting"
+          rows="1"
+          label="Architecture"
+          hint=""
+          auto-grow
+          outlined
+          clearable
+          dense
+        ></v-textarea>
+        <v-divider class="mb-4"></v-divider>
+        <div class="d-flex justify-end">
+          <v-btn :loading="isSubmitting" depressed color="error" @click="deleteModel">Delete</v-btn>
+          <v-btn :loading="isSubmitting" depressed color="warning" class="mx-4" @click="duplicateModel">Duplicate</v-btn>
+          <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges"
+            >Save Changes</v-btn
+          >
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -67,6 +139,43 @@ export default {
   name: 'TrainModel',
   components: {
     ModelUploader,
+  },
+  data() {
+    return {
+      isSubmitting: false,
+      viewingModel: 'a',
+      modelList: ['a', 'b', 'c'],
+    };
+  },
+  methods: {
+    trainModel() {
+      this.$router.push({ name: 'TrainPad' });
+    },
+    setCurrentModel() {
+      this.$root.currentModel = this.viewingModel;
+    },
+    deleteModel() {
+      this.isSubmitting = true;
+      setTimeout(() => {
+        this.isSubmitting = false;
+        this.modelList.splice(this.modelList.indexOf(this.viewingModel), 1);
+        this.viewingModel = this.modelList[0] || 'my-test-model';
+      }, 3000);
+    },
+    duplicateModel() {
+      this.isSubmitting = true;
+      setTimeout(() => {
+        this.isSubmitting = false;
+        this.viewingModel = this.viewingModel + '-copy'
+        this.modelList.push(this.viewingModel)
+      }, 3000);
+    },
+    saveModelChanges() {
+      this.isSubmitting = true;
+      setTimeout(() => {
+        this.isSubmitting = false;
+      }, 3000);
+    },
   },
 };
 </script>

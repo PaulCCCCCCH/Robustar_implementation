@@ -192,6 +192,9 @@ export default {
       },
     };
   },
+  created () {
+    this.configs.model_name = this.$root.currentModel
+  },
   methods: {
     async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
