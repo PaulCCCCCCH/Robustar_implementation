@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="700px" persistent>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on"> Upload New Model </v-btn>
+      <v-btn v-bind="attrs" v-on="on" depressed color="primary"> Upload New Model </v-btn>
     </template>
 
     <v-card>
