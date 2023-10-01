@@ -146,8 +146,10 @@ def new_server_object(base_dir):
     from database.db_init import db, init_db
 
     print(f'app.config["SQLALCHEMY_DATABASE_URI"] before hardcoding: {app.config["SQLALCHEMY_DATABASE_URI"]}')
+    original_uri = app.config["SQLALCHEMY_DATABASE_URI"]
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/circleci/project/back-end/Robustar2/data.db"
     print(f'app.config["SQLALCHEMY_DATABASE_URI"]: {app.config["SQLALCHEMY_DATABASE_URI"]}')
+    app.config["SQLALCHEMY_DATABASE_URI"] = original_uri
     db.init_app(app)
     init_db(app)
     # Setup data manager
