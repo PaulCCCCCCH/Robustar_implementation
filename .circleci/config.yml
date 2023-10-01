@@ -18,13 +18,13 @@ jobs:
             echo '^^^^^^^^^^^^^ Files cloned from repo'
             echo 'Current Branch: $(git branch --show-current)'
             echo 'Commit: $(git rev-parse HEAD)'
-      - run:
-          name: Download frontend dependencies and build
-          working_directory: ./front-end
-          command: |
-            echo "Files in directory: $(ls)"
-            npm install
-            npm run build
+      # - run:
+      #     name: Download frontend dependencies and build
+      #     working_directory: ./front-end
+      #     command: |
+      #       echo "Files in directory: $(ls)"
+      #       npm install
+      #       npm run build
 
       - run:
           name: Download dataset
@@ -45,7 +45,7 @@ jobs:
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
-            python -m pytest --basedir ../Robustar2 -W ignore::UserWarning -W ignore::DeprecationWarning
+            python -m pytest --basedir ./Robustar2 -W ignore::UserWarning -W ignore::DeprecationWarning
 
       - run:
           name: End-to-end tests
