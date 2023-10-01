@@ -141,15 +141,15 @@ def new_server_object(base_dir):
 
     """ SETUP DATA MANAGER """
     # Setup database
-    db_conn_str = f"sqlite:///{db_path}"
+    db_conn_str = f"sqlite:///{to_absolute(db_path)}"
     app.config["SQLALCHEMY_DATABASE_URI"] = db_conn_str
     from database.db_init import db, init_db
 
     print(f'app.config["SQLALCHEMY_DATABASE_URI"] before hardcoding: {app.config["SQLALCHEMY_DATABASE_URI"]}')
-    original_uri = app.config["SQLALCHEMY_DATABASE_URI"]
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/circleci/project/back-end/Robustar2/data.db"
-    print(f'app.config["SQLALCHEMY_DATABASE_URI"]: {app.config["SQLALCHEMY_DATABASE_URI"]}')
-    app.config["SQLALCHEMY_DATABASE_URI"] = original_uri
+    # original_uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/circleci/project/back-end/Robustar2/data.db"
+    # print(f'app.config["SQLALCHEMY_DATABASE_URI"]: {app.config["SQLALCHEMY_DATABASE_URI"]}')
+    # app.config["SQLALCHEMY_DATABASE_URI"] = original_uri  # Intended to fail the test
     db.init_app(app)
     init_db(app)
     # Setup data manager
