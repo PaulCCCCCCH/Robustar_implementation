@@ -142,8 +142,6 @@ def new_server_object(base_dir):
     """ SETUP DATA MANAGER """
     # Setup database
     db_conn_str = f"sqlite:///{db_path}"
-    print("Database path: ", db_path)
-    print(f"Database connection string: {db_conn_str}")
     app.config["SQLALCHEMY_DATABASE_URI"] = db_conn_str
     from database.db_init import db, init_db
 
