@@ -19,49 +19,49 @@ class DummyModelWrapper:
         self.device = RServer.get_model_wrapper().device
 
 
-def init_predefined_model(name, pretrained, num_classes):
+def init_predefined_model(class_name, pretrained, num_classes):
     """ Initialize the predefined model with the specified name
     """
     # Check if the model name is valid
-    if name not in PREDEFINED_MODELS:
-        raise Exception(f"Predefined model name {name} not recognized.")
+    if class_name not in PREDEFINED_MODELS:
+        raise Exception(f"Predefined model name {class_name} not recognized.")
 
     # If the model is pretrained, it should have the same number of classes as the ImageNet model
     if pretrained and num_classes != IMAGENET_OUTPUT_SIZE:
         raise Exception(f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output.")
 
-    if name == "ResNet18":
+    if class_name == "ResNet18":
         model = torchvision.models.resnet18(pretrained=pretrained, num_classes=num_classes)
-    elif name == "ResNet34":
+    elif class_name == "ResNet34":
         model = torchvision.models.resnet34(pretrained=pretrained, num_classes=num_classes)
-    elif name == "ResNet50":
+    elif class_name == "ResNet50":
         model = torchvision.models.resnet50(pretrained=pretrained, num_classes=num_classes)
-    elif name == "ResNet101":
+    elif class_name == "ResNet101":
         model = torchvision.models.resnet101(pretrained=pretrained, num_classes=num_classes)
-    elif name == "ResNet152":
+    elif class_name == "ResNet152":
         model = torchvision.models.resnet152(pretrained=pretrained, num_classes=num_classes)
-    elif name == "mobilenet-v2":
+    elif class_name == "mobilenet-v2":
         model = torchvision.models.mobilenet_v2(pretrained=pretrained, num_classes=num_classes)
-    elif name == "ResNet18-32x32":
+    elif class_name == "ResNet18-32x32":
         model = torchvision.models.ResNet(torchvision.models.resnet.BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
         model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
         if pretrained:
             raise Exception("Pretrained ResNet18-32x32 is not available.")
-    elif name == "AlexNet":
+    elif class_name == "AlexNet":
         model = torchvision.models.alexnet(pretrained=pretrained, num_classes=num_classes)
 
     return model
 
 
-def init_custom_model(code_path, name):
+def init_custom_model(code_path, class_name):
     """ Initialize the custom model by importing the class with the specified name in the file specified by code_path
     """
     try:
         spec = importlib.util.spec_from_file_location("model_def", code_path)
         model_def = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(model_def)
-        model = getattr(model_def, name)()
+        model = getattr(model_def, class_name)()
         return model
     except Exception as e:
         print("Failed to initialize the model.")

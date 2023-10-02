@@ -1,8 +1,6 @@
-import os
 import json
 import string
 import uuid
-import torch
 import io
 import contextlib
 from flask import request
@@ -48,7 +46,7 @@ def DeleteModel():
 @model_api.route("/model", methods=["POST"])
 def UploadModel():
     """
-    Should also accept (optionally) a model weight file as argument
+    Upload a new model to the server
     ---
     tags:
       - model
@@ -72,6 +70,35 @@ def UploadModel():
         description: "The weight file for the trained model (optional)"
         required: false       # The weight file is optional, so set 'required' to false
         type: "file"          # The type of data for the weight file (file upload)
+
+    definitions:
+      Metadata:
+        type: "object"
+        properties:
+          class_name:
+            type: "string"
+            description: "The name of the model class."
+            required: true
+          nickname:
+            type: "string"
+            description: "A nickname for the model."
+            required: true
+          description:
+            type: "string"
+            description: "A description of the model (optional)."
+          tags:
+            type: "array"
+            items:
+              type: "string"
+            description: "A list of tags associated with the model (optional)."
+          pretrained:
+            type: "string"
+            description: |
+              Indicates if a predefined model is being used.
+              "1" represents pretrained, "0" otherwise (required only if users choose to use a predefined model).
+          num_classes:
+            type: "integer"
+            description: "The number of classes (required only if users choose to use a predefined model)."
 
     responses:
       200:
@@ -109,14 +136,13 @@ def UploadModel():
 
     print("Requested to upload a new model")
 
-    # TODO: Discuss with the team about the naming of the model related files if the id is set to autoincrement
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
     code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
-    weight_path = None
 
-    metadata_4_save = {'name': None,
+    metadata_4_save = {'class_name': None,
+                       'nickname': None,
                        'description': None,
                        'architecture': None,
                        'tags': None,
@@ -131,8 +157,8 @@ def UploadModel():
                        'last_eval_on_test_set': None
                        }
 
-    # Get the model name
-    name = metadata.get('name')
+    # Get the model's class name
+    class_name = metadata.get('class_name')
 
     # If the model is custom(i.e. it has code definition)
     if 'code' in request.form:
@@ -147,7 +173,7 @@ def UploadModel():
 
         # Initialize the custom model
         try:
-            model = init_custom_model(code_path, name)
+            model = init_custom_model(code_path, class_name)
         except Exception as e:
             clear_model_temp_files(saving_id)
             return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
@@ -155,7 +181,7 @@ def UploadModel():
         pretrained = bool(int(metadata.get('pretrained')))
         num_classes = int(metadata.get('num_classes'))
         try:
-            model = init_predefined_model(name, pretrained, num_classes)
+            model = init_predefined_model(class_name, pretrained, num_classes)
             with open(code_path, 'w') as code_file:
                 code_file.write(f"num_classes = {num_classes}")
         except Exception as e:
@@ -193,9 +219,10 @@ def UploadModel():
         return RResponse.abort(400, f"The model is invalid. {e}")
 
     # Update the metadata for saving
-    metadata_4_save['name'] = name
-    metadata_4_save['description'] = metadata.get('description')
-    metadata_4_save['tags'] = metadata.get('tags')
+    metadata_4_save['class_name'] = class_name
+    metadata_4_save['nickname'] = metadata.get('nickname')
+    metadata_4_save['description'] = metadata.get('description') if metadata.get('description') else None
+    metadata_4_save['tags'] = metadata.get('tags') if metadata.get('tags') else None
     metadata_4_save['create_time'] = datetime.now()
     metadata_4_save['code_path'] = code_path
     metadata_4_save['weight_path'] = weight_path
