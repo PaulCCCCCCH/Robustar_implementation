@@ -144,4 +144,6 @@ def start_auto_annotate(split, start: int, end: int):
     auto_annotate_thread = threading.Thread(
         target=auto_annotate_thread, args=(split, start, end)
     )
-    auto_annotate_thread.start()
+
+    with RServer.get_server().get_flask_app().app_context():
+        auto_annotate_thread.start()
