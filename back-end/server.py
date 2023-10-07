@@ -40,6 +40,7 @@ def start_flask_app():
 # Get server listener objects
 app, socket = start_flask_app()
 
+
 # Init socket connection
 @socket.on("connect")
 def test_connect():

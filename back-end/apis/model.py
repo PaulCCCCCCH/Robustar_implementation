@@ -133,13 +133,17 @@ def UploadModel():
     models_dir = os.path.join(RServer.get_server().base_dir, 'generated', 'models')
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
+    if not os.path.exists(os.path.join(models_dir, 'code')):
+        os.makedirs(os.path.join(models_dir, 'code'))
+    if not os.path.exists(os.path.join(models_dir, 'ckpt')):
+        os.makedirs(os.path.join(models_dir, 'ckpt'))
 
     print("Requested to upload a new model")
 
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
-    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
+    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'code', f'{saving_id}.py')
 
     metadata_4_save = {'class_name': None,
                        'nickname': None,
@@ -191,7 +195,7 @@ def UploadModel():
     if 'weight_file' in request.files:
         weight_file = request.files.get('weight_file')
         try:
-            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.pth')
             weight_file.save(weight_path)
         except Exception as e:
             clear_model_temp_files(saving_id)
@@ -205,7 +209,7 @@ def UploadModel():
             return RResponse.abort(400, f"Failed to load the weights. {e}")
     else:   # If the weight file is not provided, save the current weights to a temporary location
         try:
-            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.pth')
             torch.save(model.state_dict(), weight_path)
         except Exception as e:
             clear_model_temp_files(saving_id)

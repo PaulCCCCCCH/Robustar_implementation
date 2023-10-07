@@ -72,8 +72,8 @@ def init_custom_model(code_path, class_name):
 def clear_model_temp_files(saving_id):
     """ Clear the temporary files associated with the model
     """
-    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.py')
-    weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', f'{saving_id}.pth')
+    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'code', f'{saving_id}.py')
+    weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.pth')
     try:
         if os.path.exists(code_path):
             os.remove(code_path)
