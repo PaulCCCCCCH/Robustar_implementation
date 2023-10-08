@@ -122,7 +122,14 @@
         <v-divider class="mb-4"></v-divider>
         <div class="d-flex justify-end">
           <v-btn :loading="isSubmitting" depressed color="error" @click="deleteModel">Delete</v-btn>
-          <v-btn :loading="isSubmitting" depressed color="warning" class="mx-4" @click="duplicateModel">Duplicate</v-btn>
+          <v-btn
+            :loading="isSubmitting"
+            depressed
+            color="warning"
+            class="mx-4"
+            @click="duplicateModel"
+            >Duplicate</v-btn
+          >
           <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges"
             >Save Changes</v-btn
           >
@@ -133,6 +140,13 @@
 </template>
 
 <script>
+import {
+  APIGetCurrentModel,
+  APISetCurrentModel,
+  APIDeleteModel,
+  APIUploadModel,
+  APIGetAllModels,
+} from '@/services/model';
 import ModelUploader from '@/components/ModelUploader';
 
 export default {
@@ -147,35 +161,61 @@ export default {
       modelList: ['a', 'b', 'c'],
     };
   },
+  async mounted() {
+    try {
+      const response = await APIGetAllModels();
+      this.modelList = response.data;
+    } catch (error) {
+      console.error('Error fetching model list:', error);
+    }
+  },
   methods: {
     trainModel() {
       this.$router.push({ name: 'TrainPad' });
     },
-    setCurrentModel() {
-      this.$root.currentModel = this.viewingModel;
+    async setCurrentModel() {
+      try {
+        const response = await APISetCurrentModel(this.viewingModel);
+        this.$root.currentModel = this.viewingModel;
+      } catch (error) {
+        console.error('Error setting current model:', error);
+      }
     },
-    deleteModel() {
+    async deleteModel() {
       this.isSubmitting = true;
-      setTimeout(() => {
-        this.isSubmitting = false;
+      try {
+        const response = await APIDeleteModel(this.viewingModel);
         this.modelList.splice(this.modelList.indexOf(this.viewingModel), 1);
         this.viewingModel = this.modelList[0] || 'my-test-model';
-      }, 3000);
-    },
-    duplicateModel() {
-      this.isSubmitting = true;
-      setTimeout(() => {
+      } catch (error) {
+        console.error('Error deleting model:', error);
+      } finally {
         this.isSubmitting = false;
-        this.viewingModel = this.viewingModel + '-copy'
-        this.modelList.push(this.viewingModel)
-      }, 3000);
+      }
     },
-    saveModelChanges() {
+    async duplicateModel() {
       this.isSubmitting = true;
-      setTimeout(() => {
+      try {
+        // TODO: Replace with actual API call
+        this.viewingModel = this.viewingModel + '-copy';
+        this.modelList.push(this.viewingModel);
+      } catch (error) {
+        console.error('Error duplicating model:', error);
+      } finally {
         this.isSubmitting = false;
-      }, 3000);
+      }
+    },
+    async saveModelChanges() {
+      this.isSubmitting = true;
+      try {
+        // TODO: Replace with actual API call
+      } catch (error) {
+        console.error('Error saving model changes:', error);
+      } finally {
+        this.isSubmitting = false;
+      }
     },
   },
 };
 </script>
+
