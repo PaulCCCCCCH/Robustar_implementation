@@ -23,7 +23,7 @@ def convert_predict_to_array(output):
 
 
 def get_image_prediction(
-    model_wrapper: RModelManager, imgpath: str, imgsize: int, argmax=False
+    model_manager: RModelManager, imgpath: str, imgsize: int, argmax=False
 ):
     """
     Get the probability for each class predicted by the model on the given image.
@@ -40,9 +40,9 @@ def get_image_prediction(
 
         image = data_manager.transforms(image)
         image = image.unsqueeze(0)  # The model requires a batch dimension
-        image = image.to(model_wrapper.device)
+        image = image.to(model_manager.device)
 
-        model = model_wrapper.model
+        model = model_manager.model
 
         out_score = model(
             image
@@ -59,7 +59,7 @@ def get_image_prediction(
 
 
 def calculate_influence(
-    model_wrapper: RModelManager,
+    model_manager: RModelManager,
     data_manager: RDataManager,
     in_config
 ):
@@ -88,7 +88,7 @@ def calculate_influence(
     else:
         end_idx = min(len(testloader.dataset), end_idx)
 
-    config["gpu"] = -1 if model_wrapper.device == "cpu" else 0
+    config["gpu"] = -1 if model_manager.device == "cpu" else 0
     config["test_sample_num"] = end_idx - config["test_start_index"]
     config["outdir"] = data_manager.influence_log_path
 
@@ -120,7 +120,7 @@ def calculate_influence(
     max_influence_dicts = {}
     try:
         max_influence_dicts = ptif.calc_img_wise(
-            config, model_wrapper.model, trainloader, testloader
+            config, model_manager.model, trainloader, testloader
         )
     except StopIteration:
         print("Influence calculation stopped!")
@@ -162,19 +162,19 @@ def get_calc_influence_thread(configs):
 class CalcInfluenceThread(threading.Thread):
     def __init__(
         self,
-        model_wrapper: RModelManager,
+        model_manager: RModelManager,
         data_manager: RDataManager,
         config,
     ):
         super(CalcInfluenceThread, self).__init__()
-        self.model_wrapper = model_wrapper
+        self.model_manager = model_manager
         self.dataManager = data_manager
         self.config = config
 
     def run(self):
         try:
             calculate_influence(
-                self.model_wrapper,
+                self.model_manager,
                 self.dataManager,
                 self.config,
             )

@@ -65,8 +65,8 @@ def setup_training(configs):
     test_set = DataSet(testset, int(configs["image_size"]), transforms)
 
     # Model will be initialized with server config
-    model_wrapper = RServer.get_model_manager()
-    model = model_wrapper.model
+    model_manager = RServer.get_model_manager()
+    model = model_manager.model
 
     trainer = Trainer(
         net=model,
@@ -105,8 +105,8 @@ def start_train(configs):
 
     print("configs:", configs)
 
-    model_wrapper = RServer.get_model_manager()
-    if not model_wrapper.acquire_model():
+    model_manager = RServer.get_model_manager()
+    if not model_manager.acquire_model():
         raise Exception(
             "Cannot start training because the model is occupied by another thread"
         )
@@ -135,7 +135,7 @@ def start_train(configs):
         train_thread.start()
 
     except Exception as e:
-        model_wrapper.release_model()
+        model_manager.release_model()
         raise e
 
     return train_thread

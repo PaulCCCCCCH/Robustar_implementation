@@ -47,12 +47,12 @@ class TestThread(threading.Thread):
         incorrect_buffer = []
 
         task = RTask(TaskType.Test, dataset_length)
-        model_wrapper = RServer.get_model_manager()
-        model_wrapper.model.eval()
+        model_manager = RServer.get_model_manager()
+        model_manager.model.eval()
         for img_path, label in samples:
 
             output = get_image_prediction(
-                model_wrapper,
+                model_manager,
                 img_path,
                 self.dataManager.image_size,
                 argmax=False,
@@ -89,8 +89,8 @@ class TestThread(threading.Thread):
 
 
 def start_test(split):
-    model_wrapper = RServer.get_model_manager()
-    if not model_wrapper.acquire_model():
+    model_manager = RServer.get_model_manager()
+    if not model_manager.acquire_model():
         raise Exception(
             "Cannot start testing because model is occupied by another thread"
         )
@@ -99,5 +99,5 @@ def start_test(split):
         test_thread = TestThread(split)
         test_thread.start()
     except Exception as e:
-        model_wrapper.release_model()
+        model_manager.release_model()
         raise e

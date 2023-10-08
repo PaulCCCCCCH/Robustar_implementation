@@ -18,7 +18,7 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
-# TODO(Chonghan): Change this class to RModelManager later.
+
 class RModelManager:
     def __init__(
         self, db_conn, device

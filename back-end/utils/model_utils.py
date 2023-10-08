@@ -12,8 +12,8 @@ PREDEFINED_MODELS = ['ResNet18', 'ResNet34', 'ResNet50', 'ResNet101', 'ResNet152
                      'AlexNet']
 
 
-# TODO: Use real model wrapper instead of dummy model wrapper
-class DummyModelWrapper:
+# TODO: Use the real model manager instead of dummy model manager
+class DummyModelManager:
     def __init__(self, model):
         self.model = model
         self.device = RServer.get_model_manager().device
@@ -93,13 +93,13 @@ def val_model(model):
     dataset = data_manager.validationset
     samples = dataset.samples[:10]
     # Create a dummy model wrapper to pass to the predict function
-    dummy_model_wrapper = DummyModelWrapper(model)
-    dummy_model_wrapper.model.eval()
+    dummy_model_manager = DummyModelManager(model)
+    dummy_model_manager.model.eval()
 
     # Run the model against the samples
     for img_path, label in samples:
         get_image_prediction(
-            dummy_model_wrapper,
+            dummy_model_manager,
             img_path,
             data_manager.image_size,
             argmax=False,

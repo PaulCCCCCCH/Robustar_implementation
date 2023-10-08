@@ -82,7 +82,7 @@ def predict(split):
     """
     server = RServer.get_server()
     dataManager = server.data_manager
-    model_wrapper = RServer.get_model_manager()
+    model_manager = RServer.get_model_manager()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -100,7 +100,7 @@ def predict(split):
     image_path = to_unix(image_path)
 
     # get predict results
-    if not model_wrapper.acquire_model():
+    if not model_manager.acquire_model():
         RResponse.abort(
             500,
             "Cannot start inferencing because model is occupied by another thread",
@@ -108,7 +108,7 @@ def predict(split):
 
     try:
         output = get_image_prediction(
-            model_wrapper, image_path, dataManager.image_size, argmax=False
+            model_manager, image_path, dataManager.image_size, argmax=False
         )
 
         output_array = convert_predict_to_array(output.cpu().detach().numpy())
@@ -116,7 +116,7 @@ def predict(split):
         # get visualize images
         image_name = to_snake_path(image_path)
         output = visualize(
-            model_wrapper,
+            model_manager,
             image_path,
             dataManager.image_size,
             server.configs["device"],
@@ -126,7 +126,7 @@ def predict(split):
         print(e)
         RResponse.abort(400, "Invalid image path {}".format(image_path))
     finally:
-        model_wrapper.release_model()
+        model_manager.release_model()
 
     if len(output) != 4:
         RResponse.abort(500, "[Unexpected] Invalid number of predict visualize figures")
@@ -235,8 +235,8 @@ def calculate_influence():
               type: string
               example: "Influence calculation started!"
     """
-    model_wrapper = RServer.get_model_manager()
-    if not model_wrapper.acquire_model():
+    model_manager = RServer.get_model_manager()
+    if not model_manager.acquire_model():
         raise Exception(
             "Cannot start calculating influence because the model is occupied by another thread"
         )
@@ -247,10 +247,10 @@ def calculate_influence():
     try:
         calc_influence_thread = get_calc_influence_thread(raw_configs)
     except KeyError as e:
-        model_wrapper.release_model()
+        model_manager.release_model()
         RResponse.abort(400, f"Invalid input. ({e})")
     except Exception as e:
-        model_wrapper.release_model()
+        model_manager.release_model()
         RResponse.abort(500, f"Failed to create influence calculation thread. ({e})")
 
     with RServer.get_server().get_flask_app().app_context():

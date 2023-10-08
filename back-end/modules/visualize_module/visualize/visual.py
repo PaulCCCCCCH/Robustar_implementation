@@ -5,8 +5,8 @@ import torch
 
 
 # https://github.com/MisaOgura/flashtorch#saliency-maps-flashtorchsaliency
-def visualize(model_wrapper: RModelManager, imgpath, imgsize, device):
-    mymodel = model_wrapper.model
+def visualize(model_manager: RModelManager, imgpath, imgsize, device):
+    mymodel = model_manager.model
     images = []
     try:
         backprop = Backprop(mymodel)
