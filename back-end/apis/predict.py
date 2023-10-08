@@ -82,7 +82,7 @@ def predict(split):
     """
     server = RServer.get_server()
     dataManager = server.data_manager
-    model_wrapper = RServer.get_model_wrapper()
+    model_wrapper = RServer.get_model_manager()
 
     # get attributes
     if split in ("train", "annotated"):
@@ -235,7 +235,7 @@ def calculate_influence():
               type: string
               example: "Influence calculation started!"
     """
-    model_wrapper = RServer.get_model_wrapper()
+    model_wrapper = RServer.get_model_manager()
     if not model_wrapper.acquire_model():
         raise Exception(
             "Cannot start calculating influence because the model is occupied by another thread"

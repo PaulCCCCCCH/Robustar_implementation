@@ -1,11 +1,11 @@
-from objects.RModelWrapper import RModelWrapper
+from objects.RModelManager import RModelManager
 from ..flashtorch_.utils import apply_transforms, load_image
 from ..flashtorch_.saliency import Backprop
 import torch
 
 
 # https://github.com/MisaOgura/flashtorch#saliency-maps-flashtorchsaliency
-def visualize(model_wrapper: RModelWrapper, imgpath, imgsize, device):
+def visualize(model_wrapper: RModelManager, imgpath, imgsize, device):
     mymodel = model_wrapper.model
     images = []
     try:

@@ -8,7 +8,7 @@ class RServer:
     server_instance = None
 
     # Use createServer method instead!
-    def __init__(self, configs, base_dir, dataset_dir, ckpt_dir, app, socket):
+    def __init__(self, configs, base_dir, dataset_dir, app, socket):
 
         app.config["SWAGGER"] = {
             "title": "Robustar API",
@@ -20,20 +20,18 @@ class RServer:
         self.dataset_dir = dataset_dir
         self.base_dir = base_dir
         self.datasetPath = dataset_dir
-        self.ckpt_dir = ckpt_dir
         self.app = app
         self.socket = socket
         self.configs = configs
-        self.model_wrapper = None
-        self.model_weights = {}
+        self.model_manager = None
 
     @staticmethod
     def create_server(
-        configs: dict, base_dir: str, dataset_dir: str, ckpt_dir: str, app, socket
+        configs: dict, base_dir: str, dataset_dir: str, app, socket
     ):
         if RServer.server_instance is None:
             RServer.server_instance = RServer(
-                configs, base_dir, dataset_dir, ckpt_dir, app, socket
+                configs, base_dir, dataset_dir, app, socket
             )
         else:
             assert (
@@ -66,20 +64,12 @@ class RServer:
         return RServer.server_instance.configs
 
     @staticmethod
-    def get_model_wrapper():
-        return RServer.server_instance.model_wrapper
+    def get_model_manager():
+        return RServer.server_instance.model_manager
 
     @staticmethod
-    def set_model(model_wrapper):
-        RServer.server_instance.model_wrapper = model_wrapper
-
-    @staticmethod
-    def get_model_weights():
-        return RServer.server_instance.model_weights
-
-    @staticmethod
-    def add_model_weight(name, weight):
-        RServer.server_instance.model_weights[name] = weight
+    def set_model_manager(model_manager):
+        RServer.server_instance.model_manager = model_manager
 
     @staticmethod
     def get_socket():

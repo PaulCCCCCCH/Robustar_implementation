@@ -24,7 +24,7 @@ class TrainThread(threading.Thread):
         except Exception as e:
             raise e
         finally:
-            RServer.get_model_wrapper().release_model()
+            RServer.get_model_manager().release_model()
 
     def update_info(self, status_dict):
         return """This is a placeholder function. If anything needs to be done
@@ -45,7 +45,6 @@ def setup_training(configs):
     model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
     # Default configs from the server
-    save_dir = RServer.get_server().ckpt_dir
     device = RServer.get_server_configs()["device"]
     data_manager = RServer.get_data_manager()
     transforms = data_manager.transforms
@@ -66,7 +65,7 @@ def setup_training(configs):
     test_set = DataSet(testset, int(configs["image_size"]), transforms)
 
     # Model will be initialized with server config
-    model_wrapper = RServer.get_model_wrapper()
+    model_wrapper = RServer.get_model_manager()
     model = model_wrapper.model
 
     trainer = Trainer(
@@ -80,7 +79,6 @@ def setup_training(configs):
         learn_rate=float(configs["learn_rate"]),
         auto_save=configs["auto_save_model"],
         save_every=int(configs["save_every"]),
-        save_dir=save_dir,
         name=model_name,
         use_paired_train=configs["use_paired_train"],
         paired_reg=float(configs["paired_train_reg_coeff"]),
@@ -107,7 +105,7 @@ def start_train(configs):
 
     print("configs:", configs)
 
-    model_wrapper = RServer.get_model_wrapper()
+    model_wrapper = RServer.get_model_manager()
     if not model_wrapper.acquire_model():
         raise Exception(
             "Cannot start training because the model is occupied by another thread"

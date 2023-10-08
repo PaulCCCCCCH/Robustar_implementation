@@ -1,10 +1,11 @@
 import torch
 import time
-from torchattacks import PGD
+import uuid
 import os
+from torchattacks import PGD
 from objects.RTask import RTask, TaskType
 from objects.RServer import RServer
-import copy
+from datetime import datetime
 
 
 class Trainer:
@@ -15,21 +16,20 @@ class Trainer:
     statusInfo = {}
 
     def __init__(
-        self,
-        net,
-        trainset,
-        testset,
-        batch_size,
-        shuffle,
-        num_workers,
-        device,
-        learn_rate,
-        auto_save,
-        save_every,
-        save_dir,
-        name,
-        use_paired_train=False,
-        paired_reg=1e-4,
+            self,
+            net,
+            trainset,
+            testset,
+            batch_size,
+            shuffle,
+            num_workers,
+            device,
+            learn_rate,
+            auto_save,
+            save_every,
+            name,
+            use_paired_train=False,
+            paired_reg=1e-4,
     ):
         self.initialize_loader(trainset, testset, batch_size, shuffle, num_workers)
         self.net = net
@@ -37,10 +37,14 @@ class Trainer:
         self.learn_rate = learn_rate
         self.auto_save = auto_save
         self.save_every = save_every
-        self.save_dir = save_dir
         self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
+        self.temp_best_path = None
+        self.temp_best_epoch = 0
+        self.orig_metadata = RServer.get_model_manager().convert_model_to_metadata(
+            RServer.get_model_manager().get_model_by_nickname(self.name)
+        )
 
     def initialize_loader(self, trainset, testset, batch_size, shuffle, num_workers):
         self.testloader = torch.utils.data.DataLoader(
@@ -57,23 +61,54 @@ class Trainer:
     def update_gui(self):
         self.updateInfo(self.statusInfo)
 
-    def _save_net(self, name):
-        if not os.path.exists(self.save_dir):
-            os.mkdir(self.save_dir)
-        torch.save(self.net.state_dict(), os.path.join(self.save_dir, name))
+    def save_net_2_disk(self):
+        saving_id = str(uuid.uuid4())
+        saving_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.py')
+        torch.save(self.net.state_dict(), saving_path)
+        return saving_path
 
-        # Save the model to the Rserver instance
-        dict_in_mem = copy.deepcopy(self.net.state_dict())
-
-        RServer.add_model_weight(name, dict_in_mem)
+    def save_net_temp_best(self, epoch):
+        if self.temp_best_path:
+            try:
+                os.remove(self.temp_best_path)
+            except Exception as e:
+                raise Exception(f"Failed to remove the outdated best model's weight file. {e}")
+        self.temp_best_path = self.save_net_2_disk()
+        self.temp_best_epoch = epoch
 
     def save_net_best(self):
-        name_str = self.name + "_best"
-        self._save_net(name_str)
+        name = f'{self.name}_best_auto_saved'
+        # TODO: discuss the correct way to specify the model's name
+        #  (currently treating self.name as the origin model's name)
+        #  (maybe we should have both the origin model's name and the result model's name)
+        metadata_4_save = self.create_metadata_4_save(name, self.temp_best_epoch, self.temp_best_path)
+        RServer.get_model_manager().create_model(metadata_4_save)
 
     def save_net_epoch(self, epoch):
-        name_str = self.name + "_" + str(epoch)
-        self._save_net(name_str)
+        name = f'{self.name}_{epoch}_auto_saved'
+        saving_path = self.save_net_2_disk()
+        # TODO: same as save_net_best
+        metadata_4_save = self.create_metadata_4_save(name, epoch, saving_path)
+        RServer.get_model_manager().create_model(metadata_4_save)
+
+    def create_metadata_4_save(self, name, epoch, weight_path):
+        metadata_4_save = {}
+        metadata_4_save['class_name'] = self.orig_metadata['class_name']
+        metadata_4_save['nickname'] = name
+        metadata_4_save['description'] = self.orig_metadata['description']
+        metadata_4_save['architecture'] = self.orig_metadata['architecture']
+        metadata_4_save['tags'] = self.orig_metadata['tags']
+        metadata_4_save['create_time'] = datetime.now()
+        metadata_4_save['code_path'] = self.orig_metadata['code_path']
+        metadata_4_save['weight_path'] = weight_path
+        metadata_4_save['epoch'] = self.orig_metadata['epoch'] + epoch + 1
+        # TODO: discuss the correct accuracy and eval info to be saved
+        metadata_4_save['train_accuracy'] = None
+        metadata_4_save['val_accuracy'] = None
+        metadata_4_save['test_accuracy'] = None
+        metadata_4_save['last_eval_on_dev_set'] = None
+        metadata_4_save['last_eval_on_test_set'] = None
+        return metadata_4_save
 
     def print_accuracy(self):
         loader = self.testloader
@@ -218,10 +253,12 @@ class Trainer:
             torch.cuda.empty_cache()
             if current_acc > best:
                 if auto_save:
-                    self.save_net_best()
+                    self.save_net_temp_best(epoch)
                 best = current_acc
             if (epoch + 1) % self.save_every == 0:
                 self.save_net_epoch(epoch)
+
+        self.save_net_best()
 
         endtime = time.time()
         print("Time consumption:", endtime - starttime)

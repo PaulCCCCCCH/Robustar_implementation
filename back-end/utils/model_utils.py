@@ -16,7 +16,7 @@ PREDEFINED_MODELS = ['ResNet18', 'ResNet34', 'ResNet50', 'ResNet101', 'ResNet152
 class DummyModelWrapper:
     def __init__(self, model):
         self.model = model
-        self.device = RServer.get_model_wrapper().device
+        self.device = RServer.get_model_manager().device
 
 
 def init_predefined_model(class_name, pretrained, num_classes):

@@ -145,21 +145,7 @@ def UploadModel():
 
     code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'code', f'{saving_id}.py')
 
-    metadata_4_save = {'class_name': None,
-                       'nickname': None,
-                       'description': None,
-                       'architecture': None,
-                       'tags': None,
-                       'create_time': None,
-                       'weight_path': None,
-                       'code_path': None,
-                       'epoch': None,
-                       'train_accuracy': None,
-                       'val_accuracy': None,
-                       'test_accuracy': None,
-                       'last_eval_on_dev_set': None,
-                       'last_eval_on_test_set': None
-                       }
+    metadata_4_save = {}
 
     # Get the model's class name
     class_name = metadata.get('class_name')
@@ -245,7 +231,7 @@ def UploadModel():
 
     # Save the model's metadata to the database
     try:
-        RServer.get_model_wrapper().create_model(metadata_4_save)
+        RServer.get_model_manager().create_model(metadata_4_save)
     except Exception as e:
         return RResponse.abort(500, f"Failed to save the model. {e}")
 

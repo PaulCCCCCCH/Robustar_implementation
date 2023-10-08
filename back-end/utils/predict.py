@@ -1,5 +1,5 @@
 from modules.visualize_module.flashtorch_.utils import load_image
-from objects.RModelWrapper import RModelWrapper
+from objects.RModelManager import RModelManager
 from objects.RServer import RServer
 import torch
 import modules.influence_module as ptif
@@ -23,7 +23,7 @@ def convert_predict_to_array(output):
 
 
 def get_image_prediction(
-    model_wrapper: RModelWrapper, imgpath: str, imgsize: int, argmax=False
+    model_wrapper: RModelManager, imgpath: str, imgsize: int, argmax=False
 ):
     """
     Get the probability for each class predicted by the model on the given image.
@@ -59,7 +59,7 @@ def get_image_prediction(
 
 
 def calculate_influence(
-    model_wrapper: RModelWrapper,
+    model_wrapper: RModelManager,
     data_manager: RDataManager,
     in_config
 ):
@@ -154,7 +154,7 @@ def get_calc_influence_thread(configs):
         configs[key] = int(configs[key]) 
 
     return CalcInfluenceThread(
-        RServer.get_model_wrapper(),
+        RServer.get_model_manager(),
         RServer.get_data_manager(),
         configs
     )
@@ -162,7 +162,7 @@ def get_calc_influence_thread(configs):
 class CalcInfluenceThread(threading.Thread):
     def __init__(
         self,
-        model_wrapper: RModelWrapper,
+        model_wrapper: RModelManager,
         data_manager: RDataManager,
         config,
     ):
@@ -181,5 +181,5 @@ class CalcInfluenceThread(threading.Thread):
         except Exception as e:
             raise e
         finally:
-            RServer.get_model_wrapper().release_model()
+            RServer.get_model_manager().release_model()
 
