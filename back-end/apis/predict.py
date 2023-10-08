@@ -129,15 +129,11 @@ def predict(split):
         model_wrapper.release_model()
 
     if len(output) != 4:
-        RResponse.abort(
-            500, "[Unexpected] Invalid number of predict visualize figures"
-        )
+        RResponse.abort(500, "[Unexpected] Invalid number of predict visualize figures")
 
     predict_fig_routes = []
     for i, fig in enumerate(output):
-        predict_fig_route = "{}/{}_{}.png".format(
-            visualize_root, image_name, str(i)
-        )
+        predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
         fig.savefig(predict_fig_route)
         predict_fig_routes.append(predict_fig_route)
 
@@ -222,7 +218,7 @@ def calculate_influence():
                 recursion_depth: 9000,
                 scale: 5000,
                 batch_size: 16,
-                num_workers: 5, 
+                num_workers: 5,
               }
     responses:
       200:
@@ -256,6 +252,7 @@ def calculate_influence():
     except Exception as e:
         model_wrapper.release_model()
         RResponse.abort(500, f"Failed to create influence calculation thread. ({e})")
-    
-    calc_influence_thread.start()
+
+    with RServer.get_server().get_flask_app().app_context():
+        calc_influence_thread.start()
     return RResponse.ok({}, "Influence calculation started!")
