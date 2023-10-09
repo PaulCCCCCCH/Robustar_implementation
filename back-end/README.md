@@ -2,6 +2,8 @@
 
 # To Run Backend
 
+*The versions of packages in `requirements.txt` have been verified to work with Python 3.9.*
+
 ```
 cd back-end # If you are not already in this folder
 pip install -r requirements.txt
@@ -61,5 +63,4 @@ From Catalina version onwards,  the root directory becomes read-only. This means
    > **NOTE**: It is important to ensure that the space between the two folder names is a **TAB** character, and not just a number of space.
 
 3. After creating the file above with the specified contents, you need to reboot the system. After rebooting, you'll see the `/Robustar2` folder.
-
 

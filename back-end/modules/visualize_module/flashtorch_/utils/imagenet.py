@@ -6,7 +6,7 @@
 import json
 
 from collections.abc import Mapping
-from importlib_resources import path
+from importlib.resources import path
 
 from . import resources
 
