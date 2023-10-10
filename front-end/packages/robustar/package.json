@@ -14,23 +14,23 @@
     "lodash": "^4.17.21",
     "p-debounce": "^4.0.0",
     "sass-loader": "^10.0.0",
+    "socket.io-client": "^4.7.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.2",
     "vuetify": "^2.6.12"
   },
   "devDependencies": {
-    "vue-eslint-parser": "^9.3.1",
-    "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.6.11",
-    "@vue/cli-service": "^5.0.8",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.48.0",
     "sass": "~1.32.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
-    "vue-socket.io": "^3.0.10",
+    "vue-eslint-parser": "^9.3.1",
+    "vue-loader": "^15.9.8",
+    "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.9.2"
   },
   "eslintConfig": {
