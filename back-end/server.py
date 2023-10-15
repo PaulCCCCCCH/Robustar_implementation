@@ -11,8 +11,9 @@ from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
-import logging 
-log = logging.getLogger('werkzeug')
+import logging
+
+log = logging.getLogger("werkzeug")
 log.setLevel(logging.WARNING)
 
 
@@ -126,6 +127,8 @@ def new_server_object(base_dir):
         configs["image_size"] if expected_input_shape is None else expected_input_shape
     )
 
+    print("Server initializing...")
+
     """ CREATE SERVER """
     server = RServer.create_server(
         configs=configs,
@@ -137,10 +140,19 @@ def new_server_object(base_dir):
     )
 
     """ SETUP DATA MANAGER """
+    # Setup database
+    db_conn_str = f"sqlite:///{to_absolute(os.getcwd(), db_path)}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_conn_str
+    from database.db_init import db, init_db
+
+    db.init_app(app)
+    init_db(app)
+    # Setup data manager
     data_manager = RDataManager(
         base_dir,
         dataset_dir,
-        db_path,
+        db,
+        app,
         shuffle=configs["shuffle"],
         image_size=image_size,
         image_padding=configs["image_padding"],
@@ -150,6 +162,7 @@ def new_server_object(base_dir):
 
     """ SETUP MODEL """
     model = RModelWrapper(
+        db_conn=db,
         network_type=network_type,
         net_path=to_unix(os.path.join(ckpt_dir, configs["weight_to_load"])),
         device=configs["device"],
@@ -166,6 +179,8 @@ def new_server_object(base_dir):
         model_name="u2net",
     )
     RServer.set_auto_annotator(annotator)
+
+    print("Performing server consistency checks...")
 
     # Check file state consistency
     precheck()
@@ -192,6 +207,7 @@ def create_app():
     print("Absolute basedir is {}".format(basedir))
     new_server_object(basedir)
 
+    print("Server started")
     return RServer.get_server().get_flask_app()
 
 

@@ -2,6 +2,8 @@ import torch
 import torchvision
 import os
 from threading import Lock
+from flask_sqlalchemy import SQLAlchemy
+from database.model import *
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -16,9 +18,13 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
+# TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
-    def __init__(self, network_type, net_path, device, pretrained, num_classes):
+    def __init__(
+        self, db_conn, network_type, net_path, device, pretrained, num_classes
+    ):
         # self.device = torch.device(device)
+        self.db_conn: SQLAlchemy = db_conn
         if pretrained:
             assert (
                 num_classes == IMAGENET_OUTPUT_SIZE
@@ -112,3 +118,38 @@ class RModelWrapper:
         self._lock.acquire()
         self._model_available = True
         self._lock.release()
+
+    def create_model(self, fields: dict):
+        # TODO: Need to validate fields, dump model definition to a file,
+        # etc. Either do these here or somewhere else
+
+        tags = fields.pop('tags', [])
+
+        tag_objs = []
+        if tags:
+            for tag_name in tags:
+                tag = self.db_conn.session.query(Tags).filter_by(name=tag_name).first()
+                if tag is None:
+                    tag = Tags(name=tag_name)
+                    self.db_conn.session.add(tag)
+                tag_objs.append(tag)
+
+        model = Models(**fields, tags=tag_objs)
+        self.db_conn.session.add(model)
+        self.db_conn.session.commit()
+
+    def list_models(self) -> Models:
+        return Models.query.all()
+
+    def delete_model_by_name(self, name):
+        model_to_delete = Models.query.filter_by(name=name).first()
+        if model_to_delete:
+            db.session.delete(model_to_delete)
+            db.session.commit()
+        else:
+            print(
+                f"Attempting to delete a model that does not exist. Model name: {name}"
+            )
+
+    def get_model_by_name(self, name):
+        return Models.query.filter_by(name=name).first()

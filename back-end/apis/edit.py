@@ -1,4 +1,5 @@
 import binascii
+import traceback
 
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
@@ -75,10 +76,13 @@ def api_user_edit(split):
         save_edit(split, path, decoded, h, w)
         return RResponse.ok("Success!")
     except binascii.Error:
+        traceback.print_exc()
         RResponse.abort(400, "Broken image, fail to decode")
     except ValueError as e:
+        traceback.print_exc()
         RResponse.abort(400, str(e))
     except Exception as e:
+        traceback.print_exc()
         RResponse.abort(500, str(e))
 
 

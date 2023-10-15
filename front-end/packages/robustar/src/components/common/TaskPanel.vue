@@ -73,13 +73,13 @@ export default {
   },
   created() {
     this.socket = io(configs.socketUrl);
-    if (!this.socket) return
+    if (!this.socket) return;
     this.socket.on('connect', () => console.log('socket.io connected'));
     this.socket.on('afterConnect', ({ data }) => console.log(data));
     this.socket.on('digest', ({ digest }) => (this.digest = digest));
   },
   beforeDestroy() {
-    if (!this.socket) return
+    if (!this.socket) return;
     this.socket.close();
   },
   methods: {
