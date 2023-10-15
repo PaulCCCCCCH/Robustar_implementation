@@ -167,7 +167,7 @@ def UploadModel():
         except Exception as e:
             clear_model_temp_files(saving_id)
             return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
-    else:   # If the model is predefined
+    elif 'pretrained' in metadata:   # If the model is predefined
         pretrained = bool(int(metadata.get('pretrained')))
         num_classes = int(metadata.get('num_classes'))
         try:
@@ -176,6 +176,8 @@ def UploadModel():
                 code_file.write(f"num_classes = {num_classes}")
         except Exception as e:
             return RResponse.abort(400, f"Failed to initialize the predefined model. {e}")
+    else:
+        return RResponse.abort(400, "The model is neither custom nor predefined.")
 
     # Get the weight file and save it to a temporary location if it exists
     if 'weight_file' in request.files:

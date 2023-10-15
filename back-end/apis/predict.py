@@ -253,6 +253,5 @@ def calculate_influence():
         model_manager.release_model()
         RResponse.abort(500, f"Failed to create influence calculation thread. ({e})")
 
-    with RServer.get_server().get_flask_app().app_context():
-        calc_influence_thread.start()
+    calc_influence_thread.start()
     return RResponse.ok({}, "Influence calculation started!")

@@ -3,7 +3,7 @@ import os.path as osp
 import os
 from objects.RServer import RServer
 from objects.RDataManager import RDataManager
-from objects.RModelManager import RModelManager, MODEL_INPUT_SHAPE
+from objects.RModelManager import RModelManager
 from objects.RAutoAnnotator import RAutoAnnotator
 from utils.path_utils import to_unix, to_absolute
 from utils.predict import get_image_prediction

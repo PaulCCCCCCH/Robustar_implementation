@@ -77,10 +77,20 @@ def calculate_influence(
     config = ptif.get_default_config()
     config.update(in_config)
 
-    batch_size = config['batch_size']
-    num_workers = config['num_workers']
-    testloader = torch.utils.data.DataLoader(data_manager.testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-    trainloader = torch.utils.data.DataLoader(data_manager.trainset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    batch_size = config["batch_size"]
+    num_workers = config["num_workers"]
+    testloader = torch.utils.data.DataLoader(
+        data_manager.testset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+    )
+    trainloader = torch.utils.data.DataLoader(
+        data_manager.trainset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+    )
 
     end_idx = config["test_end_index"]
     if end_idx == -1:
@@ -92,7 +102,9 @@ def calculate_influence(
     config["test_sample_num"] = end_idx - config["test_start_index"]
     config["outdir"] = data_manager.influence_log_path
 
-    print(f"Starting influence calculation with the following configuration: \n {config}")
+    print(
+        f"Starting influence calculation with the following configuration: \n {config}"
+    )
 
     # max_influence_dicts is the dictionary containing the four most influential training images for each testing image
     #   e.g.    {
@@ -108,7 +120,6 @@ def calculate_influence(
 
     # TODO: change argument from testloader to misclassified test loader
     # as we are only interested in the influence for misclassified samples
-
 
     # TODO: Now max_influence_dicts will be empty if user stops the influence calculation
     # (i.e., all previous results are thrown away because we only return the full result when
@@ -136,11 +147,12 @@ def calculate_influence(
 
         for j in range(4):
             train_id = int(train_ids[j])
-            train_img_path = data_manager.trainset.get_image_list(train_id, train_id + 1)[0]
+            train_img_path = data_manager.trainset.get_image_list(
+                train_id, train_id + 1
+            )[0]
             train_img_paths.append(train_img_path)
 
         influences[test_img_path] = train_img_paths
-    
 
     data_manager.get_influence_dict().update(influences)
     if influences:
@@ -148,16 +160,24 @@ def calculate_influence(
             pickle.dump(data_manager.get_influence_dict(), influence_file)
             print("Influence calculation done.")
 
+
 def get_calc_influence_thread(configs):
     # Parse the following fields from string to integer
-    for key in ["test_start_index", "test_end_index", "recursion_depth", "r_averaging", "scale"]:
-        configs[key] = int(configs[key]) 
+    for key in [
+        "test_start_index",
+        "test_end_index",
+        "recursion_depth",
+        "r_averaging",
+        "scale",
+    ]:
+        configs[key] = int(configs[key])
 
     return CalcInfluenceThread(
         RServer.get_model_manager(),
         RServer.get_data_manager(),
         configs
     )
+
 
 class CalcInfluenceThread(threading.Thread):
     def __init__(
@@ -173,13 +193,13 @@ class CalcInfluenceThread(threading.Thread):
 
     def run(self):
         try:
-            calculate_influence(
-                self.model_manager,
-                self.dataManager,
-                self.config,
-            )
+            with RServer.get_server().get_flask_app().app_context():
+                calculate_influence(
+                    self.model_manager,
+                    self.dataManager,
+                    self.config,
+                )
         except Exception as e:
             raise e
         finally:
             RServer.get_model_manager().release_model()
-
