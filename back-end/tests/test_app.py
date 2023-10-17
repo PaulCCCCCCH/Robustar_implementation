@@ -8,12 +8,13 @@ import pytest
 from objects.RServer import RServer
 from server import start_flask_app, new_server_object
 from utils.path_utils import to_unix
+from database.db_init import db
 
 PARAM_NAME_IMAGE_PATH = "image_url"
 flask_app = None
 
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def app(request):
     global flask_app
     basedir = request.config.getoption("basedir")
@@ -22,13 +23,17 @@ def app(request):
 
         if flask_app is None:
             flask_app, _ = start_flask_app()
-            server = new_server_object(basedir)
+            new_server_object(basedir)
             server = RServer.get_server()
             flask_app = server.get_flask_app()
 
         flask_app.config["TESTING"] = True
         yield flask_app
         flask_app.config["TESTING"] = False
+
+        with flask_app.app_context():
+            db.session.remove()
+            db.engine.dispose()
 
     except Exception as e:
         _clean_up(basedir)
@@ -39,7 +44,7 @@ def app(request):
     time.sleep(0.1)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def client(app):
     yield app.test_client()
 

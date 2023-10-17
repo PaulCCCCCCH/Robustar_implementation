@@ -17,14 +17,20 @@ influ_rel = db.Table(
     ),
     db.Column("influ_path", db.Integer),
 )
+model_tag_rel = db.Table(
+    "model_tag_rel",
+    db.Column("model_id", db.Integer, db.ForeignKey("models.id"), primary_key=True),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tags.id"), primary_key=True),
+)
 
 
 class Models(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
+    class_name = db.Column(db.String)
+    nickname = db.Column(db.String)
     description = db.Column(db.String)
     architecture = db.Column(db.String)
-    tags = db.Column(db.String)
+    tags = db.relationship("Tags", secondary=model_tag_rel, backref="models")
     create_time = db.Column(db.DateTime)
     weight_path = db.Column(db.String)
     code_path = db.Column(db.String)
@@ -41,6 +47,11 @@ class Models(db.Model):
         lazy="subquery",
         backref=db.backref("models", lazy=True),
     )
+
+
+class Tags(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, unique=True)
 
 
 class PairedSetImage(db.Model):

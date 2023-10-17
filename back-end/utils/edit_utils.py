@@ -121,27 +121,30 @@ def start_auto_annotate(split, start: int, end: int):
         return
 
     def auto_annotate_thread(split, start, end):
-        task = RTask(TaskType.AutoAnnotate, end - start)
-        starttime = time.time()
 
-        for train_path in data_manager.trainset.get_image_list(start, end):
-            # Propose edit for this image
-            proposed_image_path, pil_image = propose_edit(split, train_path, True)
+        with RServer.get_server().get_flask_app().app_context():
+            task = RTask(TaskType.AutoAnnotate, end - start)
+            starttime = time.time()
 
-            # Save the image to paired data folder
-            data_manager.pairedset.save_annotated_image(
-                train_path, data_manager.trainset, pil_image
-            )
+            for train_path in data_manager.trainset.get_image_list(start, end):
+                # Propose edit for this image
+                proposed_image_path, pil_image = propose_edit(split, train_path, True)
 
-            task_update_res = task.update()
-            if not task_update_res:
-                endtime = time.time()
-                print("Time consumption:", endtime - starttime)
-                print("Auto annotate stopped!")
-                return
-        # task.exit()
+                # Save the image to paired data folder
+                data_manager.pairedset.save_annotated_image(
+                    train_path, data_manager.trainset, pil_image
+                )
+
+                task_update_res = task.update()
+                if not task_update_res:
+                    endtime = time.time()
+                    print("Time consumption:", endtime - starttime)
+                    print("Auto annotate stopped!")
+                    return
+            # task.exit()
 
     auto_annotate_thread = threading.Thread(
         target=auto_annotate_thread, args=(split, start, end)
     )
+
     auto_annotate_thread.start()

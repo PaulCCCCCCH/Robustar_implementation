@@ -2,17 +2,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
-import VueSocketIO from 'vue-socket.io';
-import { configs } from '@/configs.js';
 
 Vue.config.productionTip = false;
-
-Vue.use(
-  new VueSocketIO({
-    debug: false,
-    connection: configs.socketUrl,
-  })
-);
 
 new Vue({
   router,
