@@ -3,8 +3,8 @@ import torchvision
 import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
-from database.model import *
-from utils.model_utils import *
+from database.model import Models, Tags, db
+import importlib
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -57,7 +57,7 @@ class RModelWrapper:
             del self.model
             self.model = None
 
-        self.model_name, self.model_meta_data = load_model_by_name(model_name)
+        self.model_name, self.model_meta_data = self.load_model_by_name(model_name)
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
@@ -179,3 +179,23 @@ class RModelWrapper:
 
     def get_model_by_name(self, name):
         return Models.query.filter_by(name=name).first()
+
+    def load_model_by_name(self, model_name: str):
+        model_meta_data = self.get_model_by_name(model_name)
+        model = self.init_custom_model(model_meta_data.code_path, model_name)
+        model.load_state_dict(torch.load(model_meta_data.weight_path))
+        return model, model_meta_data
+
+    @staticmethod
+    def init_custom_model(code_path, name):
+        """Initialize the custom model by importing the class with the specified name in the file specified by code_path"""
+        try:
+            spec = importlib.util.spec_from_file_location("model_def", code_path)
+            model_def = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(model_def)
+            model = getattr(model_def, name)()
+            return model
+        except Exception as e:
+            print("Failed to initialize the model.")
+            print(e)
+            raise e

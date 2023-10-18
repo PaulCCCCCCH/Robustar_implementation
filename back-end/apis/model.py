@@ -11,21 +11,14 @@ from datetime import datetime
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 
 model_api = Blueprint("model_api", __name__)
 
 
 @model_api.route("/model/current", methods=["GET"])
 def GetCurrModel():
-    """Get the model that is currently active"""
-    """ return data
-    {
-        id: string,
-        name: string,
-        details: string,
-    }
-    """
-    return RResponse.ok(get_current_model_metadata())
+    return RResponse.ok(RServer.get_model_wrapper().get_current_model_metadata())
 
 
 @model_api.route("/model/current/<model_name>", methods=["POST"])
@@ -47,7 +40,7 @@ def DeleteModel(model_name: str):
         details: string,
     }
     """
-    return RResponse.ok(delete_model_by_name(model_name))
+    return RResponse.ok(RServer.get_model_wrapper().delete_model_by_name(model_name))
 
 
 @model_api.route("/model", methods=["POST"])
@@ -137,7 +130,8 @@ def UploadModel():
     metadata = json.loads(request.form.get("metadata"))
 
     # Check if the folder for saving models exists, if not, create it
-    models_dir = os.path.join(RServer.get_server().base_dir, "generated", "models")
+    base_dir = RServer.get_server().base_dir
+    models_dir = os.path.join(base_dir, "generated", "models")
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
@@ -146,9 +140,7 @@ def UploadModel():
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
-    code_path = os.path.join(
-        RServer.get_server().base_dir, "generated", "models", f"{saving_id}.py"
-    )
+    code_path = os.path.join(base_dir, "generated", "models", f"{saving_id}.py")
 
     metadata_4_save = {
         "class_name": None,
@@ -178,14 +170,14 @@ def UploadModel():
             with open(code_path, "w") as code_file:
                 code_file.write(code)
         except Exception as e:
-            clear_model_temp_files(saving_id)
+            clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the model definition. {e}")
 
         # Initialize the custom model
         try:
-            model = init_custom_model(code_path, class_name)
+            model = RModelWrapper.init_custom_model(code_path, class_name)
         except Exception as e:
-            clear_model_temp_files(saving_id)
+            clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
     elif "pretrained" in metadata:  # If the model is predefined
         pretrained = bool(int(metadata.get("pretrained")))
@@ -210,14 +202,14 @@ def UploadModel():
             )
             weight_file.save(weight_path)
         except Exception as e:
-            clear_model_temp_files(saving_id)
+            clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
         # Load the weights from the file
         try:
             model.load_state_dict(torch.load(weight_path))
         except Exception as e:
-            clear_model_temp_files(saving_id)
+            clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(400, f"Failed to load the weights. {e}")
     else:  # If the weight file is not provided, save the current weights to a temporary location
         try:
@@ -226,14 +218,17 @@ def UploadModel():
             )
             torch.save(model.state_dict(), weight_path)
         except Exception as e:
-            clear_model_temp_files(saving_id)
+            clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
     # Validate the model
     try:
-        val_model(model)
+        dummy_model_wrapper = DummyModelWrapper(
+            model, RServer.get_model_wrapper().device
+        )
+        val_model(RServer.get_data_manager(), dummy_model_wrapper)
     except Exception as e:
-        clear_model_temp_files(saving_id)
+        clear_model_temp_files(base_dir, saving_id)
         return RResponse.abort(400, f"The model is invalid. {e}")
 
     # Update the metadata for saving
@@ -287,6 +282,6 @@ def GetAllModels():
     ]
     """
     try:
-        return list_models()
+        return RResponse.ok(RServer.get_model_wrapper().list_models())
     except Exception as e:
         return RResponse.abort(500, f"Failed to list all models. {e}")
