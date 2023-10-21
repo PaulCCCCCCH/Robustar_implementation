@@ -1,9 +1,7 @@
 import os
-import os.path as osp
 import shutil
 import time
 import zipfile
-
 import pytest
 
 from objects.RServer import RServer
@@ -18,13 +16,13 @@ flask_app = None
 @pytest.fixture(scope="function")
 def app(request):
     global flask_app
-    basedir = to_unix(request.config.getoption("basedir"))
+    zip_file_path = to_unix(request.config.getoption("zip_file_path"))
     try:
-        _set_up(basedir)
+        _set_up(zip_file_path)
 
         if flask_app is None:
             flask_app, _ = start_flask_app()
-            new_server_object(to_unix(os.path.join(basedir, "Robustar2-test")))
+            new_server_object(zip_file_path[:-4])
             server = RServer.get_server()
             flask_app = server.get_flask_app()
 
@@ -38,10 +36,10 @@ def app(request):
             db.engine.dispose()
 
     except Exception as e:
-        _clean_up(basedir)
+        _clean_up(zip_file_path)
         raise e
     finally:
-        _clean_up(basedir)
+        _clean_up(zip_file_path)
 
     time.sleep(0.1)
 
@@ -51,10 +49,8 @@ def client(app):
     yield app.test_client()
 
 
-def _set_up(basedir):
-    # Unzip dataset from Robustar2-test.zip
-    zip_file_path = to_unix(osp.join(basedir, "Robustar2-test.zip"))
-
+def _set_up(zip_file_path):
+    basedir = os.path.dirname(zip_file_path)
     try:
         with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             zip_ref.extractall(basedir)
@@ -64,7 +60,7 @@ def _set_up(basedir):
     print(f"Extracted {zip_file_path} to {basedir}")
 
 
-def _clean_up(basedir):
-    dataset_dir = to_unix(osp.join(basedir, "Robustar2-test"))
-    shutil.rmtree(dataset_dir)
-    print(f"Remove {dataset_dir}")
+def _clean_up(zip_file_path):
+    file_path = zip_file_path[:-4]
+    shutil.rmtree(file_path)
+    print(f"Remove {file_path}")
