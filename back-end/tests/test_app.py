@@ -15,10 +15,10 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 flask_app = None
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app(request):
     global flask_app
-    basedir = request.config.getoption("basedir")
+    basedir = to_unix(request.config.getoption("basedir"))
     try:
         _set_up(basedir)
 
@@ -46,18 +46,17 @@ def app(request):
     time.sleep(0.1)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def client(app):
     yield app.test_client()
 
 
 def _set_up(basedir):
     # Unzip dataset from Robustar2-test.zip
-    basedir = to_unix(basedir)
     zip_file_path = to_unix(osp.join(basedir, "Robustar2-test.zip"))
 
     try:
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             zip_ref.extractall(basedir)
     except Exception as e:
         raise Exception(f"Failed to extract {zip_file_path} to {basedir}.")
@@ -66,7 +65,6 @@ def _set_up(basedir):
 
 
 def _clean_up(basedir):
-    basedir = to_unix(basedir)
     dataset_dir = to_unix(osp.join(basedir, "Robustar2-test"))
     shutil.rmtree(dataset_dir)
-    print(f'Remove {dataset_dir}')
+    print(f"Remove {dataset_dir}")

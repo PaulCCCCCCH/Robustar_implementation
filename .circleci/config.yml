@@ -65,7 +65,7 @@ jobs:
             pip install -r ../back-end/requirements.txt
             # Run backend
             cd ../back-end
-            python3 server.py --basedir ./Robustar2-test &
+            python3 server.py --basedir ./Robustar2 &
             # Sleep for a while before running tests
             sleep 10
             # Run frontend tests
