@@ -55,8 +55,8 @@ def _set_up(zip_file_path):
         with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             zip_ref.extractall(basedir)
     except Exception as e:
-        raise Exception(f"Failed to extract {zip_file_path} to {basedir}.")
         print(e)
+        raise Exception(f"Failed to extract {zip_file_path} to {basedir}.")
     print(f"Extracted {zip_file_path} to {basedir}")
 
 
