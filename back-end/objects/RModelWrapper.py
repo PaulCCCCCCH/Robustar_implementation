@@ -4,7 +4,6 @@ import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
 from database.model import *
-from utils.model_utils import *
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -141,7 +140,18 @@ class RModelWrapper:
         # TODO: Need to validate fields, dump model definition to a file,
         # etc. Either do these here or somewhere else
 
-        model = Models(**fields)
+        tags = fields.pop('tags', [])
+
+        tag_objs = []
+        if tags:
+            for tag_name in tags:
+                tag = self.db_conn.session.query(Tags).filter_by(name=tag_name).first()
+                if tag is None:
+                    tag = Tags(name=tag_name)
+                    self.db_conn.session.add(tag)
+                tag_objs.append(tag)
+
+        model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
         self.db_conn.session.commit()
 
@@ -153,18 +163,10 @@ class RModelWrapper:
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
-            return model_to_delete
         else:
             print(
                 f"Attempting to delete a model that does not exist. Model name: {name}"
             )
-            return None
-
-    def get_current_model(self):
-        return self.model
-
-    def get_current_model_metadata(self):
-        return self.model_meta_data
 
     def get_model_by_name(self, name):
         return Models.query.filter_by(name=name).first()

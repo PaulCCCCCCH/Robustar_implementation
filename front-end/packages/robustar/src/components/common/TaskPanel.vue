@@ -60,26 +60,27 @@
 <script>
 import { APIStopTask } from '@/services/task';
 import { configs } from '@/configs.js';
+import { io } from 'socket.io-client';
 
 export default {
   name: 'TaskPanel',
   data() {
     return {
+      socket: null,
       digest: [],
       configs: configs,
     };
   },
-  sockets: {
-    connect() {
-      console.log('connect');
-    },
-    afterConnect(data) {
-      console.log(data);
-    },
-    // get digest from backend
-    digest(data) {
-      this.digest = data.digest;
-    },
+  created() {
+    this.socket = io(configs.socketUrl);
+    if (!this.socket) return;
+    this.socket.on('connect', () => console.log('socket.io connected'));
+    this.socket.on('afterConnect', ({ data }) => console.log(data));
+    this.socket.on('digest', ({ digest }) => (this.digest = digest));
+  },
+  beforeDestroy() {
+    if (!this.socket) return;
+    this.socket.close();
   },
   methods: {
     getProgressColor(successPercent) {

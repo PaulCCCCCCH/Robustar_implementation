@@ -15,11 +15,12 @@ class TrainThread(threading.Thread):
 
     def run(self):
         try:
-            self.trainer.start_train(
-                call_back=lambda status_dict: self.update_info(status_dict),
-                epochs=int(self.configs["epoch"]),
-                auto_save=self.configs["auto_save_model"] == "yes",
-            )
+            with RServer.get_server().get_flask_app().app_context():
+                self.trainer.start_train(
+                    call_back=lambda status_dict: self.update_info(status_dict),
+                    epochs=int(self.configs["epoch"]),
+                    auto_save=self.configs["auto_save_model"] == "yes",
+                )
         except Exception as e:
             raise e
         finally:
@@ -115,7 +116,7 @@ def start_train(configs):
     try:
         train_set, test_set, model, trainer = setup_training(configs)
         # Set up tensorboard log directory
-        tb_dir = "runs" 
+        tb_dir = "runs"
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
         if not os.path.exists(tb_dir):
             os.mkdir(tb_dir)
