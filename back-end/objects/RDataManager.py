@@ -218,6 +218,9 @@ class RDataManager:
     def get_db_conn(self):
         return self.db_conn
 
+    def get_base_dir(self):
+        return self.base_dir
+
 
 class SquarePad:
     """
