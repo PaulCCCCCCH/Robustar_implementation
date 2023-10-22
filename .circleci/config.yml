@@ -46,7 +46,7 @@ jobs:
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
-            python -m pytest --basedir ./ -W ignore::UserWarning -W ignore::DeprecationWarning
+            python -m pytest --zip_file_path ./Robustar-test.zip -W ignore::UserWarning -W ignore::DeprecationWarning
 
       - run:
           name: End-to-end tests
