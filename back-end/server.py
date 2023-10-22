@@ -108,7 +108,6 @@ def new_server_object(base_dir):
     """ CREATE SERVER """
     RServer.create_server(
         configs=configs,
-        base_dir=base_dir,
         app=app,
         socket=socket,
     )
