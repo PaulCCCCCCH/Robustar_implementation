@@ -51,13 +51,18 @@ class RModelWrapper:
         if model_name == self.model_name:
             return
 
+        # Get new model
+        new_model_data, new_model_meta_data = self.load_model_by_name(model_name)
+        if not new_model_data or not new_model_meta_data:
+            raise ValueError("Model does not exist")
+
         # Free up current model.
         # TODO: make sure this model is GC'ed
         if self.model is not None:
             del self.model
             self.model = None
 
-        self.model_name, self.model_meta_data = self.load_model_by_name(model_name)
+        self.model_name, self.model_meta_data = new_model_data, new_model_meta_data
 
     def init_model(self, network_type, pretrained, num_classes):
         if network_type == "resnet-18":
