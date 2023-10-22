@@ -14,7 +14,7 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 flask_app = None
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app(request):
     global flask_app
     basedir = request.config.getoption("basedir")
@@ -44,7 +44,7 @@ def app(request):
     time.sleep(0.1)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def client(app):
     yield app.test_client()
 
