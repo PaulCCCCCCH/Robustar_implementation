@@ -12,9 +12,10 @@ from objects.RServer import RServer
 
 model_api = Blueprint("model_api", __name__)
 
+
 @model_api.route("/model/current", methods=["GET"])
 def GetCurrModel():
-    """ Get the model that is currently active """
+    """Get the model that is currently active"""
     """ return data
     {
         id: string,
@@ -27,13 +28,13 @@ def GetCurrModel():
 
 @model_api.route("/model/current/<model_id>", methods=["POST"])
 def SetCurrModel(model_id: string):
-    """ return 200 on success """
+    """return 200 on success"""
     pass
 
 
 @model_api.route("/model/<id>", methods=["DELETE"])
 def DeleteModel():
-    """ return data
+    """return data
     {
         id: string,
         name: string,
@@ -127,35 +128,37 @@ def UploadModel():
 
     """
     # Get the model's metadata
-    metadata = json.loads(request.form.get('metadata'))
+    metadata = json.loads(request.form.get("metadata"))
 
     # Check if the folder for saving models exists, if not, create it
-    models_dir = os.path.join(RServer.get_server().base_dir, 'generated', 'models')
+    models_dir = os.path.join(RServer.get_server().base_dir, "generated", "models")
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
-    if not os.path.exists(os.path.join(models_dir, 'code')):
-        os.makedirs(os.path.join(models_dir, 'code'))
-    if not os.path.exists(os.path.join(models_dir, 'ckpt')):
-        os.makedirs(os.path.join(models_dir, 'ckpt'))
+    if not os.path.exists(os.path.join(models_dir, "code")):
+        os.makedirs(os.path.join(models_dir, "code"))
+    if not os.path.exists(os.path.join(models_dir, "ckpt")):
+        os.makedirs(os.path.join(models_dir, "ckpt"))
 
     print("Requested to upload a new model")
 
     # Generate a uuid for the model saving
     saving_id = str(uuid.uuid4())
 
-    code_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'code', f'{saving_id}.py')
+    code_path = os.path.join(
+        RServer.get_server().base_dir, "generated", "models", "code", f"{saving_id}.py"
+    )
 
     metadata_4_save = {}
 
     # Get the model's class name
-    class_name = metadata.get('class_name')
+    class_name = metadata.get("class_name")
 
     # If the model is custom(i.e. it has code definition)
-    if 'code' in request.form:
+    if "code" in request.form:
         # Get the model definition code and save it to a temporary file
-        code = request.form.get('code')
+        code = request.form.get("code")
         try:
-            with open(code_path, 'w') as code_file:
+            with open(code_path, "w") as code_file:
                 code_file.write(code)
         except Exception as e:
             clear_model_temp_files(saving_id)
@@ -166,24 +169,32 @@ def UploadModel():
             model = init_custom_model(code_path, class_name)
         except Exception as e:
             clear_model_temp_files(saving_id)
-            return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
-    elif 'pretrained' in metadata:   # If the model is predefined
-        pretrained = bool(int(metadata.get('pretrained')))
-        num_classes = int(metadata.get('num_classes'))
+            return RResponse.fail(f"Failed to initialize the custom model. {e}", 400)
+    elif "pretrained" in metadata:  # If the model is predefined
+        pretrained = bool(int(metadata.get("pretrained")))
+        num_classes = int(metadata.get("num_classes"))
         try:
             model = init_predefined_model(class_name, pretrained, num_classes)
-            with open(code_path, 'w') as code_file:
+            with open(code_path, "w") as code_file:
                 code_file.write(f"num_classes = {num_classes}")
         except Exception as e:
-            return RResponse.abort(400, f"Failed to initialize the predefined model. {e}")
+            return RResponse.fail(
+                f"Failed to initialize the predefined model. {e}", 400
+            )
     else:
-        return RResponse.abort(400, "The model is neither custom nor predefined.")
+        return RResponse.fail("The model is neither custom nor predefined.", 400)
 
     # Get the weight file and save it to a temporary location if it exists
-    if 'weight_file' in request.files:
-        weight_file = request.files.get('weight_file')
+    if "weight_file" in request.files:
+        weight_file = request.files.get("weight_file")
         try:
-            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.pth')
+            weight_path = os.path.join(
+                RServer.get_server().base_dir,
+                "generated",
+                "models",
+                "ckpt",
+                f"{saving_id}.pth",
+            )
             weight_file.save(weight_path)
         except Exception as e:
             clear_model_temp_files(saving_id)
@@ -194,10 +205,16 @@ def UploadModel():
             model.load_state_dict(torch.load(weight_path))
         except Exception as e:
             clear_model_temp_files(saving_id)
-            return RResponse.abort(400, f"Failed to load the weights. {e}")
-    else:   # If the weight file is not provided, save the current weights to a temporary location
+            return RResponse.fail(f"Failed to load the weights. {e}", 400)
+    else:  # If the weight file is not provided, save the current weights to a temporary location
         try:
-            weight_path = os.path.join(RServer.get_server().base_dir, 'generated', 'models', 'ckpt', f'{saving_id}.pth')
+            weight_path = os.path.join(
+                RServer.get_server().base_dir,
+                "generated",
+                "models",
+                "ckpt",
+                f"{saving_id}.pth",
+            )
             torch.save(model.state_dict(), weight_path)
         except Exception as e:
             clear_model_temp_files(saving_id)
@@ -208,28 +225,30 @@ def UploadModel():
         val_model(model)
     except Exception as e:
         clear_model_temp_files(saving_id)
-        return RResponse.abort(400, f"The model is invalid. {e}")
+        return RResponse.fail(f"The model is invalid. {e}", 400)
 
     # Update the metadata for saving
-    metadata_4_save['class_name'] = class_name
-    metadata_4_save['nickname'] = metadata.get('nickname')
-    metadata_4_save['description'] = metadata.get('description') if metadata.get('description') else None
-    metadata_4_save['tags'] = metadata.get('tags') if metadata.get('tags') else None
-    metadata_4_save['create_time'] = datetime.now()
-    metadata_4_save['code_path'] = code_path
-    metadata_4_save['weight_path'] = weight_path
-    metadata_4_save['epoch'] = 0
-    metadata_4_save['train_accuracy'] = None
-    metadata_4_save['val_accuracy'] = None
-    metadata_4_save['test_accuracy'] = None
-    metadata_4_save['last_eval_on_dev_set'] = None
-    metadata_4_save['last_eval_on_test_set'] = None
+    metadata_4_save["class_name"] = class_name
+    metadata_4_save["nickname"] = metadata.get("nickname")
+    metadata_4_save["description"] = (
+        metadata.get("description") if metadata.get("description") else None
+    )
+    metadata_4_save["tags"] = metadata.get("tags") if metadata.get("tags") else None
+    metadata_4_save["create_time"] = datetime.now()
+    metadata_4_save["code_path"] = code_path
+    metadata_4_save["weight_path"] = weight_path
+    metadata_4_save["epoch"] = 0
+    metadata_4_save["train_accuracy"] = None
+    metadata_4_save["val_accuracy"] = None
+    metadata_4_save["test_accuracy"] = None
+    metadata_4_save["last_eval_on_dev_set"] = None
+    metadata_4_save["last_eval_on_test_set"] = None
 
     # Save the model's architecture to the metadata
     buffer = io.StringIO()
     with contextlib.redirect_stdout(buffer):
         print(model)
-    metadata_4_save['architecture'] = buffer.getvalue()
+    metadata_4_save["architecture"] = buffer.getvalue()
 
     # Save the model's metadata to the database
     try:
@@ -243,12 +262,12 @@ def UploadModel():
     except Exception as e:
         return RResponse.abort(500, f"Failed to set the current model. {e}")
 
-    return RResponse.ok('Success')
+    return RResponse.ok("Success")
 
 
 @model_api.route("/model/list", methods=["GET"])
 def GetAllModels():
-    """ return data
+    """return data
     [
         {
             id: string,
@@ -259,4 +278,3 @@ def GetAllModels():
     ]
     """
     pass
-
