@@ -7,7 +7,7 @@ class RServer:
     server_instance = None
 
     # Use createServer method instead!
-    def __init__(self, configs, base_dir, app, socket):
+    def __init__(self, configs, app, socket):
         app.config["SWAGGER"] = {
             "title": "Robustar API",
             "uiversion": 3,
@@ -15,16 +15,15 @@ class RServer:
         }
         self.swagger = Swagger(app)
 
-        self.base_dir = base_dir
         self.app = app
         self.socket = socket
         self.configs = configs
         self.model_manager = None
 
     @staticmethod
-    def create_server(configs: dict, base_dir: str, app, socket):
+    def create_server(configs: dict, app, socket):
         if RServer.server_instance is None:
-            RServer.server_instance = RServer(configs, base_dir, app, socket)
+            RServer.server_instance = RServer(configs, app, socket)
         else:
             assert (
                 configs == RServer.server_instance.configs
