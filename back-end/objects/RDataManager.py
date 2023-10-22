@@ -91,6 +91,7 @@ class RDataManager:
             osp.join(self.influence_root, "influence_images.pkl")
         )
         self.influence_log_path = to_unix(osp.join(self.influence_root, "logs"))
+        self.generated_root = to_unix(osp.join(self.base_dir, "generated"))
 
     def _init_data_records(self):
         # Check if we should recreate all db tables:
@@ -172,6 +173,7 @@ class RDataManager:
             self.visualize_root,
             self.influence_root,
             self.proposed_annotation_root,
+            self.generated_root,
         ]:
             os.makedirs(root, exist_ok=True)
 

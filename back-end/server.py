@@ -151,7 +151,7 @@ def new_server_object(base_dir):
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser = argparse.ArgumentParser(description="Starts the backend of Robustar.")
     parser.add_argument(
         "--basedir",
         default="/Robustar2",
