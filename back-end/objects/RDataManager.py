@@ -17,12 +17,11 @@ import torchvision.transforms.functional as transF
 
 # The data interface
 class RDataManager:
-
     SUPP_IMG_EXT = ["jpg", "jpeg", "png"]
 
     def __init__(
         self,
-        baseDir: str,
+        base_dir: str,
         dataset_dir: str,
         db_conn: SQLAlchemy,
         app: Flask,
@@ -30,11 +29,10 @@ class RDataManager:
         image_padding="short_side",
         class2label_mapping=None,
     ):
-
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
         self.data_root = dataset_dir
-        self.base_dir = baseDir
+        self.base_dir = base_dir
         self.db_conn = db_conn
         self.image_size = image_size
         self.image_padding = image_padding

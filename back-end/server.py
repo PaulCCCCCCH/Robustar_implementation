@@ -56,7 +56,6 @@ def precheck():
     validationset = data_manager.validationset
 
     def check_num_classes_consistency():
-
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []
@@ -102,17 +101,14 @@ def new_server_object(base_dir):
     else:
         print("Class to label file not found!")
 
-    image_size = (
-        configs["image_size"]
-    )
+    image_size = configs["image_size"]
 
     print("Server initializing...")
 
     """ CREATE SERVER """
-    server = RServer.create_server(
+    RServer.create_server(
         configs=configs,
         base_dir=base_dir,
-        dataset_dir=dataset_dir,
         app=app,
         socket=socket,
     )
@@ -138,10 +134,7 @@ def new_server_object(base_dir):
     RServer.set_data_manager(data_manager)
 
     """ SETUP MODEL """
-    model = RModelManager(
-        db_conn=db,
-        device=configs["device"]
-    )
+    model = RModelManager(db_conn=db, device=configs["device"])
     RServer.set_model_manager(model)
 
     """ SETUP AUTO ANNOTATOR """
