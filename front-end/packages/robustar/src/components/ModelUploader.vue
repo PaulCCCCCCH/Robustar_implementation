@@ -213,15 +213,19 @@ export default {
       if (this.$refs.form.validate()) {
         this.isSubmitting = true;
         try {
-          await APIUploadModel({
-            class_name: this.className,
-            nickname: this.nickname,
-            description: this.description,
-            tags: this.tags,
-            pretrained: this.predefined ? '1' : '0',
-            num_classes: this.num_classes,
-          });
-          this.reset()
+          await APIUploadModel(
+            {
+              class_name: this.className,
+              nickname: this.nickname,
+              description: this.description,
+              tags: this.tags,
+              pretrained: this.predefined ? '1' : '0',
+              num_classes: this.num_classes,
+            },
+            this.code,
+            this.weightFile
+          );
+          this.reset();
           this.$root.alert('success', 'Model uploading succeeded');
         } catch (error) {
           this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
