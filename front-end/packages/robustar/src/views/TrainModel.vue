@@ -163,8 +163,9 @@ export default {
   },
   async mounted() {
     try {
+      console.log(await APIGetCurrentModel())
       const response = await APIGetAllModels();
-      this.modelList = response.data;
+      this.modelList = response.data.data;
     } catch (error) {
       console.error('Error fetching model list:', error);
     }

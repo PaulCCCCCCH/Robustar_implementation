@@ -10,5 +10,5 @@ export const APIGetInfluenceImages = async (split, image_url) => {
 };
 
 export const APICalculateInfluence = async (configs) => {
-  return postRequest(configs, '/influence');
+  return postRequest('/influence', configs);
 };
