@@ -28,7 +28,7 @@ const validateStatus = (status) => [200, 201].includes(status);
  * @param {object} data
  * @param {string} route
  */
-export const postRequest = async (data, route) => {
+export const postRequest = async (route, data) => {
   return axios.post(`/api${route}`, data, { validateStatus: validateStatus });
 };
 

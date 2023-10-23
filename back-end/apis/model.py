@@ -46,6 +46,13 @@ def DeleteModel(model_name: str):
 @model_api.route("/model", methods=["POST"])
 def UploadModel():
     """
+    Should also accept (optionally) a model weight file as argument
+    ---
+    tags:
+      - model
+    consumes:
+      - "multipart/form-data"
+    produces:
       - "application/json"
       - in: "formData"        # Use "formData" to indicate multipart/form-data parameters
         name: "metadata"      # Name of the parameter for the model metadata
