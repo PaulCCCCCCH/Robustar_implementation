@@ -146,7 +146,7 @@ import {
   APIDeleteModel,
   APIUploadModel,
   APIGetAllModels,
-} from '@/services/model';
+} from '@/services/model/';
 import ModelUploader from '@/components/ModelUploader';
 
 export default {
@@ -218,4 +218,3 @@ export default {
   },
 };
 </script>
-
