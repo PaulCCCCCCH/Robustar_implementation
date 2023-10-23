@@ -262,7 +262,7 @@ def UploadModel():
 
     # Set the current model to the newly uploaded model
     try:
-        SetCurrModel(saving_id)
+        RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
     except Exception as e:
         return RResponse.abort(500, f"Failed to set the current model. {e}")
 

@@ -165,7 +165,7 @@ class RModelWrapper:
         return Models.query.all()
 
     def delete_model_by_name(self, name):
-        model_to_delete = Models.query.filter_by(name=name).first()
+        model_to_delete = Models.query.filter_by(nickname=name).first()
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
@@ -183,7 +183,7 @@ class RModelWrapper:
         return self.model_meta_data
 
     def get_model_by_name(self, name):
-        return Models.query.filter_by(name=name).first()
+        return Models.query.filter_by(nickname=name).first()
 
     def load_model_by_name(self, model_name: str):
         model_meta_data = self.get_model_by_name(model_name)
