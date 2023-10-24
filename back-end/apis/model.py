@@ -5,6 +5,7 @@ import uuid
 import torch
 import io
 import contextlib
+import traceback
 from flask import request
 from flask import Blueprint
 from datetime import datetime
@@ -282,6 +283,9 @@ def GetAllModels():
     ]
     """
     try:
-        return RResponse.ok(RServer.get_model_wrapper().list_models())
+        return RResponse.ok(
+            [model.as_dict() for model in RServer.get_model_wrapper().list_models()]
+        )
     except Exception as e:
+        traceback.print_exc()
         return RResponse.abort(500, f"Failed to list all models. {e}")

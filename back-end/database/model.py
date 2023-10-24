@@ -48,6 +48,9 @@ class Models(db.Model):
         backref=db.backref("models", lazy=True),
     )
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
