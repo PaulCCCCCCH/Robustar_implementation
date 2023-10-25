@@ -56,17 +56,11 @@
           >
         </div>
         <v-divider class="mb-4"></v-divider>
-        <div class="d-flex justify-space-between" style="width: 700px">
-          <div style="width: 200px">
-            <v-text-field
-              :loading="isSubmitting"
-              label="Created time"
-              hint=""
-              outlined
-              clearable
-              dense
-            ></v-text-field>
-          </div>
+        <div class="d-flex justify-space-between">
+          <span>
+            <span class="font-weight-medium">Created time: </span>
+            {{ viewingModel.create_time }}
+          </span>
           <div style="width: 200px">
             <v-text-field
               :loading="isSubmitting"
@@ -89,6 +83,7 @@
           </div>
           <div style="width: 100px">
             <v-text-field
+              v-model="viewingModel.epoch"
               :loading="isSubmitting"
               label="Epoch"
               hint=""
@@ -100,6 +95,7 @@
           </div>
         </div>
         <v-textarea
+          v-model="viewingModel.description"
           :loading="isSubmitting"
           rows="1"
           label="Description"
@@ -110,11 +106,11 @@
           dense
         ></v-textarea>
         <v-textarea
+          v-model="viewingModel.architecture"
           :loading="isSubmitting"
-          rows="1"
+          rows="7"
           label="Architecture"
           hint=""
-          auto-grow
           outlined
           clearable
           dense
@@ -157,15 +153,24 @@ export default {
   data() {
     return {
       isSubmitting: false,
-      viewingModel: 'a',
-      modelList: ['a', 'b', 'c'],
+      viewingModel: {
+        architecture: '',
+        class_name: '',
+        create_time: '',
+        description: '',
+        epoch: 0,
+        nickname: '',
+      },
+      modelList: [],
+      epoch: 0,
     };
   },
   async mounted() {
     try {
-      console.log(await APIGetCurrentModel())
-      const response = await APIGetAllModels();
-      this.modelList = response.data.data;
+      console.log(await APIGetCurrentModel());
+      const response = (await APIGetAllModels())?.data?.data;
+      this.modelList = response.map((item) => ({ text: item.nickname, value: item }));
+      this.viewingModel = this.modelList.length ? this.modelList[0].value : null;
     } catch (error) {
       console.error('Error fetching model list:', error);
     }
@@ -185,9 +190,9 @@ export default {
     async deleteModel() {
       this.isSubmitting = true;
       try {
-        const response = await APIDeleteModel(this.viewingModel);
+        await APIDeleteModel(this.viewingModel.nickname);
         this.modelList.splice(this.modelList.indexOf(this.viewingModel), 1);
-        this.viewingModel = this.modelList[0] || 'my-test-model';
+        this.viewingModel = this.modelList[0] || null;
       } catch (error) {
         console.error('Error deleting model:', error);
       } finally {
