@@ -19,7 +19,11 @@ model_api = Blueprint("model_api", __name__)
 
 @model_api.route("/model/current", methods=["GET"])
 def GetCurrModel():
-    return RResponse.ok(RServer.get_model_wrapper().get_current_model_metadata())
+    model = RServer.get_model_wrapper().get_current_model_metadata()
+    if not model:
+        RResponse.abort(400, f"No current model is selected")
+
+    return RResponse.ok(model.as_dict())
 
 
 @model_api.route("/model/current/<model_name>", methods=["POST"])
@@ -41,7 +45,15 @@ def DeleteModel(model_name: str):
         details: string,
     }
     """
-    return RResponse.ok(RServer.get_model_wrapper().delete_model_by_name(model_name))
+    try:
+        model = RServer.get_model_wrapper().delete_model_by_name(model_name)
+    except Exception as e:
+        RResponse.abort(500, f"Failed to delete model {model_name}." + str(e))
+
+    if not model:
+        RResponse.abort(400, f"Model {model_name} does not exist.")
+
+    return RResponse.ok(model.as_dict())
 
 
 @model_api.route("/model", methods=["POST"])

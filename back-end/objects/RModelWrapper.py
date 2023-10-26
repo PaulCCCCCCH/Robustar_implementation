@@ -125,7 +125,7 @@ class RModelWrapper:
     def list_models(self) -> list[Models]:
         return Models.query.all()
 
-    def delete_model_by_name(self, name):
+    def delete_model_by_name(self, name) -> Models:
         model_to_delete = Models.query.filter_by(nickname=name).first()
         if model_to_delete:
             db.session.delete(model_to_delete)
