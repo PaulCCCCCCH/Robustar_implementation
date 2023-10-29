@@ -167,6 +167,8 @@ def UploadModel():
         if not predefined:  # If the model is custom
             # Get the model definition code and save it to a temporary file
             code = request.form.get("code")
+            if code is None:
+                return RResponse.fail(f"The model definition code is missing.", 400)
             try:
                 save_code(code, code_path)
             except Exception as e:
@@ -259,45 +261,7 @@ def UploadModel():
         return RResponse.ok("Success")
     except Exception as e:
         clear_model_temp_files(saving_id)
-        return RResponse.abort(400, f"The model is invalid. {e}")
-
-    # Update the metadata for saving
-    metadata_4_save["class_name"] = class_name
-    metadata_4_save["nickname"] = metadata.get("nickname")
-    metadata_4_save["predefined"] = predefined
-    metadata_4_save["description"] = (
-        metadata.get("description") if metadata.get("description") else None
-    )
-    metadata_4_save["tags"] = metadata.get("tags") if metadata.get("tags") else None
-    metadata_4_save["create_time"] = datetime.now()
-    metadata_4_save["code_path"] = code_path
-    metadata_4_save["weight_path"] = weight_path
-    metadata_4_save["epoch"] = 0
-    metadata_4_save["train_accuracy"] = None
-    metadata_4_save["val_accuracy"] = None
-    metadata_4_save["test_accuracy"] = None
-    metadata_4_save["last_eval_on_dev_set"] = None
-    metadata_4_save["last_eval_on_test_set"] = None
-
-    # Save the model's architecture to the metadata
-    buffer = io.StringIO()
-    with contextlib.redirect_stdout(buffer):
-        print(model)
-    metadata_4_save["architecture"] = buffer.getvalue()
-
-    # Save the model's metadata to the database
-    try:
-        RServer.get_model_wrapper().create_model(metadata_4_save)
-    except Exception as e:
-        return RResponse.abort(500, f"Failed to save the model. {e}")
-
-    # Set the current model to the newly uploaded model
-    try:
-        SetCurrModel(saving_id)
-    except Exception as e:
-        return RResponse.abort(500, f"Failed to set the current model. {e}")
-
-    return RResponse.ok("Success")
+        return RResponse.abort(500, f"Unexpected error. {e}")
 
 
 @model_api.route("/model/list", methods=["GET"])
