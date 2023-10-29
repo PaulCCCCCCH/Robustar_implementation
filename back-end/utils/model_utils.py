@@ -123,7 +123,9 @@ def val_model(model):
 
 def create_models_dir():
     # Check if the folder for saving models exists, if not, create it
-    models_dir = os.path.join(RServer.get_server().base_dir, "generated", "models")
+    models_dir = os.path.join(
+        RServer.get_data_manager().get_base_dir(), "generated", "models"
+    )
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
     if not os.path.exists(os.path.join(models_dir, "code")):

@@ -144,14 +144,14 @@ def UploadModel():
         saving_id = str(uuid.uuid4())
 
         code_path = os.path.join(
-            RServer.get_server().base_dir,
+            RServer.get_data_manager().get_base_dir(),
             "generated",
             "models",
             "code",
             f"{saving_id}.py",
         )
         weight_path = os.path.join(
-            RServer.get_server().base_dir,
+            RServer.get_data_manager().get_base_dir(),
             "generated",
             "models",
             "ckpt",
