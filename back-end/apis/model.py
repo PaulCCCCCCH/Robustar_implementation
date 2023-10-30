@@ -129,6 +129,8 @@ def UploadModel():
               example: "Success"
 
     """
+    code_path = None
+    weight_path = None
     try:
         # Get the model's metadata
         metadata = json.loads(request.form.get("metadata"))
@@ -260,7 +262,8 @@ def UploadModel():
 
         return RResponse.ok("Success")
     except Exception as e:
-        clear_model_temp_files(saving_id)
+        if code_path is not None and weight_path is not None:
+            clear_model_temp_files(code_path, weight_path)
         return RResponse.abort(500, f"Unexpected error. {e}")
 
 
