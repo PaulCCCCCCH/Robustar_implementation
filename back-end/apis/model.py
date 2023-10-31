@@ -140,7 +140,9 @@ def UploadModel():
 
     """
     # Get the model's metadata
-    metadata = json.loads(request.form.get("metadata"))
+    metadata = request.form
+    if not metadata:
+        RResponse.abort(400, "Empty request received")
 
     # Check if the folder for saving models exists, if not, create it
     base_dir = RServer.get_server().base_dir
@@ -183,6 +185,7 @@ def UploadModel():
             with open(code_path, "w") as code_file:
                 code_file.write(code)
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the model definition. {e}")
 
@@ -190,6 +193,7 @@ def UploadModel():
         try:
             model = RModelWrapper.init_custom_model(code_path, class_name)
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(400, f"Failed to initialize the custom model. {e}")
     elif "pretrained" in metadata:  # If the model is predefined
@@ -200,6 +204,7 @@ def UploadModel():
             with open(code_path, "w") as code_file:
                 code_file.write(f"num_classes = {num_classes}")
         except Exception as e:
+            traceback.print_exc()
             return RResponse.abort(
                 400, f"Failed to initialize the predefined model. {e}"
             )
@@ -215,6 +220,7 @@ def UploadModel():
             )
             weight_file.save(weight_path)
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
@@ -222,6 +228,7 @@ def UploadModel():
         try:
             model.load_state_dict(torch.load(weight_path))
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(400, f"Failed to load the weights. {e}")
     else:  # If the weight file is not provided, save the current weights to a temporary location
@@ -231,6 +238,7 @@ def UploadModel():
             )
             torch.save(model.state_dict(), weight_path)
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
             return RResponse.abort(500, f"Failed to save the weight file. {e}")
 
@@ -241,6 +249,7 @@ def UploadModel():
         )
         val_model(RServer.get_data_manager(), dummy_model_wrapper)
     except Exception as e:
+        traceback.print_exc()
         clear_model_temp_files(base_dir, saving_id)
         return RResponse.abort(400, f"The model is invalid. {e}")
 
@@ -271,12 +280,14 @@ def UploadModel():
     try:
         RServer.get_model_wrapper().create_model(metadata_4_save)
     except Exception as e:
+        traceback.print_exc()
         return RResponse.abort(500, f"Failed to save the model. {e}")
 
     # Set the current model to the newly uploaded model
     try:
         RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
     except Exception as e:
+        traceback.print_exc()
         return RResponse.abort(500, f"Failed to set the current model. {e}")
 
     return RResponse.ok("Success")
