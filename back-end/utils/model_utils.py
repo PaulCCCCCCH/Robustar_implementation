@@ -4,6 +4,7 @@ import torch
 import torchvision
 import io
 import contextlib
+import json
 from objects.RServer import RServer
 from utils.predict import get_image_prediction
 from datetime import datetime
@@ -93,22 +94,44 @@ def init_custom_model(code_path, class_name):
     return model
 
 
-def precheck_metadata(metadata):
+def precheck_request_4_upload_model(request):
     errors = []
 
-    # Define initial set of required keys
-    required_keys = ["class_name", "nickname", "predefined"]
+    # Check for the presence of metadata
+    metadata_str = request.form.get("metadata")
+    if not metadata_str:
+        errors.append("The model metadata is missing.")
+        return errors
 
-    # If the model is predefined, extend the required keys list
+    metadata = json.loads(metadata_str)
+
+    # Check for the presence of data
+    missing_keys = []
+    required_keys = ["class_name", "nickname", "predefined"]
     if metadata.get("predefined") == "1":
         required_keys.extend(["pretrained", "num_classes"])
-
-    # Check for missing required keys
     for key in required_keys:
         if key not in metadata:
-            errors.append(f"Missing key: {key}")
+            missing_keys.append(key)
+    if missing_keys:
+        errors.append(
+            f"The following metadata fields are missing: {', '.join(missing_keys)}"
+        )
 
-    # Check for correct data types and other conditions
+    if metadata.get("predefined") == "0":
+        code = request.form.get("code")
+        if not code:
+            errors.append(
+                "Model definition code is missing but required when predefined is '0'."
+            )
+        if metadata.get("pretrained") is not None:
+            errors.append("pretrained should not be specified when predefined is '0'.")
+    if metadata.get("pretrained") == "1":
+        weight_file = request.files.get("weight_file")
+        if weight_file:
+            errors.append("Weight file should not be specified when pretrained is '1'.")
+
+    # Additional checks for metadata fields
     if "class_name" in metadata and not isinstance(metadata["class_name"], str):
         errors.append("class_name should be a string")
     if "nickname" in metadata and not isinstance(metadata["nickname"], str):
@@ -125,15 +148,12 @@ def precheck_metadata(metadata):
             "pretrained"
         ] not in ["0", "1"]:
             errors.append("pretrained should be a string and either '0' or '1'")
-
-    # Handle num_classes as string of integer
     if "num_classes" in metadata:
         if (
             not isinstance(metadata["num_classes"], str)
             or not metadata["num_classes"].isdigit()
         ):
             errors.append("num_classes should be a string representation of an integer")
-
     if "tags" in metadata and not (
         isinstance(metadata["tags"], list)
         and all(isinstance(tag, str) for tag in metadata["tags"])

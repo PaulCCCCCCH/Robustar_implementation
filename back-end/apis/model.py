@@ -139,11 +139,11 @@ def UploadModel():
             return RResponse.fail(f"The model metadata is missing.", 400)
         metadata = json.loads(metadata_str)
 
-        # Precheck the metadata
-        errors = precheck_metadata(metadata)
+        # Precheck the request
+        errors = precheck_request_4_upload_model(request)
         if len(errors) > 0:
             error_message = "; ".join(errors)
-            return RResponse.fail(f"Metadata validation failed: {error_message}", 400)
+            return RResponse.fail(f"Request validation failed: {error_message}", 400)
 
         create_models_dir()
 
@@ -176,13 +176,7 @@ def UploadModel():
         if not predefined:  # If the model is custom
             # Get the model definition code and save it to a temporary file
             code = request.form.get("code")
-            if code is None:
-                return RResponse.fail(f"The model definition code is missing.", 400)
-            try:
-                save_code(code, code_path)
-            except Exception as e:
-                clear_model_temp_files(code_path, weight_path)
-                return RResponse.abort(500, f"Failed to save the model definition. {e}")
+            save_code(code, code_path)
             # Initialize the model
             try:
                 model = init_custom_model(code_path, class_name)
@@ -195,11 +189,7 @@ def UploadModel():
             pretrained = bool(int(metadata.get("pretrained")))
             num_classes = int(metadata.get("num_classes"))
             code = f"num_classes = {num_classes}"
-            try:
-                save_code(code, code_path)
-            except Exception as e:
-                clear_model_temp_files(code_path, weight_path)
-                return RResponse.abort(500, f"Failed to save the model definition. {e}")
+            save_code(code, code_path)
             try:
                 model = init_predefined_model(class_name, pretrained, num_classes)
             except Exception as e:
@@ -215,11 +205,7 @@ def UploadModel():
         # Get the weight file and save it to a temporary location if it exists
         if "weight_file" in request.files:
             weight_file = request.files.get("weight_file")
-            try:
-                save_ckpt_weight(weight_file, weight_path)
-            except Exception as e:
-                clear_model_temp_files(code_path, weight_path)
-                return RResponse.abort(500, f"Failed to save the weight file. {e}")
+            save_ckpt_weight(weight_file, weight_path)
             # Load and validate the weights from the file
             try:
                 load_ckpt_weight(model, weight_path)
@@ -227,11 +213,7 @@ def UploadModel():
                 clear_model_temp_files(code_path, weight_path)
                 return RResponse.fail(f"Failed to load the weights. {e}", 400)
         else:  # If the weight file is not provided, save the current weights to a temporary location
-            try:
-                save_cur_weight(model, weight_path)
-            except Exception as e:
-                clear_model_temp_files(code_path, weight_path)
-                return RResponse.abort(500, f"Failed to save the weight file. {e}")
+            save_cur_weight(model, weight_path)
 
         # Validate the model
         try:
@@ -241,31 +223,15 @@ def UploadModel():
             return RResponse.fail(f"The model is invalid. {e}", 400)
 
         # Construct the metadata for saving
-        try:
-            metadata_4_save = construct_metadata_4_save(
-                class_name, metadata, code_path, weight_path, model
-            )
-        except Exception as e:
-            clear_model_temp_files(code_path, weight_path)
-            return RResponse.abort(
-                500, f"Failed to construct the metadata for saving. {e}"
-            )
+        metadata_4_save = construct_metadata_4_save(
+            class_name, metadata, code_path, weight_path, model
+        )
 
         # Save the model's metadata to the database
-        try:
-            RServer.get_model_manager().create_model(metadata_4_save)
-        except Exception as e:
-            clear_model_temp_files(code_path, weight_path)
-            return RResponse.abort(
-                500, f"Failed to save the model to the database. {e}"
-            )
+        RServer.get_model_manager().create_model(metadata_4_save)
 
         # Set the current model to the newly uploaded model
-        try:
-            SetCurrModel(saving_id)
-        except Exception as e:
-            clear_model_temp_files(code_path, weight_path)
-            return RResponse.abort(500, f"Failed to set the current model. {e}")
+        SetCurrModel(saving_id)
 
         return RResponse.ok("Success")
     except Exception as e:
