@@ -191,7 +191,9 @@ def UploadModel():
 
         # Initialize the custom model
         try:
-            model = RModelWrapper.init_custom_model(code_path, class_name)
+            model = RModelWrapper.init_custom_model(
+                code_path, class_name, RServer.get_model_wrapper().device
+            )
         except Exception as e:
             traceback.print_exc()
             clear_model_temp_files(base_dir, saving_id)
