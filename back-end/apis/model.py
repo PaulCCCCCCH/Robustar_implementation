@@ -86,6 +86,7 @@ def UploadModel():
             description: |
                 Indicates if a predefined model is being used.
                 "1" represents predefined, "0" otherwise.
+            required: true
           description:
             type: "string"
             description: "A description of the model (optional)."
@@ -100,7 +101,7 @@ def UploadModel():
               Indicates if a predefined model uses pretrained weights.
               "1" represents pretrained, "0" otherwise (required if predefined).
           num_classes:
-            type: "integer"
+            type: "string"
             description: "The number of classes for the predefined model (required if predefined)."
 
     responses:
@@ -133,12 +134,18 @@ def UploadModel():
     weight_path = None
     try:
         # Get the model's metadata
-        metadata = json.loads(request.form.get("metadata"))
+        metadata_str = request.form.get("metadata")
+        if metadata_str is None:
+            return RResponse.fail(f"The model metadata is missing.", 400)
+        metadata = json.loads(metadata_str)
 
-        try:
-            create_models_dir()
-        except Exception as e:
-            return RResponse.abort(500, f"Failed to create the models directory. {e}")
+        # Precheck the metadata
+        errors = precheck_metadata(metadata)
+        if len(errors) > 0:
+            error_message = "; ".join(errors)
+            return RResponse.fail(f"Metadata validation failed: {error_message}", 400)
+
+        create_models_dir()
 
         print("Requested to upload a new model")
 

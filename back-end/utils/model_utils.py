@@ -93,6 +93,56 @@ def init_custom_model(code_path, class_name):
     return model
 
 
+def precheck_metadata(metadata):
+    errors = []
+
+    # Define initial set of required keys
+    required_keys = ["class_name", "nickname", "predefined"]
+
+    # If the model is predefined, extend the required keys list
+    if metadata.get("predefined") == "1":
+        required_keys.extend(["pretrained", "num_classes"])
+
+    # Check for missing required keys
+    for key in required_keys:
+        if key not in metadata:
+            errors.append(f"Missing key: {key}")
+
+    # Check for correct data types and other conditions
+    if "class_name" in metadata and not isinstance(metadata["class_name"], str):
+        errors.append("class_name should be a string")
+    if "nickname" in metadata and not isinstance(metadata["nickname"], str):
+        errors.append("nickname should be a string")
+    if "predefined" in metadata:
+        if not isinstance(metadata["predefined"], str) or metadata[
+            "predefined"
+        ] not in ["0", "1"]:
+            errors.append("predefined should be a string and either '0' or '1'")
+    if "description" in metadata and not isinstance(metadata["description"], str):
+        errors.append("description should be a string")
+    if "pretrained" in metadata:
+        if not isinstance(metadata["pretrained"], str) or metadata[
+            "pretrained"
+        ] not in ["0", "1"]:
+            errors.append("pretrained should be a string and either '0' or '1'")
+
+    # Handle num_classes as string of integer
+    if "num_classes" in metadata:
+        if (
+            not isinstance(metadata["num_classes"], str)
+            or not metadata["num_classes"].isdigit()
+        ):
+            errors.append("num_classes should be a string representation of an integer")
+
+    if "tags" in metadata and not (
+        isinstance(metadata["tags"], list)
+        and all(isinstance(tag, str) for tag in metadata["tags"])
+    ):
+        errors.append("tags should be a list of strings")
+
+    return errors
+
+
 def clear_model_temp_files(code_path, weight_path):
     """Clear the temporary files associated with the model"""
     if os.path.exists(code_path):
