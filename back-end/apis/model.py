@@ -15,7 +15,7 @@ model_api = Blueprint("model_api", __name__)
 
 @model_api.route("/model/current", methods=["GET"])
 def GetCurrModel():
-    """Get the model that is currently active"""
+    """ Get the model that is currently active """
     """ return data
     {
         id: string,
@@ -28,13 +28,13 @@ def GetCurrModel():
 
 @model_api.route("/model/current/<model_id>", methods=["POST"])
 def SetCurrModel(model_id: string):
-    """return 200 on success"""
+    """ return 200 on success """
     pass
 
 
 @model_api.route("/model/<id>", methods=["DELETE"])
 def DeleteModel():
-    """return data
+    """ return data
     {
         id: string,
         name: string,
@@ -136,7 +136,6 @@ def UploadModel():
     metadata = json.loads(request.form.get("metadata"))
 
     # Check if the folder for saving models exists, if not, create it
-    models_dir = os.path.join(RServer.get_server().base_dir, "generated", "models")
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
@@ -278,7 +277,7 @@ def UploadModel():
 
 @model_api.route("/model/list", methods=["GET"])
 def GetAllModels():
-    """return data
+    """ return data
     [
         {
             id: string,
