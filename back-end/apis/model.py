@@ -205,6 +205,8 @@ def UploadModel():
         # Get the weight file and save it to a temporary location if it exists
         if "weight_file" in request.files:
             weight_file = request.files.get("weight_file")
+            # TODO: Use save_cur_weight() to save the weight of the model after it loads the ckpt to avoid potential
+            #  inconsistency of the weight's location and the used device
             save_ckpt_weight(weight_file, weight_path)
             # Load and validate the weights from the file
             try:
