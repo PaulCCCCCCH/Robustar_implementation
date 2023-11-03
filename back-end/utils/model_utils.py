@@ -24,7 +24,6 @@ PREDEFINED_MODELS = [
 ]
 
 
-# TODO: Use the real model manager instead of dummy model manager
 class DummyModelManager:
     def __init__(self, model):
         self.model = model
