@@ -1,4 +1,5 @@
 from .RDataManager import RDataManager
+from .RModelWrapper import RModelWrapper
 from flasgger import Swagger
 
 
@@ -66,7 +67,7 @@ class RServer:
         return RServer.server_instance.configs
 
     @staticmethod
-    def get_model_wrapper():
+    def get_model_wrapper() -> RModelWrapper:
         return RServer.server_instance.model_wrapper
 
     @staticmethod

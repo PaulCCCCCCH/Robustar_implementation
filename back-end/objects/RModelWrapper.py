@@ -3,7 +3,8 @@ import torchvision
 import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
-from database.model import *
+from database.model import Models, Tags, db
+import importlib
 
 IMAGENET_OUTPUT_SIZE = 1000
 
@@ -18,6 +19,8 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
+AVAILABLE_MODELS = list(MODEL_INPUT_SHAPE.keys())
+
 # TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
     def __init__(
@@ -30,7 +33,15 @@ class RModelWrapper:
                 num_classes == IMAGENET_OUTPUT_SIZE
             ), f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output. "
         self.device = device  # We keep device as string to allow for easy comparison
-        self.init_model(network_type, pretrained, num_classes)
+        self.model = None
+        self.model_meta_data = None
+        self.model_name = ""
+
+        # TODO: Should initialize to None. Remove in the future.
+        self.model = RModelWrapper.init_pre_defined_model(
+            network_type, pretrained, num_classes, self.device
+        )
+        self.num_classes = num_classes
         self.modelwork_type = network_type
         self._lock = Lock()
         self._model_available = True
@@ -41,50 +52,25 @@ class RModelWrapper:
         else:
             print("Checkpoint file not found: {}".format(net_path))
 
-    def init_model(self, network_type, pretrained, num_classes):
-        if network_type == "resnet-18":
-            self.model = torchvision.models.resnet18(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "resnet-34":
-            self.model = torchvision.models.resnet34(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "resnet-50":
-            self.model = torchvision.models.resnet50(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "resnet-101":
-            self.model = torchvision.models.resnet101(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "resnet-152":
-            self.model = torchvision.models.resnet152(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "mobilenet-v2":
-            self.model = torchvision.models.mobilenet_v2(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        elif network_type == "resnet-18-32x32":
-            self.model = torchvision.models.ResNet(
-                torchvision.models.resnet.BasicBlock,
-                [2, 2, 2, 2],
-                num_classes=num_classes,
-            )
-            self.model.conv1 = torch.nn.Conv2d(
-                3, 64, kernel_size=3, stride=1, padding=1, bias=False
-            )
-            self.model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-            self.model = self.model.to(self.device)
-        elif network_type == "alexnet":
-            self.model = torchvision.models.alexnet(
-                pretrained=pretrained, num_classes=num_classes
-            ).to(self.device)
-        else:
-            raise NotImplementedError(
-                "Requested model type not supported. Please check."
-            )
+    def set_current_model(self, model_name: str):
+        # No change if this model is already the current model
+        if model_name == self.model_name:
+            return
+
+        # Get new model
+        new_model, new_model_meta_data = self.load_model_by_name(model_name)
+        if not new_model or not new_model_meta_data:
+            raise ValueError("Model does not exist")
+
+        # Free up current model.
+        # TODO: make sure this model is GC'ed
+        if self.model is not None:
+            del self.model
+            self.model = None
+
+        self.model = new_model
+        self.model_name = new_model_meta_data.nickname
+        self.model_meta_data = new_model_meta_data
 
     def load_net(self, path):
         if os.path.exists(path):
@@ -123,7 +109,7 @@ class RModelWrapper:
         # TODO: Need to validate fields, dump model definition to a file,
         # etc. Either do these here or somewhere else
 
-        tags = fields.pop('tags', [])
+        tags = fields.pop("tags", [])
 
         tag_objs = []
         if tags:
@@ -138,18 +124,106 @@ class RModelWrapper:
         self.db_conn.session.add(model)
         self.db_conn.session.commit()
 
-    def list_models(self) -> Models:
+    def list_models(self) -> list[Models]:
         return Models.query.all()
 
-    def delete_model_by_name(self, name):
-        model_to_delete = Models.query.filter_by(name=name).first()
+    def delete_model_by_name(self, name) -> Models:
+        model_to_delete = Models.query.filter_by(nickname=name).first()
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
+            return model_to_delete
         else:
             print(
                 f"Attempting to delete a model that does not exist. Model name: {name}"
             )
+            return None
 
-    def get_model_by_name(self, name):
-        return Models.query.filter_by(name=name).first()
+    def get_current_model(self):
+        return self.model
+
+    def get_current_model_metadata(self):
+        return self.model_meta_data
+
+    @staticmethod
+    def get_model_by_name(name) -> Models:
+        return Models.query.filter_by(nickname=name).first()
+
+    def load_model_by_name(self, model_name: str):
+        model_meta_data = RModelWrapper.get_model_by_name(model_name)
+
+        # TODO: need a way to distinguish between predefined and custom model
+        if model_meta_data.class_name in AVAILABLE_MODELS:
+            model = RModelWrapper.init_pre_defined_model(
+                model_meta_data.class_name,
+                False,
+                self.num_classes,
+                self.device,
+            )
+        else:
+            model = RModelWrapper.init_custom_model(
+                model_meta_data.code_path, model_name, self.device
+            )
+        model.load_state_dict(torch.load(model_meta_data.weight_path))
+        return model, model_meta_data
+
+    @staticmethod
+    def init_pre_defined_model(network_type, pretrained, num_classes, device):
+        if network_type == "resnet-18":
+            model = torchvision.models.resnet18(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "resnet-34":
+            model = torchvision.models.resnet34(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "resnet-50":
+            model = torchvision.models.resnet50(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "resnet-101":
+            model = torchvision.models.resnet101(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "resnet-152":
+            model = torchvision.models.resnet152(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "mobilenet-v2":
+            model = torchvision.models.mobilenet_v2(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        elif network_type == "resnet-18-32x32":
+            model = torchvision.models.ResNet(
+                torchvision.models.resnet.BasicBlock,
+                [2, 2, 2, 2],
+                num_classes=num_classes,
+            )
+            model.conv1 = torch.nn.Conv2d(
+                3, 64, kernel_size=3, stride=1, padding=1, bias=False
+            )
+            model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
+        elif network_type == "alexnet":
+            model = torchvision.models.alexnet(
+                pretrained=pretrained, num_classes=num_classes
+            )
+        else:
+            raise NotImplementedError(
+                "Requested model type not supported. Please check."
+            )
+
+        return model.to(device)
+
+    @staticmethod
+    def init_custom_model(code_path, name, device):
+        """Initialize the custom model by importing the class with the specified name in the file specified by code_path"""
+        try:
+            spec = importlib.util.spec_from_file_location("model_def", code_path)
+            model_def = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(model_def)
+            model = getattr(model_def, name)()
+            return model.to(device)
+        except Exception as e:
+            print("Failed to initialize the model.")
+            print(e)
+            raise e
