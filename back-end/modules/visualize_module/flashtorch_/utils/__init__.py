@@ -9,7 +9,6 @@ from PIL import Image
 
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as F
-from objects.RServer import RServer
 
 from .imagenet import *
 
@@ -28,7 +27,7 @@ def load_image(image_path):
     return Image.open(image_path).convert("RGB")
 
 
-def apply_transforms(image, size=224):
+def apply_transforms(image, transforms, size=224):
     """Transforms a PIL image to torch.Tensor.
 
     Applies a series of tranformations on PIL image including a conversion
@@ -65,11 +64,7 @@ def apply_transforms(image, size=224):
     if not isinstance(image, Image.Image):
         image = F.to_pil_image(image)
 
-    dataManager = RServer.get_data_manager()
-
-    transform = dataManager.transforms
-
-    tensor = transform(image).unsqueeze(0)
+    tensor = transforms(image).unsqueeze(0)
 
     tensor.requires_grad = True
 
@@ -128,7 +123,6 @@ def denormalize(tensor):
 def standardize_and_clip(
     tensor, min_value=0.0, max_value=1.0, saturation=0.1, brightness=0.5
 ):
-
     """Standardizes and clips input tensor.
 
     Standardizes the input tensor (mean = 0.0, std = 1.0). The color saturation

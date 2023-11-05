@@ -1,50 +1,58 @@
-import json
-import string
 import uuid
+import traceback
 from flask import request
 from flask import Blueprint
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 
 model_api = Blueprint("model_api", __name__)
 
 
 @model_api.route("/model/current", methods=["GET"])
 def GetCurrModel():
-    """Get the model that is currently active"""
-    """ return data
-    {
-        id: string,
-        name: string,
-        details: string,
-    }
-    """
-    pass
+    model = RServer.get_model_wrapper().get_current_model_metadata()
+    if not model:
+        RResponse.abort(400, f"No current model is selected")
+
+    return RResponse.ok(model.as_dict())
 
 
-@model_api.route("/model/current/<model_id>", methods=["POST"])
-def SetCurrModel(model_id: string):
+@model_api.route("/model/current/<model_name>", methods=["POST"])
+def SetCurrModel(model_name: str):
     """return 200 on success"""
-    pass
+    try:
+        RServer.get_model_wrapper().set_current_model(model_name)
+        return RResponse.ok("Success")
+    except Exception as e:
+        RResponse.abort(500, "Failed to switch model." + str(e))
 
 
-@model_api.route("/model/<id>", methods=["DELETE"])
-def DeleteModel():
+@model_api.route("/model/<model_name>", methods=["DELETE"])
+def DeleteModel(model_name: str):
     """return data
     {
-        id: string,
+        id: integer,
         name: string,
         details: string,
     }
     """
-    pass
+    try:
+        model = RServer.get_model_wrapper().delete_model_by_name(model_name)
+    except Exception as e:
+        RResponse.abort(500, f"Failed to delete model {model_name}." + str(e))
+
+    if not model:
+        RResponse.abort(400, f"Model {model_name} does not exist.")
+
+    return RResponse.ok(model.as_dict())
 
 
 @model_api.route("/model", methods=["POST"])
 def UploadModel():
     """
-    Upload a new model to the server
+    Should also accept (optionally) a model weight file as argument
     ---
     tags:
       - model
@@ -133,18 +141,16 @@ def UploadModel():
     code_path = None
     weight_path = None
     try:
-        # Get the model's metadata
-        metadata_str = request.form.get("metadata")
-        if metadata_str is None:
-            return RResponse.fail(f"The model metadata is missing.", 400)
-        metadata = json.loads(metadata_str)
-
         # Precheck the request
         errors = precheck_request_4_upload_model(request)
         if len(errors) > 0:
             error_message = "; ".join(errors)
             return RResponse.fail(f"Request validation failed: {error_message}", 400)
 
+        metadata_str = request.form.get("metadata")
+        metadata = json.loads(metadata_str)
+
+        # Create the code and ckpt directories if they don't exist
         create_models_dir()
 
         print("Requested to upload a new model")
@@ -179,8 +185,11 @@ def UploadModel():
             save_code(code, code_path)
             # Initialize the model
             try:
-                model = init_custom_model(code_path, class_name)
+                model = RModelWrapper.init_custom_model(
+                    code_path, class_name, RServer.get_model_wrapper().device
+                )
             except Exception as e:
+                traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
                 return RResponse.fail(
                     f"Failed to initialize the custom model. {e}", 400
@@ -188,11 +197,18 @@ def UploadModel():
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
             num_classes = int(metadata.get("num_classes"))
+            # TODO: Stop relying on the user to provide the number of classes
             code = f"num_classes = {num_classes}"
             save_code(code, code_path)
             try:
-                model = init_predefined_model(class_name, pretrained, num_classes)
+                model = RModelWrapper.init_predefined_model(
+                    class_name,
+                    pretrained,
+                    num_classes,
+                    RServer.get_model_wrapper().device,
+                )
             except Exception as e:
+                traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
                 return RResponse.fail(
                     f"Failed to initialize the predefined model. {e}", 400
@@ -212,6 +228,7 @@ def UploadModel():
             try:
                 load_ckpt_weight(model, weight_path)
             except Exception as e:
+                traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
                 return RResponse.fail(f"Failed to load the weights. {e}", 400)
         else:  # If the weight file is not provided, save the current weights to a temporary location
@@ -219,8 +236,12 @@ def UploadModel():
 
         # Validate the model
         try:
-            val_model(model)
+            dummy_model_wrapper = DummyModelWrapper(
+                model, RServer.get_model_wrapper().device
+            )
+            val_model(dummy_model_wrapper)
         except Exception as e:
+            traceback.print_exc()
             clear_model_temp_files(code_path, weight_path)
             return RResponse.fail(f"The model is invalid. {e}", 400)
 
@@ -233,10 +254,11 @@ def UploadModel():
         RServer.get_model_wrapper().create_model(metadata_4_save)
 
         # Set the current model to the newly uploaded model
-        SetCurrModel(saving_id)
+        RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
 
         return RResponse.ok("Success")
     except Exception as e:
+        traceback.print_exc()
         if code_path is not None and weight_path is not None:
             clear_model_temp_files(code_path, weight_path)
         return RResponse.abort(500, f"Unexpected error. {e}")
@@ -254,4 +276,10 @@ def GetAllModels():
         ...
     ]
     """
-    pass
+    try:
+        return RResponse.ok(
+            [model.as_dict() for model in RServer.get_model_wrapper().list_models()]
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return RResponse.abort(500, f"Failed to list all models. {e}")

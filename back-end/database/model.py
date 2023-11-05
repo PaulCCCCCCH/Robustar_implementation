@@ -6,6 +6,9 @@ class EvalResults(db.Model):
     img_path = db.Column(db.String, primary_key=True)
     result = db.Column(db.Integer)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 # Many-to-many relationship reference
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/
@@ -39,6 +42,9 @@ class Models(db.Model):
     train_accuracy = db.Column(db.Float)
     val_accuracy = db.Column(db.Float)
     test_accuracy = db.Column(db.Float)
+    # If model is uploaded but not trained, last_trained should be empty
+    # otherwise it will be the same as create_time
+    last_trained = db.Column(db.DateTime)
     last_eval_on_dev_set = db.Column(db.DateTime)
     last_eval_on_test_set = db.Column(db.DateTime)
 
@@ -49,25 +55,40 @@ class Models(db.Model):
         backref=db.backref("models", lazy=True),
     )
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class PairedSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     train_path = db.Column(db.String)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class ProposedImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     train_path = db.Column(db.String)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class TestSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     label = db.Column(db.Integer)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class TrainSetImage(db.Model):
@@ -75,10 +96,16 @@ class TrainSetImage(db.Model):
     paired_path = db.Column(db.String, db.ForeignKey("paired_set_image.path"))
     label = db.Column(db.Integer)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class ValSetImage(db.Model):
     path = db.Column(db.String, primary_key=True)
     label = db.Column(db.Integer)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Visuals(db.Model):
@@ -89,3 +116,6 @@ class Visuals(db.Model):
     # Maybe consider merging those tables together?
     image_path = db.Column(db.String)
     model_id = db.Column(db.BigInteger, db.ForeignKey("models.id"))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

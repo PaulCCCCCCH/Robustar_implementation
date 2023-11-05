@@ -1,4 +1,5 @@
 from flask import request
+import traceback
 
 from modules.visualize_module.visualize.visual import visualize
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
@@ -14,6 +15,7 @@ from utils.predict import (
 from flask import Blueprint
 
 predict_api = Blueprint("predict_api", __name__)
+
 
 # Return prediction result
 @predict_api.route("/predict/<split>")
@@ -123,7 +125,7 @@ def predict(split):
         )
 
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         RResponse.abort(400, "Invalid image path {}".format(image_path))
     finally:
         model_wrapper.release_model()

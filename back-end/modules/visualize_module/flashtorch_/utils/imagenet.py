@@ -31,12 +31,12 @@ class ImageNetIndex(Mapping):
     def __init__(self):
         self._index = {}
 
-        with path(resources, 'imagenet_class_index.json') as source_path:
-            with open(str(source_path), 'r') as source:
+        with path(resources, "imagenet_class_index.json") as source_path:
+            with open(str(source_path), "r") as source:
                 data = json.load(source)
 
         for index, (_, class_name) in data.items():
-            class_name = class_name.lower().replace('_', ' ')
+            class_name = class_name.lower().replace("_", " ")
             self._index[class_name] = int(index)
 
     def __len__(self):
@@ -47,7 +47,7 @@ class ImageNetIndex(Mapping):
 
     def __getitem__(self, phrase):
         if type(phrase) != str:
-            raise TypeError('Target class needs to be a string.')
+            raise TypeError("Target class needs to be a string.")
 
         if phrase in self._index:
             return self._index[phrase]
@@ -57,8 +57,11 @@ class ImageNetIndex(Mapping):
         if not any(partial_matches):
             return None
         elif len(partial_matches) > 1:
-            raise ValueError('Multiple potential matches found: {}' \
-                .format(', '.join(map(str, partial_matches))))
+            raise ValueError(
+                "Multiple potential matches found: {}".format(
+                    ", ".join(map(str, partial_matches))
+                )
+            )
 
         target_class = partial_matches.pop()
 
@@ -74,20 +77,19 @@ class ImageNetIndex(Mapping):
         return self._index.items()
 
     def _find_partial_matches(self, phrase):
-        words = phrase.lower().split(' ')
+        words = phrase.lower().split(" ")
 
         # Find the intersection between search words and class names to
         # prioritise whole word matches
-            # e.g. If words = {'dalmatian', 'dog'} then matches 'dalmatian'
+        # e.g. If words = {'dalmatian', 'dog'} then matches 'dalmatian'
 
         matches = set(words).intersection(set(self.keys()))
 
         if not any(matches):
             # Find substring matches between search words and class names to
             # accommodate for fuzzy matches to some extend
-                # e.g. If words = {'foxhound'} then matches 'english foxhound'
+            # e.g. If words = {'foxhound'} then matches 'english foxhound'
 
-            matches = [key for word in words for key in self.keys() \
-                if word in key]
+            matches = [key for word in words for key in self.keys() if word in key]
 
         return matches

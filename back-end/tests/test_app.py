@@ -14,7 +14,7 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 flask_app = None
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app(request):
     global flask_app
     basedir = request.config.getoption("basedir")
@@ -44,7 +44,7 @@ def app(request):
     time.sleep(0.1)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def client(app):
     yield app.test_client()
 
@@ -132,12 +132,12 @@ def _set_up(basedir):
     else:
         print("setup > no proposed dir, skip copy")
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("setup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("setup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("setup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("setup > no db, skip delete")
 
     visualize_images_dir = to_unix(osp.join(base_dir, "visualize_images"))
     if osp.exists(visualize_images_dir):
@@ -200,12 +200,12 @@ def _clean_up(basedir):
     # os.rmdir(visualize_images_dir)
     # os.rename(visualize_images_dir_original, visualize_images_dir)
 
-    db_path = to_unix(osp.join(base_dir, "data.db"))
-    if osp.exists(db_path):
-        print("cleanup > delete " + db_path)
-        os.remove(db_path)
-    else:
-        print("cleanup > no db, skip delete")
+    # db_path = to_unix(osp.join(base_dir, "data.db"))
+    # if osp.exists(db_path):
+    #     print("cleanup > delete " + db_path)
+    #     os.remove(db_path)
+    # else:
+    #     print("cleanup > no db, skip delete")
 
     # db_path = to_unix(osp.join(base_dir, 'data.db'))
     # db_path_original = to_unix(osp.join(base_dir, 'data_o.db'))

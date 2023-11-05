@@ -1,4 +1,5 @@
 from objects.RModelWrapper import RModelWrapper
+from objects.RServer import RServer
 from ..flashtorch_.utils import apply_transforms, load_image
 from ..flashtorch_.saliency import Backprop
 import torch
@@ -11,7 +12,11 @@ def visualize(model_wrapper: RModelWrapper, imgpath, imgsize, device):
     try:
         backprop = Backprop(mymodel)
         image = load_image(imgpath)
-        image = apply_transforms(image, imgsize)
+
+        dataManager = RServer.get_data_manager()
+        transform = dataManager.transforms
+
+        image = apply_transforms(image, transform, imgsize)
 
         modeloutput = backprop.model(image.to(device))
         modeloutput = torch.nn.functional.softmax(modeloutput, 1)
