@@ -41,6 +41,9 @@ class Models(db.Model):
     train_accuracy = db.Column(db.Float)
     val_accuracy = db.Column(db.Float)
     test_accuracy = db.Column(db.Float)
+    # If model is uploaded but not trained, last_trained should be empty
+    # otherwise it will be the same as create_time
+    last_trained = db.Column(db.DateTime)
     last_eval_on_dev_set = db.Column(db.DateTime)
     last_eval_on_test_set = db.Column(db.DateTime)
 

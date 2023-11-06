@@ -58,8 +58,8 @@ class RModelWrapper:
             return
 
         # Get new model
-        new_model_data, new_model_meta_data = self.load_model_by_name(model_name)
-        if not new_model_data or not new_model_meta_data:
+        new_model, new_model_meta_data = self.load_model_by_name(model_name)
+        if not new_model or not new_model_meta_data:
             raise ValueError("Model does not exist")
 
         # Free up current model.
@@ -68,7 +68,9 @@ class RModelWrapper:
             del self.model
             self.model = None
 
-        self.model_name, self.model_meta_data = new_model_data, new_model_meta_data
+        self.model = new_model
+        self.model_name = new_model_meta_data.nickname
+        self.model_meta_data = new_model_meta_data
 
     def load_net(self, path):
         if os.path.exists(path):
@@ -143,28 +145,29 @@ class RModelWrapper:
     def get_current_model_metadata(self):
         return self.model_meta_data
 
-    def get_model_by_name(self, name) -> Models:
+    @staticmethod
+    def get_model_by_name(name) -> Models:
         return Models.query.filter_by(nickname=name).first()
 
     def load_model_by_name(self, model_name: str):
-        model_meta_data = self.get_model_by_name(model_name)
+        model_meta_data = RModelWrapper.get_model_by_name(model_name)
 
         # TODO: need a way to distinguish between predefined and custom model
         if model_meta_data.class_name in AVAILABLE_MODELS:
             model = RModelWrapper.init_pre_defined_model(
                 model_meta_data.class_name,
-                True,
-                model_meta_data,
+                False,
                 self.num_classes,
                 self.device,
             )
         else:
             model = RModelWrapper.init_custom_model(
-                model_meta_data.code_path, model_name
+                model_meta_data.code_path, model_name, self.device
             )
         model.load_state_dict(torch.load(model_meta_data.weight_path))
         return model, model_meta_data
 
+    @staticmethod
     def init_pre_defined_model(network_type, pretrained, num_classes, device):
         if network_type == "resnet-18":
             model = torchvision.models.resnet18(
@@ -212,14 +215,14 @@ class RModelWrapper:
         return model.to(device)
 
     @staticmethod
-    def init_custom_model(code_path, name):
+    def init_custom_model(code_path, name, device):
         """Initialize the custom model by importing the class with the specified name in the file specified by code_path"""
         try:
             spec = importlib.util.spec_from_file_location("model_def", code_path)
             model_def = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(model_def)
             model = getattr(model_def, name)()
-            return model
+            return model.to(device)
         except Exception as e:
             print("Failed to initialize the model.")
             print(e)
