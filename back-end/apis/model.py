@@ -165,13 +165,6 @@ def UploadModel():
             "code",
             f"{saving_id}.py",
         )
-        weight_path = os.path.join(
-            RServer.get_server().base_dir,
-            "generated",
-            "models",
-            "ckpt",
-            f"{saving_id}.pth",
-        )
 
         # Get the model's class name
         class_name = metadata.get("class_name")
@@ -220,9 +213,14 @@ def UploadModel():
 
         # Get the weight file and save it to a temporary location if it exists
         if "weight_file" in request.files:
+            weight_path = os.path.join(
+                RServer.get_server().base_dir,
+                "generated",
+                "models",
+                "ckpt",
+                f"{saving_id}.pth",
+            )
             weight_file = request.files.get("weight_file")
-            # TODO: Use save_cur_weight() to save the weight of the model after it loads the ckpt to avoid potential
-            #  inconsistency of the weight's location and the used device
             save_ckpt_weight(weight_file, weight_path)
             # Load and validate the weights from the file
             try:
@@ -231,8 +229,6 @@ def UploadModel():
                 traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
                 return RResponse.fail(f"Failed to load the weights. {e}", 400)
-        else:  # If the weight file is not provided, save the current weights to a temporary location
-            save_cur_weight(model, weight_path)
 
         # Validate the model
         try:
@@ -247,7 +243,7 @@ def UploadModel():
 
         # Construct the metadata for saving
         metadata_4_save = construct_metadata_4_save(
-            class_name, metadata, code_path, weight_path, model
+            metadata, code_path, weight_path, model
         )
 
         # Save the model's metadata to the database
@@ -259,8 +255,7 @@ def UploadModel():
         return RResponse.ok("Success")
     except Exception as e:
         traceback.print_exc()
-        if code_path is not None and weight_path is not None:
-            clear_model_temp_files(code_path, weight_path)
+        clear_model_temp_files(code_path, weight_path)
         return RResponse.abort(500, f"Unexpected error. {e}")
 
 

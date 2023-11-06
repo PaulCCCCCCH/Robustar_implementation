@@ -32,6 +32,7 @@ class Models(db.Model):
     class_name = db.Column(db.String)
     nickname = db.Column(db.String)
     predefined = db.Column(db.Boolean)
+    pretrained = db.Column(db.Boolean)
     description = db.Column(db.String)
     architecture = db.Column(db.String)
     tags = db.relationship("Tags", secondary=model_tag_rel, backref="models")

@@ -86,10 +86,12 @@ def precheck_request_4_upload_model(request):
 
 def clear_model_temp_files(code_path, weight_path):
     """Clear the temporary files associated with the model"""
-    if os.path.exists(code_path):
-        os.remove(code_path)
-    if os.path.exists(weight_path):
-        os.remove(weight_path)
+    if code_path:
+        if os.path.exists(code_path):
+            os.remove(code_path)
+    if weight_path:
+        if os.path.exists(weight_path):
+            os.remove(weight_path)
 
 
 def val_model(model_wrapper: DummyModelWrapper):
@@ -139,12 +141,15 @@ def save_cur_weight(model, weight_path):
     torch.save(model.state_dict(), weight_path)
 
 
-def construct_metadata_4_save(class_name, metadata, code_path, weight_path, model):
+def construct_metadata_4_save(metadata, code_path, weight_path, model):
     # Construct the metadata for saving
     metadata_4_save = {
-        "class_name": class_name,
+        "class_name": metadata.get("class_name"),
         "nickname": metadata.get("nickname"),
         "predefined": bool(int(metadata.get("predefined"))),
+        "pretrained": bool(int(metadata.get("pretrained")))
+        if metadata.get("pretrained")
+        else None,
         "description": metadata.get("description"),
         "tags": metadata.get("tags"),
         "create_time": datetime.now(),

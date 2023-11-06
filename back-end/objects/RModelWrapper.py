@@ -164,7 +164,7 @@ class RModelWrapper:
 
             model = RModelWrapper.init_predefined_model(
                 model_meta_data.class_name,
-                False,
+                model_meta_data.pretrained,
                 num_classes,
                 self.device,
             )
@@ -172,7 +172,8 @@ class RModelWrapper:
             model = RModelWrapper.init_custom_model(
                 model_meta_data.code_path, model_meta_data.class_name, self.device
             )
-        model.load_state_dict(torch.load(model_meta_data.weight_path))
+        if model_meta_data.weight_path:
+            model.load_state_dict(torch.load(model_meta_data.weight_path))
         return model, model_meta_data
 
     @staticmethod
