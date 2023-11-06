@@ -123,7 +123,6 @@ def denormalize(tensor):
 def standardize_and_clip(
     tensor, min_value=0.0, max_value=1.0, saturation=0.1, brightness=0.5
 ):
-
     """Standardizes and clips input tensor.
 
     Standardizes the input tensor (mean = 0.0, std = 1.0). The color saturation

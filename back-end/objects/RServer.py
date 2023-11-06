@@ -5,12 +5,10 @@ from flasgger import Swagger
 
 # Wrapper for flask server instance
 class RServer:
-
     server_instance = None
 
     # Use createServer method instead!
     def __init__(self, configs, base_dir, dataset_dir, ckpt_dir, app, socket):
-
         app.config["SWAGGER"] = {
             "title": "Robustar API",
             "uiversion": 3,
