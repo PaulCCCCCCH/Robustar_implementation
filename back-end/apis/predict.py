@@ -16,6 +16,7 @@ from flask import Blueprint
 
 predict_api = Blueprint("predict_api", __name__)
 
+
 # Return prediction result
 @predict_api.route("/predict/<split>")
 def predict(split):

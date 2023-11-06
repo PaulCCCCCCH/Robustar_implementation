@@ -219,8 +219,9 @@ export default {
               nickname: this.nickname,
               description: this.description,
               tags: this.tags,
-              pretrained: this.predefined ? '1' : '0',
-              num_classes: this.num_classes,
+              predefined: this.predefined ? '1' : '0',
+              pretrained: this.predefined ? '1' : null,
+              num_classes: String(this.num_classes),
             },
             this.code,
             this.weightFile

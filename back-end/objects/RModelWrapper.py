@@ -38,7 +38,7 @@ class RModelWrapper:
         self.model_name = ""
 
         # TODO: Should initialize to None. Remove in the future.
-        self.model = RModelWrapper.init_pre_defined_model(
+        self.model = RModelWrapper.init_predefined_model(
             network_type, pretrained, num_classes, self.device
         )
         self.num_classes = num_classes
@@ -152,23 +152,42 @@ class RModelWrapper:
     def load_model_by_name(self, model_name: str):
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
 
-        # TODO: need a way to distinguish between predefined and custom model
-        if model_meta_data.class_name in AVAILABLE_MODELS:
-            model = RModelWrapper.init_pre_defined_model(
+        if model_meta_data.predefined:
+            # TODO: use the number of classes from RDataManager
+            file_path = model_meta_data.code_path
+            module_name = "variables_module"
+            spec = importlib.util.spec_from_file_location(module_name, file_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            num_classes = module.num_classes
+
+            model = RModelWrapper.init_predefined_model(
                 model_meta_data.class_name,
-                False,
-                self.num_classes,
+                model_meta_data.pretrained,
+                num_classes,
                 self.device,
             )
         else:
             model = RModelWrapper.init_custom_model(
-                model_meta_data.code_path, model_name, self.device
+                model_meta_data.code_path, model_meta_data.class_name, self.device
             )
-        model.load_state_dict(torch.load(model_meta_data.weight_path))
+        if model_meta_data.weight_path:
+            model.load_state_dict(torch.load(model_meta_data.weight_path))
         return model, model_meta_data
 
     @staticmethod
-    def init_pre_defined_model(network_type, pretrained, num_classes, device):
+    def init_predefined_model(network_type, pretrained, num_classes, device):
+        # Check if the model is supported
+        if network_type not in AVAILABLE_MODELS:
+            raise Exception(
+                f"Requested model type {network_type} not supported. Please check."
+            )
+        # If the model is pretrained, it should have the same number of classes as the ImageNet model
+        if pretrained and num_classes != IMAGENET_OUTPUT_SIZE:
+            raise Exception(
+                f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output."
+            )
+
         if network_type == "resnet-18":
             model = torchvision.models.resnet18(
                 pretrained=pretrained, num_classes=num_classes
@@ -207,23 +226,16 @@ class RModelWrapper:
             model = torchvision.models.alexnet(
                 pretrained=pretrained, num_classes=num_classes
             )
-        else:
-            raise NotImplementedError(
-                "Requested model type not supported. Please check."
-            )
 
         return model.to(device)
 
     @staticmethod
     def init_custom_model(code_path, name, device):
-        """Initialize the custom model by importing the class with the specified name in the file specified by code_path"""
-        try:
-            spec = importlib.util.spec_from_file_location("model_def", code_path)
-            model_def = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(model_def)
-            model = getattr(model_def, name)()
-            return model.to(device)
-        except Exception as e:
-            print("Failed to initialize the model.")
-            print(e)
-            raise e
+        """
+        Initialize the custom model by importing the class with the specified name in the file specified by code_path
+        """
+        spec = importlib.util.spec_from_file_location("model_def", code_path)
+        model_def = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(model_def)
+        model = getattr(model_def, name)()
+        return model.to(device)

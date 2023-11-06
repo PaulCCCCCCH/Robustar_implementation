@@ -167,7 +167,7 @@ export default {
   },
   async mounted() {
     try {
-      console.log(await APIGetCurrentModel());
+      // console.log(await APIGetCurrentModel());
       const response = (await APIGetAllModels())?.data?.data;
       this.modelList = response.map((item) => ({ text: item.nickname, value: item }));
       this.viewingModel = this.modelList.length ? this.modelList[0].value : null;
@@ -181,7 +181,7 @@ export default {
     },
     async setCurrentModel() {
       try {
-        const response = await APISetCurrentModel(this.viewingModel);
+        const response = await APISetCurrentModel(this.viewingModel.nickname);
         this.$root.currentModel = this.viewingModel;
       } catch (error) {
         console.error('Error setting current model:', error);
