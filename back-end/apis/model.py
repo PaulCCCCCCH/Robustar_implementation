@@ -105,11 +105,11 @@ def UploadModel():
           pretrained:
             type: "string"
             description: |
-              Indicates if a predefined model uses pretrained weights.
-              "1" represents pretrained, "0" otherwise (required if predefined).
+              Indicates whether the model is pretrained.
+              Should only be set to "1" if the model is predefined and pretrained.
           num_classes:
             type: "string"
-            description: "The number of classes for the predefined model (required if predefined)."
+            description: "The number of classes for the predefined model (will soon be removed)."
 
     responses:
       200:

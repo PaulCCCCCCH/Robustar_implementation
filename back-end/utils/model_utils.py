@@ -28,9 +28,7 @@ def precheck_request_4_upload_model(request):
 
     # Check for the presence of data
     missing_keys = []
-    required_keys = ["class_name", "nickname", "predefined"]
-    if metadata.get("predefined") == "1":
-        required_keys.extend(["pretrained", "num_classes"])
+    required_keys = ["class_name", "nickname", "predefined", "pretrained"]
     for key in required_keys:
         if key not in metadata:
             missing_keys.append(key)
@@ -45,8 +43,6 @@ def precheck_request_4_upload_model(request):
             errors.append(
                 "Model definition code is missing but required when predefined is '0'."
             )
-        if metadata.get("pretrained") is not None:
-            errors.append("pretrained should not be specified when predefined is '0'.")
     if metadata.get("pretrained") == "1":
         weight_file = request.files.get("weight_file")
         if weight_file:
@@ -58,17 +54,13 @@ def precheck_request_4_upload_model(request):
     if "nickname" in metadata and not isinstance(metadata["nickname"], str):
         errors.append("nickname should be a string")
     if "predefined" in metadata:
-        if not isinstance(metadata["predefined"], str) or metadata[
-            "predefined"
-        ] not in ["0", "1"]:
-            errors.append("predefined should be a string and either '0' or '1'")
+        if metadata["predefined"] not in ["0", "1"]:
+            errors.append("predefined should be a either '0' or '1'")
     if "description" in metadata and not isinstance(metadata["description"], str):
         errors.append("description should be a string")
     if "pretrained" in metadata:
-        if not isinstance(metadata["pretrained"], str) or metadata[
-            "pretrained"
-        ] not in ["0", "1"]:
-            errors.append("pretrained should be a string and either '0' or '1'")
+        if metadata["pretrained"] not in ["0", "1"]:
+            errors.append("pretrained should be a either '0' or '1'")
     if "num_classes" in metadata:
         if (
             not isinstance(metadata["num_classes"], str)
@@ -147,9 +139,7 @@ def construct_metadata_4_save(metadata, code_path, weight_path, model):
         "class_name": metadata.get("class_name"),
         "nickname": metadata.get("nickname"),
         "predefined": bool(int(metadata.get("predefined"))),
-        "pretrained": bool(int(metadata.get("pretrained")))
-        if metadata.get("pretrained")
-        else None,
+        "pretrained": bool(int(metadata.get("pretrained"))),
         "description": metadata.get("description"),
         "tags": metadata.get("tags"),
         "create_time": datetime.now(),

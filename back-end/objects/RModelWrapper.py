@@ -21,6 +21,7 @@ MODEL_INPUT_SHAPE = {
 
 AVAILABLE_MODELS = list(MODEL_INPUT_SHAPE.keys())
 
+
 # TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
     def __init__(
