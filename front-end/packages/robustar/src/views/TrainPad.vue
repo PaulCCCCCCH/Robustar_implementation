@@ -143,6 +143,7 @@
 
 <script>
 import { APIStartTrain, APIStopTrain } from '@/services/train';
+import { APIGetCurrentModel } from '@/services/model/';
 import { configs } from '@/configs.js';
 export default {
   name: 'TrainPad',
@@ -192,8 +193,19 @@ export default {
       },
     };
   },
-  created () {
-    this.configs.model_name = this.$root.currentModel
+  async created() {
+    this.configs.model_name = this.$root.currentModel;
+    try {
+      const res = await APIGetCurrentModel();
+      const model = res?.data?.data;
+      if (model) {
+        this.configs.model_name = model.nickname;
+        this.configs.epoch = model.epoch;
+        this.configs.pretrain = model.pretrained;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
     async startTraining() {

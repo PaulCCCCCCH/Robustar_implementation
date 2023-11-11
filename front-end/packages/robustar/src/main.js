@@ -24,7 +24,6 @@ new Vue({
       imageSplit: 'test_correct',
       imageClass: '',
       imagePageHistory: {},
-      currentModel: ''
     };
   },
   created() {
@@ -33,7 +32,6 @@ new Vue({
     this.imageSplit = sessionStorage.getItem('image_split') || 'test_correct';
     this.imageClass = sessionStorage.getItem('image_class') || '';
     this.imagePageHistory = JSON.parse(sessionStorage.getItem('image_page_history')) || {};
-    this.currentModel = sessionStorage.getItem('current_model') || 'my-test-model';
     window.onbeforeunload = this.updateSessionStorage;
   },
   beforeDestroy() {
@@ -71,7 +69,6 @@ new Vue({
       sessionStorage.setItem('image_split', this.imageSplit);
       sessionStorage.setItem('image_class', this.imageClass);
       sessionStorage.setItem('image_page_history', JSON.stringify(this.imagePageHistory));
-      sessionStorage.setItem('current_model', this.currentModel);
     },
   },
 }).$mount('#app');
