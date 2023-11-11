@@ -7,6 +7,10 @@
       </v-card-title>
       <v-card-text>
         <div>
+          <span class="mr-8">
+            <span class="font-weight-medium">Tag: </span>
+            {{ currentModel.tag }}
+          </span>
           <span>
             <span class="font-weight-medium">Created time: </span>
             {{ currentModel.create_time }}
@@ -74,6 +78,17 @@
         </div>
         <v-divider class="mb-4"></v-divider>
         <div>
+          <div style="width: 100px; display: inline-block" class="mr-8">
+            <v-text-field
+              v-model="viewingModel.tag"
+              :loading="isSubmitting"
+              label="Tag"
+              hint=""
+              outlined
+              clearable
+              dense
+            ></v-text-field>
+          </div>
           <span>
             <span class="font-weight-medium">Created time: </span>
             {{ viewingModel.create_time }}
@@ -82,18 +97,10 @@
             <span class="font-weight-medium">Last trained: </span>
             {{ viewingModel.last_trained }}
           </span>
-          <div style="width: 100px; display: inline-block">
-            <v-text-field
-              v-model="viewingModel.epoch"
-              :loading="isSubmitting"
-              label="Epoch"
-              hint=""
-              outlined
-              clearable
-              dense
-              type="number"
-            ></v-text-field>
-          </div>
+          <span>
+            <span class="font-weight-medium">Epoch: </span>
+            {{ viewingModel.epoch }}
+          </span>
         </div>
         <div class="mb-8">
           <span>
@@ -171,6 +178,7 @@ const initialModel = {
   test_accuracy: '',
   train_accuracy: '',
   val_accuracy: '',
+  tag: '',
 };
 
 export default {
