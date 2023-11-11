@@ -126,7 +126,11 @@ def save_ckpt_weight(weight_file, weight_path):
 
 
 def load_ckpt_weight(model, weight_path):
-    model.load_state_dict(torch.load(weight_path))
+    model.load_state_dict(
+        torch.load(
+            weight_path, map_location=torch.device(RServer.get_model_wrapper().device)
+        )
+    )
 
 
 def save_cur_weight(model, weight_path):

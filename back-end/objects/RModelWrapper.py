@@ -173,7 +173,9 @@ class RModelWrapper:
                 model_meta_data.code_path, model_meta_data.class_name, self.device
             )
         if model_meta_data.weight_path:
-            model.load_state_dict(torch.load(model_meta_data.weight_path))
+            model.load_state_dict(
+                torch.load(model_meta_data.weight_path, map_location=self.device)
+            )
         return model, model_meta_data
 
     @staticmethod
