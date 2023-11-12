@@ -175,8 +175,8 @@ def UploadModel():
             save_code(code, code_path)
             # Initialize the model
             try:
-                model = RModelWrapper.init_custom_model(
-                    code_path, class_name, RServer.get_model_wrapper().device
+                model = RServer.get_model_wrapper().init_custom_model(
+                    code_path, class_name
                 )
             except Exception as e:
                 traceback.print_exc()
@@ -186,13 +186,9 @@ def UploadModel():
                 )
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
-            num_classes = RServer.get_model_wrapper().num_classes
             try:
-                model = RModelWrapper.init_predefined_model(
-                    class_name,
-                    pretrained,
-                    num_classes,
-                    RServer.get_model_wrapper().device,
+                model = RServer.get_model_wrapper().init_predefined_model(
+                    class_name, pretrained
                 )
             except Exception as e:
                 traceback.print_exc()
