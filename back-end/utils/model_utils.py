@@ -61,12 +61,6 @@ def precheck_request_4_upload_model(request):
     if "pretrained" in metadata:
         if metadata["pretrained"] not in ["0", "1"]:
             errors.append("pretrained should be a either '0' or '1'")
-    if "num_classes" in metadata:
-        if (
-            not isinstance(metadata["num_classes"], str)
-            or not metadata["num_classes"].isdigit()
-        ):
-            errors.append("num_classes should be a string representation of an integer")
     if "tags" in metadata and not (
         isinstance(metadata["tags"], list)
         and all(isinstance(tag, str) for tag in metadata["tags"])

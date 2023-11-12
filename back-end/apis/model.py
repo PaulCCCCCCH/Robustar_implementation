@@ -108,9 +108,6 @@ def UploadModel():
             description: |
               Indicates whether the model is pretrained.
               Should only be set to "1" if the model is predefined and pretrained.
-          num_classes:
-            type: "string"
-            description: "The number of classes for the predefined model (will soon be removed)."
 
     responses:
       200:
@@ -158,14 +155,6 @@ def UploadModel():
         # Generate a uuid for the model saving
         saving_id = str(uuid.uuid4())
 
-        code_path = os.path.join(
-            RServer.get_server().base_dir,
-            "generated",
-            "models",
-            "code",
-            f"{saving_id}.py",
-        )
-
         # Get the model's class name
         class_name = metadata.get("class_name")
 
@@ -173,6 +162,14 @@ def UploadModel():
 
         # Save the model's code definition and initialize the model
         if not predefined:  # If the model is custom
+            code_path = os.path.join(
+                RServer.get_server().base_dir,
+                "generated",
+                "models",
+                "code",
+                f"{saving_id}.py",
+            )
+
             # Get the model definition code and save it to a temporary file
             code = request.form.get("code")
             save_code(code, code_path)
@@ -189,10 +186,7 @@ def UploadModel():
                 )
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
-            num_classes = int(metadata.get("num_classes"))
-            # TODO: Stop relying on the user to provide the number of classes
-            code = f"num_classes = {num_classes}"
-            save_code(code, code_path)
+            num_classes = RServer.get_data_manager().get_num_classes()
             try:
                 model = RModelWrapper.init_predefined_model(
                     class_name,
