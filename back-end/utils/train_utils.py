@@ -15,6 +15,7 @@ class TrainThread(threading.Thread):
 
     def run(self):
         try:
+            RServer.get_model_wrapper().acquire_model()
             with RServer.get_server().get_flask_app().app_context():
                 self.trainer.start_train(
                     call_back=lambda status_dict: self.update_info(status_dict),
