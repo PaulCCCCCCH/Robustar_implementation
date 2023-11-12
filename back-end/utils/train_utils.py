@@ -35,19 +35,16 @@ class TrainThread(threading.Thread):
 
 def setup_training(configs):
     # Configs from training pad
-    dataManager = RServer.get_data_manager()
+    data_manager = RServer.get_data_manager()
 
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
-    image_size = dataManager.image_size
-    trainset = dataManager.train_root
-    testset = dataManager.test_root
+    image_size = data_manager.image_size
+    trainset = data_manager.train_root
+    testset = data_manager.test_root
     user_edit_buffering = configs["user_edit_buffering"]
-    model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
-    # Default configs from the server
-    save_dir = RServer.get_server().ckpt_dir
-    device = RServer.get_server_configs()["device"]
+    device = RServer.get_model_wrapper().device
     data_manager = RServer.get_data_manager()
     transforms = data_manager.transforms
     paired_data_path = data_manager.paired_root
@@ -66,9 +63,7 @@ def setup_training(configs):
 
     test_set = DataSet(testset, int(configs["image_size"]), transforms)
 
-    # Model will be initialized with server config
-    model_wrapper = RServer.get_model_wrapper()
-    model = model_wrapper.model
+    model = RServer.get_model_wrapper().get_current_model()
 
     trainer = Trainer(
         net=model,
