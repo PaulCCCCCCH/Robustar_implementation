@@ -105,14 +105,10 @@ def start_train(configs):
     TODO: Set an 'exit flag' in thread object, and check regularly during training.
           This is the most elegant way that I can think of to signal a stop from the front end.
     """
-
-    print("configs:", configs)
-
+    # Switch to the model to be trained
     model_wrapper = RServer.get_model_wrapper()
-    if not model_wrapper.acquire_model():
-        raise Exception(
-            "Cannot start training because the model is occupied by another thread"
-        )
+    model_name = configs["model_name"]
+    model_wrapper.set_current_model(model_name)
 
     try:
         train_set, test_set, model, trainer = setup_training(configs)
