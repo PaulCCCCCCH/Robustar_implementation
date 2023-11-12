@@ -247,7 +247,12 @@ def UploadModel():
         )
 
         # Save the model's metadata to the database
-        RServer.get_model_wrapper().create_model(metadata_4_save)
+        try:
+            RServer.get_model_wrapper().create_model(metadata_4_save)
+        except Exception as e:
+            traceback.print_exc()
+            clear_model_temp_files(code_path, weight_path)
+            return RResponse.fail(f"Failed to save the model. {e}", 400)
 
         # Set the current model to the newly uploaded model
         RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
