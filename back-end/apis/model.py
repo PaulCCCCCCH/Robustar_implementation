@@ -5,7 +5,6 @@ from flask import Blueprint
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from objects.RModelWrapper import RModelWrapper
 
 model_api = Blueprint("model_api", __name__)
 
