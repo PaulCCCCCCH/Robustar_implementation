@@ -56,6 +56,10 @@ class RModelWrapper:
         if model_name == self.model_name:
             return
 
+        # Check if the current model is idle
+        if not self.is_model_available():
+            raise Exception("Failed to switch model because the current model is busy.")
+
         # Get new model
         new_model, new_model_meta_data = self.load_model_by_name(model_name)
         if not new_model or not new_model_meta_data:
@@ -103,6 +107,16 @@ class RModelWrapper:
         self._lock.acquire()
         self._model_available = True
         self._lock.release()
+
+    def is_model_available(self):
+        """
+        Check if the model is available without changing its state.
+        """
+        self._lock.acquire()
+        try:
+            return self._model_available
+        finally:
+            self._lock.release()
 
     def create_model(self, fields: dict):
         # TODO: Need to validate fields, dump model definition to a file,
