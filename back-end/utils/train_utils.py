@@ -129,7 +129,6 @@ def start_train(configs):
         train_thread.start()
 
     except Exception as e:
-        model_wrapper.release_model()
         raise e
 
     return train_thread
