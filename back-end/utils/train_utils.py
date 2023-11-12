@@ -141,3 +141,27 @@ def start_train(configs):
         raise e
 
     return train_thread
+
+
+def check_configs(config):
+    """
+    Check the config of the server. Returns 0 if config is valid.
+    Otherwise, return an error code from the following table:
+    error code  |       meaning
+        10      | Training set not found or not valid
+        11      | Test set not found or not valid
+        12      | Dev set not found or not valid
+        13      | Class file not found or not valid
+        14      | Weight file not found or not valid
+        15      | Path for the source data set to be mirrored is not valid
+        16      | User edit json file path not valid
+
+        20      | paired train reg coeff not valid
+        21      | learn rate not valid
+        22      | epoch num not valid
+        23      | image size not valid
+        24      | thread number not valid
+        25      | batch size not valid
+    """
+    # TODO: check the config here
+    return 0
