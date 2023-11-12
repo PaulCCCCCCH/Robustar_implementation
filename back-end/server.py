@@ -153,7 +153,6 @@ def new_server_object(base_dir):
         dataset_dir,
         db,
         app,
-        configs["num_classes"],
         shuffle=configs["shuffle"],
         image_size=image_size,
         image_padding=configs["image_padding"],

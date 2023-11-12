@@ -26,7 +26,6 @@ class RDataManager:
         dataset_dir: str,
         db_conn: SQLAlchemy,
         app: Flask,
-        num_classes: int,
         shuffle=True,
         image_size=32,
         image_padding="short_side",
@@ -41,7 +40,6 @@ class RDataManager:
         self.image_size = image_size
         self.image_padding = image_padding
         self.class2label = class2label_mapping
-        self.num_classes = num_classes
         self.app = app
 
         self._init_paths()
@@ -221,9 +219,6 @@ class RDataManager:
 
     def get_db_conn(self):
         return self.db_conn
-
-    def get_num_classes(self):
-        return self.num_classes
 
 
 class SquarePad:

@@ -154,18 +154,10 @@ class RModelWrapper:
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
 
         if model_meta_data.predefined:
-            # TODO: use the number of classes from RDataManager
-            file_path = model_meta_data.code_path
-            module_name = "variables_module"
-            spec = importlib.util.spec_from_file_location(module_name, file_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            num_classes = module.num_classes
-
             model = RModelWrapper.init_predefined_model(
                 model_meta_data.class_name,
                 model_meta_data.pretrained,
-                num_classes,
+                self.num_classes,
                 self.device,
             )
         else:

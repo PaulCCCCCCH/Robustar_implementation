@@ -186,7 +186,7 @@ def UploadModel():
                 )
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
-            num_classes = RServer.get_data_manager().get_num_classes()
+            num_classes = RServer.get_model_wrapper().num_classes
             try:
                 model = RModelWrapper.init_predefined_model(
                     class_name,
