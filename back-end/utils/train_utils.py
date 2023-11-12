@@ -61,7 +61,7 @@ def setup_training(configs):
     else:
         train_set = DataSet(trainset, image_size, transforms)
 
-    test_set = DataSet(testset, int(configs["image_size"]), transforms)
+    test_set = DataSet(testset, image_size, transforms)
 
     model = RServer.get_model_wrapper().get_current_model()
 
