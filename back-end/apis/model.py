@@ -11,7 +11,7 @@ model_api = Blueprint("model_api", __name__)
 
 
 @model_api.route("/model/current", methods=["GET"])
-def GetCurrModel():
+def get_curr_model():
     model = RServer.get_model_wrapper().get_current_model_metadata()
     if not model:
         RResponse.abort(400, f"No current model is selected")
@@ -20,7 +20,7 @@ def GetCurrModel():
 
 
 @model_api.route("/model/current/<model_name>", methods=["POST"])
-def SetCurrModel(model_name: str):
+def set_curr_model(model_name: str):
     """return 200 on success"""
     try:
         RServer.get_model_wrapper().set_current_model(model_name)
@@ -30,13 +30,9 @@ def SetCurrModel(model_name: str):
 
 
 @model_api.route("/model/<model_name>", methods=["DELETE"])
-def DeleteModel(model_name: str):
-    """return data
-    {
-        id: integer,
-        name: string,
-        details: string,
-    }
+def delete_model(model_name: str):
+    """
+    return model meta data
     """
     try:
         model = RServer.get_model_wrapper().delete_model_by_name(model_name)
@@ -50,7 +46,7 @@ def DeleteModel(model_name: str):
 
 
 @model_api.route("/model", methods=["POST"])
-def UploadModel():
+def upload_model():
     """
     Should also accept (optionally) a model weight file as argument
     ---
@@ -259,17 +255,51 @@ def UploadModel():
         return RResponse.abort(500, f"Unexpected error. {e}")
 
 
+@model_api.route("/model/<model_name>", methods=["PUT"])
+def update_model(model_name):
+    """
+    path_parameter:
+        model_name: nickname of the model
+    request_body:
+        metadata: see upload_model API definition
+    returns:
+        model meta data
+    """
+    try:
+        metadata_str = request.form.get("metadata")
+        metadata = json.loads(metadata_str)
+        model = RServer.get_model_wrapper().update_model(model_name, metadata)
+        if not model:
+            return RResponse.abort(
+                400, f"Failed to update model.Model {model_name} not found."
+            )
+        return RResponse.ok(model.as_dict())
+    except Exception as e:
+        traceback.print_exc()
+        return RResponse.abort(500, f"Failed to update model. Error: {e}")
+
+
+@model_api.route("/model/duplicate/<model_name>", methods=["POST"])
+def duplicate_model(model_name):
+    """
+    return model metadata for the duplicated model
+    """
+    try:
+        model = RServer.get_model_wrapper().duplicate_model(model_name)
+        if not model:
+            return RResponse.abort(
+                400, f"Failed to duplicate model. Model {model_name} not found."
+            )
+        return RResponse.ok(model.as_dict())
+    except Exception as e:
+        traceback.print_exc()
+        return RResponse.abort(500, f"Failed to duplicate model. Error: {e}")
+
+
 @model_api.route("/model/list", methods=["GET"])
-def GetAllModels():
-    """return data
-    [
-        {
-            id: string,
-            name: string,
-            details: string,
-        },
-        ...
-    ]
+def get_all_models():
+    """
+    return a list of model metadata
     """
     try:
         return RResponse.ok(
@@ -278,3 +308,11 @@ def GetAllModels():
     except Exception as e:
         traceback.print_exc()
         return RResponse.abort(500, f"Failed to list all models. {e}")
+
+
+@model_api.route("/model/predefined", methods=["GET"])
+def get_predefined_models():
+    """
+    return a list of pre-defined model names
+    """
+    return RResponse.ok(RModelWrapper.list_predefined_models())
