@@ -77,7 +77,7 @@ def start_training():
                 'use_paired_train': True,
                 'mixture': 'random_pure',
                 'auto_save_model': True,
-                'batch_size': '128',
+                'batch_size': 128,
                 'shuffle': True,
                 'learn_rate': 0.1,
                 'pgd': 'no PGD',
