@@ -19,7 +19,7 @@ class TrainThread(threading.Thread):
             with RServer.get_server().get_flask_app().app_context():
                 self.trainer.start_train(
                     call_back=lambda status_dict: self.update_info(status_dict),
-                    epochs=int(self.configs["epoch"]),
+                    epochs=self.configs["epoch"],
                     auto_save=self.configs["auto_save_model"],
                 )
         except Exception as e:
@@ -69,17 +69,17 @@ def setup_training(configs):
         net=model,
         trainset=train_set,
         testset=test_set,
-        batch_size=int(configs["batch_size"]),
+        batch_size=configs["batch_size"],
         shuffle=configs["shuffle"],
-        num_workers=int(configs["num_workers"]),
+        num_workers=configs["num_workers"],
         device=device,
-        learn_rate=float(configs["learn_rate"]),
+        learn_rate=configs["learn_rate"],
         auto_save=configs["auto_save_model"],
-        save_every=int(configs["save_every"]),
+        save_every=configs["save_every"],
         save_dir=save_dir,
         name=model_name,
         use_paired_train=configs["use_paired_train"],
-        paired_reg=float(configs["paired_train_reg_coeff"]),
+        paired_reg=configs["paired_train_reg_coeff"],
     )
 
     return train_set, test_set, model, trainer
