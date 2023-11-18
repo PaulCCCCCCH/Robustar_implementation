@@ -40,6 +40,7 @@ def start_flask_app():
 # Get server listener objects
 app, socket = start_flask_app()
 
+
 # Init socket connection
 @socket.on("connect")
 def test_connect():
@@ -56,7 +57,6 @@ def precheck():
     validationset = data_manager.validationset
 
     def check_num_classes_consistency():
-
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []

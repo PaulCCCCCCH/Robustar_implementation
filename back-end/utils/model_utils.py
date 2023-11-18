@@ -61,12 +61,6 @@ def precheck_request_4_upload_model(request):
     if "pretrained" in metadata:
         if metadata["pretrained"] not in ["0", "1"]:
             errors.append("pretrained should be a either '0' or '1'")
-    if "num_classes" in metadata:
-        if (
-            not isinstance(metadata["num_classes"], str)
-            or not metadata["num_classes"].isdigit()
-        ):
-            errors.append("num_classes should be a string representation of an integer")
     if "tags" in metadata and not (
         isinstance(metadata["tags"], list)
         and all(isinstance(tag, str) for tag in metadata["tags"])
@@ -98,10 +92,7 @@ def val_model(model_wrapper: DummyModelWrapper):
     # Run the model against the samples
     for img_path, label in samples:
         get_image_prediction(
-            model_wrapper,
-            img_path,
-            data_manager.image_size,
-            argmax=False,
+            model_wrapper, img_path, data_manager.image_size, argmax=False,
         )
 
 
@@ -126,7 +117,11 @@ def save_ckpt_weight(weight_file, weight_path):
 
 
 def load_ckpt_weight(model, weight_path):
-    model.load_state_dict(torch.load(weight_path))
+    model.load_state_dict(
+        torch.load(
+            weight_path, map_location=torch.device(RServer.get_model_wrapper().device)
+        )
+    )
 
 
 def save_cur_weight(model, weight_path):

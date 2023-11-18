@@ -15,6 +15,7 @@ class TrainThread(threading.Thread):
 
     def run(self):
         try:
+            RServer.get_model_wrapper().acquire_model()
             with RServer.get_server().get_flask_app().app_context():
                 self.trainer.start_train(
                     call_back=lambda status_dict: self.update_info(status_dict),
@@ -34,19 +35,16 @@ class TrainThread(threading.Thread):
 
 def setup_training(configs):
     # Configs from training pad
-    dataManager = RServer.get_data_manager()
+    data_manager = RServer.get_data_manager()
 
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
-    image_size = dataManager.image_size
-    trainset = dataManager.train_root
-    testset = dataManager.test_root
+    image_size = data_manager.image_size
+    trainset = data_manager.train_root
+    testset = data_manager.test_root
     user_edit_buffering = configs["user_edit_buffering"]
-    model_name = configs["model_name"] if configs["model_name"] else "my-model"
 
-    # Default configs from the server
-    save_dir = RServer.get_server().ckpt_dir
-    device = RServer.get_server_configs()["device"]
+    device = RServer.get_model_wrapper().device
     data_manager = RServer.get_data_manager()
     transforms = data_manager.transforms
     paired_data_path = data_manager.paired_root
@@ -63,11 +61,9 @@ def setup_training(configs):
     else:
         train_set = DataSet(trainset, image_size, transforms)
 
-    test_set = DataSet(testset, int(configs["image_size"]), transforms)
+    test_set = DataSet(testset, image_size, transforms)
 
-    # Model will be initialized with server config
-    model_wrapper = RServer.get_model_wrapper()
-    model = model_wrapper.model
+    model = RServer.get_model_wrapper().get_current_model()
 
     trainer = Trainer(
         net=model,
@@ -104,14 +100,10 @@ def start_train(configs):
     TODO: Set an 'exit flag' in thread object, and check regularly during training.
           This is the most elegant way that I can think of to signal a stop from the front end.
     """
-
-    print("configs:", configs)
-
+    # Switch to the model to be trained
     model_wrapper = RServer.get_model_wrapper()
-    if not model_wrapper.acquire_model():
-        raise Exception(
-            "Cannot start training because the model is occupied by another thread"
-        )
+    model_name = configs["model_name"]
+    model_wrapper.set_current_model(model_name)
 
     try:
         train_set, test_set, model, trainer = setup_training(configs)
@@ -137,7 +129,30 @@ def start_train(configs):
         train_thread.start()
 
     except Exception as e:
-        model_wrapper.release_model()
         raise e
 
     return train_thread
+
+
+def check_configs(config):
+    """
+    Check the config of the server. Returns 0 if config is valid.
+    Otherwise, return an error code from the following table:
+    error code  |       meaning
+        10      | Training set not found or not valid
+        11      | Test set not found or not valid
+        12      | Dev set not found or not valid
+        13      | Class file not found or not valid
+        14      | Weight file not found or not valid
+        15      | Path for the source data set to be mirrored is not valid
+        16      | User edit json file path not valid
+
+        20      | paired train reg coeff not valid
+        21      | learn rate not valid
+        22      | epoch num not valid
+        23      | image size not valid
+        24      | thread number not valid
+        25      | batch size not valid
+    """
+    # TODO: check the config here
+    return 0

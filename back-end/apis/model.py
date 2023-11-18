@@ -5,7 +5,6 @@ from flask import Blueprint
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
-from objects.RModelWrapper import RModelWrapper
 
 model_api = Blueprint("model_api", __name__)
 
@@ -104,9 +103,6 @@ def upload_model():
             description: |
               Indicates whether the model is pretrained.
               Should only be set to "1" if the model is predefined and pretrained.
-          num_classes:
-            type: "string"
-            description: "The number of classes for the predefined model (will soon be removed)."
 
     responses:
       200:
@@ -154,14 +150,6 @@ def upload_model():
         # Generate a uuid for the model saving
         saving_id = str(uuid.uuid4())
 
-        code_path = os.path.join(
-            RServer.get_server().base_dir,
-            "generated",
-            "models",
-            "code",
-            f"{saving_id}.py",
-        )
-
         # Get the model's class name
         class_name = metadata.get("class_name")
 
@@ -169,13 +157,21 @@ def upload_model():
 
         # Save the model's code definition and initialize the model
         if not predefined:  # If the model is custom
+            code_path = os.path.join(
+                RServer.get_server().base_dir,
+                "generated",
+                "models",
+                "code",
+                f"{saving_id}.py",
+            )
+
             # Get the model definition code and save it to a temporary file
             code = request.form.get("code")
             save_code(code, code_path)
             # Initialize the model
             try:
-                model = RModelWrapper.init_custom_model(
-                    code_path, class_name, RServer.get_model_wrapper().device
+                model = RServer.get_model_wrapper().init_custom_model(
+                    code_path, class_name
                 )
             except Exception as e:
                 traceback.print_exc()
@@ -185,16 +181,9 @@ def upload_model():
                 )
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
-            num_classes = int(metadata.get("num_classes"))
-            # TODO: Stop relying on the user to provide the number of classes
-            code = f"num_classes = {num_classes}"
-            save_code(code, code_path)
             try:
-                model = RModelWrapper.init_predefined_model(
-                    class_name,
-                    pretrained,
-                    num_classes,
-                    RServer.get_model_wrapper().device,
+                model = RServer.get_model_wrapper().init_predefined_model(
+                    class_name, pretrained
                 )
             except Exception as e:
                 traceback.print_exc()
@@ -243,7 +232,12 @@ def upload_model():
         )
 
         # Save the model's metadata to the database
-        RServer.get_model_wrapper().create_model(metadata_4_save)
+        try:
+            RServer.get_model_wrapper().create_model(metadata_4_save)
+        except Exception as e:
+            traceback.print_exc()
+            clear_model_temp_files(code_path, weight_path)
+            return RResponse.fail(f"Failed to save the model. {e}", 400)
 
         # Set the current model to the newly uploaded model
         RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
