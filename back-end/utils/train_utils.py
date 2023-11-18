@@ -20,7 +20,7 @@ class TrainThread(threading.Thread):
                 self.trainer.start_train(
                     call_back=lambda status_dict: self.update_info(status_dict),
                     epochs=int(self.configs["epoch"]),
-                    auto_save=self.configs["auto_save_model"] == "yes",
+                    auto_save=self.configs["auto_save_model"],
                 )
         except Exception as e:
             raise e
