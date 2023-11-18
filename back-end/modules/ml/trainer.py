@@ -16,9 +16,9 @@ class Trainer:
 
     def __init__(
         self,
-        net,
-        trainset,
-        testset,
+        model,
+        train_set,
+        val_set,
         batch_size,
         shuffle,
         num_workers,
@@ -31,8 +31,11 @@ class Trainer:
         use_paired_train=False,
         paired_reg=1e-4,
     ):
-        self.initialize_loader(trainset, testset, batch_size, shuffle, num_workers)
-        self.net = net
+        self.storeArr = None
+        self.updateInfo = None
+        self.statusInfo = {}
+
+        self.model = model
         self.device = device
         self.learn_rate = learn_rate
         self.auto_save = auto_save
@@ -42,12 +45,20 @@ class Trainer:
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
 
-    def initialize_loader(self, trainset, testset, batch_size, shuffle, num_workers):
-        self.testloader = torch.utils.data.DataLoader(
-            testset, batch_size=batch_size, shuffle=False, num_workers=num_workers
+        self.temp_best_path = None
+        self.temp_best_epoch = 0
+
+        # Initialize loaders
+        self.train_loader = None
+        self.val_loader = None
+        self.initialize_loader(train_set, val_set, batch_size, shuffle, num_workers)
+
+    def initialize_loader(self, train_set, test_set, batch_size, shuffle, num_workers):
+        self.val_loader = torch.utils.data.DataLoader(
+            test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers
         )
-        self.trainloader = torch.utils.data.DataLoader(
-            trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
+        self.train_loader = torch.utils.data.DataLoader(
+            train_set, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
         )
 
     def start_train(self, call_back, epochs, auto_save):
@@ -76,17 +87,17 @@ class Trainer:
         self._save_net(name_str)
 
     def print_accuracy(self):
-        loader = self.testloader
+        loader = self.val_loader
         torch.no_grad()
         correct = 0
         total = 0
-        self.net.eval()
+        self.model.eval()
 
         # for data in loader:
         for data in self.storeLoader(loader):
             images, labels = data
             images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
+            outputs = self.model(images)
 
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
@@ -112,13 +123,13 @@ class Trainer:
 
     def train(self, epoch, auto_save=True, pgd=False, merge=1):
         starttime = time.time()
-        loader = self.trainloader
+        loader = self.train_loader
         criterion = torch.nn.CrossEntropyLoss()
         pgd_attack = (
-            PGD(self.net, eps=0.2, alpha=2 / 255, iters=2) if pgd else self.returna
+            PGD(self.model, eps=0.2, alpha=2 / 255, iters=2) if pgd else self.returna
         )
         optimizer = torch.optim.SGD(
-            self.net.parameters(), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4
+            self.model.parameters(), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4
         )
         best = 0
 
@@ -128,7 +139,7 @@ class Trainer:
         for epoch in range(epoch):
             print("\nEpoch: %d" % (epoch + 1))
             sepoch = time.time()
-            self.net.train()
+            self.model.train()
             sum_loss = 0.0
             correct = 0.0
             total = 0.0
@@ -147,11 +158,11 @@ class Trainer:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
                 # forward + backward
-                outputs = self.net(inputs)
+                outputs = self.model(inputs)
                 loss = criterion(outputs, labels)
 
                 if self.use_paired_train:
-                    paired_outputs = self.net(paired_inputs)
+                    paired_outputs = self.model(paired_inputs)
                     paired_loss = criterion(paired_outputs, labels)
                     loss += paired_loss + self.paired_reg * torch.mean(
                         torch.square(torch.norm(outputs - paired_outputs))

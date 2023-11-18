@@ -40,8 +40,8 @@ def setup_training(configs):
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
     image_size = data_manager.image_size
-    trainset = data_manager.train_root
-    testset = data_manager.test_root
+    train_set = data_manager.train_root
+    val_set = data_manager.validation_root
     user_edit_buffering = configs["user_edit_buffering"]
 
     device = RServer.get_model_wrapper().device
@@ -51,7 +51,7 @@ def setup_training(configs):
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset,
+            train_set,
             paired_data_path,
             image_size,
             transforms,
@@ -59,16 +59,16 @@ def setup_training(configs):
             user_edit_buffering,
         )
     else:
-        train_set = DataSet(trainset, image_size, transforms)
+        train_set = DataSet(train_set, image_size, transforms)
 
-    test_set = DataSet(testset, image_size, transforms)
+    val_set = DataSet(val_set, image_size, transforms)
 
     model = RServer.get_model_wrapper().get_current_model()
 
     trainer = Trainer(
-        net=model,
-        trainset=train_set,
-        testset=test_set,
+        model=model,
+        train_set=train_set,
+        val_set=val_set,
         batch_size=configs["batch_size"],
         shuffle=configs["shuffle"],
         num_workers=configs["num_workers"],
@@ -82,7 +82,7 @@ def setup_training(configs):
         paired_reg=configs["paired_train_reg_coeff"],
     )
 
-    return train_set, test_set, model, trainer
+    return train_set, val_set, model, trainer
 
 
 def start_tensorboard(logdir):
