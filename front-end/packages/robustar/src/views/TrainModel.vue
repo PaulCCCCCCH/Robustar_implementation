@@ -154,6 +154,63 @@
         </div>
       </v-card-text>
     </v-card>
+
+    <v-card  class="pa-2 mb-4" width="1000">
+      <v-card-title class="mb-2">All Models</v-card-title>
+      <v-card-text>
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Nickname</th>
+                <th class="text-left">Tag</th>
+                <th class="text-left">Created Time</th>
+                <th class="text-left">Last Trained</th>
+                <th class="text-left">Epoch</th>
+                <th class="text-left">Test Accuracy</th>
+                <th class="text-left">Train Accuracy</th>
+                <th class="text-left">Validation Accuracy</th>
+                <th class="text-left">Description</th>
+                <th class="text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="model in modelList" :key="model.nickname">
+                <td>{{ viewingModel.nickname }}</td>
+                <td>{{ viewingModel.tag }}</td>
+                <td>{{ viewingModel.create_time }}</td>
+                <td>{{ viewingModel.last_trained }}</td>
+                <td>{{ viewingModel.epoch }}</td>
+                <td>{{ viewingModel.test_accuracy }}</td>
+                <td>{{ viewingModel.train_accuracy }}</td>
+                <td>{{ viewingModel.val_accuracy }}</td>
+                <td>{{ viewingModel.description }}</td>
+                <td>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="deleteModel(model.nickname)">
+                        <v-list-item-title>Delete</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="duplicateModel(model.nickname)">
+                        <v-list-item-title>Duplicate</v-list-item-title>
+                      </v-list-item>
+                       <v-list-item @click="setCurrentModel(model.nickname)">
+                        <v-list-item-title>Set as current model</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
