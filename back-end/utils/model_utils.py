@@ -92,10 +92,7 @@ def val_model(model_wrapper: DummyModelWrapper):
     # Run the model against the samples
     for img_path, label in samples:
         get_image_prediction(
-            model_wrapper,
-            img_path,
-            data_manager.image_size,
-            argmax=False,
+            model_wrapper, img_path, data_manager.image_size, argmax=False,
         )
 
 

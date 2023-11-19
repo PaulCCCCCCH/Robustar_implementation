@@ -4,6 +4,7 @@ import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
 from database.model import Models, Tags, db
+from datetime import datetime
 import importlib
 
 IMAGENET_OUTPUT_SIZE = 1000
@@ -152,6 +153,51 @@ class RModelWrapper:
             )
             return None
 
+    def update_model(self, model_name, metadata) -> Models:
+        model_to_update = Models.query.filter_by(nickname=model_name).first()
+        if not model_to_update:
+            return None
+
+        model_to_update.description = (
+            metadata.get("description") or model_to_update.description
+        )
+        model_to_update.architecture = (
+            metadata.get("architecture") or model_to_update.architecture
+        )
+
+        prev_tags = metadata.get("tags")
+        model_to_update.tags = (
+            [Tags(name=tag_name) for tag_name in prev_tags] if prev_tags else []
+        )
+
+        db.session.commit()
+
+        return model_to_update
+
+    def duplicate_model(self, model_name) -> Models:
+        model = Models.query.filter_by(nickname=model_name).first()
+        if not model:
+            return None
+
+        model_copy = Models(
+            class_name=model.class_name,
+            nickname=model.nickname + "_copy",
+            predefined=model.predefined,
+            pretrained=model.pretrained,
+            description=model.description,
+            architecture=model.architecture,
+            tags=model.tags,
+            create_time=datetime.now(),
+            weight_path=model.weight_path,
+            code_path=model.code_path,
+            epoch=model.epoch,
+        )
+
+        self.db_conn.session.add(model_copy)
+        self.db_conn.session.commit()
+
+        return model_copy
+
     def get_current_model(self):
         return self.model
 
@@ -176,8 +222,7 @@ class RModelWrapper:
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
-                model_meta_data.class_name,
-                model_meta_data.pretrained,
+                model_meta_data.class_name, model_meta_data.pretrained,
             )
         else:
             model = self.init_custom_model(
@@ -188,6 +233,10 @@ class RModelWrapper:
                 torch.load(model_meta_data.weight_path, map_location=self.device)
             )
         return model, model_meta_data
+
+    @staticmethod
+    def list_predefined_models():
+        return AVAILABLE_MODELS
 
     def init_predefined_model(self, network_type, pretrained):
         # Check if the model is supported
