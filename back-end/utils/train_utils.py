@@ -15,7 +15,6 @@ class TrainThread(threading.Thread):
 
     def run(self):
         try:
-            RServer.get_model_wrapper().acquire_model()
             with RServer.get_server().get_flask_app().app_context():
                 self.trainer.start_train(
                     call_back=lambda status_dict: self.update_info(status_dict),
@@ -43,11 +42,13 @@ def setup_training(configs):
     train_set = data_manager.train_root
     val_set = data_manager.validation_root
     user_edit_buffering = configs["user_edit_buffering"]
-
     device = RServer.get_model_wrapper().device
     data_manager = RServer.get_data_manager()
     transforms = data_manager.transforms
     paired_data_path = data_manager.paired_root
+    save_dir = os.path.join(
+        RServer.get_server().base_dir, "generated", "models", "ckpt"
+    )
 
     if use_paired_train:
         train_set = PairedDataset(
@@ -77,7 +78,6 @@ def setup_training(configs):
         auto_save=configs["auto_save_model"],
         save_every=configs["save_every"],
         save_dir=save_dir,
-        name=model_name,
         use_paired_train=configs["use_paired_train"],
         paired_reg=configs["paired_train_reg_coeff"],
     )
@@ -126,7 +126,10 @@ def start_train(configs):
         train_thread = TrainThread(trainer, configs)
 
         # Start training on a new thread
-        train_thread.start()
+        if RServer.get_model_wrapper().acquire_model():
+            train_thread.start()
+        else:
+            raise Exception("The model to be trained is busy.")
 
     except Exception as e:
         raise e

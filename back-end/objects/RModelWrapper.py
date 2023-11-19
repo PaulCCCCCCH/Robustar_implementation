@@ -162,6 +162,15 @@ class RModelWrapper:
     def get_model_by_name(name) -> Models:
         return Models.query.filter_by(nickname=name).first()
 
+    @staticmethod
+    def convert_metadata_2_dict(metadata):
+        """
+        Convert a model metadata object to a dictionary
+        """
+        data = {c.name: getattr(metadata, c.name) for c in metadata.__table__.columns}
+        data["tags"] = [tag.name for tag in metadata.tags]
+        return data
+
     def load_model_by_name(self, model_name: str):
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
 
