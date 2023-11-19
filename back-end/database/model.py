@@ -30,7 +30,7 @@ model_tag_rel = db.Table(
 class Models(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     class_name = db.Column(db.String)
-    nickname = db.Column(db.String)
+    nickname = db.Column(db.String, unique=True)
     predefined = db.Column(db.Boolean)
     pretrained = db.Column(db.Boolean)
     description = db.Column(db.String)

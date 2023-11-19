@@ -11,11 +11,14 @@ from .u2net import U2NETP as U2NETP_DEEP
 from objects.RDataManager import SquarePad
 from torchvision import transforms
 
+
 def download(url, saveTo, msg=None):
     from urllib import request
+
     if msg:
         print(msg)
     request.urlretrieve(url, saveTo)
+
 
 class U2NET:
     """U^2-Net model interface"""
@@ -27,38 +30,42 @@ class U2NET:
         self.U2NET_DEEP = U2NET_DEEP
         self.U2NETP_DEEP = U2NETP_DEEP
         self.image_size = 320  # required by U2Net
-        self.resize_transform = transforms.Compose([
-            SquarePad('short_side'), # TODO: Hard-coded for now
-            transforms.Resize((self.image_size, self.image_size)),
-        ])
-        
-        if name == 'u2net':  # Load model
+        self.resize_transform = transforms.Compose(
+            [
+                SquarePad("short_side"),  # TODO: Hard-coded for now
+                transforms.Resize((self.image_size, self.image_size)),
+            ]
+        )
+
+        if name == "u2net":  # Load model
             if not osp.exists(checkpoint):
                 download(
                     "https://github.com/OPHoperHPO/image-background-remove-tool/releases/download/3.2/u2net.pth",
                     checkpoint,
-                    "Downloading U2NET model (176.6mb)..."
+                    "Downloading U2NET model (176.6mb)...",
                 )
-            print("Loading a U2NET model (176.6 mb) with better quality but slower processing.")
+            print(
+                "Loading a U2NET model (176.6 mb) with better quality but slower processing."
+            )
             net = self.U2NET_DEEP()
-        elif name == 'u2netp':
+        elif name == "u2netp":
             if not osp.exists(checkpoint):
                 download(
                     "https://github.com/OPHoperHPO/image-background-remove-tool/releases/download/3.2/u2netp.pth",
                     checkpoint,
-                    "Downloading U2NETp model (4 mb)..."
+                    "Downloading U2NETp model (4 mb)...",
                 )
-            print("Loading a U2NETp model (4 mb) with lower quality but fast processing.")
+            print(
+                "Loading a U2NETp model (4 mb) with lower quality but fast processing."
+            )
             net = self.U2NETP_DEEP()
         else:
             raise NotImplementedError("Unknown u2net model!")
 
         try:
-            if device == 'cpu':
-                net.load_state_dict(self.torch.load(os.path.join(checkpoint), map_location='cpu'))
-            else:
-                net.load_state_dict(self.torch.load(os.path.join(checkpoint)))
-                net = net.to(device)
+            net.load_state_dict(
+                self.torch.load(os.path.join(checkpoint), map_location=device)
+            )
         except FileNotFoundError:
             raise FileNotFoundError("No pre-trained model found!")
         net.eval()
@@ -82,8 +89,12 @@ class U2NET:
             # then this algorithm should immediately remove the background
             image = preprocessing.run(self, image, org_image)
         else:
-            image = self.__get_output__(image, org_image)  # If this is not, then just remove the background
-        if postprocessing:  # If a postprocessing algorithm is specified, we send it an image without a background
+            image = self.__get_output__(
+                image, org_image
+            )  # If this is not, then just remove the background
+        if (
+            postprocessing
+        ):  # If a postprocessing algorithm is specified, we send it an image without a background
             image = postprocessing.run(self, image, org_image)
         return image
 
@@ -128,19 +139,23 @@ class U2NET:
         if isinstance(data, str):
             try:
                 # TODO: use existing library instead!
-                pil_image = Image.open(data)  # Load image if there is a path 
-                if pil_image.mode != 'RGB':
-                    pil_image = pil_image.convert('RGB')
+                pil_image = Image.open(data)  # Load image if there is a path
+                if pil_image.mode != "RGB":
+                    pil_image = pil_image.convert("RGB")
             except IOError:
-                print('Cannot retrieve image. Please check file: ' + data)
+                print("Cannot retrieve image. Please check file: " + data)
                 return False, False
             image = np.asarray(self.resize_transform(pil_image), dtype=np.float64)
         else:
-            image = np.array(self.resize_transform(data), dtype=np.float64)  # Convert PIL image to numpy arr
+            image = np.array(
+                self.resize_transform(data), dtype=np.float64
+            )  # Convert PIL image to numpy arr
             pil_image = data
-        
-        image = self.__ndrarray2tensor__(image)  # Convert image from numpy arr to tensor
-        
+
+        image = self.__ndrarray2tensor__(
+            image
+        )  # Convert image from numpy arr to tensor
+
         return image, pil_image
 
     def __ndrarray2tensor__(self, image: np.ndarray):
@@ -173,7 +188,7 @@ class U2NET:
     @staticmethod
     def __prepare_mask__(predict, image_size):
         """Prepares mask
-        Returns a mask as an PIL image 
+        Returns a mask as an PIL image
         """
         predict = predict.squeeze()
         predict_np = predict.cpu().data.numpy()

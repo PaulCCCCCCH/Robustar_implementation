@@ -37,13 +37,11 @@ class RModelWrapper:
         self.model = None
         self.model_meta_data = None
         self.model_name = ""
-
-        # TODO: Should initialize to None. Remove in the future.
-        self.model = RModelWrapper.init_predefined_model(
-            network_type, pretrained, num_classes, self.device
-        )
         self.num_classes = num_classes
         self.modelwork_type = network_type
+
+        # TODO: Should initialize to None. Remove in the future.
+        self.model = self.init_predefined_model(network_type, pretrained)
         self._lock = Lock()
         self._model_available = True
 
@@ -154,70 +152,61 @@ class RModelWrapper:
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
 
         if model_meta_data.predefined:
-            # TODO: use the number of classes from RDataManager
-            file_path = model_meta_data.code_path
-            module_name = "variables_module"
-            spec = importlib.util.spec_from_file_location(module_name, file_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            num_classes = module.num_classes
-
-            model = RModelWrapper.init_predefined_model(
+            model = self.init_predefined_model(
                 model_meta_data.class_name,
                 model_meta_data.pretrained,
-                num_classes,
-                self.device,
             )
         else:
-            model = RModelWrapper.init_custom_model(
-                model_meta_data.code_path, model_meta_data.class_name, self.device
+            model = self.init_custom_model(
+                model_meta_data.code_path, model_meta_data.class_name
             )
         if model_meta_data.weight_path:
-            model.load_state_dict(torch.load(model_meta_data.weight_path))
+            model.load_state_dict(
+                torch.load(model_meta_data.weight_path, map_location=self.device)
+            )
         return model, model_meta_data
 
-    @staticmethod
-    def init_predefined_model(network_type, pretrained, num_classes, device):
+    def init_predefined_model(self, network_type, pretrained):
         # Check if the model is supported
         if network_type not in AVAILABLE_MODELS:
             raise Exception(
                 f"Requested model type {network_type} not supported. Please check."
             )
         # If the model is pretrained, it should have the same number of classes as the ImageNet model
-        if pretrained and num_classes != IMAGENET_OUTPUT_SIZE:
+        if pretrained and self.num_classes != IMAGENET_OUTPUT_SIZE:
             raise Exception(
                 f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output."
             )
 
         if network_type == "resnet-18":
             model = torchvision.models.resnet18(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "resnet-34":
             model = torchvision.models.resnet34(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "resnet-50":
             model = torchvision.models.resnet50(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "resnet-101":
             model = torchvision.models.resnet101(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "resnet-152":
             model = torchvision.models.resnet152(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "mobilenet-v2":
             model = torchvision.models.mobilenet_v2(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
         elif network_type == "resnet-18-32x32":
             model = torchvision.models.ResNet(
                 torchvision.models.resnet.BasicBlock,
                 [2, 2, 2, 2],
-                num_classes=num_classes,
+                num_classes=self.num_classes,
             )
             model.conv1 = torch.nn.Conv2d(
                 3, 64, kernel_size=3, stride=1, padding=1, bias=False
@@ -225,13 +214,12 @@ class RModelWrapper:
             model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
         elif network_type == "alexnet":
             model = torchvision.models.alexnet(
-                pretrained=pretrained, num_classes=num_classes
+                pretrained=pretrained, num_classes=self.num_classes
             )
 
-        return model.to(device)
+        return model.to(self.device)
 
-    @staticmethod
-    def init_custom_model(code_path, name, device):
+    def init_custom_model(self, code_path, name):
         """
         Initialize the custom model by importing the class with the specified name in the file specified by code_path
         """
@@ -239,4 +227,4 @@ class RModelWrapper:
         model_def = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(model_def)
         model = getattr(model_def, name)()
-        return model.to(device)
+        return model.to(self.device)

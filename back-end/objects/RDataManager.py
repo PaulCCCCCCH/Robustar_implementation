@@ -3,6 +3,7 @@ from flask import Flask
 import pickle
 import os.path as osp
 import os
+from pathlib import Path
 from utils.path_utils import get_paired_path, split_path, to_unix
 from torchvision import transforms
 from flask_sqlalchemy import SQLAlchemy
@@ -17,7 +18,6 @@ import torchvision.transforms.functional as transF
 
 # The data interface
 class RDataManager:
-
     SUPP_IMG_EXT = ["jpg", "jpeg", "png"]
 
     def __init__(
@@ -31,7 +31,6 @@ class RDataManager:
         image_padding="short_side",
         class2label_mapping=None,
     ):
-
         # TODO: Support customized splits by taking a list of splits as argument
         # splits = ['train', 'test']
         self.data_root = dataset_dir
