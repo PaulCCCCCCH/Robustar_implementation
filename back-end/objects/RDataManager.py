@@ -220,6 +220,10 @@ class RDataManager:
     def get_db_conn(self):
         return self.db_conn
 
+    def dispose_db_engine(self):
+        with self.app.app_context():
+            self.db_conn.engine.dispose()
+
 
 class SquarePad:
     """

@@ -99,7 +99,7 @@ def precheck():
     check_image_size_consistency()
 
 
-def new_server_object(base_dir):
+def new_server_object(base_dir, app, socket):
     base_dir = to_unix(base_dir)
     dataset_dir = to_unix(osp.join(base_dir, "dataset"))
     ckpt_dir = to_unix(osp.join(base_dir, "checkpoints"))
@@ -205,7 +205,7 @@ def create_app():
     basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
     print("Current working directory is {}".format(os.getcwd()))
     print("Absolute basedir is {}".format(basedir))
-    new_server_object(basedir)
+    new_server_object(basedir, app, socket)
 
     print("Server started")
     return RServer.get_server().get_flask_app()
