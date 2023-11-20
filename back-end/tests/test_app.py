@@ -15,10 +15,10 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 
 @pytest.fixture()
 def app(request):
-    zip_file_path = to_unix(request.config.getoption("zip_file_path"))
-    basedir = zip_file_path[:-4]
+    data_path = to_unix(request.config.getoption("data_path"))
+    basedir = f"{data_path}-copy"
 
-    _set_up(zip_file_path)
+    _set_up(data_path, basedir)
 
     app, socket = start_flask_app()
     new_server_object(basedir, app, socket)
@@ -40,11 +40,9 @@ def client(app):
     yield app.test_client()
 
 
-def _set_up(zip_file_path):
-    root_dir = os.path.dirname(zip_file_path)
-    with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-        zip_ref.extractall(root_dir)
-    print(f"Extracted {zip_file_path} to {root_dir}")
+def _set_up(data_path, basedir):
+    shutil.copytree(data_path, basedir)
+    print(f"Copy {data_path} to {basedir}")
 
 
 def _clean_up(basedir):

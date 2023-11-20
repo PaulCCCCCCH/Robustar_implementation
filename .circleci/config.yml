@@ -37,6 +37,7 @@ jobs:
             echo "Files in directory"
             ls ./Robustar2
             gdown https://drive.google.com/uc?id=1hs29ZEDZH8Y5UrrEGm3RjhK1Lr6AbYxU
+            unzip Robustar2-test.zip
 
       - run:
           name: Install backend test dependencies and run
@@ -46,7 +47,7 @@ jobs:
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
-            python -m pytest --zip_file_path ./Robustar2-test.zip -W ignore::UserWarning -W ignore::DeprecationWarning
+            python -m pytest --data_path ./Robustar2-test -W ignore::UserWarning -W ignore::DeprecationWarning
 
       - run:
           name: End-to-end tests

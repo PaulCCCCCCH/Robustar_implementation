@@ -1,7 +1,7 @@
 def pytest_addoption(parser):
     parser.addoption(
-        "--zip_file_path",
+        "--data_path",
         action="store",
-        default="/Robustar2-test.zip",
-        help="Path of the zipped test folder",
+        default="/Robustar2-test",
+        help="Path of the test data",
     )
