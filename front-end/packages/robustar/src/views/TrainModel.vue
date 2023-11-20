@@ -61,6 +61,7 @@
           <template v-slot:default>
             <thead>
               <tr>
+                <th></th>
                 <th class="text-left">Nickname</th>
                 <th class="text-left">Tag</th>
                 <th class="text-left">Created Time</th>
@@ -81,15 +82,15 @@
                     @change="() => selectModel(index)"
                   ></v-checkbox>
                 </td>
-                <td>{{ model.nickname }}</td>
-                <td>{{ model.tag }}</td>
-                <td>{{ model.create_time }}</td>
-                <td>{{ model.last_trained }}</td>
-                <td>{{ model.epoch }}</td>
-                <td>{{ model.test_accuracy }}</td>
-                <td>{{ model.train_accuracy }}</td>
-                <td>{{ model.val_accuracy }}</td>
-                <td>{{ model.description }}</td>
+                <td>{{ model?.value?.nickname }}</td>
+                <td>{{ model?.value?.tag }}</td>
+                <td>{{ model?.value?.create_time }}</td>
+                <td>{{ model?.value?.last_trained }}</td>
+                <td>{{ model?.value?.epoch }}</td>
+                <td>{{ model?.value?.test_accuracy }}</td>
+                <td>{{ model?.value?.train_accuracy }}</td>
+                <td>{{ model?.value?.val_accuracy }}</td>
+                <td>{{ model?.value?.description }}</td>
                 <td>
                   <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">

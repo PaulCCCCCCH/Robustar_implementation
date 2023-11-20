@@ -70,7 +70,19 @@
           clearable
           dense
         ></v-textarea>
-        <v-checkbox v-model="predefined" label="use predefined" dense></v-checkbox>
+        <v-checkbox
+          v-model="predefined"
+          label="use predefined"
+          dense
+          class="d-inline-block mr-8"
+        ></v-checkbox>
+        <v-checkbox
+          v-if="predefined"
+          v-model="pretrained"
+          label="is model pretrained"
+          dense
+          class="d-inline-block"
+        ></v-checkbox>
         <div v-if="!predefined">
           <v-file-input
             v-model="weightFile"
@@ -112,19 +124,6 @@
             style="font-family: monospace"
           ></v-textarea>
         </div>
-        <div v-else>
-          <v-text-field
-            v-model="num_classes"
-            :loading="isSubmitting"
-            label="num_classes"
-            type="number"
-            min="0"
-            hint=""
-            outlined
-            clearable
-            dense
-          ></v-text-field>
-        </div>
       </v-form>
 
       <v-divider></v-divider>
@@ -160,6 +159,7 @@ export default {
     return {
       dialog: false,
       predefined: false,
+      pretrained: false,
       isSubmitting: false,
       nickname: '',
       className: '',
@@ -178,7 +178,6 @@ export default {
       weightFile: null,
       codeFile: null,
       code: '',
-      num_classes: 0,
       rules: {
         required: (value) =>
           (value && typeof value === 'string' && !!value.trim()) ||
@@ -220,8 +219,7 @@ export default {
               description: this.description,
               tags: this.tags,
               predefined: this.predefined ? '1' : '0',
-              pretrained: this.predefined ? '1' : null,
-              num_classes: String(this.num_classes),
+              pretrained: this.pretrained ? '1' : '0',
             },
             this.code,
             this.weightFile
@@ -240,6 +238,7 @@ export default {
       this.status = '';
       this.feedback = '';
       this.predefined = false;
+      this.pretrained = false;
       this.nickname = '';
       this.className = '';
       this.tags.length = 0;
