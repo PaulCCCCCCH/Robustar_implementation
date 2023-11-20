@@ -70,28 +70,18 @@ def start_training():
               type: object
               example: {
                 'model_name': 'my-test-model',
-                'weight': '',
-                'train_path': '/Robustar2/dataset/train',
-                'test_path': '/Robustar2/dataset/test',
-                'class_path': './model/cifar-class.txt',
                 'use_paired_train': True,
                 'mixture': 'random_pure',
                 'auto_save_model': True,
-                'batch_size': '128',
+                'batch_size': 128,
                 'shuffle': True,
                 'learn_rate': 0.1,
-                'pgd': 'no PGD',
                 'paired_train_reg_coeff': 0.001,
-                'image_size': 32,
                 'epoch': 20,
-                'thread': 8,
-                'pretrain': False,
+                'num_workers': 8,
                 'user_edit_buffering': False,
                 'save_every': 5
               }
-            info:
-              type: string
-              example: placeholder
     responses:
       200:
         description: Training started or training cannot be started
@@ -116,23 +106,17 @@ def start_training():
         # Return error message if config is invalid
         check_result = check_configs(configs)
         if check_result != 0:
-            RResponse.abort(400, "Invalid Configuration!", check_result)
+            return RResponse.fail(f"Invalid Configuration!: {check_result}", 400)
 
         # Try to start training thread
         print("DEBUG: Training request received! Setting up training...")
 
         # start the training thread
-        train_thread = None
         try:
-            train_thread = start_train(configs)
+            start_train(configs)
         except Exception as e:
             traceback.print_exc()
-            RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
-
-        # Return error if training cannot be started
-        if not train_thread:
-            traceback.print_exc()
-            RResponse.abort(500, "Failed to start training thread", -1)
+            return RResponse.fail(f"Failed to start training thread. {e}", 400)
 
         # Training started succesfully!
         print("Training started!")
