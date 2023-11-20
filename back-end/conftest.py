@@ -1,5 +1,7 @@
 def pytest_addoption(parser):
-    parser.addoption("--basedir", action="store", default="/Robustar2", help="Base directory where robustar folder is placed")
-
-
-
+    parser.addoption(
+        "--zip_file_path",
+        action="store",
+        default="/Robustar2-test.zip",
+        help="Path of the zipped test folder",
+    )
