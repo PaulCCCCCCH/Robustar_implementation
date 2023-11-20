@@ -5,28 +5,55 @@ import json
 from test_app import app, client
 
 
-class TestModel:
-    class TestSetCurrentModel:
-        def test_set_current_model(self, client):
-            model0 = "model-non-exist"
-            response = client.post(f"/model/current/{model0}")
-            assert response.status_code != 200
+def get_dummy_model_metadata(nickname):
+    metadata = {
+        "class_name": "ResNet18",
+        "nickname": nickname,
+        "description": "test description",
+        "tags": ["tag1", "tag2"],
+        "pretrained": "0",
+        "predefined": "1",
+        "num_classes": "1000",
+    }
 
+    return metadata
+
+
+def api_upload_dummy_model(client, name):
+    metadata = get_dummy_model_metadata("test-resnet-18")
+
+    response = client.post(f"/model", data=metadata, content_type="multipart/form-data")
+
+    return response
+
+
+def api_set_current_model(client, name):
+    response = client.post(f"/model/current/{name}")
+    return response
+
+
+def api_get_current_model(client):
+    response = client.get("/model/current")
+    return response
+
+
+class TestModel:
     class TestUploadModel:
         def test_upload_model(self, client):
-            pass
+            # TODO:
+            response = api_upload_dummy_model(client, "test-resnet-18")
+            assert response.status_code == 200
 
-            # metadata = {
-            #     "class_name": "ResNet18",
-            #     "nickname": "test_model",
-            #     "description": "test description",
-            #     "tags": ["tag1", "tag2"],
-            #     "pretrained": "1",
-            #     "num_classes": "1000",
-            # }
+    class TestCurrentModel:
+        def test_set_current_model_nonexist(self, client):
+            model_name = "model-non-exist"
+            response = client.post(f"/model/current/{model_name}")
+            assert response.status_code != 200
 
-            # response = client.post(
-            #     f"/model", data=metadata, content_type="multipart/form-data"
-            # )
+        def test_get_current_model(self, client):
+            api_upload_dummy_model(client, "model-1")
+            api_upload_dummy_model(client, "model-2")
 
-            # assert response.status_code == 200
+            # No model is selected
+            resp = client.get(f"/model/current")
+            assert resp.status_code == 400

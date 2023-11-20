@@ -1,12 +1,13 @@
-'''
+"""
 Author: Chonghan Chen (paulcccccch@gmail.com)
 -----
 Last Modified: Friday, 10th March 2023 5:03:19 pm
 Modified By: Chonghan Chen (paulcccccch@gmail.com)
 -----
-'''
+"""
+import traceback
 from flask import request
-from utils.train import start_train
+from utils.train_utils import *
 from objects.RResponse import RResponse
 from objects.RTask import RTask, TaskType
 from flask import Blueprint
@@ -106,58 +107,36 @@ def start_training():
               type: string
               example: Success
     """
-
-    print("Requested to training with the following configuration: ")
-    json_data = request.get_json()
-    print(json_data)
-    configs = json_data["configs"]
-    print(configs)
-
-    # Return error message if config is invalid
-    check_result = check_configs(configs)
-    if check_result != 0:
-        RResponse.abort(400, "Invalid Configuration!", check_result)
-
-    # Try to start training thread
-    print("DEBUG: Training request received! Setting up training...")
-
-    # start the training thread
-    train_thread = None
     try:
-        train_thread = start_train(configs)
+        print("Requested to training with the following configuration: ")
+        json_data = request.get_json()
+        configs = json_data["configs"]
+        print(configs)
+
+        # Return error message if config is invalid
+        check_result = check_configs(configs)
+        if check_result != 0:
+            RResponse.abort(400, "Invalid Configuration!", check_result)
+
+        # Try to start training thread
+        print("DEBUG: Training request received! Setting up training...")
+
+        # start the training thread
+        train_thread = None
+        try:
+            train_thread = start_train(configs)
+        except Exception as e:
+            traceback.print_exc()
+            RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
+
+        # Return error if training cannot be started
+        if not train_thread:
+            traceback.print_exc()
+            RResponse.abort(500, "Failed to start training thread", -1)
+
+        # Training started succesfully!
+        print("Training started!")
+        return RResponse.ok("Training started!")
     except Exception as e:
-        print(e)
-        RResponse.abort(500, f"Failed to start training thread. ({e})", -1)
-
-    # Return error if training cannot be started
-    if not train_thread:
-        print(e)
-        RResponse.abort(500, "Failed to start training thread", -1)
-
-    # Training started succesfully!
-    print("Training started!")
-    return RResponse.ok("Training started!")
-
-
-def check_configs(config):
-    """
-    Check the config of the server. Returns 0 if config is valid.
-    Otherwise, return an error code from the following table:
-    error code  |       meaning
-        10      | Training set not found or not valid
-        11      | Test set not found or not valid
-        12      | Dev set not found or not valid
-        13      | Class file not found or not valid
-        14      | Weight file not found or not valid
-        15      | Path for the source data set to be mirrored is not valid
-        16      | User edit json file path not valid
-
-        20      | paired train reg coeff not valid
-        21      | learn rate not valid
-        22      | epoch num not valid
-        23      | image size not valid
-        24      | thread number not valid
-        25      | batch size not valid
-    """
-    # TODO: check the config here
-    return 0
+        traceback.print_exc()
+        return RResponse.abort(500, f"Unexpected error. {e}")
