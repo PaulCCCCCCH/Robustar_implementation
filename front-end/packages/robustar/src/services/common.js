@@ -48,5 +48,14 @@ export const getRequest = async (route, pageNo) => {
  */
 export const deleteRequest = async (route) => {
   let requestUrl = `/api${route}`;
-  return axios.delete(requestUrl);
+  return axios.delete(requestUrl, { validateStatus: validateStatus });
+};
+
+/**
+ * make PUT request
+ * @param {object} data
+ * @param {string} route
+ */
+export const putRequest = async (route, data) => {
+  return axios.put(`/api${route}`, data, { validateStatus: validateStatus });
 };

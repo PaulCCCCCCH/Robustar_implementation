@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './common';
+import { getRequest, postRequest, deleteRequest, putRequest } from './common';
 import { configs } from '../configs';
 
 /**
@@ -41,8 +41,36 @@ export const APIUploadModel = async (metadata, code = null, weightFile = null) =
 };
 
 /**
+ * Update a model.
+ * @param {string} name - Model name
+ * @param {Object} metadata - Model metadata
+ */
+export const APIUpdateModel = async (name, metadata) => {
+  const formData = new FormData();
+  formData.append('metadata', JSON.stringify(metadata));
+
+  return putRequest(`/model/${name}`, formData);
+};
+
+/**
  * Fetch the list of all models.
  */
 export const APIGetAllModels = async () => {
     return getRequest(`/model/list`);
+};
+
+/**
+ * Duplicate a model by its name.
+ * @param {string} modelName
+ */
+export const APIDuplicateModel = async (modelName) => {
+  return postRequest(`/model/duplicate/${modelName}`);
+};
+
+/**
+ * Get predefined model list.
+ * @param {string} modelName
+ */
+export const APIGetPredefinedModels = async () => {
+  return getRequest(`/model/predefined`);
 };

@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import { APIUploadModel } from '@/services/model';
+import { APIUploadModel, APIGetPredefinedModels } from '@/services/model';
 
 export default {
   name: 'ModelUploader',
@@ -187,6 +187,13 @@ export default {
       status: '',
       feedback: '',
     };
+  },
+  async mounted () {
+    try {
+      this.modelClasses = (await APIGetPredefinedModels())?.data?.data ?? []
+    } catch (error) {
+      console.log(error)
+    }
   },
   methods: {
     handleCodeFileUpload(file) {

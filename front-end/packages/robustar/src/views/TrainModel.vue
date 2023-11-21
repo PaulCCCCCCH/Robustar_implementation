@@ -82,15 +82,15 @@
                     @change="() => selectModel(index)"
                   ></v-checkbox>
                 </td>
-                <td>{{ model?.value?.nickname }}</td>
-                <td>{{ model?.value?.tag }}</td>
-                <td>{{ model?.value?.create_time }}</td>
-                <td>{{ model?.value?.last_trained }}</td>
-                <td>{{ model?.value?.epoch }}</td>
-                <td>{{ model?.value?.test_accuracy }}</td>
-                <td>{{ model?.value?.train_accuracy }}</td>
-                <td>{{ model?.value?.val_accuracy }}</td>
-                <td>{{ model?.value?.description }}</td>
+                <td>{{ model?.nickname }}</td>
+                <td>{{ model?.tag }}</td>
+                <td>{{ model?.create_time }}</td>
+                <td>{{ model?.last_trained }}</td>
+                <td>{{ model?.epoch }}</td>
+                <td>{{ model?.test_accuracy }}</td>
+                <td>{{ model?.train_accuracy }}</td>
+                <td>{{ model?.val_accuracy }}</td>
+                <td>{{ model?.description }}</td>
                 <td>
                   <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
@@ -123,15 +123,15 @@
       <v-card-text>
         <div class="d-flex justify-space-between">
           <span style="width: 400px"
-            ><v-select
-              v-model="viewingModel"
+            ><v-text-field
+              v-model="viewingModel.nickname"
               :loading="isSubmitting"
-              :items="modelList"
-              label="Model"
+              label="Model Name"
               hint=""
               outlined
+              clearable
               dense
-            ></v-select
+            ></v-text-field
           ></span>
           <span
             ><ModelUploader />
@@ -226,8 +226,9 @@ import {
   APIGetCurrentModel,
   APISetCurrentModel,
   APIDeleteModel,
-  APIUploadModel,
   APIGetAllModels,
+  APIDuplicateModel,
+  APIUpdateModel,
 } from '@/services/model/';
 import ModelUploader from '@/components/ModelUploader';
 
@@ -269,13 +270,12 @@ export default {
       this.$router.push({ name: 'TrainPad' });
     },
     selectModel(index) {
-      this.getModelList();
       if (this.selectedModelIndex === index) {
         this.selectedModelIndex = null;
         this.viewingModel = { ...initialModel };
       } else {
         this.selectedModelIndex = index;
-        this.viewingModel = this.modelList[index];
+        this.viewingModel = { ...this.modelList[index] };
       }
     },
     async getCurrentModel() {
@@ -288,9 +288,8 @@ export default {
     },
     async getModelList() {
       try {
-        const response = (await APIGetAllModels())?.data?.data;
-        this.modelList = response.map((item) => ({ text: item.nickname, value: item }));
-        this.viewingModel = this.modelList.length ? this.modelList[0].value : { ...initialModel };
+        this.modelList = (await APIGetAllModels())?.data?.data;
+        this.viewingModel = this.modelList.length ? {...this.modelList[0]} : { ...initialModel };
       } catch (error) {
         console.error('Error fetching model list:', error);
       }
@@ -298,7 +297,7 @@ export default {
     async setCurrentModel() {
       try {
         const response = await APISetCurrentModel(this.viewingModel.nickname);
-        this.currentModel = this.viewingModel;
+        this.currentModel = {...this.viewingModel};
       } catch (error) {
         console.error('Error setting current model:', error);
       }
@@ -318,9 +317,8 @@ export default {
     async duplicateModel() {
       this.isSubmitting = true;
       try {
-        // TODO: Replace with actual API call
-        this.viewingModel = this.viewingModel + '-copy';
-        this.modelList.push(this.viewingModel);
+        await APIDuplicateModel(this.viewingModel.nickname);
+        this.getModelList();
       } catch (error) {
         console.error('Error duplicating model:', error);
       } finally {
@@ -330,7 +328,8 @@ export default {
     async saveModelChanges() {
       this.isSubmitting = true;
       try {
-        // TODO: Replace with actual API call
+        await APIUpdateModel(this.modelList[this.selectedModelIndex].nickname, this.viewingModel);
+        this.getModelList();
       } catch (error) {
         console.error('Error saving model changes:', error);
       } finally {
