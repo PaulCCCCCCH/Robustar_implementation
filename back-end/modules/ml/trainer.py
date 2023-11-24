@@ -2,23 +2,19 @@ import torch
 import time
 from torchattacks import PGD
 import os
+import uuid
 from objects.RTask import RTask, TaskType
 from objects.RServer import RServer
-import copy
+from objects.RModelWrapper import RModelWrapper
+from datetime import datetime
 
 
 class Trainer:
-    storeArr = None
-    device = "cpu"
-    updateInfo = None
-    PATH = "temp_path"
-    statusInfo = {}
-
     def __init__(
         self,
-        net,
-        trainset,
-        testset,
+        model,
+        train_set,
+        val_set,
         batch_size,
         shuffle,
         num_workers,
@@ -27,113 +23,161 @@ class Trainer:
         auto_save,
         save_every,
         save_dir,
-        name,
         use_paired_train=False,
         paired_reg=1e-4,
     ):
-        self.initialize_loader(trainset, testset, batch_size, shuffle, num_workers)
-        self.net = net
+        self.val_sample_buffer = None
+        self.update_info = None
+        self.status_info = {}
+
+        self.model = model
         self.device = device
         self.learn_rate = learn_rate
         self.auto_save = auto_save
         self.save_every = save_every
         self.save_dir = save_dir
-        self.name = name
         self.use_paired_train = use_paired_train
         self.paired_reg = paired_reg
-
-    def initialize_loader(self, trainset, testset, batch_size, shuffle, num_workers):
-        self.testloader = torch.utils.data.DataLoader(
-            testset, batch_size=batch_size, shuffle=False, num_workers=num_workers
+        self.orig_metadata = RModelWrapper.convert_metadata_2_dict(
+            RServer.get_model_wrapper().get_current_model_metadata()
         )
-        self.trainloader = torch.utils.data.DataLoader(
-            trainset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
+
+        self.best_val_acc = 0
+        self.best_train_acc = 0  # The train acc at the best val acc
+        self.best_epoch = 0
+        self.best_path = None
+
+        # Initialize loaders
+        self.train_loader = None
+        self.val_loader = None
+        self.initialize_loader(train_set, val_set, batch_size, shuffle, num_workers)
+
+    def initialize_loader(self, train_set, test_set, batch_size, shuffle, num_workers):
+        self.val_loader = torch.utils.data.DataLoader(
+            test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers
+        )
+        self.train_loader = torch.utils.data.DataLoader(
+            train_set, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
         )
 
     def start_train(self, call_back, epochs, auto_save):
-        self.updateInfo = call_back
+        self.update_info = call_back
         self.train(epochs, auto_save=auto_save, pgd=False)
 
     def update_gui(self):
-        self.updateInfo(self.statusInfo)
+        self.update_info(self.status_info)
 
-    def _save_net(self, name):
-        if not os.path.exists(self.save_dir):
-            os.mkdir(self.save_dir)
-        torch.save(self.net.state_dict(), os.path.join(self.save_dir, name))
+    def save_weights(self):
+        rand_id = str(uuid.uuid4())
+        weight_path = os.path.join(self.save_dir, f"{rand_id}.py")
+        torch.save(self.model.state_dict(), weight_path)
+        return weight_path
 
-        # Save the model to the Rserver instance
-        dict_in_mem = copy.deepcopy(self.net.state_dict())
+    def save_best_weights(self):
+        if self.best_path:
+            os.remove(self.best_path)
+        self.best_path = self.save_weights()
 
-        RServer.add_model_weight(name, dict_in_mem)
+    def save_best_model(self):
+        metadata_4_save = self.create_metadata_4_save(
+            self.best_epoch, self.best_path, self.best_train_acc, self.best_val_acc
+        )
+        RServer.get_model_wrapper().create_model(metadata_4_save)
 
-    def save_net_best(self):
-        name_str = self.name + "_best"
-        self._save_net(name_str)
+    def save_epoch_model(self, epoch, train_acc, val_acc):
+        weight_path = self.save_weights()
+        metadata_4_save = self.create_metadata_4_save(
+            epoch, weight_path, train_acc, val_acc
+        )
+        RServer.get_model_wrapper().create_model(metadata_4_save)
 
-    def save_net_epoch(self, epoch):
-        name_str = self.name + "_" + str(epoch)
-        self._save_net(name_str)
+    def create_metadata_4_save(self, epoch, weight_path, train_acc, val_acc):
+        metadata_4_save = {
+            "class_name": self.orig_metadata["class_name"],
+            "nickname": f"{self.orig_metadata['nickname']}-{uuid.uuid4()}",
+            "predefined": self.orig_metadata["predefined"],
+            "pretrained": self.orig_metadata["pretrained"],
+            "description": self.orig_metadata["description"],
+            "architecture": self.orig_metadata["architecture"],
+            "tags": self.orig_metadata["tags"],
+            "create_time": datetime.now(),
+            "code_path": self.orig_metadata["code_path"],
+            "weight_path": weight_path,
+            "epoch": self.orig_metadata["epoch"] + epoch + 1,
+            "train_accuracy": train_acc,
+            "val_accuracy": val_acc,
+            "test_accuracy": None,
+            "last_trained": datetime.now(),
+            "last_eval_on_dev_set": datetime.now(),
+            "last_eval_on_test_set": None,
+        }
+        return metadata_4_save
 
-    def print_accuracy(self):
-        loader = self.testloader
-        torch.no_grad()
+    def val(self):
+        loader = self.val_loader
+
         correct = 0
         total = 0
-        self.net.eval()
+        self.model.eval()
 
-        # for data in loader:
-        for data in self.storeLoader(loader):
-            images, labels = data
-            images, labels = images.to(self.device), labels.to(self.device)
-            outputs = self.net(images)
+        with torch.no_grad():
+            for data in self.buffer_val_sample(loader):
+                images, labels = data
+                images, labels = images.to(self.device), labels.to(self.device)
+                outputs = self.model(images)
 
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum()
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum()
 
         result = 1.0 * 100 * correct / total
-        self.statusInfo["test_acc"] = float(result)
+        self.status_info["val_acc"] = float(result)
         self.update_gui()
-        print("The accuracy is: %.3f%%" % result)
+        print("The validation accuracy is: %.3f%%" % result)
         torch.cuda.empty_cache()
         return result
 
-    def storeLoader(self, loader):
-        if self.storeArr:
-            return self.storeArr
-        self.storeArr = []
+    def buffer_val_sample(self, loader):
+        if self.val_sample_buffer:
+            return self.val_sample_buffer
+        self.val_sample_buffer = []
         for _, data in enumerate(loader, 0):
-            self.storeArr.append(data)
-        return self.storeArr
+            self.val_sample_buffer.append(data)
+        return self.val_sample_buffer
 
-    def returna(self, a, b):
+    @staticmethod
+    def return_a(a, b):
         return a
 
     def train(self, epoch, auto_save=True, pgd=False, merge=1):
-        starttime = time.time()
-        loader = self.trainloader
+        start_time = time.time()
+        loader = self.train_loader
         criterion = torch.nn.CrossEntropyLoss()
         pgd_attack = (
-            PGD(self.net, eps=0.2, alpha=2 / 255, iters=2) if pgd else self.returna
+            PGD(self.model, eps=0.2, alpha=2 / 255, iters=2)
+            if pgd
+            else Trainer.return_a
         )
         optimizer = torch.optim.SGD(
-            self.net.parameters(), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4
+            self.model.parameters(), lr=self.learn_rate, momentum=0.9, weight_decay=5e-4
         )
-        best = 0
 
         # init task
         task = RTask(TaskType.Training, epoch * len(loader))
 
+        # Number of batches in one epoch
+        iter_num_per_epoch = len(loader)
+
         for epoch in range(epoch):
             print("\nEpoch: %d" % (epoch + 1))
-            sepoch = time.time()
-            self.net.train()
+            s_epoch = time.time()
+
             sum_loss = 0.0
             correct = 0.0
             total = 0.0
-            length = len(loader)
-            # storeLoader(loader)
+
+            # Training
+            self.model.train()
             optimizer.zero_grad()
             for i, data in enumerate(loader, 0):
                 if self.use_paired_train:
@@ -147,11 +191,11 @@ class Trainer:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
                 # forward + backward
-                outputs = self.net(inputs)
+                outputs = self.model(inputs)
                 loss = criterion(outputs, labels)
 
                 if self.use_paired_train:
-                    paired_outputs = self.net(paired_inputs)
+                    paired_outputs = self.model(paired_inputs)
                     paired_loss = criterion(paired_outputs, labels)
                     loss += paired_loss + self.paired_reg * torch.mean(
                         torch.square(torch.norm(outputs - paired_outputs))
@@ -163,29 +207,30 @@ class Trainer:
                     optimizer.step()
                     optimizer.zero_grad()
 
-                # print the accuracy
                 sum_loss += loss.item()
+
+                # Count the number of correct predictions and total number of predictions
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += predicted.eq(labels.data).cpu().sum()
 
-                info_iteration = i + 1 + epoch * length
+                info_iter = i + 1 + epoch * iter_num_per_epoch
                 info_loss = sum_loss / (i + 1)
                 info_train_acc = 100.0 * correct / total
 
-                self.statusInfo["epoch"] = epoch + 1
-                self.statusInfo["iter"] = info_iteration
-                self.statusInfo["loss"] = info_loss
-                self.statusInfo["train_acc"] = info_train_acc
+                self.status_info["epoch"] = epoch + 1
+                self.status_info["iter"] = info_iter
+                self.status_info["loss"] = info_loss
+                self.status_info["train_acc"] = info_train_acc
 
                 output_text = "[epoch:%d, iter:%d] Loss: %.03f | Acc: %.3f%% " % (
                     epoch + 1,
-                    info_iteration,
+                    info_iter,
                     info_loss,
                     info_train_acc,
                 )
-                self.writer.add_scalar("train accuracy", info_train_acc, info_iteration)
-                self.writer.add_scalar("loss", info_loss, info_iteration)
+                self.writer.add_scalar("train accuracy", info_train_acc, info_iter)
+                self.writer.add_scalar("loss", info_loss, info_iter)
 
                 self.update_gui()
 
@@ -194,37 +239,48 @@ class Trainer:
                 # update task
                 task_update_res = task.update()
                 if not task_update_res:
-                    endtime = time.time()
-                    print("Time consumption:", endtime - starttime)
+                    end_time = time.time()
+                    print("Time consumption:", end_time - start_time)
                     print("Training stopped!")
                     return
 
             print("Epoch Finish!")
-            eepoch = time.time()
+            e_epoch = time.time()
             print(
                 "Time consumption in training epoch:{} {}".format(
-                    epoch + 1, eepoch - sepoch
+                    epoch + 1, e_epoch - s_epoch
                 )
             )
+
             torch.cuda.empty_cache()
-            sepoch = time.time()
-            current_acc = self.print_accuracy()
-            eepoch = time.time()
+
+            s_epoch = time.time()
+            val_acc = self.val()
+            e_epoch = time.time()
             print(
                 "Time consumption in testing epoch:{} {}".format(
-                    epoch + 1, eepoch - sepoch
+                    epoch + 1, e_epoch - s_epoch
                 )
             )
             torch.cuda.empty_cache()
-            if current_acc > best:
+            if val_acc > self.best_val_acc:
                 if auto_save:
-                    self.save_net_best()
-                best = current_acc
+                    self.save_best_weights()
+                self.best_val_acc = val_acc
+                self.best_train_acc = info_train_acc
+                self.best_epoch = epoch
             if (epoch + 1) % self.save_every == 0:
-                self.save_net_epoch(epoch)
+                self.save_epoch_model(epoch, info_train_acc, val_acc)
 
-        endtime = time.time()
-        print("Time consumption:", endtime - starttime)
+        # Save the best model
+        self.save_best_model()
+
+        # Save the last model if not saved
+        if (epoch + 1) % self.save_every != 0 and self.best_epoch != epoch:
+            self.save_epoch_model(epoch, info_train_acc, val_acc)
+
+        end_time = time.time()
+        print("Time consumption:", end_time - start_time)
 
         # Stop updating the tensorboard
         self.stop_tb_process()
