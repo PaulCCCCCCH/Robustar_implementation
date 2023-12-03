@@ -1,7 +1,5 @@
-import os
 import os.path as osp
 import shutil
-import zipfile
 import time
 
 import pytest
@@ -41,6 +39,9 @@ def client(app):
 
 
 def _set_up(data_path, basedir):
+    if osp.exists(basedir):
+        print(f"Remove {basedir}")
+        shutil.rmtree(basedir)
     shutil.copytree(data_path, basedir)
     print(f"Copy {data_path} to {basedir}")
 
