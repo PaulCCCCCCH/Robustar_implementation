@@ -134,9 +134,9 @@ class RModelWrapper:
                     self.db_conn.session.add(tag)
                 tag_objs.append(tag)
 
-        test = TestSetImage(path="test", label=0)
-        self.db_conn.session.add(test)
-        self.db_conn.session.commit()
+        # test = TestSetImage(path="test", label=0)
+        # self.db_conn.session.add(test)
+        # self.db_conn.session.commit()
 
         model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
