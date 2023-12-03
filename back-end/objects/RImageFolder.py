@@ -115,7 +115,6 @@ class RImageFolder(DatasetFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(RImageFolder, self).__init__(
             root,
             loader,
@@ -171,6 +170,7 @@ class RImageFolder(DatasetFolder):
             return
         self.db_conn.session.add_all(images)
         self.db_conn.session.commit()
+        print("Successssssssssssssssssssssssssss")
 
     def get_image_list(self, start=None, end=None):
         if start is not None and len(self.samples) <= start:
@@ -195,7 +195,6 @@ class RTrainImageFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(RTrainImageFolder, self).__init__(
             root,
             split,
@@ -254,7 +253,6 @@ class REvalImageFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(REvalImageFolder, self).__init__(
             root,
             split,
@@ -374,7 +372,6 @@ class RAnnotationFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         self.root = root
         self.train_root = train_root
 
