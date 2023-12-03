@@ -3,7 +3,7 @@ import torchvision
 import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
-from database.model import Models, Tags, db
+from database.model import Models, Tags, db, TestSetImage
 from datetime import datetime
 import importlib
 
@@ -134,6 +134,10 @@ class RModelWrapper:
                     self.db_conn.session.add(tag)
                 tag_objs.append(tag)
 
+        test = TestSetImage(path="test", label=0)
+        self.db_conn.session.add(test)
+        self.db_conn.session.commit()
+
         model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
         self.db_conn.session.commit()
@@ -222,7 +226,8 @@ class RModelWrapper:
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
-                model_meta_data.class_name, model_meta_data.pretrained,
+                model_meta_data.class_name,
+                model_meta_data.pretrained,
             )
         else:
             model = self.init_custom_model(
