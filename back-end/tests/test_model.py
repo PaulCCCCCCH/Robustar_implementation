@@ -62,8 +62,7 @@ upload_test_cases = [
                 "nickname": "simple-classifier",
                 "predefined": "0",
                 "pretrained": "0",
-                "description": "Simple CNN classifier.",
-                "tags": ["test", "CNN"]
+                "description": "Simple CNN classifier."
             }""",
             "code": code,
         },
