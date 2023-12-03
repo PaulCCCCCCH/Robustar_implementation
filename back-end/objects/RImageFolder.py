@@ -170,7 +170,6 @@ class RImageFolder(DatasetFolder):
             return
         self.db_conn.session.add_all(images)
         self.db_conn.session.commit()
-        print("Successssssssssssssssssssssssssss")
 
     def get_image_list(self, start=None, end=None):
         if start is not None and len(self.samples) <= start:

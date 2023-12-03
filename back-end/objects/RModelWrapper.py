@@ -3,7 +3,7 @@ import torchvision
 import os
 from threading import Lock
 from flask_sqlalchemy import SQLAlchemy
-from database.model import Models, Tags, db, TestSetImage
+from database.model import Models, Tags, db
 from datetime import datetime
 import importlib
 
@@ -133,10 +133,6 @@ class RModelWrapper:
                     tag = Tags(name=tag_name)
                     self.db_conn.session.add(tag)
                 tag_objs.append(tag)
-
-        # test = TestSetImage(path="test", label=0)
-        # self.db_conn.session.add(test)
-        # self.db_conn.session.commit()
 
         model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
