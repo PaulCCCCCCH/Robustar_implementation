@@ -68,12 +68,7 @@ upload_test_cases = [
                 "tags": ["test", "CNN"]
             }""",
             "code": code,
-            "weight_file": (
-                FileStorage(
-                    stream=open(os.path.join(basedir, "SimpleCNN.pth"), "rb"),
-                    filename="SimpleCNN.pth",
-                )
-            ),
+            "weight_file": "SimpleCNN.pth",
         },
         "expected_output": 200,
     },
@@ -117,7 +112,16 @@ class TestModel:
     class TestUploadModel:
         @pytest.mark.parametrize("test_data", upload_test_cases)
         def test_upload_model(self, client, test_data):
+            input_data = test_data["input"].copy()
+
+            if "weight_file_path" in input_data:
+                weight_file_path = os.path.join(basedir, input_data["weight_file"])
+                with open(weight_file_path, "rb") as f:
+                    input_data["weight_file"] = (
+                        FileStorage(stream=f, filename="SimpleCNN.pth"),
+                    )
+
             response = client.post(
-                "/model", data=test_data["input"], content_type="multipart/form-data"
+                "/model", data=input_data, content_type="multipart/form-data"
             )
             assert response.status_code == test_data["expected_output"]
