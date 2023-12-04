@@ -69,6 +69,19 @@ upload_test_cases = [
         },
         "expected_output": 200,
     },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "resnet-34",
+                "nickname": "predefined-resnet-34",
+                "predefined": "1",
+                "pretrained": "0",
+                "description": "Predefined ResNet 34."
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 200,
+    },
 ]
 
 
