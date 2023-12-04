@@ -111,7 +111,7 @@ class TestModel:
 
     class TestUploadModel:
         @pytest.mark.parametrize("test_data", upload_test_cases)
-        def test_upload_model(self, client, test_data):
+        def test_upload_model(self, client, basedir, test_data):
             input_data = test_data["input"].copy()
 
             if "weight_file_path" in input_data:
