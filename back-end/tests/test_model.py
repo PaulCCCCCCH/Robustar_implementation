@@ -63,10 +63,11 @@ upload_test_cases = [
                 "predefined": "0",
                 "pretrained": "0",
                 "description": "Simple CNN classifier."
+                "tags": ["test", "CNN"]
             }""",
             "code": code,
         },
-        "expected_output": 0,
+        "expected_output": 200,
     },
 ]
 
@@ -84,4 +85,4 @@ class TestModel:
             response = client.post(
                 "/model", data=test_data["input"], content_type="multipart/form-data"
             )
-            assert response.status_code == 200
+            assert response.status_code == test_data["expected_output"]
