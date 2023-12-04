@@ -112,6 +112,19 @@ upload_test_cases = [
         },
         "expected_output": 500,
     },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "resnet-34",
+                "nickname": "custom-nocode",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Custom model without code.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 500,
+    },
 ]
 
 
