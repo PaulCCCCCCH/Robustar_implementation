@@ -1,7 +1,7 @@
 import os
 import pytest
 from werkzeug.datastructures import FileStorage
-from test_app import app, client
+from test_app import app, client, basedir
 
 
 code = """import torch
@@ -70,9 +70,7 @@ upload_test_cases = [
             "code": code,
             "weight_file": (
                 FileStorage(
-                    stream=open(
-                        os.path.join(app.config["BASEDIR"], "SimpleCNN.pth"), "rb"
-                    ),
+                    stream=open(os.path.join(basedir, "SimpleCNN.pth"), "rb"),
                     filename="SimpleCNN.pth",
                 )
             ),

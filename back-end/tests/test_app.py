@@ -39,6 +39,11 @@ def client(app):
     yield app.test_client()
 
 
+@pytest.fixture()
+def basedir(app):
+    yield app.config["BASEDIR"]
+
+
 def _set_up(data_path, basedir):
     if osp.exists(basedir):
         print(f"Remove {basedir}")
