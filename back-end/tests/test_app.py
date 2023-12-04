@@ -24,6 +24,7 @@ def app(request):
     app = server.get_flask_app()
 
     app.config["TESTING"] = True
+    app.config["BASEDIR"] = basedir
     yield app
     app.config["TESTING"] = False
 

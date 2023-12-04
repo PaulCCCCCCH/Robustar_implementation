@@ -1,4 +1,6 @@
+import os
 import pytest
+from werkzeug.datastructures import FileStorage
 from test_app import app, client
 
 
@@ -58,7 +60,29 @@ upload_test_cases = [
     {
         "input": {
             "metadata": """{
-                "class_name": "SimpleCNN",
+                "class_name": "custom-with-weight",
+                "nickname": "simple-classifier",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": code,
+            "weight_file": (
+                FileStorage(
+                    stream=open(
+                        os.path.join(app.config["BASEDIR"], "SimpleCNN.pth"), "rb"
+                    ),
+                    filename="SimpleCNN.pth",
+                )
+            ),
+        },
+        "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "custom-without-weight",
                 "nickname": "simple-classifier",
                 "predefined": "0",
                 "pretrained": "0",
@@ -73,10 +97,10 @@ upload_test_cases = [
         "input": {
             "metadata": """{
                 "class_name": "resnet-34",
-                "nickname": "predefined-resnet-34",
+                "nickname": "predefined-nonpretrained",
                 "predefined": "1",
                 "pretrained": "0",
-                "description": "Predefined ResNet 34.",
+                "description": "Predefined ResNet 34 without pretrained weights.",
                 "tags": ["test", "CNN", "resnet"]
             }""",
         },
