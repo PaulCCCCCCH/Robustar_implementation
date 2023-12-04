@@ -53,171 +53,169 @@
         ></v-textarea>
       </v-card-text>
     </v-card>
-
     <v-card class="pa-2 mb-4" width="1000">
-      <v-card-title class="mb-2">All Models</v-card-title>
-      <v-card-text>
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th></th>
-                <th class="text-left">Nickname</th>
-                <th class="text-left">Tag</th>
-                <th class="text-left">Created Time</th>
-                <th class="text-left">Last Trained</th>
-                <th class="text-left">Epoch</th>
-                <th class="text-left">Test Accuracy</th>
-                <th class="text-left">Train Accuracy</th>
-                <th class="text-left">Validation Accuracy</th>
-                <th class="text-left">Description</th>
-                <th class="text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(model, index) in modelList" :key="model.id" :loading="isSubmitting">
-                <td>
-                  <v-checkbox
-                    :value="selectedModelIndex === index"
-                    @change="() => selectModel(index)"
-                  ></v-checkbox>
-                </td>
-                <td>{{ model?.nickname }}</td>
-                <td>{{ model?.tag }}</td>
-                <td>{{ model?.create_time }}</td>
-                <td>{{ model?.last_trained }}</td>
-                <td>{{ model?.epoch }}</td>
-                <td>{{ model?.test_accuracy }}</td>
-                <td>{{ model?.train_accuracy }}</td>
-                <td>{{ model?.val_accuracy }}</td>
-                <td>{{ model?.description }}</td>
-                <td>
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item @click="deleteModel(model.nickname)">
-                        <v-list-item-title>Delete</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="duplicateModel(model.nickname)">
-                        <v-list-item-title>Duplicate</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="setCurrentModel(model.nickname)">
-                        <v-list-item-title>Set as current model</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-card-text>
+      <v-card-title>
+        All models <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+      <v-data-table
+        v-model="selected"
+        :headers="headers"
+        :items="modelList"
+        :single-select="singleSelect"
+        :search="search"
+        item-key="nickname"
+        show-select
+        class="elevation-1"
+        width="1000"
+      >
+        <template v-slot:top>
+          <!-- <v-toolbar flat> -->
+            <v-dialog v-model="dialog" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Edit item</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <div class="d-flex justify-space-between">
+                      <span style="width: 400px"
+                        ><v-text-field
+                          v-model="viewingModel.nickname"
+                          :loading="isSubmitting"
+                          label="Model Name"
+                          hint=""
+                          outlined
+                          clearable
+                          dense
+                        ></v-text-field
+                      ></span>
+                      <span
+                        ><ModelUploader />
+                        <v-btn class="ml-4" depressed color="primary" @click="setCurrentModel"
+                          >Set As Current Model</v-btn
+                        ></span
+                      >
+                    </div>
+                    <v-divider class="mb-4"></v-divider>
+                    <div>
+                      <div style="width: 100px; display: inline-block" class="mr-8">
+                        <v-text-field
+                          v-model="viewingModel.tag"
+                          :loading="isSubmitting"
+                          label="Tag"
+                          hint=""
+                          outlined
+                          clearable
+                          dense
+                        ></v-text-field>
+                      </div>
+                      <span>
+                        <span class="font-weight-medium">Created time: </span>
+                        {{ viewingModel.create_time }}
+                      </span>
+                      <span class="mx-8">
+                        <span class="font-weight-medium">Last trained: </span>
+                        {{ viewingModel.last_trained }}
+                      </span>
+                      <span>
+                        <span class="font-weight-medium">Epoch: </span>
+                        {{ viewingModel.epoch }}
+                      </span>
+                    </div>
+                    <div class="mb-8">
+                      <span>
+                        <span class="font-weight-medium">Test Accuracy: </span>
+                        {{ viewingModel.test_accuracy }}
+                      </span>
+                      <span class="mx-8">
+                        <span class="font-weight-medium">Train Accuracy: </span>
+                        {{ viewingModel.train_accuracy }}
+                      </span>
+                      <span>
+                        <span class="font-weight-medium">Validation Accuracy: </span>
+                        {{ viewingModel.val_accuracy }}
+                      </span>
+                    </div>
+                    <v-textarea
+                      v-model="viewingModel.description"
+                      :loading="isSubmitting"
+                      rows="1"
+                      label="Description"
+                      hint=""
+                      auto-grow
+                      outlined
+                      clearable
+                      dense
+                    ></v-textarea>
+                    <v-textarea
+                      v-model="viewingModel.architecture"
+                      :loading="isSubmitting"
+                      rows="7"
+                      label="Architecture"
+                      hint=""
+                      outlined
+                      clearable
+                      dense
+                    ></v-textarea>
+                    <v-divider class="mb-4"></v-divider>
+                    <div class="d-flex justify-end">
+                      <v-btn :loading="isSubmitting" depressed color="error" @click="deleteModel"
+                        >Delete</v-btn
+                      >
+                      <v-btn
+                        :loading="isSubmitting"
+                        depressed
+                        color="warning"
+                        class="mx-4"
+                        @click="duplicateModel"
+                        >Duplicate</v-btn
+                      >
+                      <v-btn
+                        :loading="isSubmitting"
+                        depressed
+                        color="success"
+                        @click="saveModelChanges"
+                        >Save Changes</v-btn
+                      >
+                    </div>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" text @click="saveModelChanges"> Save </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialogDelete" max-width="500px">
+              <v-card>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
+                  <v-btn color="blue darken-1" text @click="deleteModel(model.nickname)">
+                    OK
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          <!-- </v-toolbar> -->
+          <v-switch v-model="singleSelect" label="Single select" class="pa-3"></v-switch>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+          <v-icon small @click="deleteModel"> mdi-delete </v-icon>
+        </template>
+      </v-data-table>
     </v-card>
-
-    <v-card v-if="selectedModelIndex !== null" class="pa-2 mb-4" width="1000">
-      <v-card-title class="mb-2">Selected Model</v-card-title>
-      <v-card-text>
-        <div class="d-flex justify-space-between">
-          <span style="width: 400px"
-            ><v-text-field
-              v-model="viewingModel.nickname"
-              :loading="isSubmitting"
-              label="Model Name"
-              hint=""
-              outlined
-              clearable
-              dense
-            ></v-text-field
-          ></span>
-          <span
-            ><ModelUploader />
-            <v-btn class="ml-4" depressed color="primary" @click="setCurrentModel"
-              >Set As Current Model</v-btn
-            ></span
-          >
-        </div>
-        <v-divider class="mb-4"></v-divider>
-        <div>
-          <div style="width: 100px; display: inline-block" class="mr-8">
-            <v-text-field
-              v-model="viewingModel.tag"
-              :loading="isSubmitting"
-              label="Tag"
-              hint=""
-              outlined
-              clearable
-              dense
-            ></v-text-field>
-          </div>
-          <span>
-            <span class="font-weight-medium">Created time: </span>
-            {{ viewingModel.create_time }}
-          </span>
-          <span class="mx-8">
-            <span class="font-weight-medium">Last trained: </span>
-            {{ viewingModel.last_trained }}
-          </span>
-          <span>
-            <span class="font-weight-medium">Epoch: </span>
-            {{ viewingModel.epoch }}
-          </span>
-        </div>
-        <div class="mb-8">
-          <span>
-            <span class="font-weight-medium">Test Accuracy: </span>
-            {{ viewingModel.test_accuracy }}
-          </span>
-          <span class="mx-8">
-            <span class="font-weight-medium">Train Accuracy: </span>
-            {{ viewingModel.train_accuracy }}
-          </span>
-          <span>
-            <span class="font-weight-medium">Validation Accuracy: </span>
-            {{ viewingModel.val_accuracy }}
-          </span>
-        </div>
-        <v-textarea
-          v-model="viewingModel.description"
-          :loading="isSubmitting"
-          rows="1"
-          label="Description"
-          hint=""
-          auto-grow
-          outlined
-          clearable
-          dense
-        ></v-textarea>
-        <v-textarea
-          v-model="viewingModel.architecture"
-          :loading="isSubmitting"
-          rows="7"
-          label="Architecture"
-          hint=""
-          outlined
-          clearable
-          dense
-        ></v-textarea>
-        <v-divider class="mb-4"></v-divider>
-        <div class="d-flex justify-end">
-          <v-btn :loading="isSubmitting" depressed color="error" @click="deleteModel">Delete</v-btn>
-          <v-btn
-            :loading="isSubmitting"
-            depressed
-            color="warning"
-            class="mx-4"
-            @click="duplicateModel"
-            >Duplicate</v-btn
-          >
-          <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges"
-            >Save Changes</v-btn
-          >
-        </div>
-      </v-card-text>
-    </v-card>
+    
   </div>
 </template>
 
@@ -259,11 +257,52 @@ export default {
       modelList: [],
       epoch: 0,
       selectedModelIndex: null,
+      singleSelect: false,
+      selected: [],
+      search: '',
+      editedIndex: -1,
+      dialog: false,
+      dialogDelete: false,
+      headers: [
+        {
+          text: 'nickname',
+          align: 'start',
+          sortable: false,
+          value: 'nickname',
+        },
+        { text: 'Tag', value: 'tag' },
+        { text: 'Created Time', value: 'create_time' },
+        { text: 'Last Trained', value: 'last_trained' },
+        { text: 'Epoch', value: 'epoch' },
+        { text: 'Test Accuracy', value: 'test_accuracy' },
+        { text: 'Train Accuracy', value: 'test_accuracy' },
+        { text: 'Validation Accuracy', value: 'test_accuracy' },
+        { text: 'Description', value: 'description' },
+        { text: 'Actions', value: 'actions', sortable: false },
+      ],
+      editedItem: {
+        architecture: '',
+        class_name: '',
+        create_time: '',
+        last_trained: '',
+        description: '',
+        epoch: 0,
+        nickname: '',
+        test_accuracy: '',
+        train_accuracy: '',
+        val_accuracy: '',
+        tag: '',
+      },
     };
   },
   mounted() {
     this.getCurrentModel();
     this.getModelList();
+  },
+  watch: {
+    dialog(val) {
+      val || this.close();
+    },
   },
   methods: {
     trainModel() {
@@ -278,6 +317,19 @@ export default {
         this.viewingModel = { ...this.modelList[index] };
       }
     },
+    editItem(item) {
+      this.editedIndex = this.modelList.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+
     async getCurrentModel() {
       try {
         const response = (await APIGetCurrentModel())?.data?.data;
@@ -289,7 +341,7 @@ export default {
     async getModelList() {
       try {
         this.modelList = (await APIGetAllModels())?.data?.data;
-        this.viewingModel = this.modelList.length ? {...this.modelList[0]} : { ...initialModel };
+        this.viewingModel = this.modelList.length ? { ...this.modelList[0] } : { ...initialModel };
       } catch (error) {
         console.error('Error fetching model list:', error);
       }
@@ -297,7 +349,7 @@ export default {
     async setCurrentModel() {
       try {
         const response = await APISetCurrentModel(this.viewingModel.nickname);
-        this.currentModel = {...this.viewingModel};
+        this.currentModel = { ...this.viewingModel };
       } catch (error) {
         console.error('Error setting current model:', error);
       }
@@ -308,6 +360,7 @@ export default {
         await APIDeleteModel(this.viewingModel.nickname);
         this.getCurrentModel();
         this.getModelList();
+        // this.dialogDelete = true;
       } catch (error) {
         console.error('Error deleting model:', error);
       } finally {
@@ -328,8 +381,9 @@ export default {
     async saveModelChanges() {
       this.isSubmitting = true;
       try {
-        await APIUpdateModel(this.modelList[this.selectedModelIndex].nickname, this.viewingModel);
+        await APIUpdateModel(this.modelList[this.editedIndex].nickname, this.viewingModel);
         this.getModelList();
+        this.dialog = false;
       } catch (error) {
         console.error('Error saving model changes:', error);
       } finally {
