@@ -62,7 +62,7 @@ upload_test_cases = [
                 "nickname": "simple-classifier",
                 "predefined": "0",
                 "pretrained": "0",
-                "description": "Simple CNN classifier."
+                "description": "Simple CNN classifier.",
                 "tags": ["test", "CNN"]
             }""",
             "code": code,
@@ -76,7 +76,7 @@ upload_test_cases = [
                 "nickname": "predefined-resnet-34",
                 "predefined": "1",
                 "pretrained": "0",
-                "description": "Predefined ResNet 34."
+                "description": "Predefined ResNet 34.",
                 "tags": ["test", "CNN", "resnet"]
             }""",
         },
