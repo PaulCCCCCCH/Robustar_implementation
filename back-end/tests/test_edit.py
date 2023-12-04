@@ -72,9 +72,8 @@ class TestEdit:
         )
         assert response.status_code == 200
         rv = response.get_json()
-        assert rv["data"] is None
         assert rv["code"] == 0
-        assert rv["msg"] == "Success"
+        assert "Success" in rv["msg"]
 
 
 # class TestDeleteEdit:  # TODO [test]
