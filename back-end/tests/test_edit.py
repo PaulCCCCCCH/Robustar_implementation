@@ -56,7 +56,7 @@ class TestEdit:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Broken image, fail to decode"
 
-    def test_user_edit_success(self, client):  # TODO: fail due to inactive database
+    def test_user_edit_success1(self, client):  # TODO: fail due to inactive database
         data = {
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
             "image_height": "224",
@@ -68,6 +68,25 @@ class TestEdit:
             + "="
             + RServer.get_server().base_dir
             + "/dataset/train/bird/0.JPEG",
+            json=json.loads(json.dumps(data)),
+        )
+        assert response.status_code == 200
+        rv = response.get_json()
+        assert rv["code"] == 0
+        assert "Success" in rv["msg"]
+
+    def test_user_edit_success2(self, client):  # TODO: fail due to inactive database
+        data = {
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
+            "image_height": "224",
+            "image_width": "224",
+        }  # a png image of 1*1 pixel in white
+        response = client.post(
+            "/edit/train?"
+            + PARAM_NAME_IMAGE_PATH
+            + "="
+            + RServer.get_server().base_dir
+            + "/dataset/train/bird/1.JPEG",
             json=json.loads(json.dumps(data)),
         )
         assert response.status_code == 200
