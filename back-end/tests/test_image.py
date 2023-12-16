@@ -1,4 +1,4 @@
-from test_app import app, client, PARAM_NAME_IMAGE_PATH
+from test_app import client, PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 
 

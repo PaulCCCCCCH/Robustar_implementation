@@ -1,9 +1,6 @@
-import os
-import os.path as osp
 import shutil
-import zipfile
 import time
-
+import os
 import pytest
 
 from objects.RServer import RServer
@@ -14,7 +11,7 @@ PARAM_NAME_IMAGE_PATH = "image_url"
 
 
 @pytest.fixture()
-def app(request):
+def client(request):
     data_path = to_unix(request.config.getoption("data_path"))
     basedir = f"{data_path}-copy"
 
@@ -26,7 +23,11 @@ def app(request):
     app = server.get_flask_app()
 
     app.config["TESTING"] = True
-    yield app
+
+    with app.test_client() as test_client:
+        with app.app_context():
+            yield test_client
+
     app.config["TESTING"] = False
 
     server.get_data_manager().dispose_db_engine()
@@ -35,16 +36,11 @@ def app(request):
     time.sleep(0.1)
 
 
-@pytest.fixture()
-def client(app):
-    yield app.test_client()
-
-
 def _set_up(data_path, basedir):
-    shutil.copytree(data_path, basedir)
+    shutil.copytree(data_path, basedir, dirs_exist_ok=True)
     print(f"Copy {data_path} to {basedir}")
 
 
 def _clean_up(basedir):
-    shutil.rmtree(basedir)
+    shutil.rmtree(basedir, ignore_errors=True)
     print(f"Remove {basedir}")
