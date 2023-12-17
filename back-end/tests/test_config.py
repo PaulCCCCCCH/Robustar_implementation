@@ -1,6 +1,3 @@
-from test_app import client
-
-
 class TestConfig:
     def test_config_success(self, client):
         response = client.get("/config")

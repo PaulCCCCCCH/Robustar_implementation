@@ -1,6 +1,3 @@
-from test_app import client
-
-
 class TestTask:
     class TestStopTask:
         def test_stop_task_fail_invalid_task_id(self, client):

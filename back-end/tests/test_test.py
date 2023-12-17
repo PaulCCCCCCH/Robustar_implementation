@@ -1,8 +1,5 @@
 import json
 
-from test_app import client
-
-
 class TestTest:
     class TestStartTestThread:
         def test_start_test_thread_fail_invalid_split(self, client):

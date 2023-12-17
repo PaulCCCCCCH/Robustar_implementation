@@ -3,7 +3,6 @@ import time
 
 import torch
 
-from test_app import client
 
 
 # class TestTrain:

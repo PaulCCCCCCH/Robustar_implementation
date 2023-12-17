@@ -1,7 +1,6 @@
-from test_app import client, PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from utils.path_utils import to_snake_path
-
+from . import PARAM_NAME_IMAGE_PATH
 
 class TestPredict:
     class TestPredict:
