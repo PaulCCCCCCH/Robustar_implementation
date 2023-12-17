@@ -3,8 +3,6 @@ import time
 
 import torch
 
-from test_app import app, client
-
 
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level

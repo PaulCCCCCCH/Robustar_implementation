@@ -6,6 +6,7 @@ from objects.RModelWrapper import RModelWrapper
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 
 model_api = Blueprint("model_api", __name__)
 
@@ -26,7 +27,7 @@ def set_curr_model(model_name: str):
         RServer.get_model_wrapper().set_current_model(model_name)
         return RResponse.ok("Success")
     except Exception as e:
-        RResponse.abort(500, "Failed to switch model." + str(e))
+        RResponse.abort(500, f"Failed to switch to model {model_name}. Error: {str(e)}")
 
 
 @model_api.route("/model/<model_name>", methods=["DELETE"])
@@ -37,7 +38,7 @@ def delete_model(model_name: str):
     try:
         model = RServer.get_model_wrapper().delete_model_by_name(model_name)
     except Exception as e:
-        RResponse.abort(500, f"Failed to delete model {model_name}." + str(e))
+        RResponse.abort(500, f"Failed to delete model {model_name}. Error: {str(e)}")
 
     if not model:
         RResponse.abort(400, f"Model {model_name} does not exist.")
@@ -137,7 +138,8 @@ def upload_model():
         errors = precheck_request_4_upload_model(request)
         if len(errors) > 0:
             error_message = "; ".join(errors)
-            return RResponse.fail(f"Request validation failed: {error_message}", 400)
+            traceback.print_exc()
+            RResponse.abort(400, f"Request validation failed. Error: {error_message}")
 
         metadata_str = request.form.get("metadata")
         metadata = json.loads(metadata_str)
@@ -176,9 +178,7 @@ def upload_model():
             except Exception as e:
                 traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
-                return RResponse.fail(
-                    f"Failed to initialize the custom model. {e}", 400
-                )
+                RResponse.abort(400, f"Failed to initialize the custom model. {str(e)}")
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
             try:
@@ -188,12 +188,12 @@ def upload_model():
             except Exception as e:
                 traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
-                return RResponse.fail(
-                    f"Failed to initialize the predefined model. {e}", 400
+                RResponse.abort(
+                    400, f"Failed to initialize the predefined model. Error: {str(e)}"
                 )
         else:
-            return RResponse.fail(
-                "Invalid request. The model is neither custom nor predefined.", 400
+            RResponse.abort(
+                400, "Invalid request. The model is neither custom nor predefined."
             )
 
         # Get the weight file and save it to a temporary location if it exists
@@ -213,7 +213,7 @@ def upload_model():
             except Exception as e:
                 traceback.print_exc()
                 clear_model_temp_files(code_path, weight_path)
-                return RResponse.fail(f"Failed to load the weights. {e}", 400)
+                RResponse.abort(400, f"Failed to load the weights. Error: {str(e)}")
 
         # Validate the model
         try:
@@ -224,7 +224,7 @@ def upload_model():
         except Exception as e:
             traceback.print_exc()
             clear_model_temp_files(code_path, weight_path)
-            return RResponse.fail(f"The model is invalid. {e}", 400)
+            RResponse.abort(400, f"The model is invalid. {e}")
 
         # Construct the metadata for saving
         metadata_4_save = construct_metadata_4_save(
@@ -237,16 +237,18 @@ def upload_model():
         except Exception as e:
             traceback.print_exc()
             clear_model_temp_files(code_path, weight_path)
-            return RResponse.fail(f"Failed to save the model. {e}", 400)
+            RResponse.abort(400, f"Failed to save the model. Error: {str(e)}")
 
-        # Set the current model to the newly uploaded model
-        RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
+        ## Set the current model to the newly uploaded model
+        ## TODO(Chonghan): Removing this logic for better separation of concern during tests.
+        ## We may want to add this back in the future.
+        # RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
 
         return RResponse.ok("Success")
     except Exception as e:
         traceback.print_exc()
         clear_model_temp_files(code_path, weight_path)
-        return RResponse.abort(500, f"Unexpected error. {e}")
+        return RResponse.abort(500, f"Unexpected error. {str(e)}")
 
 
 @model_api.route("/model/<model_name>", methods=["PUT"])
@@ -270,7 +272,7 @@ def update_model(model_name):
         return RResponse.ok(model.as_dict())
     except Exception as e:
         traceback.print_exc()
-        return RResponse.abort(500, f"Failed to update model. Error: {e}")
+        return RResponse.abort(500, f"Failed to update model. Error: {str(e)}")
 
 
 @model_api.route("/model/duplicate/<model_name>", methods=["POST"])
@@ -287,7 +289,7 @@ def duplicate_model(model_name):
         return RResponse.ok(model.as_dict())
     except Exception as e:
         traceback.print_exc()
-        return RResponse.abort(500, f"Failed to duplicate model. Error: {e}")
+        return RResponse.abort(500, f"Failed to duplicate model. Error: {str(e)}")
 
 
 @model_api.route("/model/list", methods=["GET"])
@@ -301,7 +303,7 @@ def get_all_models():
         )
     except Exception as e:
         traceback.print_exc()
-        return RResponse.abort(500, f"Failed to list all models. {e}")
+        return RResponse.abort(500, f"Failed to list all models. {str(e)}")
 
 
 @model_api.route("/model/predefined", methods=["GET"])

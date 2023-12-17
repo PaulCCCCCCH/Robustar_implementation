@@ -219,10 +219,13 @@ class RModelWrapper:
 
     def load_model_by_name(self, model_name: str):
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
+        if not model_meta_data:
+            return None, None
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
-                model_meta_data.class_name, model_meta_data.pretrained,
+                model_meta_data.class_name,
+                model_meta_data.pretrained,
             )
         else:
             model = self.init_custom_model(
