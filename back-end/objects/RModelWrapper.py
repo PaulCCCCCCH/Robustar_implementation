@@ -60,7 +60,7 @@ class RModelWrapper:
         import contextlib
 
         metadata_4_save = {
-            "class_name": self.network_type,
+            "class_name": self.modelwork_type,
             "nickname": "simple-classifier",
             "predefined": True,
             "pretrained": False,
