@@ -60,8 +60,8 @@ upload_test_cases = [
     {
         "input": {
             "metadata": """{
-                "class_name": "custom-with-weight",
-                "nickname": "simple-classifier",
+                "class_name": "SimpleCNN",
+                "nickname": "custom-with-weight",
                 "predefined": "0",
                 "pretrained": "0",
                 "description": "Simple CNN classifier.",
@@ -75,8 +75,8 @@ upload_test_cases = [
     {
         "input": {
             "metadata": """{
-                "class_name": "custom-without-weight",
-                "nickname": "simple-classifier",
+                "class_name": "SimpleCNN",
+                "nickname": "custom-without-weight",
                 "predefined": "0",
                 "pretrained": "0",
                 "description": "Simple CNN classifier.",
