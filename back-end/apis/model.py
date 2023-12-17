@@ -191,10 +191,6 @@ def upload_model():
                 RResponse.abort(
                     400, f"Failed to initialize the predefined model. Error: {str(e)}"
                 )
-        else:
-            RResponse.abort(
-                400, "Invalid request. The model is neither custom nor predefined."
-            )
 
         # Get the weight file and save it to a temporary location if it exists
         if "weight_file" in request.files:
