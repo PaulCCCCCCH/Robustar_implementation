@@ -26,7 +26,7 @@ AVAILABLE_MODELS = list(MODEL_INPUT_SHAPE.keys())
 # TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
     def __init__(
-        self, db_conn, network_type, net_path, device, pretrained, num_classes
+        self, db_conn, network_type, net_path, device, pretrained, num_classes, app
     ):
         # self.device = torch.device(device)
         self.db_conn: SQLAlchemy = db_conn
@@ -53,9 +53,10 @@ class RModelWrapper:
             print("Checkpoint file not found: {}".format(net_path))
 
         # TODO: Should remove this in the future. Currently added for passing the e2e test.
-        self.upload_model_4_e2e_test()
+        # Also stop passing app to this class.
+        self.upload_model_4_e2e_test(app)
 
-    def upload_model_4_e2e_test(self):
+    def upload_model_4_e2e_test(self, app):
         import io
         import contextlib
 
@@ -82,7 +83,8 @@ class RModelWrapper:
             print(self.model)
         metadata_4_save["architecture"] = buffer.getvalue()
 
-        self.create_model(metadata_4_save)
+        with app.app_context():
+            self.create_model(metadata_4_save)
 
     def set_current_model(self, model_name: str):
         # No change if this model is already the current model
