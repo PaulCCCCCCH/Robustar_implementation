@@ -26,7 +26,7 @@ AVAILABLE_MODELS = list(MODEL_INPUT_SHAPE.keys())
 # TODO(Chonghan): Change this class to RModelManager later.
 class RModelWrapper:
     def __init__(
-        self, db_conn, network_type, net_path, device, pretrained, num_classes
+        self, db_conn, network_type, net_path, device, pretrained, num_classes, app
     ):
         # self.device = torch.device(device)
         self.db_conn: SQLAlchemy = db_conn
@@ -51,6 +51,40 @@ class RModelWrapper:
             self.load_net(net_path)
         else:
             print("Checkpoint file not found: {}".format(net_path))
+
+        # TODO: Should remove this in the future. Currently added for passing the e2e test.
+        # Also stop passing app to this class.
+        self.upload_model_4_e2e_test(app)
+
+    def upload_model_4_e2e_test(self, app):
+        import io
+        import contextlib
+
+        metadata_4_save = {
+            "class_name": self.modelwork_type,
+            "nickname": "simple-classifier",
+            "predefined": True,
+            "pretrained": False,
+            "description": "This is the model for testing.",
+            "tags": ["test"],
+            "create_time": datetime.now(),
+            "code_path": None,
+            "weight_path": None,
+            "epoch": 0,
+            "train_accuracy": None,
+            "val_accuracy": None,
+            "test_accuracy": None,
+            "last_trained": None,
+            "last_eval_on_dev_set": None,
+            "last_eval_on_test_set": None,
+        }
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            print(self.model)
+        metadata_4_save["architecture"] = buffer.getvalue()
+
+        with app.app_context():
+            self.create_model(metadata_4_save)
 
     def set_current_model(self, model_name: str):
         # No change if this model is already the current model
@@ -219,6 +253,8 @@ class RModelWrapper:
 
     def load_model_by_name(self, model_name: str):
         model_meta_data = RModelWrapper.get_model_by_name(model_name)
+        if not model_meta_data:
+            return None, None
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
