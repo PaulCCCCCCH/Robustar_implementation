@@ -7,13 +7,13 @@ import json
 
 def build_dummy_model_metadata(nickname):
     metadata = {
-        "class_name": "resnet-18",
+        "class_name": "resnet-18-32x32",
         "nickname": nickname,
         "description": "test description",
         "tags": ["tag1", "tag2"],
         "pretrained": "0",
         "predefined": "1",
-        "num_classes": "1000",
+        "num_classes": "9",
     }
 
     return metadata
@@ -61,18 +61,18 @@ def dummy_api_delete_model(client, name: str):
 
 class TestModel:
     class TestModelUpload:
-        def test_model_upload(self, client):
+        def test_model_upload(self, client, reset_db):
             # TODO:
             response = dummy_api_upload_dummy_model(client, "test-resnet-18")
             assert response.status_code == 200
 
     class TestModelSwitch:
-        def test_set_nonexist(self, client):
+        def test_set_nonexist(self, client, reset_db):
             model_name = "model-non-exist"
             response = client.post(f"/model/current/{model_name}")
             assert response.status_code != 200
 
-        def test_get_set(self, client):
+        def test_get_set(self, client, reset_db):
             # Upload two models
             resp = dummy_api_upload_dummy_model(client, "model-1")
             assert (
@@ -112,7 +112,7 @@ class TestModel:
             ), f"current model nickname does match expected value"
 
     class TestCRUDModel:
-        def test_list(self, client):
+        def test_list(self, client, reset_db):
             # Upload dummy models
             for model_name in ["model-3", "model-4"]:
                 dummy_api_upload_dummy_model(client, model_name)
@@ -127,7 +127,7 @@ class TestModel:
             assert "model-3" in model_names
             assert "model-4" in model_names
 
-        def test_delete(self, client):
+        def test_delete(self, client, reset_db):
             # Upload dummy models
             for model_name in ["model-5", "model-6"]:
                 dummy_api_upload_dummy_model(client, model_name)

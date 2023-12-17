@@ -2,7 +2,7 @@ import json
 
 class TestTest:
     class TestStartTestThread:
-        def test_start_test_thread_fail_invalid_split(self, client):
+        def test_start_test_thread_fail_invalid_split(self, client, reset_db):
             data = {'split': 'invalid'}
             response = client.post("/test", json=json.loads(json.dumps(data)))
             assert response.status_code == 400
@@ -19,5 +19,5 @@ class TestTest:
         #     assert rv['code'] == 0
 
     class TestTestResultCorrect:
-        def test_test_result_correct(self, client):  # TODO: test
+        def test_test_result_correct(self, client, reset_db):  # TODO: test
             assert True

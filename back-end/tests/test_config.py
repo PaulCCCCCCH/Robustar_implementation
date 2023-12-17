@@ -1,5 +1,5 @@
 class TestConfig:
-    def test_config_success(self, client):
+    def test_config_success(self, client, reset_db):
         response = client.get("/config")
         rv = response.get_json()
         assert rv['code'] == 0

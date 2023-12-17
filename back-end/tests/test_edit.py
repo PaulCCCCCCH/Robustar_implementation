@@ -6,7 +6,7 @@ from objects.RServer import RServer
 
 class TestEdit:
     class TestUserEdit:  # TODO: split `annotated` and `proposed`
-        def test_user_edit_fail_invalid_split(self, client):
+        def test_user_edit_fail_invalid_split(self, client, reset_db):
             response = client.post("/edit/non-exist?image_url=0")
             assert response.status_code == 400
             rv = response.get_json()
@@ -18,7 +18,7 @@ class TestEdit:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Split test not supported"
 
-        def test_user_edit_fail_invalid_path(self, client):
+        def test_user_edit_fail_invalid_path(self, client, reset_db):
             data = {
                 "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
                 "image_height": "224",
@@ -37,7 +37,7 @@ class TestEdit:
             assert rv["error_code"] == -1
             assert rv["detail"] == "invalid image path"
 
-        def test_user_edit_fail_broken_image_data(self, client):
+        def test_user_edit_fail_broken_image_data(self, client, reset_db):
             data = {
                 "image": "data:image/png;base64,iVBORw0KGgoAAAANS",
                 "image_height": "224",
@@ -56,7 +56,7 @@ class TestEdit:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Broken image, fail to decode"
 
-    def test_user_edit_success1(self, client):  # TODO: fail due to inactive database
+    def test_user_edit_success(self, client, reset_db):  # TODO: fail due to inactive database
         data = {
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
             "image_height": "224",
@@ -81,7 +81,7 @@ class TestEdit:
 
 
 class TestAutoAnnotate:  # TODO [test]
-    def test_auto_annotate_success(self, client):
+    def test_auto_annotate_success(self, client, reset_db):
         assert True
 
 

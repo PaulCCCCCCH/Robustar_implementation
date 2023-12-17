@@ -17,8 +17,14 @@ def pytest_addoption(parser):
         help="Path of the test data",
     )
 
-
 @pytest.fixture(scope="function")
+def reset_db(request):
+    # Clean up database
+    db.create_all()
+    yield
+    db.drop_all()
+
+@pytest.fixture(scope="session")
 def client(request):
     data_path = to_unix(request.config.getoption("data_path"))
     basedir = f"{data_path}-copy"
@@ -34,11 +40,7 @@ def client(request):
 
     with app.test_client() as test_client:
         with app.app_context():
-            db.session.commit()
-            db.create_all()
             yield test_client
-            db.session.commit()
-            db.drop_all()
 
     app.config["TESTING"] = False
 
