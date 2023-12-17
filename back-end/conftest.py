@@ -52,6 +52,13 @@ def client(request):
     time.sleep(0.1)
 
 
+@pytest.fixture(scope="session")
+def basedir(request):
+    data_path = to_unix(request.config.getoption("data_path"))
+    basedir = f"{data_path}-copy"
+    return basedir
+
+
 def _set_up(data_path, basedir):
     shutil.copytree(data_path, basedir, dirs_exist_ok=True)
     print(f"Copy {data_path} to {basedir}")
