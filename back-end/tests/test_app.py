@@ -10,7 +10,7 @@ from utils.path_utils import to_unix
 PARAM_NAME_IMAGE_PATH = "image_url"
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def client(request):
     data_path = to_unix(request.config.getoption("data_path"))
     basedir = f"{data_path}-copy"
