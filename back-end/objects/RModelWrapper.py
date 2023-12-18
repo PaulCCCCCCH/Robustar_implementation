@@ -69,15 +69,6 @@ class RModelWrapper:
             "description": "This is the model for testing.",
             "tags": ["test"],
             "create_time": datetime.now(),
-            "code_path": None,
-            "weight_path": None,
-            "epoch": 0,
-            "train_accuracy": None,
-            "val_accuracy": None,
-            "test_accuracy": None,
-            "last_trained": None,
-            "last_eval_on_dev_set": None,
-            "last_eval_on_test_set": None,
         }
         buffer = io.StringIO()
         with contextlib.redirect_stdout(buffer):
