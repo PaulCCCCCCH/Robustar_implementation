@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="700px" persistent>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" depressed color="primary"> Upload New Model </v-btn>
+      <v-btn v-bind="attrs" v-on="on" outlined color="primary"> Upload New Model </v-btn>
     </template>
 
     <v-card>
@@ -188,11 +188,11 @@ export default {
       feedback: '',
     };
   },
-  async mounted () {
+  async mounted() {
     try {
-      this.modelClasses = (await APIGetPredefinedModels())?.data?.data ?? []
+      this.modelClasses = (await APIGetPredefinedModels())?.data?.data ?? [];
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
   methods: {
@@ -233,6 +233,8 @@ export default {
           );
           this.reset();
           this.$root.alert('success', 'Model uploading succeeded');
+          this.$emit('upload');
+          this.dialog = false;
         } catch (error) {
           this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
         } finally {
