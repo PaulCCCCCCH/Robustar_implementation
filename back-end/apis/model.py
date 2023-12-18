@@ -26,6 +26,7 @@ def set_curr_model(model_name: str):
         RServer.get_model_wrapper().set_current_model(model_name)
         return RResponse.ok("Success")
     except Exception as e:
+        traceback.print_exc()
         RResponse.abort(500, f"Failed to switch to model {model_name}. Error: {str(e)}")
 
 
