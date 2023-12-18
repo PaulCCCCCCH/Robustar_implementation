@@ -120,6 +120,7 @@ class RDataManager:
         )
         if not os.path.exists(self.validation_root):
             self.validationset: REvalImageFolder = self.testset
+            self.validation_root = self.test_root
         else:
             self.validationset: REvalImageFolder = REvalImageFolder(
                 self.validation_root,
