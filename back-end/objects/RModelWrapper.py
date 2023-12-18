@@ -84,6 +84,7 @@ class RModelWrapper:
         metadata_4_save["architecture"] = buffer.getvalue()
 
         with app.app_context():
+            self.delete_model_by_name(metadata_4_save["nickname"])
             self.create_model(metadata_4_save)
 
     def set_current_model(self, model_name: str):
