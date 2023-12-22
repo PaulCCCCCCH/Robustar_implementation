@@ -59,6 +59,7 @@ def upload_model():
       - "multipart/form-data"
     produces:
       - "application/json"
+    parameters:
       - in: "formData"        # Use "formData" to indicate multipart/form-data parameters
         name: "metadata"      # Name of the parameter for the model metadata
         description: "The metadata of the model"
