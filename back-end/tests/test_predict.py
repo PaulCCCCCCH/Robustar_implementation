@@ -2,10 +2,6 @@ from objects.RServer import RServer
 from utils.path_utils import to_snake_path
 from . import PARAM_NAME_IMAGE_PATH
 from .test_model import dummy_api_upload_dummy_model, dummy_api_set_current_model
-<<<<<<< HEAD
-
-=======
->>>>>>> merge/v0.3
 
 class TestPredict:
     class TestPredict:

@@ -74,10 +74,6 @@ class TestEdit:
         rv = response.get_json()
         assert rv["code"] == 0
         assert "Success" in rv["msg"]
-<<<<<<< HEAD
-
-=======
->>>>>>> merge/v0.3
 
 # class TestDeleteEdit:  # TODO [test]
 
