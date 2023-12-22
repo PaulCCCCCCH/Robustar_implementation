@@ -2,7 +2,10 @@ from objects.RServer import RServer
 from utils.path_utils import to_snake_path
 from . import PARAM_NAME_IMAGE_PATH
 from .test_model import dummy_api_upload_dummy_model, dummy_api_set_current_model
+<<<<<<< HEAD
 
+=======
+>>>>>>> merge/v0.3
 
 class TestPredict:
     class TestPredict:
@@ -33,7 +36,7 @@ class TestPredict:
             # TODO: [test] other splits
 
         def test_predict_success(self, client, reset_db):
-            resp = dummy_api_upload_dummy_model(client, "model-predict")
+            resp = dummy_api_upload_dummy_model(client, "model-predict")            
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"

@@ -143,3 +143,6 @@ class TestModel:
             resp = dummy_api_list_models(client)
             models = resp.get_json()["data"]
             assert len(models) == 1, "Unexpected number of models in the list"
+
+    class TestUploadModel:
+        pass

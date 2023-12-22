@@ -166,6 +166,7 @@ def new_server_object(base_dir, app, socket):
         device=configs["device"],
         pretrained=configs["pre_trained"],
         num_classes=configs["num_classes"],
+        app=app,
     )
     RServer.set_model(model)
 

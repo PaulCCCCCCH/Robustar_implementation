@@ -17,14 +17,12 @@ def pytest_addoption(parser):
         help="Path of the test data",
     )
 
-
 @pytest.fixture(scope="function")
 def reset_db(request):
     # Clean up database
     db.create_all()
     yield
     db.drop_all()
-
 
 @pytest.fixture(scope="session")
 def client(request):
