@@ -186,7 +186,6 @@ export default {
     };
   },
   async created() {
-    this.configs.model_name = this.$root.currentModel;
     try {
       const res = await APIGetCurrentModel();
       const model = res?.data?.data;
@@ -203,6 +202,7 @@ export default {
     async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
       try {
+        // TODO(Chonghan): Check whether current model is set or not, both here and from the back end
         const res = await APIStartTrain({
           configs: this.configs,
           info: 'placeholder',
