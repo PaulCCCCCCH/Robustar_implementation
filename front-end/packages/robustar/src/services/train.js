@@ -4,7 +4,7 @@ import { getRequest, postRequest } from './common';
  * @param {object} configs the training configuration
  */
 export const APIStartTrain = async (configs) => {
-  return postRequest(configs, `/train`);
+  return postRequest(`/train`, configs);
 };
 
 export const APIStopTrain = async () => {
