@@ -28,7 +28,7 @@ const validateStatus = (status) => [200, 201].includes(status);
  * @param {object} data
  * @param {string} route
  */
-export const postRequest = async (route, data) => {
+export const postRequest = async (data, route) => {
   return axios.post(`/api${route}`, data, { validateStatus: validateStatus });
 };
 
@@ -48,14 +48,5 @@ export const getRequest = async (route, pageNo) => {
  */
 export const deleteRequest = async (route) => {
   let requestUrl = `/api${route}`;
-  return axios.delete(requestUrl, { validateStatus: validateStatus });
-};
-
-/**
- * make PUT request
- * @param {object} data
- * @param {string} route
- */
-export const putRequest = async (route, data) => {
-  return axios.put(`/api${route}`, data, { validateStatus: validateStatus });
+  return axios.delete(requestUrl);
 };

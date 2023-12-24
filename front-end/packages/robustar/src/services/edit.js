@@ -19,7 +19,7 @@ export const APISendEdit = async ({
     image_height,
     image_width,
   };
-  return postRequest(`/edit/${split}?${configs.imagePathParamName}=${image_url}`, data);
+  return postRequest(data, `/edit/${split}?${configs.imagePathParamName}=${image_url}`);
 };
 
 export const APIGetProposedEdit = async (split, image_url) => {
@@ -27,7 +27,7 @@ export const APIGetProposedEdit = async (split, image_url) => {
 };
 
 export const APIStartAutoAnnotate = async (split, data) => {
-  return postRequest(`/auto-annotate/${split}`, data);
+  return postRequest(data, `/auto-annotate/${split}`);
 };
 
 export const APIDeleteEdit = async (split, image_url) => {

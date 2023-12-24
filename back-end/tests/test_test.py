@@ -7,8 +7,8 @@ class TestTest:
             response = client.post("/test", json=json.loads(json.dumps(data)))
             assert response.status_code == 400
             rv = response.get_json()
-            assert rv["error_code"] == -1
-            assert rv["detail"] == "Wrong split chosen for test"
+            assert rv['error_code'] == -1
+            assert rv['detail'] == 'Wrong split chosen for test'
 
         # def test_start_test_thread_success(self, client):  # TODO: exception in thread?  # TODO: invalid pass
         #     data = {'split': 'validation'}

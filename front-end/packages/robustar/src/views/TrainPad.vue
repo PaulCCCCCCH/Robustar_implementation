@@ -143,7 +143,6 @@
 
 <script>
 import { APIStartTrain, APIStopTrain } from '@/services/train';
-import { APIGetCurrentModel } from '@/services/model/';
 import { configs } from '@/configs.js';
 export default {
   name: 'TrainPad',
@@ -185,24 +184,10 @@ export default {
       },
     };
   },
-  async created() {
-    try {
-      const res = await APIGetCurrentModel();
-      const model = res?.data?.data;
-      if (model) {
-        this.configs.model_name = model.nickname;
-        this.configs.epoch = model.epoch;
-        this.configs.pretrain = model.pretrained;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  },
   methods: {
     async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
       try {
-        // TODO(Chonghan): Check whether current model is set or not, both here and from the back end
         const res = await APIStartTrain({
           configs: this.configs,
           info: 'placeholder',
