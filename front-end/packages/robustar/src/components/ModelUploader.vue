@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="700px" persistent>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on"> Upload New Model </v-btn>
+      <v-btn v-bind="attrs" v-on="on" outlined color="primary"> Upload New Model </v-btn>
     </template>
 
     <v-card>
@@ -13,16 +13,52 @@
       </v-card-title>
 
       <v-form ref="form" lazy-validation class="pa-4">
-        <v-text-field
-          v-model="name"
-          :rules="[rules.required]"
+        <div class="d-flex justify-space-between">
+          <v-text-field
+            v-model="nickname"
+            :rules="[rules.required]"
+            :loading="isSubmitting"
+            label="Nickname"
+            hint=""
+            outlined
+            clearable
+            dense
+            class="mr-4"
+          ></v-text-field>
+          <v-select
+            v-if="predefined"
+            v-model="className"
+            :rules="[rules.required]"
+            :loading="isSubmitting"
+            :items="modelClasses"
+            label="Class Name"
+            hint=""
+            outlined
+            dense
+          ></v-select>
+          <v-text-field
+            v-else
+            v-model="className"
+            :rules="[rules.required]"
+            :loading="isSubmitting"
+            label="Class Name"
+            hint=""
+            outlined
+            clearable
+            dense
+          ></v-text-field>
+        </div>
+        <v-combobox
+          v-model="tags"
           :loading="isSubmitting"
-          label="Name"
-          hint=""
-          outlined
+          label="Tags"
+          multiple
+          chips
           clearable
           dense
-        ></v-text-field>
+          small-chips
+          outlined
+        ></v-combobox>
         <v-textarea
           v-model="description"
           :loading="isSubmitting"
@@ -34,8 +70,20 @@
           clearable
           dense
         ></v-textarea>
-        <v-checkbox v-model="usePredefined" label="use predefined" dense></v-checkbox>
-        <div v-if="!usePredefined">
+        <v-checkbox
+          v-model="predefined"
+          label="use predefined"
+          dense
+          class="d-inline-block mr-8"
+        ></v-checkbox>
+        <v-checkbox
+          v-if="predefined"
+          v-model="pretrained"
+          label="is model pretrained"
+          dense
+          class="d-inline-block"
+        ></v-checkbox>
+        <div v-if="!predefined">
           <v-file-input
             v-model="weightFile"
             :loading="isSubmitting"
@@ -76,28 +124,6 @@
             style="font-family: monospace"
           ></v-textarea>
         </div>
-        <div v-else>
-          <v-text-field
-            v-model="numClasses"
-            :loading="isSubmitting"
-            label="num_classes"
-            type="number"
-            min="0"
-            hint=""
-            outlined
-            clearable
-            dense
-          ></v-text-field>
-          <v-select
-            v-model="architecture"
-            :items="['a', 'b', 'c']"
-            :loading="isSubmitting"
-            label="Model Architecture"
-            hint=""
-            outlined
-            dense
-          ></v-select>
-        </div>
       </v-form>
 
       <v-divider></v-divider>
@@ -125,67 +151,109 @@
 </template>
 
 <script>
+import { APIUploadModel, APIGetPredefinedModels } from '@/services/model';
+
 export default {
   name: 'ModelUploader',
   data() {
     return {
       dialog: false,
-      usePredefined: false,
+      predefined: false,
+      pretrained: false,
       isSubmitting: false,
-      name: '',
+      nickname: '',
+      className: '',
+      modelClasses: [
+        'resnet-18',
+        'resnet-34',
+        'resnet-50',
+        'resnet-101',
+        'resnet-152',
+        'mobilenet-v2',
+        'resnet-18-32x32',
+        'alexnet',
+      ],
+      tags: [],
       description: '',
       weightFile: null,
       codeFile: null,
       code: '',
-      numClasses: 0,
-      architecture: 'a',
       rules: {
-        required: (value) => ((value && typeof value === 'string' && !!value.trim()) || (value && value instanceof File)) || 'Required.',
+        required: (value) =>
+          (value && typeof value === 'string' && !!value.trim()) ||
+          (value && value instanceof File) ||
+          'Required.',
       },
       status: '',
       feedback: '',
     };
   },
+  async mounted() {
+    try {
+      this.modelClasses = (await APIGetPredefinedModels())?.data?.data ?? [];
+    } catch (error) {
+      console.log(error);
+    }
+  },
   methods: {
     handleCodeFileUpload(file) {
       if (!file || !file instanceof File) {
-        this.code = ''
-        return
-      } 
-      const reader = new FileReader()
-      reader.readAsText(file)
+        this.code = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsText(file);
       reader.onloadstart = () => {
         this.$root.startProcessing('The file is being read. Please wait...');
-      }
+      };
       reader.onload = () => {
-        this.code = reader.result
+        this.code = reader.result;
         this.$root.finishProcessing();
-      }
+      };
       reader.onerror = () => {
         this.$root.finishProcessing();
         this.$root.alert('error', 'Failed to read file');
-      }
+      };
     },
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
         this.isSubmitting = true;
-        setTimeout(() => {
+        try {
+          await APIUploadModel(
+            {
+              class_name: this.className,
+              nickname: this.nickname,
+              description: this.description,
+              tags: this.tags,
+              predefined: this.predefined ? '1' : '0',
+              pretrained: this.pretrained ? '1' : '0',
+            },
+            this.code,
+            this.weightFile
+          );
+          this.reset();
+          this.$root.alert('success', 'Model uploading succeeded');
+          this.$emit('upload');
+          this.dialog = false;
+        } catch (error) {
+          this.$root.alert('error', error.response?.data?.detail || 'Server error. Check console.');
+        } finally {
           this.isSubmitting = false;
-          // this.reset();
-          this.status = 'sdfsd';
-        }, 3000);
+        }
       }
     },
     reset() {
       this.$refs.form.reset();
       this.status = '';
       this.feedback = '';
-      this.usePredefined = false;
-      this.name = '';
+      this.predefined = false;
+      this.pretrained = false;
+      this.nickname = '';
+      this.className = '';
+      this.tags.length = 0;
       this.description = '';
       this.weightFile = null;
       this.code = '';
-      this.architecture = 'a';
     },
   },
 };

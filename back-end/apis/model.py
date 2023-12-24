@@ -2,6 +2,7 @@ import uuid
 import traceback
 from flask import request
 from flask import Blueprint
+from objects.RModelWrapper import RModelWrapper
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
