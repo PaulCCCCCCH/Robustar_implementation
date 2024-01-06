@@ -91,12 +91,18 @@ def val_model(model_wrapper: DummyModelWrapper):
 
     # Run the model against the samples
     for img_path, label in samples:
-        get_image_prediction(
+        pred = get_image_prediction(
             model_wrapper,
             img_path,
             data_manager.image_size,
             argmax=False,
         )
+
+        # Check if the prediction has the correct shape
+        if pred.shape != (1, RServer.get_model_wrapper().num_classes):
+            raise ValueError(
+                "The model's output shape is inconsistent with the number of classes."
+            )
 
 
 def create_models_dir():
