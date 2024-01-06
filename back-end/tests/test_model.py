@@ -80,6 +80,21 @@ upload_test_cases = [
     {
         "input": {
             "metadata": """{
+                "class_name": "WrongName",
+                "nickname": "custom-wrong-class-name",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": code,
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
                 "class_name": "SimpleCNN",
                 "nickname": "custom-without-weight",
                 "predefined": "0",
@@ -95,15 +110,42 @@ upload_test_cases = [
         "input": {
             "metadata": """{
                 "class_name": "SimpleCNN",
-                "nickname": "custom-with-wrong-code",
+                "nickname": "custom-without-code",
                 "predefined": "0",
                 "pretrained": "0",
                 "description": "Simple CNN classifier.",
                 "tags": ["test", "CNN"]
             }""",
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+            "class_name": "SimpleCNN",
+            "nickname": "custom-with-wrong-code",
+            "predefined": "0",
+            "pretrained": "0",
+            "description": "Simple CNN classifier.",
+            "tags": ["test", "CNN"]
+        }""",
             "code": wrong_code,
         },
         "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "without-description-tags",
+                "predefined": "0",
+                "pretrained": "0"
+            }""",
+            "code": code,
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 200,
     },
     {
         "input": {
@@ -135,12 +177,40 @@ upload_test_cases = [
         "input": {
             "metadata": """{
                 "class_name": "resnet-34",
-                "nickname": "custom-nocode",
-                "predefined": "0",
-                "pretrained": "0",
-                "description": "Custom model without code.",
+                "nickname": "predefined-pretrained",
+                "predefined": "1",
+                "pretrained": "1",
+                "description": "Predefined ResNet 34 specified to be pretrained but with a weight file.",
                 "tags": ["test", "CNN", "resnet"]
             }""",
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "undefined-name",
+                "nickname": "undefined-name",
+                "predefined": "1",
+                "pretrained": "1",
+                "description": "Undefined model name for predefined model.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": 1,
+                "nickname": 1,
+                "predefined": 1,
+                "pretrained": "2",
+                "description": 1,
+                "tags": "test"
+            }""",
+            "code": code,
         },
         "expected_output": 400,
     },
