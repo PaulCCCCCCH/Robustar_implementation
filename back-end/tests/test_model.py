@@ -54,6 +54,11 @@ if __name__ == "__main__":
     # Save the model checkpoint
     torch.save(model.state_dict(), "./SimpleCNN.pth")"""
 
+wrong_code = code
+wrong_code = wrong_code.replace(
+    "self.fc2 = nn.Linear(128, 9)", "self.fc2 = nn.Linear(128, 10)"
+)
+
 
 # Test cases for upload_model
 upload_test_cases = [
@@ -85,6 +90,20 @@ upload_test_cases = [
             "code": code,
         },
         "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "custom-with-wrong-code",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": wrong_code,
+        },
+        "expected_output": 400,
     },
     {
         "input": {
