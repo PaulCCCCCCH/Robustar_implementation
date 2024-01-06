@@ -161,15 +161,6 @@ def dummy_api_upload_dummy_model(client, name: str):
     return response
 
 
-def dummy_api_upload_model(client, metadata):
-    response = client.post(
-        f"/model",
-        data={"metadata": json.dumps(metadata)},
-        content_type="multipart/form-data",
-    )
-    return response
-
-
 def dummy_api_set_current_model(client, name: str):
     response = client.post(f"/model/current/{name}")
     return response
@@ -197,11 +188,6 @@ def dummy_api_delete_model(client, name: str):
 
 class TestModel:
     class TestModelUpload:
-        # def test_model_upload(self, client, reset_db):
-        #     # TODO:
-        #     response = dummy_api_upload_dummy_model(client, "test-resnet-18")
-        #     assert response.status_code == 200
-
         @pytest.mark.parametrize("test_data", upload_test_cases)
         def test_model_upload(self, client, reset_db, basedir, test_data):
             input_data = test_data["input"].copy()

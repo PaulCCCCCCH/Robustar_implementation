@@ -6,7 +6,6 @@ from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
-from werkzeug.exceptions import HTTPException
 
 model_api = Blueprint("model_api", __name__)
 
@@ -27,6 +26,7 @@ def set_curr_model(model_name: str):
         RServer.get_model_wrapper().set_current_model(model_name)
         return RResponse.ok("Success")
     except Exception as e:
+        traceback.print_exc()
         RResponse.abort(500, f"Failed to switch to model {model_name}. Error: {str(e)}")
 
 
@@ -38,6 +38,7 @@ def delete_model(model_name: str):
     try:
         model = RServer.get_model_wrapper().delete_model_by_name(model_name)
     except Exception as e:
+        traceback.print_exc()
         RResponse.abort(500, f"Failed to delete model {model_name}. Error: {str(e)}")
 
     if not model:
@@ -134,7 +135,7 @@ def upload_model():
     """
     code_path = None
     weight_path = None
-    # try:
+
     # Precheck the request
     errors = precheck_request_4_upload_model(request)
     if len(errors) > 0:
@@ -238,10 +239,6 @@ def upload_model():
     # RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
 
     return RResponse.ok("Success")
-    # except Exception as e:
-    #     traceback.print_exc()
-    #     clear_model_temp_files(code_path, weight_path)
-    #     return RResponse.abort(500, f"Unexpected error. {str(e)}")
 
 
 @model_api.route("/model/<model_name>", methods=["PUT"])

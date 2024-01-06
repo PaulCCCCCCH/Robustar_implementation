@@ -92,7 +92,10 @@ def val_model(model_wrapper: DummyModelWrapper):
     # Run the model against the samples
     for img_path, label in samples:
         get_image_prediction(
-            model_wrapper, img_path, data_manager.image_size, argmax=False,
+            model_wrapper,
+            img_path,
+            data_manager.image_size,
+            argmax=False,
         )
 
 
@@ -140,13 +143,6 @@ def construct_metadata_4_save(metadata, code_path, weight_path, model):
         "create_time": datetime.now(),
         "code_path": code_path,
         "weight_path": weight_path,
-        "epoch": 0,
-        "train_accuracy": None,
-        "val_accuracy": None,
-        "test_accuracy": None,
-        "last_trained": None,
-        "last_eval_on_dev_set": None,
-        "last_eval_on_test_set": None,
     }
 
     # Save the model's architecture to the metadata
