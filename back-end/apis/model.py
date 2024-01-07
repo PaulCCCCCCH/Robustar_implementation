@@ -1,4 +1,3 @@
-import uuid
 import traceback
 from flask import request
 from flask import Blueprint
