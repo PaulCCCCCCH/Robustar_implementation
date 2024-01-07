@@ -7,5 +7,5 @@ class TestTask:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Task(1) not in list"
 
-        def test_stop_task_success(self, client, reset_db): # TODO: test
+        def test_stop_task_success(self, client, reset_db):  # TODO: test
             assert True

@@ -56,7 +56,6 @@ class RModelWrapper:
         # Also stop passing app to this class.
         self.upload_model_4_e2e_test(app)
 
-    # TODO(Chonghan): upload a model at the start of e2e tests, and remove this afterwards
     def upload_model_4_e2e_test(self, app):
         import io
         import contextlib

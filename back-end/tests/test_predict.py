@@ -3,6 +3,7 @@ from utils.path_utils import to_snake_path
 from . import PARAM_NAME_IMAGE_PATH
 from .test_model import dummy_api_upload_dummy_model, dummy_api_set_current_model
 
+
 class TestPredict:
     class TestPredict:
         def test_predict_fail_invalid_split(self, client, reset_db):
@@ -32,7 +33,7 @@ class TestPredict:
             # TODO: [test] other splits
 
         def test_predict_success(self, client, reset_db):
-            resp = dummy_api_upload_dummy_model(client, "model-predict")            
+            resp = dummy_api_upload_dummy_model(client, "model-predict")
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"

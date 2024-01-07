@@ -1,4 +1,221 @@
+import os
+import pytest
 import json
+from werkzeug.datastructures import FileStorage
+
+
+code = """import torch
+import torch.nn as nn
+
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+
+        # Convolutional layers
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1)
+
+        # Activation and pooling
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+
+        # Fully connected layers
+        self.fc1 = nn.Linear(32 * 8 * 8, 128)  # after two pooling operations, 32x32 becomes 8x8
+        self.fc2 = nn.Linear(128, 9)  # for 9 output classes
+
+    def forward(self, x):
+        # First convolutional layer followed by activation and pooling
+        x = self.conv1(x)
+        x = self.relu(x)
+        x = self.pool(x)
+
+        # Second convolutional layer followed by activation and pooling
+        x = self.conv2(x)
+        x = self.relu(x)
+        x = self.pool(x)
+
+        # Flatten the tensor
+        x = x.view(-1, 32 * 8 * 8)
+
+        # First fully connected layer followed by activation
+        x = self.fc1(x)
+        x = self.relu(x)
+
+        # Second fully connected layer to produce the final output
+        x = self.fc2(x)
+
+        return x
+
+
+if __name__ == "__main__":
+    model = SimpleCNN()
+
+    # Save the model checkpoint
+    torch.save(model.state_dict(), "./SimpleCNN.pth")"""
+
+wrong_code = code
+wrong_code = wrong_code.replace(
+    "self.fc2 = nn.Linear(128, 9)", "self.fc2 = nn.Linear(128, 10)"
+)
+
+
+# Test cases for upload_model
+upload_test_cases = [
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "custom-with-weight",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": code,
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "WrongName",
+                "nickname": "custom-wrong-class-name",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": code,
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "custom-without-weight",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "code": code,
+        },
+        "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "custom-without-code",
+                "predefined": "0",
+                "pretrained": "0",
+                "description": "Simple CNN classifier.",
+                "tags": ["test", "CNN"]
+            }""",
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+            "class_name": "SimpleCNN",
+            "nickname": "custom-with-wrong-code",
+            "predefined": "0",
+            "pretrained": "0",
+            "description": "Simple CNN classifier.",
+            "tags": ["test", "CNN"]
+        }""",
+            "code": wrong_code,
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "SimpleCNN",
+                "nickname": "without-description-tags",
+                "predefined": "0",
+                "pretrained": "0"
+            }""",
+            "code": code,
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "resnet-34",
+                "nickname": "predefined-nonpretrained",
+                "predefined": "1",
+                "pretrained": "0",
+                "description": "Predefined ResNet 34 without pretrained weights.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 200,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "resnet-34",
+                "nickname": "predefined-pretrained",
+                "predefined": "1",
+                "pretrained": "1",
+                "description": "Predefined ResNet 34 which is pretrained.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "resnet-34",
+                "nickname": "predefined-pretrained",
+                "predefined": "1",
+                "pretrained": "1",
+                "description": "Predefined ResNet 34 specified to be pretrained but with a weight file.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+            "weight_file": "SimpleCNN.pth",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": "undefined-name",
+                "nickname": "undefined-name",
+                "predefined": "1",
+                "pretrained": "1",
+                "description": "Undefined model name for predefined model.",
+                "tags": ["test", "CNN", "resnet"]
+            }""",
+        },
+        "expected_output": 400,
+    },
+    {
+        "input": {
+            "metadata": """{
+                "class_name": 1,
+                "nickname": 1,
+                "predefined": 1,
+                "pretrained": "2",
+                "description": 1,
+                "tags": "test"
+            }""",
+            "code": code,
+        },
+        "expected_output": 400,
+    },
+]
+
 
 """
     Helper Functions
@@ -13,7 +230,6 @@ def build_dummy_model_metadata(nickname):
         "tags": ["tag1", "tag2"],
         "pretrained": "0",
         "predefined": "1",
-        "num_classes": "9",
     }
 
     return metadata
@@ -61,10 +277,21 @@ def dummy_api_delete_model(client, name: str):
 
 class TestModel:
     class TestModelUpload:
-        def test_model_upload(self, client, reset_db):
-            # TODO:
-            response = dummy_api_upload_dummy_model(client, "test-resnet-18")
-            assert response.status_code == 200
+        @pytest.mark.parametrize("test_data", upload_test_cases)
+        def test_model_upload(self, client, reset_db, basedir, test_data):
+            input_data = test_data["input"].copy()
+
+            if "weight_file_path" in input_data:
+                weight_file_path = os.path.join(basedir, input_data["weight_file"])
+                with open(weight_file_path, "rb") as f:
+                    input_data["weight_file"] = (
+                        FileStorage(stream=f, filename="SimpleCNN.pth"),
+                    )
+
+            response = client.post(
+                "/model", data=input_data, content_type="multipart/form-data"
+            )
+            assert response.status_code == test_data["expected_output"]
 
     class TestModelSwitch:
         def test_set_nonexist(self, client, reset_db):
@@ -143,6 +370,3 @@ class TestModel:
             resp = dummy_api_list_models(client)
             models = resp.get_json()["data"]
             assert len(models) == 1, "Unexpected number of models in the list"
-
-    class TestUploadModel:
-        pass
