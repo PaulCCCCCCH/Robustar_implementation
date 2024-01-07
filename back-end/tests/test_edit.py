@@ -58,7 +58,7 @@ class TestEdit:
 
     def test_user_edit_success(
         self, client, reset_db
-    ):  # TODO: fail due to inactive database
+    ):
         data = {
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
             "image_height": "224",
