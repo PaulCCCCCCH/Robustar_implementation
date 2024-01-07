@@ -3,6 +3,7 @@ import torch
 import io
 import contextlib
 import json
+import uuid
 from objects.RServer import RServer
 from utils.predict import get_image_prediction
 from datetime import datetime
@@ -13,6 +14,61 @@ class DummyModelWrapper:
     def __init__(self, model, device):
         self.model = model
         self.device = device
+
+
+class ContextManager:
+    def __init__(self):
+        self.base_dir = RServer.get_server().base_dir
+
+    def __enter__(self):
+        self.create_models_dir()
+        self.saving_id = str(uuid.uuid4())
+        self.code_path = None
+        self.weight_path = None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self.clear_model_temp_files()
+        self.saving_id = None
+        self.code_path = None
+        self.weight_path = None
+
+    def init_code_path(self):
+        self.code_path = os.path.join(
+            self.base_dir,
+            "generated",
+            "models",
+            "code",
+            f"{self.saving_id}.py",
+        )
+
+    def init_weight_path(self):
+        self.weight_path = os.path.join(
+            self.base_dir,
+            "generated",
+            "models",
+            "ckpt",
+            f"{self.saving_id}.pth",
+        )
+
+    def create_models_dir(self):
+        """Check if the folder for saving models exists, if not, create it"""
+        models_dir = os.path.join(self.base_dir, "generated", "models")
+        if not os.path.exists(models_dir):
+            os.makedirs(models_dir)
+        if not os.path.exists(os.path.join(models_dir, "code")):
+            os.makedirs(os.path.join(models_dir, "code"))
+        if not os.path.exists(os.path.join(models_dir, "ckpt")):
+            os.makedirs(os.path.join(models_dir, "ckpt"))
+
+    def clear_model_temp_files(self):
+        """Clear the temporary files associated with the model"""
+        if self.code_path:
+            if os.path.exists(self.code_path):
+                os.remove(self.code_path)
+        if self.weight_path:
+            if os.path.exists(self.weight_path):
+                os.remove(self.weight_path)
 
 
 def precheck_request_4_upload_model(request):
@@ -70,16 +126,6 @@ def precheck_request_4_upload_model(request):
     return errors
 
 
-def clear_model_temp_files(code_path, weight_path):
-    """Clear the temporary files associated with the model"""
-    if code_path:
-        if os.path.exists(code_path):
-            os.remove(code_path)
-    if weight_path:
-        if os.path.exists(weight_path):
-            os.remove(weight_path)
-
-
 def val_model(model_wrapper: DummyModelWrapper):
     """Validate the model by running the model against a small portion of the validation dataset"""
     # Get at most 10 samples from the validation dataset
@@ -103,17 +149,6 @@ def val_model(model_wrapper: DummyModelWrapper):
             raise ValueError(
                 "The model's output shape is inconsistent with the number of classes."
             )
-
-
-def create_models_dir():
-    # Check if the folder for saving models exists, if not, create it
-    models_dir = os.path.join(RServer.get_server().base_dir, "generated", "models")
-    if not os.path.exists(models_dir):
-        os.makedirs(models_dir)
-    if not os.path.exists(os.path.join(models_dir, "code")):
-        os.makedirs(os.path.join(models_dir, "code"))
-    if not os.path.exists(os.path.join(models_dir, "ckpt")):
-        os.makedirs(os.path.join(models_dir, "ckpt"))
 
 
 def save_code(code, code_path):
