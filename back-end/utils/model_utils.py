@@ -4,6 +4,7 @@ import io
 import contextlib
 import json
 import uuid
+import traceback
 from objects.RServer import RServer
 from utils.predict import get_image_prediction
 from datetime import datetime
@@ -28,6 +29,7 @@ class ContextManager:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
+            traceback.print_exc()
             self.clear_model_temp_files()
         self.saving_id = None
         self.code_path = None
@@ -123,7 +125,8 @@ def precheck_request_4_upload_model(request):
     ):
         errors.append("tags should be a list of strings")
 
-    return errors
+    if len(errors) > 0:
+        raise ValueError("; ".join(errors))
 
 
 def val_model(model_wrapper: DummyModelWrapper):

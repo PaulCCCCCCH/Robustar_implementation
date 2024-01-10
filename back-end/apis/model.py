@@ -135,11 +135,10 @@ def upload_model():
     cm = ContextManager()
     with cm:
         # Precheck the request
-        errors = precheck_request_4_upload_model(request)
-        if len(errors) > 0:
-            error_message = "; ".join(errors)
-            traceback.print_exc()
-            RResponse.abort(400, f"Request validation failed. Error: {error_message}")
+        try:
+            precheck_request_4_upload_model(request)
+        except Exception as e:
+            RResponse.abort(400, f"Request validation failed. Error: {e}")
 
         metadata_str = request.form.get("metadata")
         metadata = json.loads(metadata_str)
@@ -164,7 +163,6 @@ def upload_model():
                     cm.code_path, class_name
                 )
             except Exception as e:
-                traceback.print_exc()
                 RResponse.abort(400, f"Failed to initialize the custom model. {str(e)}")
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
@@ -173,7 +171,6 @@ def upload_model():
                     class_name, pretrained
                 )
             except Exception as e:
-                traceback.print_exc()
                 RResponse.abort(
                     400, f"Failed to initialize the predefined model. Error: {str(e)}"
                 )
@@ -187,7 +184,6 @@ def upload_model():
             try:
                 load_ckpt_weight(model, cm.weight_path)
             except Exception as e:
-                traceback.print_exc()
                 RResponse.abort(400, f"Failed to load the weights. Error: {str(e)}")
 
         # Validate the model
@@ -197,7 +193,6 @@ def upload_model():
             )
             val_model(dummy_model_wrapper)
         except Exception as e:
-            traceback.print_exc()
             RResponse.abort(400, f"The model is invalid. {e}")
 
         # Construct the metadata for saving
@@ -209,7 +204,6 @@ def upload_model():
         try:
             RServer.get_model_wrapper().create_model(metadata_4_save)
         except Exception as e:
-            traceback.print_exc()
             RResponse.abort(400, f"Failed to save the model. Error: {str(e)}")
 
         ## Set the current model to the newly uploaded model
