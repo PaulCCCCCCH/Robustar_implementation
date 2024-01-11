@@ -102,6 +102,19 @@ class RModelWrapper:
         self.model_name = new_model_meta_data.nickname
         self.model_meta_data = new_model_meta_data
 
+    def clear_current_model(self):
+        # Check if the current model is idle
+        if not self.is_model_available():
+            raise Exception("Failed to switch model because the current model is busy.")
+        
+        del self.model
+        self.model = None
+        self.model_name = None
+        self.model_meta_data = None
+
+    def is_current_model(self, model_name: str):
+        return model_name == self.model_name
+
     def load_net(self, path):
         if os.path.exists(path):
             print("load net from: ", path)
@@ -168,7 +181,11 @@ class RModelWrapper:
         return Models.query.all()
 
     def delete_model_by_name(self, name) -> Models:
+        if self.is_current_model(name):
+            self.clear_current_model()
+
         model_to_delete = Models.query.filter_by(nickname=name).first()
+
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
