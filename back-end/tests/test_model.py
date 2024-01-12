@@ -301,11 +301,11 @@ class TestModel:
 
         def test_get_set(self, client, reset_db):
             # Upload two models
-            resp = dummy_api_upload_dummy_model(client, "model-1")
+            resp = dummy_api_upload_dummy_model(client, "model-get-set-1")
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
-            resp = dummy_api_upload_dummy_model(client, "model-2")
+            resp = dummy_api_upload_dummy_model(client, "model-get-set-2")
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
@@ -315,7 +315,7 @@ class TestModel:
             assert resp.status_code == 400
 
             # Set current model to the first one
-            resp = dummy_api_set_current_model(client, "model-1")
+            resp = dummy_api_set_current_model(client, "model-get-set-1")
             assert (
                 resp.status_code == 200
             ), f"Fail to set model-1 as current model. {resp.get_json().get('detail')}"
@@ -323,11 +323,11 @@ class TestModel:
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-1"
+                resp.get_json()["data"].get("nickname") == "model-get-set-1"
             ), f"current model nickname does match expected value"
 
             # Set current model to the second one
-            resp = dummy_api_set_current_model(client, "model-2")
+            resp = dummy_api_set_current_model(client, "model-get-set-2")
             assert (
                 resp.status_code == 200
             ), f"Fail to set model-2 as current model. {resp.get_json().get('detail')}"
@@ -335,13 +335,13 @@ class TestModel:
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-2"
+                resp.get_json()["data"].get("nickname") == "model-get-set-2"
             ), f"current model nickname does match expected value"
 
     class TestCRUDModel:
         def test_list(self, client, reset_db):
             # Upload dummy models
-            for model_name in ["model-3", "model-4"]:
+            for model_name in ["model-list-1", "model-list-2"]:
                 dummy_api_upload_dummy_model(client, model_name)
 
             # List models
@@ -351,22 +351,38 @@ class TestModel:
             assert len(models) == 2, "Unexpected number of models in the list"
 
             model_names = [model["nickname"] for model in models]
-            assert "model-3" in model_names
-            assert "model-4" in model_names
+            assert "model-list-1" in model_names
+            assert "model-list-2" in model_names
 
         def test_delete(self, client, reset_db):
             # Upload dummy models
-            for model_name in ["model-5", "model-6"]:
+            for model_name in ["model-delete-1", "model-delete-2"]:
                 dummy_api_upload_dummy_model(client, model_name)
 
             # Delete model
-            resp = dummy_api_delete_model(client, "model-5")
+            resp = dummy_api_delete_model(client, "model-delete-1")
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-5"
+                resp.get_json()["data"].get("nickname") == "model-delete-1"
             ), "Deleted model metadata is wrong"
 
             # Expect only 1 model left in the list
             resp = dummy_api_list_models(client)
             models = resp.get_json()["data"]
             assert len(models) == 1, "Unexpected number of models in the list"
+
+        def test_delete_current(self, client, reset_db):
+            # Upload dummy models
+            model_name = "model-delete-current"
+            dummy_api_upload_dummy_model(client, model_name)
+            
+            dummy_api_set_current_model(client, model_name)
+
+            # Deleting current model
+            resp = dummy_api_delete_model(client, model_name)
+            assert resp.status_code == 200
+
+            # No current model is selected
+            resp = dummy_api_get_current_model(client)
+            assert resp.status_code == 400
+

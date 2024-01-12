@@ -36,6 +36,8 @@ def delete_model(model_name: str):
     """
     try:
         model = RServer.get_model_wrapper().delete_model_by_name(model_name)
+    except ValueError as e:
+        RResponse.abort(400, f"Failed to delete model {model_name}. Error: {str(e)}")
     except Exception as e:
         traceback.print_exc()
         RResponse.abort(500, f"Failed to delete model {model_name}. Error: {str(e)}")
