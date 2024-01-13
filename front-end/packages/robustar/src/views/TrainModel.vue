@@ -83,6 +83,7 @@
         :loading="isLoading"
         loading-text="Loading... Please wait"
         item-key="nickname"
+        :item-class="(item) => (item.nickname === currentModel.nickname ? 'blue lighten-5' : '')"
         show-select
         width="1000"
       >
@@ -215,25 +216,55 @@
           <!-- </v-toolbar> -->
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            @click="
-              editingModel = { ...item };
-              dialogEdit = true;
-            "
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon small class="mx-2" @click="duplicateModel(item)"> mdi-content-copy </v-icon>
-          <v-icon
-            small
-            @click="
-              deletingModelName = item.nickname;
-              dialogDelete = true;
-            "
-          >
-            mdi-delete
-          </v-icon>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon small @click="setCurrentModel(item)" class="mr-2" v-bind="attrs" v-on="on">
+                mdi-check-circle-outline
+              </v-icon>
+            </template>
+            <span>Set as current model</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                small
+                @click="
+                  editingModel = { ...item };
+                  dialogEdit = true;
+                "
+                class="mr-2"
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+            <span>Edit model</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon small class="mr-2" @click="duplicateModel(item)" v-bind="attrs" v-on="on">
+                mdi-content-copy
+              </v-icon>
+            </template>
+            <span>Duplicate model</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                small
+                @click="
+                  deletingModelName = item.nickname;
+                  dialogDelete = true;
+                "
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-delete
+              </v-icon>
+            </template>
+            <span>Delete model</span>
+          </v-tooltip>
         </template>
       </v-data-table>
     </v-card>
@@ -315,6 +346,17 @@ export default {
         console.error('Error fetching current model:', error);
       }
     },
+    async setCurrentModel(model) {
+      try {
+        const response = await APISetCurrentModel(
+          model ? model.nickname : this.editingModel.nickname
+        );
+        this.currentModel = model ? { ...model } : { ...this.editingModel };
+        this.$root.$emit('sync-current-model')
+      } catch (error) {
+        console.error('Error setting current model:', error);
+      }
+    },
     async getModelList() {
       try {
         this.isLoading = true;
@@ -323,14 +365,6 @@ export default {
         console.error('Error fetching model list:', error);
       } finally {
         this.isLoading = false;
-      }
-    },
-    async setCurrentModel() {
-      try {
-        const response = await APISetCurrentModel(this.editingModel.nickname);
-        this.currentModel = { ...this.editingModel };
-      } catch (error) {
-        console.error('Error setting current model:', error);
       }
     },
     async deleteModel() {
