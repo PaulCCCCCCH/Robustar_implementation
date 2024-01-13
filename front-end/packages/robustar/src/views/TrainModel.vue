@@ -2,8 +2,16 @@
   <div class="d-flex flex-column align-center">
     <v-card class="mt-8 mb-4 pa-2" width="1300">
       <v-card-title class="d-flex justify-space-between mb-2">
-        <span>Current Model: {{ currentModel.nickname }}</span>
-        <v-btn outlined color="primary" @click="trainModel">Train</v-btn>
+        <span data-test="train-model-current-model"
+          >Current Model: {{ currentModel.nickname }}</span
+        >
+        <v-btn
+          outlined
+          color="primary"
+          @click="trainModel"
+          data-test="train-model-train-current-model"
+          >Train</v-btn
+        >
       </v-card-title>
       <v-card-text>
         <div>
@@ -99,7 +107,12 @@
                     ></v-text-field
                   ></span>
                   <span>
-                    <v-btn class="ml-4" outlined color="primary" @click="setCurrentModel"
+                    <v-btn
+                      class="ml-4"
+                      outlined
+                      color="primary"
+                      @click="setCurrentModel"
+                      data-test="train-model-set-current-model"
                       >Set As Current Model</v-btn
                     ></span
                   >
