@@ -56,9 +56,7 @@ class TestEdit:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Broken image, fail to decode"
 
-    def test_user_edit_success(
-        self, client, reset_db
-    ):
+    def test_user_edit_success(self, client, reset_db):
         data = {
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=",
             "image_height": "224",

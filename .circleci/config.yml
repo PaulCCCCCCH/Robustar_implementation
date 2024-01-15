@@ -31,12 +31,12 @@ jobs:
           working_directory: ./back-end
           command: |
             echo "Files in directory: $(ls)"
-            pip install gdown
+            pip install gdown==4.6.0
             gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-
             unzip Robustar2.zip
             echo "Files in directory"
             ls ./Robustar2
-            gdown https://drive.google.com/uc?id=1hs29ZEDZH8Y5UrrEGm3RjhK1Lr6AbYxU
+            gdown https://drive.google.com/uc?id=14sl0glWpq1jxPMOCtv-47g-NsQPpUrFO
             unzip Robustar2-test.zip
 
       - run:
