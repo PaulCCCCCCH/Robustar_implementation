@@ -91,7 +91,6 @@ export default {
           children: [
             { text: 'Training Data', icon: '', link: 'image-list/train' },
             { text: 'Annotated Data', icon: '', link: 'image-list/annotated' },
-            { text: 'Training Model', icon: '', link: 'image-list/model' },
             {
               text: 'Validation Data',
               icon: '',
