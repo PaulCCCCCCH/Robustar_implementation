@@ -171,7 +171,7 @@ upload_test_cases = [
                 "tags": ["test", "CNN", "resnet"]
             }""",
         },
-        "expected_output": 400,
+        "expected_output": 200,
     },
     {
         "input": {
@@ -281,16 +281,18 @@ class TestModel:
         def test_model_upload(self, client, reset_db, basedir, test_data):
             input_data = test_data["input"].copy()
 
-            if "weight_file_path" in input_data:
+            if "weight_file" in input_data:
                 weight_file_path = os.path.join(basedir, input_data["weight_file"])
-                with open(weight_file_path, "rb") as f:
-                    input_data["weight_file"] = (
-                        FileStorage(stream=f, filename="SimpleCNN.pth"),
-                    )
+                f = open(weight_file_path, "rb")
+                input_data["weight_file"] = (
+                    FileStorage(stream=f, filename="SimpleCNN.pth"),
+                )
 
             response = client.post(
                 "/model", data=input_data, content_type="multipart/form-data"
             )
+            if "weight_file" in input_data:
+                f.close()
             assert response.status_code == test_data["expected_output"]
 
     class TestModelSwitch:
@@ -375,7 +377,7 @@ class TestModel:
             # Upload dummy models
             model_name = "model-delete-current"
             dummy_api_upload_dummy_model(client, model_name)
-            
+
             dummy_api_set_current_model(client, model_name)
 
             # Deleting current model
@@ -385,4 +387,3 @@ class TestModel:
             # No current model is selected
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 400
-
