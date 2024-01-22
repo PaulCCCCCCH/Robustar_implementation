@@ -318,7 +318,7 @@ class RModelWrapper:
             init_func, weights = MODEL2INIT[network_type]
             weights = weights if pretrained else None
             model = init_func(weights=weights)
-            if self.num_classes != 1000:
+            if self.num_classes != IMAGENET_OUTPUT_SIZE:
                 self.replace_output_layer(model, self.num_classes)
 
         return model.to(self.device)
