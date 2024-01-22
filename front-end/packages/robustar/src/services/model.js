@@ -5,7 +5,7 @@ import { configs } from '../configs';
  * Fetch the currently active model's metadata.
  */
 export const APIGetCurrentModel = async () => {
-    return getRequest(`/model/current`);
+  return getRequest(`/model/current`);
 };
 
 /**
@@ -13,7 +13,7 @@ export const APIGetCurrentModel = async () => {
  * @param {string} modelName
  */
 export const APISetCurrentModel = async (modelName) => {
-    return postRequest(`/model/current/${modelName}`);
+  return postRequest(`/model/current/${modelName}`);
 };
 
 /**
@@ -21,7 +21,7 @@ export const APISetCurrentModel = async (modelName) => {
  * @param {string} modelName
  */
 export const APIDeleteModel = async (modelName) => {
-    return deleteRequest(`/model/${modelName}`);
+  return deleteRequest(`/model/${modelName}`);
 };
 
 /**
@@ -31,13 +31,13 @@ export const APIDeleteModel = async (modelName) => {
  * @param {File|null} weightFile - Weight file (if available)
  */
 export const APIUploadModel = async (metadata, code = null, weightFile = null) => {
-    const formData = new FormData();
-    formData.append('metadata', JSON.stringify(metadata));
-    
-    if (code) formData.append('code', code);
-    if (weightFile) formData.append('weight_file', weightFile);
+  const formData = new FormData();
+  formData.append('metadata', JSON.stringify(metadata));
 
-    return postRequest(`/model`, formData);
+  if (code) formData.append('code', code);
+  if (weightFile) formData.append('weight_file', weightFile);
+
+  return postRequest(`/model`, formData);
 };
 
 /**
@@ -56,7 +56,7 @@ export const APIUpdateModel = async (name, metadata) => {
  * Fetch the list of all models.
  */
 export const APIGetAllModels = async () => {
-    return getRequest(`/model/list`);
+  return getRequest(`/model/list`);
 };
 
 /**

@@ -17,12 +17,14 @@ def pytest_addoption(parser):
         help="Path of the test data",
     )
 
+
 @pytest.fixture(scope="function")
 def reset_db(request):
     # Clean up database
     db.create_all()
     yield
     db.drop_all()
+
 
 @pytest.fixture(scope="session")
 def client(request):
@@ -48,6 +50,13 @@ def client(request):
     _clean_up(basedir)
 
     time.sleep(0.1)
+
+
+@pytest.fixture(scope="session")
+def basedir(request):
+    data_path = to_unix(request.config.getoption("data_path"))
+    basedir = f"{data_path}-copy"
+    return basedir
 
 
 def _set_up(data_path, basedir):

@@ -1,8 +1,6 @@
-import uuid
 import traceback
 from flask import request
 from flask import Blueprint
-from objects.RModelWrapper import RModelWrapper
 from utils.model_utils import *
 from objects.RResponse import RResponse
 from objects.RServer import RServer
@@ -38,6 +36,8 @@ def delete_model(model_name: str):
     """
     try:
         model = RServer.get_model_wrapper().delete_model_by_name(model_name)
+    except ValueError as e:
+        RResponse.abort(400, f"Failed to delete model {model_name}. Error: {str(e)}")
     except Exception as e:
         traceback.print_exc()
         RResponse.abort(500, f"Failed to delete model {model_name}. Error: {str(e)}")
@@ -134,26 +134,18 @@ def upload_model():
               example: "Success"
 
     """
-    code_path = None
-    weight_path = None
-    try:
+    cm = ContextManager()
+    with cm:
         # Precheck the request
-        errors = precheck_request_4_upload_model(request)
-        if len(errors) > 0:
-            error_message = "; ".join(errors)
-            traceback.print_exc()
-            RResponse.abort(400, f"Request validation failed. Error: {error_message}")
+        try:
+            precheck_request_4_upload_model(request)
+        except Exception as e:
+            RResponse.abort(400, f"Request validation failed. Error: {e}")
 
         metadata_str = request.form.get("metadata")
         metadata = json.loads(metadata_str)
 
-        # Create the code and ckpt directories if they don't exist
-        create_models_dir()
-
         print("Requested to upload a new model")
-
-        # Generate a uuid for the model saving
-        saving_id = str(uuid.uuid4())
 
         # Get the model's class name
         class_name = metadata.get("class_name")
@@ -162,25 +154,17 @@ def upload_model():
 
         # Save the model's code definition and initialize the model
         if not predefined:  # If the model is custom
-            code_path = os.path.join(
-                RServer.get_server().base_dir,
-                "generated",
-                "models",
-                "code",
-                f"{saving_id}.py",
-            )
+            cm.init_code_path()
 
             # Get the model definition code and save it to a temporary file
             code = request.form.get("code")
-            save_code(code, code_path)
+            save_code(code, cm.code_path)
             # Initialize the model
             try:
                 model = RServer.get_model_wrapper().init_custom_model(
-                    code_path, class_name
+                    cm.code_path, class_name
                 )
             except Exception as e:
-                traceback.print_exc()
-                clear_model_temp_files(code_path, weight_path)
                 RResponse.abort(400, f"Failed to initialize the custom model. {str(e)}")
         elif predefined:  # If the model is predefined
             pretrained = bool(int(metadata.get("pretrained")))
@@ -189,33 +173,19 @@ def upload_model():
                     class_name, pretrained
                 )
             except Exception as e:
-                traceback.print_exc()
-                clear_model_temp_files(code_path, weight_path)
                 RResponse.abort(
                     400, f"Failed to initialize the predefined model. Error: {str(e)}"
                 )
-        else:
-            RResponse.abort(
-                400, "Invalid request. The model is neither custom nor predefined."
-            )
 
         # Get the weight file and save it to a temporary location if it exists
         if "weight_file" in request.files:
-            weight_path = os.path.join(
-                RServer.get_server().base_dir,
-                "generated",
-                "models",
-                "ckpt",
-                f"{saving_id}.pth",
-            )
+            cm.init_weight_path()
             weight_file = request.files.get("weight_file")
-            save_ckpt_weight(weight_file, weight_path)
+            save_ckpt_weight(weight_file, cm.weight_path)
             # Load and validate the weights from the file
             try:
-                load_ckpt_weight(model, weight_path)
+                load_ckpt_weight(model, cm.weight_path)
             except Exception as e:
-                traceback.print_exc()
-                clear_model_temp_files(code_path, weight_path)
                 RResponse.abort(400, f"Failed to load the weights. Error: {str(e)}")
 
         # Validate the model
@@ -225,21 +195,17 @@ def upload_model():
             )
             val_model(dummy_model_wrapper)
         except Exception as e:
-            traceback.print_exc()
-            clear_model_temp_files(code_path, weight_path)
             RResponse.abort(400, f"The model is invalid. {e}")
 
         # Construct the metadata for saving
         metadata_4_save = construct_metadata_4_save(
-            metadata, code_path, weight_path, model
+            metadata, cm.code_path, cm.weight_path, model
         )
 
         # Save the model's metadata to the database
         try:
             RServer.get_model_wrapper().create_model(metadata_4_save)
         except Exception as e:
-            traceback.print_exc()
-            clear_model_temp_files(code_path, weight_path)
             RResponse.abort(400, f"Failed to save the model. Error: {str(e)}")
 
         ## Set the current model to the newly uploaded model
@@ -248,10 +214,6 @@ def upload_model():
         # RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
 
         return RResponse.ok("Success")
-    except Exception as e:
-        traceback.print_exc()
-        clear_model_temp_files(code_path, weight_path)
-        return RResponse.abort(500, f"Unexpected error. {str(e)}")
 
 
 @model_api.route("/model/<model_name>", methods=["PUT"])

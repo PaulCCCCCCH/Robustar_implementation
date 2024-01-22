@@ -115,7 +115,6 @@ class RImageFolder(DatasetFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(RImageFolder, self).__init__(
             root,
             loader,
@@ -195,7 +194,6 @@ class RTrainImageFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(RTrainImageFolder, self).__init__(
             root,
             split,
@@ -254,7 +252,6 @@ class REvalImageFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         super(REvalImageFolder, self).__init__(
             root,
             split,
@@ -374,7 +371,6 @@ class RAnnotationFolder(RImageFolder):
         should_reindex: bool = False,
         class2label: dict[str, str] = None,
     ):
-
         self.root = root
         self.train_root = train_root
 
