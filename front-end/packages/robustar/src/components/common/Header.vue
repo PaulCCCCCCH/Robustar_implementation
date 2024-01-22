@@ -8,7 +8,7 @@
 
     <v-spacer></v-spacer>
 
-    <div class="mr-8 primary--text">Current Model: {{ currentModel?.nickname || 'unknown' }}</div>
+    <div class="mr-8 primary--text">Current Model: {{ currentModel?.nickname || '' }}</div>
 
     <div v-click-outside="onClickOutside">
       <v-btn icon color="primary" @click="toggleTaskspanel" data-test="header-toggle-tasks-panel">
@@ -70,6 +70,7 @@ export default {
         this.currentModel = res?.data?.data;
       } catch (error) {
         console.log(error);
+        this.currentModel = {};
       }
     },
   },

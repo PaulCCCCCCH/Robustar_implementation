@@ -343,7 +343,8 @@ export default {
         const response = (await APIGetCurrentModel())?.data?.data;
         this.currentModel = response;
       } catch (error) {
-        console.error('Error fetching current model:', error);
+        this.currentModel = {};
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to get current model');
       }
     },
     async setCurrentModel(model) {
@@ -352,9 +353,10 @@ export default {
           model ? model.nickname : this.editingModel.nickname
         );
         this.currentModel = model ? { ...model } : { ...this.editingModel };
-        this.$root.$emit('sync-current-model')
+        this.$root.$emit('sync-current-model');
       } catch (error) {
         console.error('Error setting current model:', error);
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to set current model');
       }
     },
     async getModelList() {
@@ -362,7 +364,7 @@ export default {
         this.isLoading = true;
         this.modelList = (await APIGetAllModels())?.data?.data;
       } catch (error) {
-        console.error('Error fetching model list:', error);
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to fetch model list');
       } finally {
         this.isLoading = false;
       }
@@ -373,9 +375,10 @@ export default {
         await APIDeleteModel(this.deletingModelName);
         this.getCurrentModel();
         this.getModelList();
+        this.$root.$emit('sync-current-model');
         this.dialogDelete = false;
       } catch (error) {
-        console.error('Error deleting model:', error);
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to delete model');
       } finally {
         this.isSubmitting = false;
       }
@@ -386,7 +389,7 @@ export default {
         await APIDuplicateModel(item.nickname);
         this.getModelList();
       } catch (error) {
-        console.error('Error duplicating model:', error);
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to duplicate model');
       } finally {
         this.isSubmitting = false;
       }
@@ -398,7 +401,7 @@ export default {
         this.getModelList();
         this.dialogEdit = false;
       } catch (error) {
-        console.error('Error saving model changes:', error);
+        this.$root.alert('error', error.response?.data?.detail || 'Failed to save changes');
       } finally {
         this.isSubmitting = false;
       }
