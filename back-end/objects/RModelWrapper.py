@@ -20,6 +20,19 @@ MODEL_INPUT_SHAPE = {
     "alexnet": 227,
 }
 
+MODEL2INIT = {
+    "resnet-18": (torchvision.models.resnet18, "ResNet18_Weights.IMAGENET1K_V1"),
+    "resnet-34": (torchvision.models.resnet34, "ResNet34_Weights.IMAGENET1K_V1"),
+    "resnet-50": (torchvision.models.resnet50, "ResNet50_Weights.IMAGENET1K_V1"),
+    "resnet-101": (torchvision.models.resnet101, "ResNet101_Weights.IMAGENET1K_V1"),
+    "resnet-152": (torchvision.models.resnet152, "ResNet152_Weights.IMAGENET1K_V1"),
+    "mobilenet-v2": (
+        torchvision.models.mobilenet_v2,
+        "MobileNet_V2_Weights.IMAGENET1K_V1",
+    ),
+    "alexnet": (torchvision.models.alexnet, "AlexNet_Weights.IMAGENET1K_V1"),
+}
+
 AVAILABLE_MODELS = list(MODEL_INPUT_SHAPE.keys())
 
 
@@ -106,7 +119,7 @@ class RModelWrapper:
         # Check if the current model is idle
         if not self.is_model_available():
             raise Exception("Failed to switch model because the current model is busy.")
-        
+
         del self.model
         self.model = None
         self.model_name = None
@@ -290,37 +303,8 @@ class RModelWrapper:
             raise Exception(
                 f"Requested model type {network_type} not supported. Please check."
             )
-        # If the model is pretrained, it should have the same number of classes as the ImageNet model
-        if pretrained and self.num_classes != IMAGENET_OUTPUT_SIZE:
-            raise Exception(
-                f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output."
-            )
 
-        if network_type == "resnet-18":
-            model = torchvision.models.resnet18(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "resnet-34":
-            model = torchvision.models.resnet34(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "resnet-50":
-            model = torchvision.models.resnet50(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "resnet-101":
-            model = torchvision.models.resnet101(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "resnet-152":
-            model = torchvision.models.resnet152(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "mobilenet-v2":
-            model = torchvision.models.mobilenet_v2(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
-        elif network_type == "resnet-18-32x32":
+        if network_type == "resnet-18-32x32":
             model = torchvision.models.ResNet(
                 torchvision.models.resnet.BasicBlock,
                 [2, 2, 2, 2],
@@ -330,12 +314,33 @@ class RModelWrapper:
                 3, 64, kernel_size=3, stride=1, padding=1, bias=False
             )
             model.maxpool = torch.nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-        elif network_type == "alexnet":
-            model = torchvision.models.alexnet(
-                pretrained=pretrained, num_classes=self.num_classes
-            )
+        elif network_type in MODEL2INIT:
+            init_func, weights = MODEL2INIT[network_type]
+            weights = weights if pretrained else None
+            model = init_func(weights=weights)
+            if self.num_classes != IMAGENET_OUTPUT_SIZE:
+                self.replace_output_layer(model, self.num_classes)
 
         return model.to(self.device)
+
+    def replace_output_layer(self, model, num_classes):
+        """
+        Replace the output layer of the model with a new one that has num_classes as output
+        """
+        if isinstance(model, torchvision.models.ResNet):
+            model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
+        elif isinstance(model, torchvision.models.MobileNetV2):
+            model.classifier[1] = torch.nn.Linear(
+                model.classifier[1].in_features, num_classes
+            )
+        elif isinstance(model, torchvision.models.AlexNet):
+            model.classifier[6] = torch.nn.Linear(
+                model.classifier[6].in_features, num_classes
+            )
+        else:
+            raise Exception(
+                "Model type not supported for replacing the output layer. Please check."
+            )
 
     def init_custom_model(self, code_path, name):
         """
