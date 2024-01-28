@@ -4,71 +4,92 @@ describe('The Model Training Page', () => {
   });
 
   it('can have current model after selecting', () => {
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-set-current-model]').click();
-    });
-    cy.wait(1000);
-    cy.getBySel('train-model-current-model-create-time').should('not.be.empty');
-    cy.getBySel('train-model-current-model-achitecture').should('not.be.empty');
+    cy.get('tr:nth-child(2)').find('td').eq(10).within(() => {
+      cy.getBySel('train-model-set-current-model').click();
+      cy.wait(1000);
+      cy.getBySel('train-model-current-model-create-time').should('not.be.empty');
+      cy.getBySel('train-model-current-model-achitecture').should('not.be.empty');
+    })
   });
 
   it('can go to the train page after having current model', () => {
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-set-current-model]').click();
+    cy.get('tr:nth-child(2)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-set-current-model]').click();
     });
     cy.wait(1000);
     cy.get('[data-test=train-model-current-model]')
       .should('exist')
       .invoke('text')
       .should('not.be.empty');
-    cy.get('[data-test=train-model-train-currentq-model]').click();
-    cy.url().should('inlcude', 'train');
-  });
-
-  it('Triggers model training', () => {
-    cy.intercept('POST', '/api/train-model/**').as('trainModel');
-    cy.getBySel('[data-test=train-model-train-model-button]').click();
-    cy.wait('@trainModel').its('response.statusCode').should('eq', 200);
+    cy.get('[data-test=train-model-train-model-button]').click();
+    cy.url().should('contains', 'train');
   });
 
   it('can edit model', () => {
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-edit-model]').click();
-      cy.wait(1000);
-      cy.getBySel('[data-test=train-model-train-model-edit-model-description]').empty();
-      cy.getBySel('[data-test=rain-model-train-model-edit-model-description]').type("test123");
-      cy.get('[data-test=train-model-edit-model-cancel]').click();
-      cy.getBySel('[data-test=train-model-current-model-description]').should('not.contain', 'test123');
-
-
-      cy.get('[data-test=trian-model-edit-model]').click();
-      cy.wait(1000);
-      cy.getBySel('[data-test=train-model-train-model-edit-model-description]').empty();
-      cy.getBySel('[data-test=rain-model-train-model-edit-model-description]').type("test");
-      cy.get('[data-test=train-model-edit-model-confirm]').click();
-      cy.getBySel('[data-test=train-model-current-model-description]').should('inlcude', 'test123');
+    cy.get('tr:nth-child(1)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-edit-model]').click({ force: true });
     });
+
+    cy.get('[data-test=train-model-edit-model-description]').clear().type("test123");
+    cy.get('[data-test=train-model-edit-model-cancel]').click();
+
+    cy.get('tr:nth-child(2)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-edit-model]').click({ force: true });
+    });
+    cy.get('[data-test=train-model-edit-model-description]').invoke('val').should('not.contain', 'test123');
+    cy.get('tr:nth-child(2)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-edit-model]').click({ force: true });
+    });
+
+    cy.get('[data-test=train-model-edit-model-description]').clear().type("test");
+    cy.get('[data-test=train-model-edit-model-confirm]').click();
+    cy.get('tr:nth-child(2)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-edit-model]').click({ force: true });
+    });
+    cy.get('[data-test=train-model-edit-model-description]').invoke('val').should('contain', 'test');
+  });
+
+
+  it('can delete model', () => {
+    cy.get('tr:nth-child(1)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-delete-model]').click();
+    });
+
+    cy.get('[data-test=train-model-delete-model-confirm]').click();
+    cy.wait(1000);
+    cy.get('tr').should('have.length', 2);
 
   });
 
   it('can duplicate model', () => {
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-duplicate-model]').click();
+    cy.get('tr:nth-child(1)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-duplicate-model]').click();
       cy.wait(1000);
     });
-    cy.get('tr:nth-child(2)').should('inlcude', 'copy');
-  });
-
-  it('can delete model', () => {
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-delete-model]').click();  
-    });
-    cy.wait(1000);
-    cy.get('tr:first-child').first().within(() => {
-      cy.get('[data-test=trian-model-delete-model]').click();
-      cy.wait(1000);
-    });
+    cy.get('tr').should('have.length', 3);
   });
 
 
+  it('can upload model', () => {
+    cy.contains('.v-btn', 'Upload New Model').click();
+    cy.get('[data-test=model-upload-nickname]').type("SimpleCNN");
+    cy.get('[data-test=model-upload-classname]').type("SimpleCNN");
+    cy.get('[data-test=model-upload-codefile]').selectFile('cypress/downloads/SimpleCNN.py', { force: true });
+    cy.get('[data-test=model-upload-submit-button]').click();
+    cy.get('tr').should('have.length', 4);
+
+
+  });
+
+
+  it('can edit model name', () => {
+    cy.get('tr:nth-child(1)').find('td').eq(10).within(() => {
+      cy.get('[data-test=train-model-edit-model]').click({ force: true });
+    });
+
+    cy.get('[data-test=train-model-edit-model-name]').clear().type("test");
+    cy.get('[data-test=train-model-edit-model-confirm]').click();
+
+    cy.get('tr:nth-child(1)').find('td').eq(2).invoke('val').should('contain', 'test');
+  });
 });

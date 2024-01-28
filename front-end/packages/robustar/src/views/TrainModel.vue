@@ -39,7 +39,7 @@
           </span>
         </div>
         <div class="my-2 mb-4">
-          <span class="font-weight-medium" data-test="train-model-current-model-description" >Description: </span>{{ currentModel.description }}
+          <span class="font-weight-medium">Description: </span>{{ currentModel.description }}
         </div>
         <v-textarea v-model="currentModel.architecture" rows="3" label="Architecture" hint=""
           data-test="train-model-current-model-architecture" outlined clearable dense disabled></v-textarea>
@@ -66,7 +66,7 @@
               <v-card-text>
                 <div class="d-flex justify-space-between">
                   <span style="width: 400px"><v-text-field v-model="editingModel.nickname" :loading="isSubmitting" 
-                      label="Model Name" hint="" outlined clearable dense></v-text-field></span>
+                      label="Model Name" hint="" outlined clearable dense  data-test="train-model-edit-model-name" ></v-text-field></span>
                   <span>
                     <v-btn class="ml-4" outlined color="primary" @click="setCurrentModel">Set As Current
                       Model</v-btn></span>
@@ -127,7 +127,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialogDelete = false"> Cancel </v-btn>
-                <v-btn color="error darken-1" text @click="deleteModel"> Confirm </v-btn>
+                <v-btn color="error darken-1" text @click="deleteModel" data-test = "train-model-delete-model-confirm"> Confirm </v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>

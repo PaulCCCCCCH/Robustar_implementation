@@ -5,9 +5,9 @@
     </template>
 
     <v-card>
-      <v-card-title class="d-flex justify-space-between">
-        <span>Upload New Model</span>
-        <v-btn icon @click="dialog = false">
+      <v-card-title class="d-flex justify-space-between" data-test = "model-upload-button">
+        <span >Upload New Model</span>
+        <v-btn icon @click="dialog = false" >
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -24,6 +24,7 @@
             clearable
             dense
             class="mr-4"
+            data-test = "model-upload-nickname"
           ></v-text-field>
           <v-select
             v-if="predefined"
@@ -46,6 +47,7 @@
             outlined
             clearable
             dense
+            data-test = "model-upload-classname"
           ></v-text-field>
         </div>
         <v-combobox
@@ -109,6 +111,7 @@
             show-size
             label="Code File"
             hint="choose file"
+            data-test = "model-upload-codefile"
           ></v-file-input>
           <v-textarea
             v-model="code"
@@ -130,7 +133,7 @@
 
       <v-card-actions class="d-flex flex-column align-start py-8">
         <div>
-          <v-btn :loading="isSubmitting" depressed color="primary" class="mr-4" @click="submit">
+          <v-btn :loading="isSubmitting" depressed color="primary" class="mr-4" @click="submit" data-test = "model-upload-submit-button">
             Submit
           </v-btn>
           <v-btn :loading="isSubmitting" depressed @click="reset"> Reset </v-btn>
