@@ -94,7 +94,7 @@ class Trainer:
     def create_metadata_4_save(self, epoch, weight_path, train_acc, val_acc):
         metadata_4_save = {
             "class_name": self.orig_metadata["class_name"],
-            "nickname": f"{self.orig_metadata['nickname']}-{uuid.uuid4()}",
+            "nickname": self.orig_metadata["nickname"],
             "predefined": self.orig_metadata["predefined"],
             "pretrained": self.orig_metadata["pretrained"],
             "description": self.orig_metadata["description"],

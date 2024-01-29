@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 import threading
 import multiprocessing
 
@@ -102,8 +103,8 @@ def start_train(configs):
     """
     # Switch to the model to be trained
     model_wrapper = RServer.get_model_wrapper()
-    model_name = configs["model_name"]
-    model_wrapper.set_current_model(model_name)
+    model_id = configs["id"]
+    model_wrapper.set_current_model(model_id)
 
     try:
         train_set, test_set, model, trainer = setup_training(configs)

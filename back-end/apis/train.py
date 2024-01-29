@@ -69,7 +69,7 @@ def start_training():
             configs:
               type: object
               example: {
-                'model_name': 'my-test-model',
+                'model_id': 1,
                 'use_paired_train': True,
                 'mixture': 'random_pure',
                 'auto_save_model': True,

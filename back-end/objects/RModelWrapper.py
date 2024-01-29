@@ -88,7 +88,6 @@ class RModelWrapper:
         metadata_4_save["architecture"] = buffer.getvalue()
 
         with app.app_context():
-            # self.delete_model_by_id(metadata_4_save["id"])
             self.create_model(metadata_4_save)
 
     def set_current_model(self, model_id: str):
@@ -278,8 +277,7 @@ class RModelWrapper:
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
-                model_meta_data.class_name,
-                model_meta_data.pretrained,
+                model_meta_data.class_name, model_meta_data.pretrained,
             )
         else:
             model = self.init_custom_model(
