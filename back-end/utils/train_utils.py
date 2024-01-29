@@ -103,7 +103,7 @@ def start_train(configs):
     """
     # Switch to the model to be trained
     model_wrapper = RServer.get_model_wrapper()
-    model_id = configs["id"]
+    model_id = configs["model_id"]
     model_wrapper.set_current_model(model_id)
 
     try:
