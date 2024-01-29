@@ -90,7 +90,7 @@ class RModelWrapper:
         with app.app_context():
             self.create_model(metadata_4_save)
 
-    def set_current_model(self, model_id: str):
+    def set_current_model(self, model_id: int):
         # No change if this model is already the current model
         if model_id == self.model_id:
             return
@@ -277,7 +277,8 @@ class RModelWrapper:
 
         if model_meta_data.predefined:
             model = self.init_predefined_model(
-                model_meta_data.class_name, model_meta_data.pretrained,
+                model_meta_data.class_name,
+                model_meta_data.pretrained,
             )
         else:
             model = self.init_custom_model(
