@@ -171,7 +171,7 @@ upload_test_cases = [
                 "tags": ["test", "CNN", "resnet"]
             }""",
         },
-        "expected_output": 400,
+        "expected_output": 200,
     },
     {
         "input": {
@@ -222,10 +222,10 @@ upload_test_cases = [
 """
 
 
-def build_dummy_model_metadata(nickname):
+def build_dummy_model_metadata():
     metadata = {
         "class_name": "resnet-18-32x32",
-        "nickname": nickname,
+        "nickname": "dummy-model",
         "description": "test description",
         "tags": ["tag1", "tag2"],
         "pretrained": "0",
@@ -240,8 +240,8 @@ def build_dummy_model_metadata(nickname):
 """
 
 
-def dummy_api_upload_dummy_model(client, name: str):
-    metadata = build_dummy_model_metadata(name)
+def dummy_api_upload_dummy_model(client):
+    metadata = build_dummy_model_metadata()
     response = client.post(
         f"/model",
         data={"metadata": json.dumps(metadata)},
@@ -250,8 +250,8 @@ def dummy_api_upload_dummy_model(client, name: str):
     return response
 
 
-def dummy_api_set_current_model(client, name: str):
-    response = client.post(f"/model/current/{name}")
+def dummy_api_set_current_model(client, model_id: int):
+    response = client.post(f"/model/current/{model_id}")
     return response
 
 
@@ -265,8 +265,8 @@ def dummy_api_list_models(client):
     return response
 
 
-def dummy_api_delete_model(client, name: str):
-    response = client.delete(f"/model/{name}")
+def dummy_api_delete_model(client, model_id: int):
+    response = client.delete(f"/model/{model_id}")
     return response
 
 
@@ -281,31 +281,33 @@ class TestModel:
         def test_model_upload(self, client, reset_db, basedir, test_data):
             input_data = test_data["input"].copy()
 
-            if "weight_file_path" in input_data:
+            if "weight_file" in input_data:
                 weight_file_path = os.path.join(basedir, input_data["weight_file"])
-                with open(weight_file_path, "rb") as f:
-                    input_data["weight_file"] = (
-                        FileStorage(stream=f, filename="SimpleCNN.pth"),
-                    )
+                f = open(weight_file_path, "rb")
+                input_data["weight_file"] = (
+                    FileStorage(stream=f, filename="SimpleCNN.pth"),
+                )
 
             response = client.post(
                 "/model", data=input_data, content_type="multipart/form-data"
             )
+            if "weight_file" in input_data:
+                f.close()
             assert response.status_code == test_data["expected_output"]
 
     class TestModelSwitch:
         def test_set_nonexist(self, client, reset_db):
-            model_name = "model-non-exist"
-            response = client.post(f"/model/current/{model_name}")
+            model_id = 1
+            response = client.post(f"/model/current/{model_id}")
             assert response.status_code != 200
 
         def test_get_set(self, client, reset_db):
             # Upload two models
-            resp = dummy_api_upload_dummy_model(client, "model-get-set-1")
+            resp = dummy_api_upload_dummy_model(client)
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
-            resp = dummy_api_upload_dummy_model(client, "model-get-set-2")
+            resp = dummy_api_upload_dummy_model(client)
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
@@ -315,7 +317,7 @@ class TestModel:
             assert resp.status_code == 400
 
             # Set current model to the first one
-            resp = dummy_api_set_current_model(client, "model-get-set-1")
+            resp = dummy_api_set_current_model(client, 1)
             assert (
                 resp.status_code == 200
             ), f"Fail to set model-1 as current model. {resp.get_json().get('detail')}"
@@ -323,11 +325,11 @@ class TestModel:
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-get-set-1"
+                resp.get_json()["data"].get("id") == 1
             ), f"current model nickname does match expected value"
 
             # Set current model to the second one
-            resp = dummy_api_set_current_model(client, "model-get-set-2")
+            resp = dummy_api_set_current_model(client, 2)
             assert (
                 resp.status_code == 200
             ), f"Fail to set model-2 as current model. {resp.get_json().get('detail')}"
@@ -335,14 +337,14 @@ class TestModel:
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-get-set-2"
+                resp.get_json()["data"].get("id") == 2
             ), f"current model nickname does match expected value"
 
     class TestCRUDModel:
         def test_list(self, client, reset_db):
             # Upload dummy models
-            for model_name in ["model-list-1", "model-list-2"]:
-                dummy_api_upload_dummy_model(client, model_name)
+            for _ in range(2):
+                dummy_api_upload_dummy_model(client)
 
             # List models
             resp = dummy_api_list_models(client)
@@ -350,20 +352,20 @@ class TestModel:
             models = resp.get_json()["data"]
             assert len(models) == 2, "Unexpected number of models in the list"
 
-            model_names = [model["nickname"] for model in models]
-            assert "model-list-1" in model_names
-            assert "model-list-2" in model_names
+            model_ids = [model["id"] for model in models]
+            assert 1 in model_ids
+            assert 2 in model_ids
 
         def test_delete(self, client, reset_db):
             # Upload dummy models
-            for model_name in ["model-delete-1", "model-delete-2"]:
-                dummy_api_upload_dummy_model(client, model_name)
+            for _ in range(2):
+                dummy_api_upload_dummy_model(client)
 
             # Delete model
-            resp = dummy_api_delete_model(client, "model-delete-1")
+            resp = dummy_api_delete_model(client, 1)
             assert resp.status_code == 200
             assert (
-                resp.get_json()["data"].get("nickname") == "model-delete-1"
+                resp.get_json()["data"].get("id") == 1
             ), "Deleted model metadata is wrong"
 
             # Expect only 1 model left in the list
@@ -373,16 +375,14 @@ class TestModel:
 
         def test_delete_current(self, client, reset_db):
             # Upload dummy models
-            model_name = "model-delete-current"
-            dummy_api_upload_dummy_model(client, model_name)
-            
-            dummy_api_set_current_model(client, model_name)
+            dummy_api_upload_dummy_model(client)
+
+            dummy_api_set_current_model(client, 1)
 
             # Deleting current model
-            resp = dummy_api_delete_model(client, model_name)
+            resp = dummy_api_delete_model(client, 1)
             assert resp.status_code == 200
 
             # No current model is selected
             resp = dummy_api_get_current_model(client)
             assert resp.status_code == 400
-

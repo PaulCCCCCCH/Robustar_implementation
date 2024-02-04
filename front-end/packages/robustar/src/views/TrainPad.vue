@@ -170,7 +170,7 @@ export default {
       ],
       // Training configs
       configs: {
-        model_name: 'simple-classifier',
+        model_id: 1,
         use_paired_train: true,
         mixture: 'random_pure',
         auto_save_model: true,
