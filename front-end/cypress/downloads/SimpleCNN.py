@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 
-import torch.nn as nn
-
 
 class SimpleCNN(nn.Module):
     def __init__(self):
@@ -18,7 +16,7 @@ class SimpleCNN(nn.Module):
 
         # Fully connected layers
         self.fc1 = nn.Linear(32 * 8 * 8, 128)  # after two pooling operations, 32x32 becomes 8x8
-        self.fc2 = nn.Linear(128, 10)  # for 10 output classes
+        self.fc2 = nn.Linear(128, 9)  # for 9 output classes
 
     def forward(self, x):
         # First convolutional layer followed by activation and pooling
