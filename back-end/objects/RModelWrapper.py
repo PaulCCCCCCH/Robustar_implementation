@@ -217,6 +217,9 @@ class RModelWrapper:
         model_to_update.architecture = (
             metadata.get("architecture") or model_to_update.architecture
         )
+        model_to_update.nickname = (
+            metadata.get("nickname") or model_to_update.nickname
+        )
 
         prev_tags = metadata.get("tags")
         model_to_update.tags = (

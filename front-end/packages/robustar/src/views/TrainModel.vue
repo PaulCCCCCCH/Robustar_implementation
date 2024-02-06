@@ -74,7 +74,7 @@
         :search="searchText"
         :loading="isLoading"
         loading-text="Loading... Please wait"
-        item-key="nickname"
+        item-key="id"
         show-select
         width="1000"
       >
@@ -215,6 +215,7 @@
           <v-icon
             small
             @click="
+              deletingModelId = item.id;
               deletingModelName = item.nickname;
               dialogDelete = true;
             "
@@ -239,6 +240,7 @@ import {
 import ModelUploader from '@/components/ModelUploader';
 
 const initialModel = {
+  id: '',
   architecture: '',
   class_name: '',
   create_time: '',
@@ -263,6 +265,7 @@ export default {
       isLoading: false,
       currentModel: { ...initialModel },
       editingModel: { ...initialModel },
+      deletingModelId: '',
       deletingModelName: '',
       modelList: [],
       selectedModels: [],
@@ -270,10 +273,7 @@ export default {
       dialogEdit: false,
       dialogDelete: false,
       headers: [
-        {
-          text: 'nickname',
-          value: 'nickname',
-        },
+        { text: 'Nickname', value: 'nickname' },
         { text: 'Tag', value: 'tag' },
         { text: 'Created Time', value: 'create_time' },
         { text: 'Last Trained', value: 'last_trained' },
@@ -314,7 +314,7 @@ export default {
     },
     async setCurrentModel() {
       try {
-        const response = await APISetCurrentModel(this.editingModel.nickname);
+        const response = await APISetCurrentModel(this.editingModel.id);
         this.currentModel = { ...this.editingModel };
       } catch (error) {
         console.error('Error setting current model:', error);
@@ -323,7 +323,7 @@ export default {
     async deleteModel() {
       this.isSubmitting = true;
       try {
-        await APIDeleteModel(this.deletingModelName);
+        await APIDeleteModel(this.deletingModelId);
         this.getCurrentModel();
         this.getModelList();
         this.dialogDelete = false;
@@ -336,7 +336,7 @@ export default {
     async duplicateModel(item) {
       this.isSubmitting = true;
       try {
-        await APIDuplicateModel(item.nickname);
+        await APIDuplicateModel(item.id);
         this.getModelList();
       } catch (error) {
         console.error('Error duplicating model:', error);
@@ -347,7 +347,7 @@ export default {
     async saveModelChanges() {
       this.isSubmitting = true;
       try {
-        await APIUpdateModel(this.editingModel.nickname, this.editingModel);
+        await APIUpdateModel(this.editingModel.id, this.editingModel);
         this.getModelList();
         this.dialogEdit = false;
       } catch (error) {
