@@ -217,6 +217,9 @@ class RModelWrapper:
         model_to_update.architecture = (
             metadata.get("architecture") or model_to_update.architecture
         )
+        model_to_update.nickname = (
+            metadata.get("nickname") or model_to_update.nickname
+        )
 
         prev_tags = metadata.get("tags")
         model_to_update.tags = (
@@ -232,9 +235,17 @@ class RModelWrapper:
         if not model:
             return None
 
+        def get_name_of_copy(initial_name):
+            nickname = initial_name + "_copy"
+            attempt = 1
+            while Models.query.filter_by(nickname=nickname).first() is not None:
+                nickname = f"{nickname}_{attempt}"
+                attempt += 1
+            return nickname
+
         model_copy = Models(
             class_name=model.class_name,
-            nickname=model.nickname + "_copy",
+            nickname=get_name_of_copy(model.nickname),
             predefined=model.predefined,
             pretrained=model.pretrained,
             description=model.description,

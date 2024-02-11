@@ -52,10 +52,24 @@
           class="mr-8"></v-text-field>
         <ModelUploader @upload="getModelList" />
       </v-card-title>
+<<<<<<< HEAD
       <v-data-table v-model="selectedModels" :headers="headers" :items="modelList" :search="searchText"
         :loading="isLoading" loading-text="Loading... Please wait" item-key="id"
         :item-class="(item) => (item.id === currentModel.id ? 'blue lighten-5' : '')" show-select
         width="1000">
+=======
+      <v-data-table
+        v-model="selectedModels"
+        :headers="headers"
+        :items="modelList"
+        :search="searchText"
+        :loading="isLoading"
+        loading-text="Loading... Please wait"
+        item-key="id"
+        show-select
+        width="1000"
+      >
+>>>>>>> merge/v0.3
         <template v-slot:top>
           <!-- <v-toolbar flat> -->
           <v-dialog v-model="dialogEdit" max-width="800px" persistent>
@@ -153,6 +167,7 @@
               <v-icon small @click="
                 editingModel = { ...item };
               dialogEdit = true;
+<<<<<<< HEAD
               " class="mr-2" v-bind="attrs" v-on="on" data-test="train-model-edit-model">
                 mdi-pencil
               </v-icon>
@@ -172,6 +187,18 @@
             <template v-slot:activator="{ on, attrs }">
               <v-icon small @click="
                 deletingModelID = item.id;
+=======
+            "
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon small class="mx-2" @click="duplicateModel(item)"> mdi-content-copy </v-icon>
+          <v-icon
+            small
+            @click="
+              deletingModelId = item.id;
+              deletingModelName = item.nickname;
+>>>>>>> merge/v0.3
               dialogDelete = true;
               " v-bind="attrs" v-on="on" data-test="train-model-delete-model">
                 mdi-delete
@@ -197,6 +224,7 @@ import {
 import ModelUploader from '@/components/ModelUploader';
 
 const initialModel = {
+  id: '',
   architecture: '',
   class_name: '',
   create_time: '',
@@ -222,13 +250,19 @@ export default {
       isLoading: false,
       currentModel: { ...initialModel },
       editingModel: { ...initialModel },
+<<<<<<< HEAD
       deletingModelID: 0,
+=======
+      deletingModelId: '',
+      deletingModelName: '',
+>>>>>>> merge/v0.3
       modelList: [],
       selectedModels: [],
       searchText: '',
       dialogEdit: false,
       dialogDelete: false,
       headers: [
+<<<<<<< HEAD
         {
           text: 'id',
           value: 'id',
@@ -237,6 +271,9 @@ export default {
           text: 'nickname',
           value: 'nickname',
         },
+=======
+        { text: 'Nickname', value: 'nickname' },
+>>>>>>> merge/v0.3
         { text: 'Tag', value: 'tag' },
         { text: 'Created Time', value: 'create_time' },
         { text: 'Last Trained', value: 'last_trained' },
@@ -286,10 +323,25 @@ export default {
         this.isLoading = false;
       }
     },
+<<<<<<< HEAD
     async deleteModel() {
       this.isSubmitting = true;
       try {
         await APIDeleteModel(this.deletingModelID);
+=======
+    async setCurrentModel() {
+      try {
+        const response = await APISetCurrentModel(this.editingModel.id);
+        this.currentModel = { ...this.editingModel };
+      } catch (error) {
+        console.error('Error setting current model:', error);
+      }
+    },
+    async deleteModel() {
+      this.isSubmitting = true;
+      try {
+        await APIDeleteModel(this.deletingModelId);
+>>>>>>> merge/v0.3
         this.getCurrentModel();
         this.getModelList();
         this.dialogDelete = false;
