@@ -50,7 +50,7 @@ class RModelWrapper:
         self.device = device  # We keep device as string to allow for easy comparison
         self.model = None
         self.model_meta_data = None
-        self.model_name = ""
+        self.model_id = None
         self.num_classes = num_classes
         self.modelwork_type = network_type
 
@@ -88,12 +88,11 @@ class RModelWrapper:
         metadata_4_save["architecture"] = buffer.getvalue()
 
         with app.app_context():
-            self.delete_model_by_name(metadata_4_save["nickname"])
             self.create_model(metadata_4_save)
 
-    def set_current_model(self, model_name: str):
+    def set_current_model(self, model_id: int):
         # No change if this model is already the current model
-        if model_name == self.model_name:
+        if model_id == self.model_id:
             return
 
         # Check if the current model is idle
@@ -101,7 +100,7 @@ class RModelWrapper:
             raise Exception("Failed to switch model because the current model is busy.")
 
         # Get new model
-        new_model, new_model_meta_data = self.load_model_by_name(model_name)
+        new_model, new_model_meta_data = self.load_model_by_id(model_id)
         if not new_model or not new_model_meta_data:
             raise ValueError("Model does not exist")
 
@@ -112,7 +111,7 @@ class RModelWrapper:
             self.model = None
 
         self.model = new_model
-        self.model_name = new_model_meta_data.nickname
+        self.model_id = new_model_meta_data.id
         self.model_meta_data = new_model_meta_data
 
     def clear_current_model(self):
@@ -122,11 +121,11 @@ class RModelWrapper:
 
         del self.model
         self.model = None
-        self.model_name = None
+        self.model_id = None
         self.model_meta_data = None
 
-    def is_current_model(self, model_name: str):
-        return model_name == self.model_name
+    def is_current_model(self, model_id: int):
+        return model_id == self.model_id
 
     def load_net(self, path):
         if os.path.exists(path):
@@ -193,24 +192,22 @@ class RModelWrapper:
     def list_models(self) -> list[Models]:
         return Models.query.all()
 
-    def delete_model_by_name(self, name) -> Models:
-        if self.is_current_model(name):
+    def delete_model_by_id(self, id) -> Models:
+        if self.is_current_model(id):
             self.clear_current_model()
 
-        model_to_delete = Models.query.filter_by(nickname=name).first()
+        model_to_delete = self.get_model_by_id(id)
 
         if model_to_delete:
             db.session.delete(model_to_delete)
             db.session.commit()
             return model_to_delete
         else:
-            print(
-                f"Attempting to delete a model that does not exist. Model name: {name}"
-            )
+            print(f"Attempting to delete a model that does not exist. Model id: {id}")
             return None
 
-    def update_model(self, model_name, metadata) -> Models:
-        model_to_update = Models.query.filter_by(nickname=model_name).first()
+    def update_model(self, model_id, metadata) -> Models:
+        model_to_update = self.get_model_by_id(model_id)
         if not model_to_update:
             return None
 
@@ -219,6 +216,9 @@ class RModelWrapper:
         )
         model_to_update.architecture = (
             metadata.get("architecture") or model_to_update.architecture
+        )
+        model_to_update.nickname = (
+            metadata.get("nickname") or model_to_update.nickname
         )
 
         prev_tags = metadata.get("tags")
@@ -230,8 +230,8 @@ class RModelWrapper:
 
         return model_to_update
 
-    def duplicate_model(self, model_name) -> Models:
-        model = Models.query.filter_by(nickname=model_name).first()
+    def duplicate_model(self, model_id) -> Models:
+        model = self.get_model_by_id(model_id)
         if not model:
             return None
 
@@ -269,8 +269,8 @@ class RModelWrapper:
         return self.model_meta_data
 
     @staticmethod
-    def get_model_by_name(name) -> Models:
-        return Models.query.filter_by(nickname=name).first()
+    def get_model_by_id(id) -> Models:
+        return Models.query.filter_by(id=id).first()
 
     @staticmethod
     def convert_metadata_2_dict(metadata):
@@ -281,8 +281,8 @@ class RModelWrapper:
         data["tags"] = [tag.name for tag in metadata.tags]
         return data
 
-    def load_model_by_name(self, model_name: str):
-        model_meta_data = RModelWrapper.get_model_by_name(model_name)
+    def load_model_by_id(self, model_id: int):
+        model_meta_data = RModelWrapper.get_model_by_id(model_id)
         if not model_meta_data:
             return None, None
 

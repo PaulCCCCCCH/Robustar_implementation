@@ -33,12 +33,12 @@ class TestPredict:
             # TODO: [test] other splits
 
         def test_predict_success(self, client, reset_db):
-            resp = dummy_api_upload_dummy_model(client, "model-predict")
+            resp = dummy_api_upload_dummy_model(client)
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
 
-            resp = dummy_api_set_current_model(client, "model-predict")
+            resp = dummy_api_set_current_model(client, 1)
             assert (
                 resp.status_code == 200
             ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
