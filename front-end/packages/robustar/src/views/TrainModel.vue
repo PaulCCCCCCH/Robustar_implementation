@@ -2,8 +2,8 @@
   <div class="d-flex flex-column align-center">
     <v-card class="mt-8 mb-4 pa-2" width="1300">
       <v-card-title class="d-flex justify-space-between mb-2">
-        <span data-test="train-model-current-model">Current Model: {{ currentModel.nickname }}</span>
-        <v-btn outlined color="primary" @click="trainModel" data-test="train-model-train-model-button">Train</v-btn>
+        <span>Current Model: {{ currentModel.nickname }}</span>
+        <v-btn outlined color="primary" @click="trainModel">Train</v-btn>
       </v-card-title>
       <v-card-text>
         <div>
@@ -30,7 +30,7 @@
         </div>
         <div class="my-2">
           <span class="mr-8">
-            <span class="font-weight-medium" data-test="train-model-current-model-create-time">Created time: </span>
+            <span class="font-weight-medium">Created time: </span>
             {{ currentModel.create_time }}
           </span>
           <span class="mx-8">
@@ -41,23 +41,32 @@
         <div class="my-2 mb-4">
           <span class="font-weight-medium">Description: </span>{{ currentModel.description }}
         </div>
-        <v-textarea v-model="currentModel.architecture" rows="3" label="Architecture" hint=""
-          data-test="train-model-current-model-architecture" outlined clearable dense disabled></v-textarea>
+        <v-textarea
+          v-model="currentModel.architecture"
+          rows="3"
+          label="Architecture"
+          hint=""
+          outlined
+          clearable
+          dense
+          disabled
+        ></v-textarea>
       </v-card-text>
     </v-card>
     <v-card class="pa-2 mb-4" width="1300">
       <v-card-title>
         All models <v-spacer></v-spacer>
-        <v-text-field v-model="searchText" append-icon="mdi-magnify" label="Search" single-line hide-details dense
-          class="mr-8"></v-text-field>
+        <v-text-field
+          v-model="searchText"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+          dense
+          class="mr-8"
+        ></v-text-field>
         <ModelUploader @upload="getModelList" />
       </v-card-title>
-<<<<<<< HEAD
-      <v-data-table v-model="selectedModels" :headers="headers" :items="modelList" :search="searchText"
-        :loading="isLoading" loading-text="Loading... Please wait" item-key="id"
-        :item-class="(item) => (item.id === currentModel.id ? 'blue lighten-5' : '')" show-select
-        width="1000">
-=======
       <v-data-table
         v-model="selectedModels"
         :headers="headers"
@@ -69,7 +78,6 @@
         show-select
         width="1000"
       >
->>>>>>> merge/v0.3
         <template v-slot:top>
           <!-- <v-toolbar flat> -->
           <v-dialog v-model="dialogEdit" max-width="800px" persistent>
@@ -79,18 +87,35 @@
               </v-card-title>
               <v-card-text>
                 <div class="d-flex justify-space-between">
-                  <span style="width: 400px"><v-text-field v-model="editingModel.nickname" :loading="isSubmitting"
-                      label="Model Name" hint="" outlined clearable dense
-                      data-test="train-model-edit-model-name"></v-text-field></span>
+                  <span style="width: 400px"
+                    ><v-text-field
+                      v-model="editingModel.nickname"
+                      :loading="isSubmitting"
+                      label="Model Name"
+                      hint=""
+                      outlined
+                      clearable
+                      dense
+                    ></v-text-field
+                  ></span>
                   <span>
-                    <v-btn class="ml-4" outlined color="primary" @click="setCurrentModel">Set As Current
-                      Model</v-btn></span>
+                    <v-btn class="ml-4" outlined color="primary" @click="setCurrentModel"
+                      >Set As Current Model</v-btn
+                    ></span
+                  >
                 </div>
                 <v-divider class="mb-4"></v-divider>
                 <div>
                   <div style="width: 100px; display: inline-block">
-                    <v-text-field v-model="editingModel.tag" :loading="isSubmitting" label="Tag" hint="" outlined
-                      clearable dense></v-text-field>
+                    <v-text-field
+                      v-model="editingModel.tag"
+                      :loading="isSubmitting"
+                      label="Tag"
+                      hint=""
+                      outlined
+                      clearable
+                      dense
+                    ></v-text-field>
                   </div>
                   <span class="mx-8">
                     <span class="font-weight-medium">Epoch: </span>
@@ -119,18 +144,41 @@
                     {{ editingModel.last_trained }}
                   </span>
                 </div>
-                <v-textarea v-model="editingModel.description" :loading="isSubmitting" rows="1" label="Description"
-                  hint="" auto-grow outlined clearable dense data-test="train-model-edit-model-description"></v-textarea>
-                <v-textarea v-model="editingModel.architecture" :loading="isSubmitting" rows="7" label="Architecture"
-                  hint="" outlined clearable dense></v-textarea>
+                <v-textarea
+                  v-model="editingModel.description"
+                  :loading="isSubmitting"
+                  rows="1"
+                  label="Description"
+                  hint=""
+                  auto-grow
+                  outlined
+                  clearable
+                  dense
+                ></v-textarea>
+                <v-textarea
+                  v-model="editingModel.architecture"
+                  :loading="isSubmitting"
+                  rows="7"
+                  label="Architecture"
+                  hint=""
+                  outlined
+                  clearable
+                  dense
+                ></v-textarea>
                 <v-divider class="mb-4"></v-divider>
                 <div class="d-flex justify-end">
-                  <v-btn :loading="isSubmitting" depressed color="warning" @click="dialogEdit = false" class="mr-4"
-                    data-test="train-model-edit-model-cancel">
+                  <v-btn
+                    :loading="isSubmitting"
+                    depressed
+                    color="warning"
+                    @click="dialogEdit = false"
+                    class="mr-4"
+                  >
                     Cancel
                   </v-btn>
                   <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges"
-                    data-test="train-model-edit-model-confirm">Save Changes</v-btn>
+                    >Save Changes</v-btn
+                  >
                 </div>
               </v-card-text>
             </v-card>
@@ -140,12 +188,13 @@
               <v-card-title>
                 <span class="text-h5">Delete model</span>
               </v-card-title>
-              <v-card-text>Are you sure you want to delete the model {{ deletingModelID }}?</v-card-text>
+              <v-card-text
+                >Are you sure you want to delete the model {{ deletingModelName }}?</v-card-text
+              >
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialogDelete = false"> Cancel </v-btn>
-                <v-btn color="error darken-1" text @click="deleteModel" data-test="train-model-delete-model-confirm">
-                  Confirm </v-btn>
+                <v-btn color="error darken-1" text @click="deleteModel"> Confirm </v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -153,41 +202,11 @@
           <!-- </v-toolbar> -->
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon small @click="setCurrentModel(item)" class="mr-2" v-bind="attrs" v-on="on"
-                data-test="train-model-set-current-model">
-                mdi-check-circle-outline
-              </v-icon>
-            </template>
-            <span>Set as current model</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon small @click="
-                editingModel = { ...item };
+          <v-icon
+            small
+            @click="
+              editingModel = { ...item };
               dialogEdit = true;
-<<<<<<< HEAD
-              " class="mr-2" v-bind="attrs" v-on="on" data-test="train-model-edit-model">
-                mdi-pencil
-              </v-icon>
-            </template>
-            <span>Edit model</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon small class="mr-2" @click="duplicateModel(item)" v-bind="attrs" v-on="on"
-                data-test="train-model-duplicate-model">
-                mdi-content-copy
-              </v-icon>
-            </template>
-            <span>Duplicate model</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon small @click="
-                deletingModelID = item.id;
-=======
             "
           >
             mdi-pencil
@@ -198,14 +217,11 @@
             @click="
               deletingModelId = item.id;
               deletingModelName = item.nickname;
->>>>>>> merge/v0.3
               dialogDelete = true;
-              " v-bind="attrs" v-on="on" data-test="train-model-delete-model">
-                mdi-delete
-              </v-icon>
-            </template>
-            <span>Delete model</span>
-          </v-tooltip>
+            "
+          >
+            mdi-delete
+          </v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -231,7 +247,6 @@ const initialModel = {
   last_trained: '',
   description: '',
   epoch: 0,
-  id: 0,
   nickname: '',
   test_accuracy: '',
   train_accuracy: '',
@@ -250,30 +265,15 @@ export default {
       isLoading: false,
       currentModel: { ...initialModel },
       editingModel: { ...initialModel },
-<<<<<<< HEAD
-      deletingModelID: 0,
-=======
       deletingModelId: '',
       deletingModelName: '',
->>>>>>> merge/v0.3
       modelList: [],
       selectedModels: [],
       searchText: '',
       dialogEdit: false,
       dialogDelete: false,
       headers: [
-<<<<<<< HEAD
-        {
-          text: 'id',
-          value: 'id',
-        },
-        {
-          text: 'nickname',
-          value: 'nickname',
-        },
-=======
         { text: 'Nickname', value: 'nickname' },
->>>>>>> merge/v0.3
         { text: 'Tag', value: 'tag' },
         { text: 'Created Time', value: 'create_time' },
         { text: 'Last Trained', value: 'last_trained' },
@@ -302,17 +302,6 @@ export default {
         console.error('Error fetching current model:', error);
       }
     },
-    async setCurrentModel(model) {
-      try {
-        const response = await APISetCurrentModel(
-          model ? model.id : this.editingModel.id
-        );
-        this.currentModel = model ? { ...model } : { ...this.editingModel };
-        this.$root.$emit('sync-current-model')
-      } catch (error) {
-        console.error('Error setting current model:', error);
-      }
-    },
     async getModelList() {
       try {
         this.isLoading = true;
@@ -323,12 +312,6 @@ export default {
         this.isLoading = false;
       }
     },
-<<<<<<< HEAD
-    async deleteModel() {
-      this.isSubmitting = true;
-      try {
-        await APIDeleteModel(this.deletingModelID);
-=======
     async setCurrentModel() {
       try {
         const response = await APISetCurrentModel(this.editingModel.id);
@@ -341,7 +324,6 @@ export default {
       this.isSubmitting = true;
       try {
         await APIDeleteModel(this.deletingModelId);
->>>>>>> merge/v0.3
         this.getCurrentModel();
         this.getModelList();
         this.dialogDelete = false;
