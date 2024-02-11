@@ -5,7 +5,7 @@
     </template>
 
     <v-card>
-      <v-card-title class="d-flex justify-space-between" data-test = "model-upload-button">
+      <v-card-title class="d-flex justify-space-between">
         <span >Upload New Model</span>
         <v-btn icon @click="dialog = false" >
           <v-icon>mdi-close</v-icon>

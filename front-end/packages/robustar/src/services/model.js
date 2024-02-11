@@ -10,18 +10,18 @@ export const APIGetCurrentModel = async () => {
 
 /**
  * Set a specific model as the current active model.
- * @param {string} modelName
+ * @param {string} modelID
  */
-export const APISetCurrentModel = async (modelName) => {
-  return postRequest(`/model/current/${modelName}`);
+export const APISetCurrentModel = async (modelID) => {
+  return postRequest(`/model/current/${modelID}`);
 };
 
 /**
- * Delete a specific model by its name.
- * @param {string} modelName
+ * Delete a specific model by its ID.
+ * @param {string} modelID
  */
-export const APIDeleteModel = async (modelName) => {
-  return deleteRequest(`/model/${modelName}`);
+export const APIDeleteModel = async (modelID) => {
+  return deleteRequest(`/model/${modelID}`);
 };
 
 /**
@@ -42,14 +42,14 @@ export const APIUploadModel = async (metadata, code = null, weightFile = null) =
 
 /**
  * Update a model.
- * @param {string} name - Model name
+ * @param {int} id - Model id
  * @param {Object} metadata - Model metadata
  */
-export const APIUpdateModel = async (name, metadata) => {
+export const APIUpdateModel = async (id, metadata) => {
   const formData = new FormData();
   formData.append('metadata', JSON.stringify(metadata));
 
-  return putRequest(`/model/${name}`, formData);
+  return putRequest(`/model/${id}`, formData);
 };
 
 /**
@@ -60,11 +60,11 @@ export const APIGetAllModels = async () => {
 };
 
 /**
- * Duplicate a model by its name.
- * @param {string} modelName
+ * Duplicate a model by its id.
+ * @param {string} modelID
  */
-export const APIDuplicateModel = async (modelName) => {
-  return postRequest(`/model/duplicate/${modelName}`);
+export const APIDuplicateModel = async (modelID) => {
+  return postRequest(`/model/duplicate/${modelID}`);
 };
 
 /**

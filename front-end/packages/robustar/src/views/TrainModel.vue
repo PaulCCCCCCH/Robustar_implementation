@@ -53,8 +53,8 @@
         <ModelUploader @upload="getModelList" />
       </v-card-title>
       <v-data-table v-model="selectedModels" :headers="headers" :items="modelList" :search="searchText"
-        :loading="isLoading" loading-text="Loading... Please wait" item-key="nickname"
-        :item-class="(item) => (item.nickname === currentModel.nickname ? 'blue lighten-5' : '')" show-select
+        :loading="isLoading" loading-text="Loading... Please wait" item-key="id"
+        :item-class="(item) => (item.id === currentModel.id ? 'blue lighten-5' : '')" show-select
         width="1000">
         <template v-slot:top>
           <!-- <v-toolbar flat> -->
@@ -65,8 +65,9 @@
               </v-card-title>
               <v-card-text>
                 <div class="d-flex justify-space-between">
-                  <span style="width: 400px"><v-text-field v-model="editingModel.nickname" :loading="isSubmitting" 
-                      label="Model Name" hint="" outlined clearable dense  data-test="train-model-edit-model-name" ></v-text-field></span>
+                  <span style="width: 400px"><v-text-field v-model="editingModel.nickname" :loading="isSubmitting"
+                      label="Model Name" hint="" outlined clearable dense
+                      data-test="train-model-edit-model-name"></v-text-field></span>
                   <span>
                     <v-btn class="ml-4" outlined color="primary" @click="setCurrentModel">Set As Current
                       Model</v-btn></span>
@@ -78,7 +79,7 @@
                       clearable dense></v-text-field>
                   </div>
                   <span class="mx-8">
-                    <span class="font-weight-medium" >Epoch: </span>
+                    <span class="font-weight-medium">Epoch: </span>
                     {{ editingModel.epoch }}
                   </span>
                   <span>
@@ -110,10 +111,12 @@
                   hint="" outlined clearable dense></v-textarea>
                 <v-divider class="mb-4"></v-divider>
                 <div class="d-flex justify-end">
-                  <v-btn :loading="isSubmitting" depressed color="warning" @click="dialogEdit = false" class="mr-4" data-test="train-model-edit-model-cancel">
+                  <v-btn :loading="isSubmitting" depressed color="warning" @click="dialogEdit = false" class="mr-4"
+                    data-test="train-model-edit-model-cancel">
                     Cancel
                   </v-btn>
-                  <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges" data-test="train-model-edit-model-confirm">Save Changes</v-btn>
+                  <v-btn :loading="isSubmitting" depressed color="success" @click="saveModelChanges"
+                    data-test="train-model-edit-model-confirm">Save Changes</v-btn>
                 </div>
               </v-card-text>
             </v-card>
@@ -123,11 +126,12 @@
               <v-card-title>
                 <span class="text-h5">Delete model</span>
               </v-card-title>
-              <v-card-text>Are you sure you want to delete the model {{ deletingModelName }}?</v-card-text>
+              <v-card-text>Are you sure you want to delete the model {{ deletingModelID }}?</v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialogDelete = false"> Cancel </v-btn>
-                <v-btn color="error darken-1" text @click="deleteModel" data-test = "train-model-delete-model-confirm"> Confirm </v-btn>
+                <v-btn color="error darken-1" text @click="deleteModel" data-test="train-model-delete-model-confirm">
+                  Confirm </v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -157,7 +161,8 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-icon small class="mr-2" @click="duplicateModel(item)" v-bind="attrs" v-on="on" data-test="train-model-duplicate-model">
+              <v-icon small class="mr-2" @click="duplicateModel(item)" v-bind="attrs" v-on="on"
+                data-test="train-model-duplicate-model">
                 mdi-content-copy
               </v-icon>
             </template>
@@ -166,7 +171,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon small @click="
-                deletingModelName = item.nickname;
+                deletingModelID = item.id;
               dialogDelete = true;
               " v-bind="attrs" v-on="on" data-test="train-model-delete-model">
                 mdi-delete
@@ -198,6 +203,7 @@ const initialModel = {
   last_trained: '',
   description: '',
   epoch: 0,
+  id: 0,
   nickname: '',
   test_accuracy: '',
   train_accuracy: '',
@@ -216,13 +222,17 @@ export default {
       isLoading: false,
       currentModel: { ...initialModel },
       editingModel: { ...initialModel },
-      deletingModelName: '',
+      deletingModelID: 0,
       modelList: [],
       selectedModels: [],
       searchText: '',
       dialogEdit: false,
       dialogDelete: false,
       headers: [
+        {
+          text: 'id',
+          value: 'id',
+        },
         {
           text: 'nickname',
           value: 'nickname',
@@ -258,7 +268,7 @@ export default {
     async setCurrentModel(model) {
       try {
         const response = await APISetCurrentModel(
-          model ? model.nickname : this.editingModel.nickname
+          model ? model.id : this.editingModel.id
         );
         this.currentModel = model ? { ...model } : { ...this.editingModel };
         this.$root.$emit('sync-current-model')
@@ -279,7 +289,7 @@ export default {
     async deleteModel() {
       this.isSubmitting = true;
       try {
-        await APIDeleteModel(this.deletingModelName);
+        await APIDeleteModel(this.deletingModelID);
         this.getCurrentModel();
         this.getModelList();
         this.dialogDelete = false;
@@ -292,7 +302,7 @@ export default {
     async duplicateModel(item) {
       this.isSubmitting = true;
       try {
-        await APIDuplicateModel(item.nickname);
+        await APIDuplicateModel(item.id);
         this.getModelList();
       } catch (error) {
         console.error('Error duplicating model:', error);
@@ -303,7 +313,7 @@ export default {
     async saveModelChanges() {
       this.isSubmitting = true;
       try {
-        await APIUpdateModel(this.editingModel.nickname, this.editingModel);
+        await APIUpdateModel(this.editingModel.id, this.editingModel);
         this.getModelList();
         this.dialogEdit = false;
       } catch (error) {
