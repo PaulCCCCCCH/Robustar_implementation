@@ -1,15 +1,14 @@
 from .RDataManager import RDataManager
+from .RModelWrapper import RModelWrapper
 from flasgger import Swagger
 
 
 # Wrapper for flask server instance
 class RServer:
-
     server_instance = None
 
     # Use createServer method instead!
     def __init__(self, configs, base_dir, dataset_dir, ckpt_dir, app, socket):
-
         app.config["SWAGGER"] = {
             "title": "Robustar API",
             "uiversion": 3,
@@ -66,7 +65,7 @@ class RServer:
         return RServer.server_instance.configs
 
     @staticmethod
-    def get_model_wrapper():
+    def get_model_wrapper() -> RModelWrapper:
         return RServer.server_instance.model_wrapper
 
     @staticmethod

@@ -1,4 +1,5 @@
 from flask import request
+import traceback
 
 from modules.visualize_module.visualize.visual import visualize
 from apis.api_configs import PARAM_NAME_IMAGE_PATH
@@ -14,6 +15,7 @@ from utils.predict import (
 from flask import Blueprint
 
 predict_api = Blueprint("predict_api", __name__)
+
 
 # Return prediction result
 @predict_api.route("/predict/<split>")
@@ -123,21 +125,17 @@ def predict(split):
         )
 
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         RResponse.abort(400, "Invalid image path {}".format(image_path))
     finally:
         model_wrapper.release_model()
 
     if len(output) != 4:
-        RResponse.abort(
-            500, "[Unexpected] Invalid number of predict visualize figures"
-        )
+        RResponse.abort(500, "[Unexpected] Invalid number of predict visualize figures")
 
     predict_fig_routes = []
     for i, fig in enumerate(output):
-        predict_fig_route = "{}/{}_{}.png".format(
-            visualize_root, image_name, str(i)
-        )
+        predict_fig_route = "{}/{}_{}.png".format(visualize_root, image_name, str(i))
         fig.savefig(predict_fig_route)
         predict_fig_routes.append(predict_fig_route)
 
@@ -222,7 +220,7 @@ def calculate_influence():
                 recursion_depth: 9000,
                 scale: 5000,
                 batch_size: 16,
-                num_workers: 5, 
+                num_workers: 5,
               }
     responses:
       200:
@@ -256,6 +254,6 @@ def calculate_influence():
     except Exception as e:
         model_wrapper.release_model()
         RResponse.abort(500, f"Failed to create influence calculation thread. ({e})")
-    
+
     calc_influence_thread.start()
     return RResponse.ok({}, "Influence calculation started!")

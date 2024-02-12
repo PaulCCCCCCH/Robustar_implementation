@@ -11,8 +11,9 @@ from flask import Flask
 import argparse
 from flask_socketio import emit, SocketIO
 from apis import blueprints
-import logging 
-log = logging.getLogger('werkzeug')
+import logging
+
+log = logging.getLogger("werkzeug")
 log.setLevel(logging.WARNING)
 
 
@@ -39,6 +40,7 @@ def start_flask_app():
 # Get server listener objects
 app, socket = start_flask_app()
 
+
 # Init socket connection
 @socket.on("connect")
 def test_connect():
@@ -55,7 +57,6 @@ def precheck():
     validationset = data_manager.validationset
 
     def check_num_classes_consistency():
-
         classes_num = configs["num_classes"]
         error_template = "Number of classes specified in configs.json({}) doesn't match that in dataset {}({})"
         errors = []
@@ -98,7 +99,7 @@ def precheck():
     check_image_size_consistency()
 
 
-def new_server_object(base_dir):
+def new_server_object(base_dir, app, socket):
     base_dir = to_unix(base_dir)
     dataset_dir = to_unix(osp.join(base_dir, "dataset"))
     ckpt_dir = to_unix(osp.join(base_dir, "checkpoints"))
@@ -126,6 +127,8 @@ def new_server_object(base_dir):
         configs["image_size"] if expected_input_shape is None else expected_input_shape
     )
 
+    print("Server initializing...")
+
     """ CREATE SERVER """
     server = RServer.create_server(
         configs=configs,
@@ -137,10 +140,17 @@ def new_server_object(base_dir):
     )
 
     """ SETUP DATA MANAGER """
+    # Setup database
+    from database.db_init import db, init_db
+
+    init_db(app, db_path)
+
+    # Setup data manager
     data_manager = RDataManager(
         base_dir,
         dataset_dir,
-        db_path,
+        db,
+        app,
         shuffle=configs["shuffle"],
         image_size=image_size,
         image_padding=configs["image_padding"],
@@ -150,11 +160,13 @@ def new_server_object(base_dir):
 
     """ SETUP MODEL """
     model = RModelWrapper(
+        db_conn=db,
         network_type=network_type,
         net_path=to_unix(os.path.join(ckpt_dir, configs["weight_to_load"])),
         device=configs["device"],
         pretrained=configs["pre_trained"],
         num_classes=configs["num_classes"],
+        app=app,
     )
     RServer.set_model(model)
 
@@ -166,6 +178,8 @@ def new_server_object(base_dir):
         model_name="u2net",
     )
     RServer.set_auto_annotator(annotator)
+
+    print("Performing server consistency checks...")
 
     # Check file state consistency
     precheck()
@@ -190,8 +204,9 @@ def create_app():
     basedir = to_absolute(os.getcwd(), to_unix(args.basedir))
     print("Current working directory is {}".format(os.getcwd()))
     print("Absolute basedir is {}".format(basedir))
-    new_server_object(basedir)
+    new_server_object(basedir, app, socket)
 
+    print("Server started")
     return RServer.get_server().get_flask_app()
 
 

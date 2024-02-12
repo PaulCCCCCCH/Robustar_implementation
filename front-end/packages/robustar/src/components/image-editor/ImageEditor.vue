@@ -66,9 +66,9 @@ export default {
   },
   computed: {
     image() {
+      const timestamp = new Date().getTime();
       return {
-        path: `${configs.imagePathServerUrl}?image_url=${this.base64}`,
-        // path: this.base64,
+        path: `${configs.imagePathServerUrl}?image_url=${this.base64}&timestamp=${timestamp}`,
         name: this.url,
       };
     },
@@ -97,23 +97,25 @@ export default {
       let options = editorDefaultOptions;
       if (this.includeUi) {
         options = Object.assign(includeUIOptions, this.options);
-        options.includeUI.loadImage = this.image;
+        const timestamp = new Date().getTime();
+        const path = `${configs.imagePathServerUrl}?image_url=${this.base64}&timestamp=${timestamp}`;
+        const name = this.url;
+        options.includeUI.loadImage = {
+          path: path,
+          name: name,
+        };
       }
       this.editorInstance = new ImageEditor('.tui-image-editor', options);
       if (!this.includeUi) {
-        const { path, name } = this.image;
-        this.editorInstance
-          .loadImageFromURL(path, name) 
-          .then(() => {
-            this.editorInstance.clearUndoStack();
-          })
-          .catch((reason) => console.log(reason));
+        this.loadImageFromURL();
       }
       this._addEventListener();
     },
     async loadImageFromURL() {
-      const { path, name } = this.image;
-      try{
+      const timestamp = new Date().getTime();
+      const path = `${configs.imagePathServerUrl}?image_url=${this.base64}&timestamp=${timestamp}`;
+      const name = this.url;
+      try {
         await this.editorInstance.loadImageFromURL(path, name);
       } catch (error) {
         this.$root.alert('error', error.response?.data?.detail || 'Image loading failed');

@@ -1,24 +1,24 @@
-from test_app import app, client, PARAM_NAME_IMAGE_PATH
+from . import PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 
 
 class TestImage:
     class TestGetImageList:
-        def test_get_image_list_fail_invalid_split(self, client):
+        def test_get_image_list_fail_invalid_split(self, client, reset_db):
             response = client.get("/image/list/non-exist/1/1")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv["error_code"] == -1
             assert rv["detail"] == "Invalid data split"
 
-        def test_get_image_list_fail_num_per_page_0(self, client):
+        def test_get_image_list_fail_num_per_page_0(self, client, reset_db):
             response = client.get("/image/list/train/1/0")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv["error_code"] == -1
             assert rv["detail"] == "Invalid non-positive num_per_page"
 
-        def test_get_image_list_fail_index_out_of_bound(self, client):
+        def test_get_image_list_fail_index_out_of_bound(self, client, reset_db):
             # train, image index 90-99
             response = client.get("/image/list/train/9/10")
             assert response.status_code == 400
@@ -39,7 +39,7 @@ class TestImage:
             assert rv["detail"] == "Out of upper-bound"
             # TODO: split `validation_(in)correct`, `annotated` (&`_(in)correct`) and `proposed`
 
-        def test_get_image_list_success(self, client):
+        def test_get_image_list_success(self, client, reset_db):
             # train, image index 0 - 3
             response = client.get("/image/list/train/0/4")
             assert response.status_code == 200
@@ -93,7 +93,7 @@ class TestImage:
             # TODO: split `validation_(in)correct`, `annotated`, `test_(in)correct` and `proposed`
 
     class TestGetNextImage:
-        def test_get_next_image_fail_invalid_split(self, client):
+        def test_get_next_image_fail_invalid_split(self, client, reset_db):
             response = client.get(
                 "/image/next/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0"
             )
@@ -107,7 +107,7 @@ class TestImage:
             assert rv["error_code"] == -1
             assert rv["detail"] == "Split test not supported"
 
-        def test_get_next_image_fail_invalid_path(self, client):
+        def test_get_next_image_fail_invalid_path(self, client, reset_db):
             response = client.get(
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
@@ -158,7 +158,7 @@ class TestImage:
             )
             # TODO: split `annotated` and `proposed`
 
-        def test_get_next_image_success(self, client):
+        def test_get_next_image_success(self, client, reset_db):
             response = client.get(
                 "/image/next/train?"
                 + PARAM_NAME_IMAGE_PATH
@@ -179,14 +179,14 @@ class TestImage:
     # class TestGetAnnotated: # TODO [test]
 
     class TestGetClassPage:
-        def test_get_class_page_fail_invalid_split(self, client):
+        def test_get_class_page_fail_invalid_split(self, client, reset_db):
             response = client.get("/image/class/non-exist")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv["error_code"] == -1
             assert rv["detail"] == "Split not supported"
 
-        def test_get_class_page_success(self, client):
+        def test_get_class_page_success(self, client, reset_db):
             response = client.get("/image/class/train")
             assert response.status_code == 200
             rv = response.get_json()
@@ -283,14 +283,14 @@ class TestImage:
             # TODO: split `validation_(in)correct`, `test_(in)correct`) and `proposed`
 
     class TestGetSplitLength:
-        def test_split_length_fail_invalid_split(self, client):
+        def test_split_length_fail_invalid_split(self, client, reset_db):
             response = client.get("/image/non-exist")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv["error_code"] == -1
             assert rv["detail"] == "Split not supported"
 
-        def test_split_length_success(self, client):
+        def test_split_length_success(self, client, reset_db):
             response = client.get("/image/train")
             assert response.status_code == 200
             rv = response.get_json()

@@ -143,6 +143,7 @@
 
 <script>
 import { APIStartTrain, APIStopTrain } from '@/services/train';
+import { APIGetCurrentModel } from '@/services/model/';
 import { configs } from '@/configs.js';
 export default {
   name: 'TrainPad',
@@ -169,33 +170,39 @@ export default {
       ],
       // Training configs
       configs: {
-        model_name: 'my-test-model',
-        weight: '',
-        train_path: `${configs.dataBaseDir}/dataset/train`,
-        test_path: `${configs.dataBaseDir}/dataset/test`,
-        class_path: './model/cifar-class.txt',
-        use_paired_train: false,
+        model_id: 1,
+        use_paired_train: true,
         mixture: 'random_pure',
-        user_edit_buffering: false,
-        device: 'cuda',
         auto_save_model: true,
-        save_every: 5,
-        batch_size: '128',
+        batch_size: 128,
         shuffle: true,
         learn_rate: 0.1,
-        pgd: false,
         paired_train_reg_coeff: 0.001,
-        image_size: 32,
         epoch: 20,
         num_workers: 8,
-        pretrain: false,
+        user_edit_buffering: false,
+        save_every: 5,
       },
     };
+  },
+  async created() {
+    try {
+      const res = await APIGetCurrentModel();
+      const model = res?.data?.data;
+      if (model) {
+        this.configs.model_name = model.nickname;
+        this.configs.epoch = model.epoch;
+        this.configs.pretrain = model.pretrained;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
     async startTraining() {
       this.$root.startProcessing('The training is starting. Please wait...');
       try {
+        // TODO(Chonghan): Check whether current model is set or not, both here and from the back end
         const res = await APIStartTrain({
           configs: this.configs,
           info: 'placeholder',

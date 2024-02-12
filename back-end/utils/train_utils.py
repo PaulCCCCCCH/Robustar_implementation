@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from objects.RServer import RServer
+from objects.RModelWrapper import RModelWrapper
 import threading
 import multiprocessing
 
@@ -15,11 +16,12 @@ class TrainThread(threading.Thread):
 
     def run(self):
         try:
-            self.trainer.start_train(
-                call_back=lambda status_dict: self.update_info(status_dict),
-                epochs=int(self.configs["epoch"]),
-                auto_save=self.configs["auto_save_model"] == "yes",
-            )
+            with RServer.get_server().get_flask_app().app_context():
+                self.trainer.start_train(
+                    call_back=lambda status_dict: self.update_info(status_dict),
+                    epochs=self.configs["epoch"],
+                    auto_save=self.configs["auto_save_model"],
+                )
         except Exception as e:
             raise e
         finally:
@@ -33,26 +35,25 @@ class TrainThread(threading.Thread):
 
 def setup_training(configs):
     # Configs from training pad
-    dataManager = RServer.get_data_manager()
+    data_manager = RServer.get_data_manager()
 
     use_paired_train = configs["use_paired_train"]
     paired_train_mixture = configs["mixture"]
-    image_size = dataManager.image_size
-    trainset = dataManager.train_root
-    testset = dataManager.test_root
+    image_size = data_manager.image_size
+    train_set = data_manager.train_root
+    val_set = data_manager.validation_root
     user_edit_buffering = configs["user_edit_buffering"]
-    model_name = configs["model_name"] if configs["model_name"] else "my-model"
-
-    # Default configs from the server
-    save_dir = RServer.get_server().ckpt_dir
-    device = RServer.get_server_configs()["device"]
+    device = RServer.get_model_wrapper().device
     data_manager = RServer.get_data_manager()
     transforms = data_manager.transforms
     paired_data_path = data_manager.paired_root
+    save_dir = os.path.join(
+        RServer.get_server().base_dir, "generated", "models", "ckpt"
+    )
 
     if use_paired_train:
         train_set = PairedDataset(
-            trainset,
+            train_set,
             paired_data_path,
             image_size,
             transforms,
@@ -60,32 +61,29 @@ def setup_training(configs):
             user_edit_buffering,
         )
     else:
-        train_set = DataSet(trainset, image_size, transforms)
+        train_set = DataSet(train_set, image_size, transforms)
 
-    test_set = DataSet(testset, int(configs["image_size"]), transforms)
+    val_set = DataSet(val_set, image_size, transforms)
 
-    # Model will be initialized with server config
-    model_wrapper = RServer.get_model_wrapper()
-    model = model_wrapper.model
+    model = RServer.get_model_wrapper().get_current_model()
 
     trainer = Trainer(
-        net=model,
-        trainset=train_set,
-        testset=test_set,
-        batch_size=int(configs["batch_size"]),
+        model=model,
+        train_set=train_set,
+        val_set=val_set,
+        batch_size=configs["batch_size"],
         shuffle=configs["shuffle"],
-        num_workers=int(configs["num_workers"]),
+        num_workers=configs["num_workers"],
         device=device,
-        learn_rate=float(configs["learn_rate"]),
+        learn_rate=configs["learn_rate"],
         auto_save=configs["auto_save_model"],
-        save_every=int(configs["save_every"]),
+        save_every=configs["save_every"],
         save_dir=save_dir,
-        name=model_name,
         use_paired_train=configs["use_paired_train"],
-        paired_reg=float(configs["paired_train_reg_coeff"]),
+        paired_reg=configs["paired_train_reg_coeff"],
     )
 
-    return train_set, test_set, model, trainer
+    return train_set, val_set, model, trainer
 
 
 def start_tensorboard(logdir):
@@ -103,19 +101,15 @@ def start_train(configs):
     TODO: Set an 'exit flag' in thread object, and check regularly during training.
           This is the most elegant way that I can think of to signal a stop from the front end.
     """
-
-    print("configs:", configs)
-
+    # Switch to the model to be trained
     model_wrapper = RServer.get_model_wrapper()
-    if not model_wrapper.acquire_model():
-        raise Exception(
-            "Cannot start training because the model is occupied by another thread"
-        )
+    model_id = configs["model_id"]
+    model_wrapper.set_current_model(model_id)
 
     try:
         train_set, test_set, model, trainer = setup_training(configs)
         # Set up tensorboard log directory
-        tb_dir = "runs" 
+        tb_dir = "runs"
         date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
         if not os.path.exists(tb_dir):
             os.mkdir(tb_dir)
@@ -133,10 +127,36 @@ def start_train(configs):
         train_thread = TrainThread(trainer, configs)
 
         # Start training on a new thread
-        train_thread.start()
+        if RServer.get_model_wrapper().acquire_model():
+            train_thread.start()
+        else:
+            raise Exception("The model to be trained is busy.")
 
     except Exception as e:
-        model_wrapper.release_model()
         raise e
 
     return train_thread
+
+
+def check_configs(config):
+    """
+    Check the config of the server. Returns 0 if config is valid.
+    Otherwise, return an error code from the following table:
+    error code  |       meaning
+        10      | Training set not found or not valid
+        11      | Test set not found or not valid
+        12      | Dev set not found or not valid
+        13      | Class file not found or not valid
+        14      | Weight file not found or not valid
+        15      | Path for the source data set to be mirrored is not valid
+        16      | User edit json file path not valid
+
+        20      | paired train reg coeff not valid
+        21      | learn rate not valid
+        22      | epoch num not valid
+        23      | image size not valid
+        24      | thread number not valid
+        25      | batch size not valid
+    """
+    # TODO: check the config here
+    return 0

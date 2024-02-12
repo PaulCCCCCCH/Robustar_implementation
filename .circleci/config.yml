@@ -31,12 +31,14 @@ jobs:
           working_directory: ./back-end
           command: |
             echo "Files in directory: $(ls)"
-            pip install gdown
+            pip install gdown==4.6.0
             gdown https://drive.google.com/uc?id=1WGicmBCHMFgLU70qwBTV4ffZ-RhpGKD-
             unzip Robustar2.zip
             echo "Files in directory"
             ls ./Robustar2
- 
+            gdown https://drive.google.com/uc?id=14sl0glWpq1jxPMOCtv-47g-NsQPpUrFO
+            unzip Robustar2-test.zip
+
       - run:
           name: Install backend test dependencies and run
           working_directory: ./back-end
@@ -45,7 +47,7 @@ jobs:
             pip install pytest
             pip install -r requirements.txt
             pip install protobuf==3.20.* 
-            python -m pytest --basedir ./Robustar2 -W ignore::UserWarning -W ignore::DeprecationWarning
+            python -m pytest --data_path ./Robustar2-test -W ignore::UserWarning -W ignore::DeprecationWarning
 
       - run:
           name: End-to-end tests

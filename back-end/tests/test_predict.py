@@ -1,18 +1,19 @@
-from test_app import app, client, PARAM_NAME_IMAGE_PATH
 from objects.RServer import RServer
 from utils.path_utils import to_snake_path
+from . import PARAM_NAME_IMAGE_PATH
+from .test_model import dummy_api_upload_dummy_model, dummy_api_set_current_model
 
 
 class TestPredict:
     class TestPredict:
-        def test_predict_fail_invalid_split(self, client):
+        def test_predict_fail_invalid_split(self, client, reset_db):
             response = client.get("/predict/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0")
             assert response.status_code == 400
             rv = response.get_json()
             assert rv["error_code"] == -1
             assert rv["detail"] == "Split not supported"
 
-        def test_predict_fail_invalid_path(self, client):
+        def test_predict_fail_invalid_path(self, client, reset_db):
             response = client.get(
                 "/predict/train?"
                 + PARAM_NAME_IMAGE_PATH
@@ -31,7 +32,17 @@ class TestPredict:
             )
             # TODO: [test] other splits
 
-        def test_predict_success(self, client):
+        def test_predict_success(self, client, reset_db):
+            resp = dummy_api_upload_dummy_model(client)
+            assert (
+                resp.status_code == 200
+            ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
+
+            resp = dummy_api_set_current_model(client, 1)
+            assert (
+                resp.status_code == 200
+            ), f"Fail to upload dummy model. {resp.get_json().get('detail')}"
+
             response = client.get(
                 "/predict/train?"
                 + PARAM_NAME_IMAGE_PATH
@@ -63,7 +74,7 @@ class TestPredict:
             # TODO: [test] other splits
 
     class TestGetInfluence:
-        def test_get_influence_fail_invalid_split(self, client):
+        def test_get_influence_fail_invalid_split(self, client, reset_db):
             response = client.get(
                 "/influence/non-exist?" + PARAM_NAME_IMAGE_PATH + "=/0"
             )
@@ -71,7 +82,7 @@ class TestPredict:
             rv = response.get_json()
             assert rv["code"] == -1
 
-        def test_get_influence_fail_invalid_path(self, client):
+        def test_get_influence_fail_invalid_path(self, client, reset_db):
             response = client.get(
                 "/influence/train?"
                 + PARAM_NAME_IMAGE_PATH
@@ -83,7 +94,7 @@ class TestPredict:
             rv = response.get_json()
             assert rv["code"] == -1
 
-        def test_get_influence_success(self, client):
+        def test_get_influence_success(self, client, reset_db):
             assert True
             # response = client.get("/influence/train?" + PARAM_NAME_IMAGE_PATH +
             #                 "=" + RServer.get_server().base_dir + "/dataset/train/bird/1.JPEG")
@@ -100,7 +111,7 @@ class TestPredict:
             #  that calculated image; current problem in 2 - need other test method
 
     class TestCalculateInfluence:  # TODO [test]
-        def test_calculate_influence_success(self, client):
+        def test_calculate_influence_success(self, client, reset_db):
             assert True
             # rv = client.get("/influence").get_json()
             # assert rv['code'] == -1

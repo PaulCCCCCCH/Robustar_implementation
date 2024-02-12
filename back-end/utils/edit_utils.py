@@ -3,7 +3,7 @@ import os.path
 from PIL import Image
 from objects.RServer import RServer
 from io import BytesIO
-from utils.image_utils import refresh_img_data
+from utils.image_utils import cache_image
 import threading
 from objects.RTask import RTask, TaskType
 import time
@@ -53,7 +53,7 @@ def save_edit(split, image_path, image_data, image_height, image_width):
     """
 
     train_img_path, paired_img_path = get_train_and_paired_path(split, image_path)
-    dataManager = RServer.get_data_manager()
+    data_manager = RServer.get_data_manager()
 
     if not os.path.exists(train_img_path):
         raise ValueError("invalid image path")
@@ -65,11 +65,10 @@ def save_edit(split, image_path, image_data, image_height, image_width):
 
         to_save.save(paired_img_path, format="png")
 
-        dataManager.pairedset.save_annotated_image(
-            train_img_path, image_data, image_height, image_width
+        data_manager.pairedset.save_annotated_image(
+            train_img_path, data_manager.trainset, image_data, image_height, image_width
         )
-        dataManager.trainset.update_paired_data([train_img_path], [paired_img_path])
-        refresh_img_data(paired_img_path)
+        cache_image(paired_img_path)
 
 
 def propose_edit(split, image_path, return_image=False):
@@ -97,7 +96,9 @@ def propose_edit(split, image_path, return_image=False):
         pil_image = RServer.get_auto_annotator().annotate_single(
             train_img_path, dataManager.image_size
         )
-        dataManager.proposedset.save_annotated_image(train_img_path, pil_image)
+        dataManager.proposedset.save_annotated_image(
+            train_img_path, dataManager.trainset, pil_image
+        )
     else:
         if return_image:
             pil_image = Image.open(proposed_path)
@@ -111,34 +112,39 @@ def start_auto_annotate(split, start: int, end: int):
     if split != "train":
         raise NotImplementedError("Auto annotation only supported for train split")
 
-    dataManager = RServer.get_data_manager()
+    data_manager = RServer.get_data_manager()
     # -1 means annotate till the end
     if end == -1:
-        end = len(dataManager.trainset)
-    end = min(end, len(dataManager.trainset))
+        end = len(data_manager.trainset)
+    end = min(end, len(data_manager.trainset))
     if start == end:
         return
 
     def auto_annotate_thread(split, start, end):
-        task = RTask(TaskType.AutoAnnotate, end - start)
-        starttime = time.time()
 
-        for train_path in dataManager.trainset.get_image_list(start, end):
-            # Propose edit for this image
-            proposed_image_path, pil_image = propose_edit(split, train_path, True)
+        with RServer.get_server().get_flask_app().app_context():
+            task = RTask(TaskType.AutoAnnotate, end - start)
+            starttime = time.time()
 
-            # Save the image to paired data folder
-            dataManager.pairedset.save_annotated_image(train_path, pil_image)
+            for train_path in data_manager.trainset.get_image_list(start, end):
+                # Propose edit for this image
+                proposed_image_path, pil_image = propose_edit(split, train_path, True)
 
-            task_update_res = task.update()
-            if not task_update_res:
-                endtime = time.time()
-                print("Time consumption:", endtime - starttime)
-                print("Auto annotate stopped!")
-                return
-        # task.exit()
+                # Save the image to paired data folder
+                data_manager.pairedset.save_annotated_image(
+                    train_path, data_manager.trainset, pil_image
+                )
+
+                task_update_res = task.update()
+                if not task_update_res:
+                    endtime = time.time()
+                    print("Time consumption:", endtime - starttime)
+                    print("Auto annotate stopped!")
+                    return
+            # task.exit()
 
     auto_annotate_thread = threading.Thread(
         target=auto_annotate_thread, args=(split, start, end)
     )
+
     auto_annotate_thread.start()
