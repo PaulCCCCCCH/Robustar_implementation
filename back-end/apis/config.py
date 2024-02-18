@@ -31,7 +31,6 @@ def get_config():
                 image_padding: short_side,
                 image_size: 32,
                 num_classes: 10,
-                num_workers: 8
               }
             msg:
               type: string

@@ -5,7 +5,6 @@ class TestConfig:
         assert rv["code"] == 0
         for field in [
             "device",
-            "num_workers",
             "image_size",
             "image_padding",
             "num_classes",
