@@ -121,7 +121,8 @@ def new_server_object(base_dir, app, socket):
     else:
         print("Class to label file not found!")
 
-    network_type = configs["model_arch"]
+    # TODO: Remove this in the future
+    network_type = "resnet-18-32x32"
     expected_input_shape = MODEL_INPUT_SHAPE.get(network_type)
     image_size = (
         configs["image_size"] if expected_input_shape is None else expected_input_shape
@@ -151,7 +152,6 @@ def new_server_object(base_dir, app, socket):
         dataset_dir,
         db,
         app,
-        shuffle=configs["shuffle"],
         image_size=image_size,
         image_padding=configs["image_padding"],
         class2label_mapping=class2label_mapping,
@@ -159,6 +159,9 @@ def new_server_object(base_dir, app, socket):
     RServer.set_data_manager(data_manager)
 
     """ SETUP MODEL """
+    # TODO：Remove this in the future
+    configs["weight_to_load"] = "dummy_weight.pth"
+    configs["pre_trained"] = False
     model = RModelWrapper(
         db_conn=db,
         network_type=network_type,

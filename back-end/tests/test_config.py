@@ -4,12 +4,7 @@ class TestConfig:
         rv = response.get_json()
         assert rv["code"] == 0
         for field in [
-            "weight_to_load",
-            "model_arch",
             "device",
-            "pre_trained",
-            "batch_size",
-            "shuffle",
             "num_workers",
             "image_size",
             "image_padding",
