@@ -81,7 +81,6 @@ def start_training():
                 'num_workers': 8,
                 'user_edit_buffering': False,
                 'save_every': 5,
-                'save_best': True,
                 'use_tensorboard': True
               }
     responses:

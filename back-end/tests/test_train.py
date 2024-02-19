@@ -75,21 +75,15 @@ class TestTrain:
         resp = client.post("/train", json={"configs": configs})
         assert resp.status_code == 200
 
-        print("11111111111111111111111")
         # Wait for training to start
         poll_for_training_start(client)
-        print("2222222222222222222222")
 
         # Stop Training
         resp = client.get("/train/stop")
         assert resp.status_code == 200
 
-        print("3333333333333333333333")
-
         # Wait for all tasks to stop
         poll_for_task_stop(client)
-
-        print("4444444444444444444444")
 
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level
