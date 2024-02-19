@@ -80,6 +80,7 @@ def setup_training(configs):
         save_dir=save_dir,
         use_paired_train=configs["use_paired_train"],
         paired_reg=configs["paired_train_reg_coeff"],
+        use_tensorboard=configs["use_tensorboard"],
     )
 
     return train_set, val_set, model, trainer
@@ -91,6 +92,27 @@ def start_tensorboard(logdir):
     """
 
     os.system("tensorboard --logdir={} --port=6006".format(os.path.abspath(logdir)))
+
+
+def attach_tensorboard_to_trainer(trainer):
+    # Get directory names
+    tb_dir = "runs"
+    date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
+    if not os.path.exists(tb_dir):
+        os.mkdir(tb_dir)
+    run_dir = os.path.join(tb_dir, "run_{}".format(date))
+
+    # Set training metrics to be tracked
+    writer = SummaryWriter(run_dir)
+    writer.add_scalar("train accuracy", 0, 0)
+    writer.add_scalar("loss", 0, 0)
+
+    # Set up writer process in trainer
+    trainer.writer = writer
+    t = multiprocessing.Process(target=start_tensorboard, args=(tb_dir,))
+    t.start()
+    trainer.set_tb_process(t)
+
 
 
 def start_train(configs):
@@ -107,25 +129,13 @@ def start_train(configs):
 
     try:
         train_set, test_set, model, trainer = setup_training(configs)
-        # Set up tensorboard log directory
-        tb_dir = "runs"
-        date = datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p")
-        if not os.path.exists(tb_dir):
-            os.mkdir(tb_dir)
-        run_dir = os.path.join(tb_dir, "run_{}".format(date))
-        writer = SummaryWriter(run_dir)
-        trainer.writer = writer
-        writer.add_scalar("train accuracy", 0, 0)
-        writer.add_scalar("loss", 0, 0)
 
-        # Start the tensorboard writer as a new process
-        t = multiprocessing.Process(target=start_tensorboard, args=(tb_dir,))
-        t.start()
-        trainer.set_tb_process(t)
-
-        train_thread = TrainThread(trainer, configs)
+        # Attach a tensorboard process to the trainer
+        if configs.get("use_tensorboard"):
+            attach_tensorboard_to_trainer(trainer)
 
         # Start training on a new thread
+        train_thread = TrainThread(trainer, configs)
         if RServer.get_model_wrapper().acquire_model():
             train_thread.start()
         else:

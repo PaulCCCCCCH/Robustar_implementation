@@ -80,7 +80,9 @@ def start_training():
                 'epoch': 20,
                 'num_workers': 8,
                 'user_edit_buffering': False,
-                'save_every': 5
+                'save_every': 5,
+                'save_best': True,
+                'use_tensorboard': True
               }
     responses:
       200:

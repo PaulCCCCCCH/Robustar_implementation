@@ -1,8 +1,95 @@
 import os
 import time
-
+import pytest
 import torch
 
+
+def build_dummy_training_config(nickname):
+    configs = {
+        "nickname": nickname,
+        "model_name": 'simple-classifier',
+        "use_paired_train": False,
+        "mixture": 'random_pure',
+        "auto_save_model": False,
+        "batch_size": 128,
+        "shuffle": True,
+        "learn_rate": 0.1,
+        "paired_train_reg_coeff": 0.001,
+        "epoch": 3,
+        "num_workers": 8,
+        "user_edit_buffering": False,
+        "save_every": 5,
+        "use_tensorboard": False
+    }
+
+    return configs
+
+def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
+    # Assume the first one is the training thread
+    resp = client.get("/task")
+    assert resp.status_code == 200
+    data = resp.get_json().get('data')
+    assert data is not None
+    assert len(data) == 1
+    task = data[0]
+
+    curr_retry = 0 
+    while True:
+        time.sleep(retry_interval_secs)
+        print("Waiting for training thread to restart ...")
+
+        curr_retry += 1
+        if curr_retry >= max_retry:
+            pytest.fail("Failed to start training")
+
+        resp = client.get(f"/task/{task['tid']}")
+        assert resp.status_code == 200
+
+        if resp.get_json()['data']['remaining_time'] != float("inf"):
+            break
+    return
+
+def poll_for_task_stop(client, max_retry = 10, retry_interval_secs = 5):
+    curr_retry = 0 
+    while True:
+        time.sleep(retry_interval_secs)
+        print("Waiting for all tasks to stop ... ")
+
+        curr_retry += 1
+        if curr_retry >= max_retry:
+            pytest.fail("Failed to stop training")
+
+        resp = client.get(f"/task")
+        assert resp.status_code == 200
+
+        if len(resp.get_json()['data']) == 0:
+            break
+    return
+
+
+class TestTrain:
+    def test_train_start_stop(self, client, reset_db):
+        configs = build_dummy_training_config("test-train-start-stop-1")
+
+        # Start Training
+        resp = client.post("/train", json={"configs": configs})
+        assert resp.status_code == 200
+
+        print("11111111111111111111111")
+        # Wait for training to start
+        poll_for_training_start(client)
+        print("2222222222222222222222")
+
+        # Stop Training
+        resp = client.get("/train/stop")
+        assert resp.status_code == 200
+
+        print("3333333333333333333333")
+
+        # Wait for all tasks to stop
+        poll_for_task_stop(client)
+
+        print("4444444444444444444444")
 
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level

@@ -22,6 +22,11 @@ pip install black
 python -m pytest
 ```
 
+Run certain test cases only:
+```
+python -m pytest ./tests/test_train.py::TestTrain
+```
+
 # Robustar
 
 https://hub.docker.com/repository/docker/paulcccccch/robustar

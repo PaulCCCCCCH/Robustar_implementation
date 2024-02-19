@@ -24,6 +24,7 @@ class Trainer:
         save_every,
         save_dir,
         use_paired_train=False,
+        use_tensorboard=True,
         paired_reg=1e-4,
     ):
         self.val_sample_buffer = None
@@ -37,6 +38,7 @@ class Trainer:
         self.save_every = save_every
         self.save_dir = save_dir
         self.use_paired_train = use_paired_train
+        self.use_tensorboard = use_tensorboard
         self.paired_reg = paired_reg
         self.orig_metadata = RModelWrapper.convert_metadata_2_dict(
             RServer.get_model_wrapper().get_current_model_metadata()
@@ -229,8 +231,10 @@ class Trainer:
                     info_loss,
                     info_train_acc,
                 )
-                self.writer.add_scalar("train accuracy", info_train_acc, info_iter)
-                self.writer.add_scalar("loss", info_loss, info_iter)
+
+                if self.use_tensorboard:
+                    self.writer.add_scalar("train accuracy", info_train_acc, info_iter)
+                    self.writer.add_scalar("loss", info_loss, info_iter)
 
                 self.update_gui()
 

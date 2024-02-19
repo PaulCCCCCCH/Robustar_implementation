@@ -47,6 +47,8 @@ def client(request):
     app.config["TESTING"] = False
 
     server.get_data_manager().dispose_db_engine()
+
+    print("Cleaning up")
     _clean_up(basedir)
 
     time.sleep(0.1)
