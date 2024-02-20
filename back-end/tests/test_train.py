@@ -24,47 +24,69 @@ def build_dummy_training_config(nickname):
 
     return configs
 
-def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
-    # Assume the first one is the training thread
-    resp = client.get("/task")
-    assert resp.status_code == 200
-    data = resp.get_json().get('data')
-    assert data is not None
-    assert len(data) == 1
-    task = data[0]
 
-    curr_retry = 0 
+def poll_for_api_call(api_call, task_name = "Unnamed API Call", max_retry = 10, retry_interval_secs = 5):
+    """
+    api_call should be a function that returns None on failure
+
+    Must succeed, i.e., Returns an API call response on success, otherwise fail the test case.
+    """
+
+    curr_retry = 0
     while True:
         time.sleep(retry_interval_secs)
-        print("Waiting for training thread to restart ...")
+        print(f"Waiting for {task_name} to finish")
+
+        res = api_call()
+
+        if res is not None:
+            return res
 
         curr_retry += 1
         if curr_retry >= max_retry:
-            pytest.fail("Failed to start training")
+            print(f"{task_name} failed after retrying {max_retry} times")
+            return None
 
+
+def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
+
+    def check_task_creation():
+        # API call to check for task has to succeed
+        resp = client.get("/task")
+        assert resp.status_code == 200
+        data = resp.get_json().get('data')
+        assert data is not None
+
+        if len(data) == 0:
+            return None
+
+        return data[0]
+
+    task = poll_for_api_call(check_task_creation, "GetTaskList - Expect length > 0", max_retry, retry_interval_secs)
+
+
+    def check_task_start():
         resp = client.get(f"/task/{task['tid']}")
         assert resp.status_code == 200
 
         if resp.get_json()['data']['remaining_time'] != float("inf"):
-            break
-    return
+            return True
+        return None
+
+    poll_for_api_call(check_task_start, "GetTask - Expect non-infinite remaining time", max_retry, retry_interval_secs)
+
+
 
 def poll_for_task_stop(client, max_retry = 10, retry_interval_secs = 5):
-    curr_retry = 0 
-    while True:
-        time.sleep(retry_interval_secs)
-        print("Waiting for all tasks to stop ... ")
-
-        curr_retry += 1
-        if curr_retry >= max_retry:
-            pytest.fail("Failed to stop training")
-
+    def check_task_list_empty():
         resp = client.get(f"/task")
         assert resp.status_code == 200
 
         if len(resp.get_json()['data']) == 0:
-            break
-    return
+            return True
+        return None
+
+    poll_for_api_call(check_task_list_empty, "GetTaskList - Expect length = 0", max_retry, retry_interval_secs)
 
 
 class TestTrain:
