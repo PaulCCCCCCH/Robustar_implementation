@@ -103,7 +103,7 @@ class RModelWrapper:
         # Get new model
         new_model, new_model_meta_data = self.load_model_by_name(model_name)
         if not new_model or not new_model_meta_data:
-            raise ValueError("Model does not exist")
+            raise ValueError(f"Model {model_name} does not exist")
 
         # Free up current model.
         # TODO: make sure this model is GC'ed

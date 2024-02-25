@@ -2,6 +2,7 @@ import os
 import time
 import pytest
 import torch
+from .utils import dummy_api_upload_dummy_model
 
 
 def build_dummy_training_config(nickname):
@@ -91,9 +92,13 @@ def poll_for_task_stop(client, max_retry = 10, retry_interval_secs = 5):
 
 class TestTrain:
     def test_train_start_stop(self, client, reset_db):
-        configs = build_dummy_training_config("test-train-start-stop-1")
+        model_name = "test-train-start-stop-1"
+
+        # Upload a new empty model 
+        dummy_api_upload_dummy_model(client, model_name, must_succeed=True)
 
         # Start Training
+        configs = build_dummy_training_config(model_name)
         resp = client.post("/train", json={"configs": configs})
         assert resp.status_code == 200
 

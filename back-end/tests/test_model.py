@@ -1,6 +1,6 @@
 import os
 import pytest
-import json
+from .utils import dummy_api_list_models, dummy_api_delete_model, dummy_api_upload_dummy_model, dummy_api_set_current_model, dummy_api_get_current_model
 from werkzeug.datastructures import FileStorage
 
 
@@ -217,64 +217,10 @@ upload_test_cases = [
 ]
 
 
-"""
-    Helper Functions
-"""
-
-
-def build_dummy_model_metadata(nickname):
-    metadata = {
-        "class_name": "resnet-18-32x32",
-        "nickname": nickname,
-        "description": "test description",
-        "tags": ["tag1", "tag2"],
-        "pretrained": "0",
-        "predefined": "1",
-    }
-
-    return metadata
-
-
-"""
-    Dummy APIs
-"""
-
-
-def dummy_api_upload_dummy_model(client, name: str):
-    metadata = build_dummy_model_metadata(name)
-    response = client.post(
-        f"/model",
-        data={"metadata": json.dumps(metadata)},
-        content_type="multipart/form-data",
-    )
-    return response
-
-
-def dummy_api_set_current_model(client, name: str):
-    response = client.post(f"/model/current/{name}")
-    return response
-
-
-def dummy_api_get_current_model(client):
-    response = client.get("/model/current")
-    return response
-
-
-def dummy_api_list_models(client):
-    response = client.get("/model/list")
-    return response
-
-
-def dummy_api_delete_model(client, name: str):
-    response = client.delete(f"/model/{name}")
-    return response
-
 
 """
     Test Cases
 """
-
-
 class TestModel:
     class TestModelUpload:
         @pytest.mark.parametrize("test_data", upload_test_cases)
@@ -344,7 +290,7 @@ class TestModel:
         def test_list(self, client, reset_db):
             # Upload dummy models
             for model_name in ["model-list-1", "model-list-2"]:
-                dummy_api_upload_dummy_model(client, model_name)
+                dummy_api_upload_dummy_model(client, model_name, must_succeed=True)
 
             # List models
             resp = dummy_api_list_models(client)
@@ -376,9 +322,9 @@ class TestModel:
         def test_delete_current(self, client, reset_db):
             # Upload dummy models
             model_name = "model-delete-current"
-            dummy_api_upload_dummy_model(client, model_name)
+            dummy_api_upload_dummy_model(client, model_name, must_succeed=True)
 
-            dummy_api_set_current_model(client, model_name)
+            dummy_api_set_current_model(client, model_name, must_succeed=True)
 
             # Deleting current model
             resp = dummy_api_delete_model(client, model_name)
