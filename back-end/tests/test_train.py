@@ -1,8 +1,119 @@
 import os
 import time
-
+import pytest
 import torch
+from .utils import dummy_api_upload_dummy_model, must_succeed
 
+
+def build_dummy_training_config(nickname, model_id):
+    configs = {
+        "model_id": model_id,
+        "nickname": nickname,
+        "model_name": 'simple-classifier',
+        "use_paired_train": False,
+        "mixture": 'random_pure',
+        "auto_save_model": False,
+        "batch_size": 128,
+        "shuffle": True,
+        "learn_rate": 0.1,
+        "paired_train_reg_coeff": 0.001,
+        "epoch": 3,
+        "num_workers": 8,
+        "user_edit_buffering": False,
+        "save_every": 5,
+        "use_tensorboard": False
+    }
+
+    return configs
+
+
+def poll_for_api_call(api_call, task_name = "Unnamed API Call", max_retry = 10, retry_interval_secs = 5):
+    """
+    api_call should be a function that returns None on failure
+
+    Must succeed, i.e., Returns an API call response on success, otherwise fail the test case.
+    """
+
+    curr_retry = 0
+    while True:
+        time.sleep(retry_interval_secs)
+        print(f"Waiting for {task_name} to finish")
+
+        res = api_call()
+
+        if res is not None:
+            return res
+
+        curr_retry += 1
+        if curr_retry >= max_retry:
+            print(f"{task_name} failed after retrying {max_retry} times")
+            return None
+
+
+def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
+
+    def check_task_creation():
+        # API call to check for task has to succeed
+        resp = client.get("/task")
+        assert resp.status_code == 200
+        data = resp.get_json().get('data')
+        assert data is not None
+
+        if len(data) == 0:
+            return None
+
+        return data[0]
+
+    task = poll_for_api_call(check_task_creation, "GetTaskList - Expect length > 0", max_retry, retry_interval_secs)
+    assert task is not None, "Training task never seen in task center"
+
+    def check_task_start():
+        resp = client.get(f"/task/{task['tid']}")
+        assert resp.status_code == 200
+
+        if resp.get_json()['data']['remaining_time'] != float("inf"):
+            return True
+        return None
+
+    started = poll_for_api_call(check_task_start, "GetTask - Expect non-infinite remaining time", max_retry, retry_interval_secs)
+    assert started, "Training thread never started"
+
+
+def poll_for_task_stop(client, max_retry = 10, retry_interval_secs = 5):
+    def check_task_list_empty():
+        resp = client.get(f"/task")
+        assert resp.status_code == 200
+
+        if len(resp.get_json()['data']) == 0:
+            return True
+        return None
+
+    poll_for_api_call(check_task_list_empty, "GetTaskList - Expect length = 0", max_retry, retry_interval_secs)
+
+
+class TestTrain:
+    def test_train_start_stop(self, client, reset_db):
+        model_name = "test-train-start-stop-1"
+
+        # Upload a new empty model 
+        resp = must_succeed(lambda: dummy_api_upload_dummy_model(client))
+        model_id = resp.get_json()['data']['id']
+        assert model_id, f"Seeing invalid model ID '{model_id}' in uploaded model."
+
+        # Start Training
+        configs = build_dummy_training_config(model_name, model_id)
+        resp = client.post("/train", json={"configs": configs})
+        assert resp.status_code == 200, f"Failed to start training. {resp.get_json().get('detail')}"
+
+        # Wait for training to start
+        poll_for_training_start(client)
+
+        # Stop Training
+        resp = client.get("/train/stop")
+        assert resp.status_code == 200
+
+        # Wait for all tasks to stop
+        poll_for_task_stop(client)
 
 # class TestTrain:
 #     # Test if the model is loaded correctly at weight level

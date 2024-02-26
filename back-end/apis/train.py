@@ -80,7 +80,8 @@ def start_training():
                 'epoch': 20,
                 'num_workers': 8,
                 'user_edit_buffering': False,
-                'save_every': 5
+                'save_every': 5,
+                'use_tensorboard': True
               }
     responses:
       200:
@@ -97,30 +98,29 @@ def start_training():
               type: string
               example: Success
     """
+    print("Requested to training with the following configuration: ")
+    configs = request.get_json().get('configs')
+    if not configs:
+        RResponse.abort(400, f"Receiving empty training config. Aborted.")
+    print(configs)
+
+    # Return error message if config is invalid
+    check_result = check_configs(configs)
+    if check_result != 0:
+        RResponse.abort(400, f"Invalid Configuration!: {check_result}")
+
+    # Try to start training thread
+    print("DEBUG: Training request received! Setting up training...")
+
+    # start the training thread
     try:
-        print("Requested to training with the following configuration: ")
-        json_data = request.get_json()
-        configs = json_data["configs"]
-        print(configs)
-
-        # Return error message if config is invalid
-        check_result = check_configs(configs)
-        if check_result != 0:
-            return RResponse.fail(f"Invalid Configuration!: {check_result}", 400)
-
-        # Try to start training thread
-        print("DEBUG: Training request received! Setting up training...")
-
-        # start the training thread
-        try:
-            start_train(configs)
-        except Exception as e:
-            traceback.print_exc()
-            return RResponse.fail(f"Failed to start training thread. {e}", 400)
-
-        # Training started succesfully!
-        print("Training started!")
-        return RResponse.ok("Training started!")
+        start_train(configs)
+    except ValueError as e:
+        RResponse.abort(400, f"Model not found. {str(e)}")
     except Exception as e:
         traceback.print_exc()
-        return RResponse.abort(500, f"Unexpected error. {e}")
+        RResponse.abort(500, f"Failed to start training thread. {str(e)}")
+
+    # Training started succesfully!
+    print("Training started!")
+    return RResponse.ok("Training started!")

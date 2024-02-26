@@ -74,6 +74,10 @@ class RTask:
         return None
 
     @staticmethod
+    def list_tasks():
+        return RTask.tasks
+
+    @staticmethod
     @with_lock
     def create_task(task):
         # start_func = TaskType.start_funcs[task_type]
@@ -182,3 +186,13 @@ class RTask:
 
     def get_done(self):
         return self.n == self.total
+
+    def as_dict(self):
+        return {
+            "tid": self.tid,
+            "n": self.n,
+            "total": self.total,
+            "start_time": self.start_time,
+            "remaining_time": self.remaining_time,
+            "elapsed_time": self.elapsed_time,
+        }

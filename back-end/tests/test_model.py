@@ -1,6 +1,6 @@
 import os
 import pytest
-import json
+from .utils import dummy_api_list_models, dummy_api_delete_model, dummy_api_upload_dummy_model, dummy_api_set_current_model, dummy_api_get_current_model, must_succeed
 from werkzeug.datastructures import FileStorage
 
 
@@ -217,64 +217,11 @@ upload_test_cases = [
 ]
 
 
-"""
-    Helper Functions
-"""
-
-
-def build_dummy_model_metadata():
-    metadata = {
-        "class_name": "resnet-18-32x32",
-        "nickname": "dummy-model",
-        "description": "test description",
-        "tags": ["tag1", "tag2"],
-        "pretrained": "0",
-        "predefined": "1",
-    }
-
-    return metadata
-
-
-"""
-    Dummy APIs
-"""
-
-
-def dummy_api_upload_dummy_model(client):
-    metadata = build_dummy_model_metadata()
-    response = client.post(
-        f"/model",
-        data={"metadata": json.dumps(metadata)},
-        content_type="multipart/form-data",
-    )
-    return response
-
-
-def dummy_api_set_current_model(client, model_id: int):
-    response = client.post(f"/model/current/{model_id}")
-    return response
-
-
-def dummy_api_get_current_model(client):
-    response = client.get("/model/current")
-    return response
-
-
-def dummy_api_list_models(client):
-    response = client.get("/model/list")
-    return response
-
-
-def dummy_api_delete_model(client, model_id: int):
-    response = client.delete(f"/model/{model_id}")
-    return response
 
 
 """
     Test Cases
 """
-
-
 class TestModel:
     class TestModelUpload:
         @pytest.mark.parametrize("test_data", upload_test_cases)
@@ -344,7 +291,7 @@ class TestModel:
         def test_list(self, client, reset_db):
             # Upload dummy models
             for _ in range(2):
-                dummy_api_upload_dummy_model(client)
+                must_succeed(lambda: dummy_api_upload_dummy_model(client))
 
             # List models
             resp = dummy_api_list_models(client)
@@ -359,7 +306,7 @@ class TestModel:
         def test_delete(self, client, reset_db):
             # Upload dummy models
             for _ in range(2):
-                dummy_api_upload_dummy_model(client)
+                must_succeed(lambda: dummy_api_upload_dummy_model(client))
 
             # Delete model
             resp = dummy_api_delete_model(client, 1)
@@ -375,9 +322,9 @@ class TestModel:
 
         def test_delete_current(self, client, reset_db):
             # Upload dummy models
-            dummy_api_upload_dummy_model(client)
+            must_succeed(lambda: dummy_api_upload_dummy_model(client))
 
-            dummy_api_set_current_model(client, 1)
+            must_succeed(lambda: dummy_api_set_current_model(client, 1))
 
             # Deleting current model
             resp = dummy_api_delete_model(client, 1)
