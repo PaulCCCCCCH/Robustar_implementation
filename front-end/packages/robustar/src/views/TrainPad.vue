@@ -181,6 +181,7 @@ export default {
         epoch: 20,
         num_workers: 8,
         user_edit_buffering: false,
+        use_tensorboard: true,
         save_every: 5,
       },
     };

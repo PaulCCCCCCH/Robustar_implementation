@@ -6,7 +6,9 @@ from objects.RServer import RServer
 from objects.RModelWrapper import RModelWrapper
 import threading
 import multiprocessing
+import logging
 
+logger = logging.getLogger(__name__)
 
 class TrainThread(threading.Thread):
     def __init__(self, trainer, configs):
@@ -23,6 +25,7 @@ class TrainThread(threading.Thread):
                     auto_save=self.configs["auto_save_model"],
                 )
         except Exception as e:
+            logger.exception(f"Error in training thread. {str(e)}") 
             raise e
         finally:
             RServer.get_model_wrapper().release_model()

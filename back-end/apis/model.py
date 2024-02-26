@@ -204,16 +204,17 @@ def upload_model():
 
         # Save the model's metadata to the database
         try:
-            RServer.get_model_wrapper().create_model(metadata_4_save)
+            model = RServer.get_model_wrapper().create_model(metadata_4_save)
+
+            ## Set the current model to the newly uploaded model
+            ## TODO(Chonghan): Removing this logic for better separation of concern during tests.
+            ## We may want to add this back in the future.
+            # RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
+            return RResponse.ok(model.as_dict())
         except Exception as e:
             RResponse.abort(400, f"Failed to save the model. Error: {str(e)}")
 
-        ## Set the current model to the newly uploaded model
-        ## TODO(Chonghan): Removing this logic for better separation of concern during tests.
-        ## We may want to add this back in the future.
-        # RServer.get_model_wrapper().set_current_model(metadata.get("nickname"))
 
-        return RResponse.ok("Success")
 
 
 @model_api.route("/model/<int:model_id>", methods=["PUT"])

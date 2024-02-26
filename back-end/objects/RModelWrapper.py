@@ -170,7 +170,11 @@ class RModelWrapper:
         finally:
             self._lock.release()
 
-    def create_model(self, fields: dict):
+    def create_model(self, fields: dict) -> Models:
+        """
+        Creates a model and return it to the caller.
+        """        
+
         # TODO: Need to validate fields, dump model definition to a file,
         # etc. Either do these here or somewhere else
 
@@ -187,7 +191,10 @@ class RModelWrapper:
 
         model = Models(**fields, tags=tag_objs)
         self.db_conn.session.add(model)
+        self.db_conn.session.flush()
         self.db_conn.session.commit()
+
+        return model
 
     def list_models(self) -> list[Models]:
         return Models.query.all()

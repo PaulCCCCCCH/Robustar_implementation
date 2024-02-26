@@ -1,7 +1,7 @@
 import shutil
 import time
 import pytest
-
+import logging
 from objects.RServer import RServer
 from server import start_flask_app, new_server_object
 from database.db_init import db
@@ -16,6 +16,13 @@ def pytest_addoption(parser):
         default="/Robustar2-test",
         help="Path of the test data",
     )
+
+
+@pytest.fixture(autouse=True)
+def capture_log():
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    return logger
 
 
 @pytest.fixture(scope="function")

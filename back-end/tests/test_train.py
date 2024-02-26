@@ -67,7 +67,6 @@ def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
     task = poll_for_api_call(check_task_creation, "GetTaskList - Expect length > 0", max_retry, retry_interval_secs)
     assert task is not None, "Training task never seen in task center"
 
-
     def check_task_start():
         resp = client.get(f"/task/{task['tid']}")
         assert resp.status_code == 200
@@ -97,10 +96,12 @@ class TestTrain:
         model_name = "test-train-start-stop-1"
 
         # Upload a new empty model 
-        must_succeed(lambda: dummy_api_upload_dummy_model(client))
+        resp = must_succeed(lambda: dummy_api_upload_dummy_model(client))
+        model_id = resp.get_json()['data']['id']
+        assert model_id, f"Seeing invalid model ID '{model_id}' in uploaded model."
 
         # Start Training
-        configs = build_dummy_training_config(model_name, 1)
+        configs = build_dummy_training_config(model_name, model_id)
         resp = client.post("/train", json={"configs": configs})
         assert resp.status_code == 200, f"Failed to start training. {resp.get_json().get('detail')}"
 
