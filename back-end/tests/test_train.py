@@ -2,11 +2,12 @@ import os
 import time
 import pytest
 import torch
-from .utils import dummy_api_upload_dummy_model
+from .utils import dummy_api_upload_dummy_model, must_succeed
 
 
-def build_dummy_training_config(nickname):
+def build_dummy_training_config(nickname, model_id):
     configs = {
+        "model_id": model_id,
         "nickname": nickname,
         "model_name": 'simple-classifier',
         "use_paired_train": False,
@@ -64,6 +65,7 @@ def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
         return data[0]
 
     task = poll_for_api_call(check_task_creation, "GetTaskList - Expect length > 0", max_retry, retry_interval_secs)
+    assert task is not None, "Training task never seen in task center"
 
 
     def check_task_start():
@@ -74,8 +76,8 @@ def poll_for_training_start(client, max_retry = 10, retry_interval_secs = 5):
             return True
         return None
 
-    poll_for_api_call(check_task_start, "GetTask - Expect non-infinite remaining time", max_retry, retry_interval_secs)
-
+    started = poll_for_api_call(check_task_start, "GetTask - Expect non-infinite remaining time", max_retry, retry_interval_secs)
+    assert started, "Training thread never started"
 
 
 def poll_for_task_stop(client, max_retry = 10, retry_interval_secs = 5):
@@ -95,12 +97,12 @@ class TestTrain:
         model_name = "test-train-start-stop-1"
 
         # Upload a new empty model 
-        dummy_api_upload_dummy_model(client, model_name, must_succeed=True)
+        must_succeed(lambda: dummy_api_upload_dummy_model(client))
 
         # Start Training
-        configs = build_dummy_training_config(model_name)
+        configs = build_dummy_training_config(model_name, 1)
         resp = client.post("/train", json={"configs": configs})
-        assert resp.status_code == 200
+        assert resp.status_code == 200, f"Failed to start training. {resp.get_json().get('detail')}"
 
         # Wait for training to start
         poll_for_training_start(client)

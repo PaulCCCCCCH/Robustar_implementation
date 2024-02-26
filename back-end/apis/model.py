@@ -18,32 +18,32 @@ def get_curr_model():
     return RResponse.ok(model.as_dict())
 
 
-@model_api.route("/model/current/<model_name>", methods=["POST"])
-def set_curr_model(model_name: str):
+@model_api.route("/model/current/<int:model_id>", methods=["POST"])
+def set_curr_model(model_id: int):
     """return 200 on success"""
     try:
-        RServer.get_model_wrapper().set_current_model(model_name)
+        RServer.get_model_wrapper().set_current_model(model_id)
         return RResponse.ok("Success")
     except Exception as e:
         traceback.print_exc()
-        RResponse.abort(500, f"Failed to switch to model {model_name}. Error: {str(e)}")
+        RResponse.abort(500, f"Failed to switch to model {model_id}. Error: {str(e)}")
 
 
-@model_api.route("/model/<model_name>", methods=["DELETE"])
-def delete_model(model_name: str):
+@model_api.route("/model/<int:model_id>", methods=["DELETE"])
+def delete_model(model_id: int):
     """
     return model meta data
     """
     try:
-        model = RServer.get_model_wrapper().delete_model_by_name(model_name)
+        model = RServer.get_model_wrapper().delete_model_by_id(model_id)
     except ValueError as e:
-        RResponse.abort(400, f"Failed to delete model {model_name}. Error: {str(e)}")
+        RResponse.abort(400, f"Failed to delete model {model_id}. Error: {str(e)}")
     except Exception as e:
         traceback.print_exc()
-        RResponse.abort(500, f"Failed to delete model {model_name}. Error: {str(e)}")
+        RResponse.abort(500, f"Failed to delete model {model_id}. Error: {str(e)}")
 
     if not model:
-        RResponse.abort(400, f"Model {model_name} does not exist.")
+        RResponse.abort(400, f"Model {model_id} does not exist.")
 
     return RResponse.ok(model.as_dict())
 
@@ -216,8 +216,8 @@ def upload_model():
         return RResponse.ok("Success")
 
 
-@model_api.route("/model/<model_name>", methods=["PUT"])
-def update_model(model_name):
+@model_api.route("/model/<int:model_id>", methods=["PUT"])
+def update_model(model_id: int):
     """
     path_parameter:
         model_name: nickname of the model
@@ -229,10 +229,10 @@ def update_model(model_name):
     try:
         metadata_str = request.form.get("metadata")
         metadata = json.loads(metadata_str)
-        model = RServer.get_model_wrapper().update_model(model_name, metadata)
+        model = RServer.get_model_wrapper().update_model(model_id, metadata)
         if not model:
             return RResponse.abort(
-                400, f"Failed to update model.Model {model_name} not found."
+                400, f"Failed to update model.Model {model_id} not found."
             )
         return RResponse.ok(model.as_dict())
     except Exception as e:
@@ -240,16 +240,16 @@ def update_model(model_name):
         return RResponse.abort(500, f"Failed to update model. Error: {str(e)}")
 
 
-@model_api.route("/model/duplicate/<model_name>", methods=["POST"])
-def duplicate_model(model_name):
+@model_api.route("/model/duplicate/<int:model_id>", methods=["POST"])
+def duplicate_model(model_id: int):
     """
     return model metadata for the duplicated model
     """
     try:
-        model = RServer.get_model_wrapper().duplicate_model(model_name)
+        model = RServer.get_model_wrapper().duplicate_model(model_id)
         if not model:
             return RResponse.abort(
-                400, f"Failed to duplicate model. Model {model_name} not found."
+                400, f"Failed to duplicate model. Model {model_id} not found."
             )
         return RResponse.ok(model.as_dict())
     except Exception as e:

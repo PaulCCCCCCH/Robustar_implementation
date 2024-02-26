@@ -1,9 +1,11 @@
 import json
-
-def build_dummy_model_metadata(nickname):
+"""
+    Helper functions
+"""
+def build_dummy_model_metadata():
     metadata = {
         "class_name": "resnet-18-32x32",
-        "nickname": nickname,
+        "nickname": "dummy-model",
         "description": "test description",
         "tags": ["tag1", "tag2"],
         "pretrained": "0",
@@ -12,52 +14,40 @@ def build_dummy_model_metadata(nickname):
 
     return metadata
 
+def must_succeed(api_call):
+    resp = api_call()
+    assert resp.status_code == 200
+    return resp
+
 
 """
     Dummy APIs
 """
-def dummy_api_upload_dummy_model(client, name: str, must_succeed=False):
-    metadata = build_dummy_model_metadata(name)
+def dummy_api_upload_dummy_model(client):
+    metadata = build_dummy_model_metadata()
     response = client.post(
         f"/model",
         data={"metadata": json.dumps(metadata)},
         content_type="multipart/form-data",
     )
-    if must_succeed:
-        assert response.status_code == 200
-
     return response
 
 
-def dummy_api_set_current_model(client, name: str, must_succeed=False):
-    response = client.post(f"/model/current/{name}")
-    if must_succeed:
-        assert response.status_code == 200
-
+def dummy_api_set_current_model(client, model_id: int):
+    response = client.post(f"/model/current/{model_id}")
     return response
 
 
-def dummy_api_get_current_model(client, must_succeed=False):
+def dummy_api_get_current_model(client):
     response = client.get("/model/current")
-    if must_succeed:
-        assert response.status_code == 200
-
     return response
 
 
-def dummy_api_list_models(client, must_succeed=False):
+def dummy_api_list_models(client):
     response = client.get("/model/list")
-    if must_succeed:
-        assert response.status_code == 200
-
     return response
 
 
-def dummy_api_delete_model(client, name: str, must_succeed=False):
-    response = client.delete(f"/model/{name}")
-    if must_succeed:
-        assert response.status_code == 200
-
+def dummy_api_delete_model(client, model_id: int):
+    response = client.delete(f"/model/{model_id}")
     return response
-
-
