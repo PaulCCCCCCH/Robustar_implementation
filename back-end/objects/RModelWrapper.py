@@ -43,10 +43,6 @@ class RModelWrapper:
     ):
         # self.device = torch.device(device)
         self.db_conn: SQLAlchemy = db_conn
-        if pretrained:
-            assert (
-                num_classes == IMAGENET_OUTPUT_SIZE
-            ), f"Pretrained model is supposed to have {IMAGENET_OUTPUT_SIZE} classes as output. "
         self.device = device  # We keep device as string to allow for easy comparison
         self.model = None
         self.model_meta_data = None
@@ -217,9 +213,7 @@ class RModelWrapper:
         model_to_update.architecture = (
             metadata.get("architecture") or model_to_update.architecture
         )
-        model_to_update.nickname = (
-            metadata.get("nickname") or model_to_update.nickname
-        )
+        model_to_update.nickname = metadata.get("nickname") or model_to_update.nickname
 
         prev_tags = metadata.get("tags")
         model_to_update.tags = (

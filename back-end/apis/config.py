@@ -27,16 +27,10 @@ def get_config():
             data:
               type: object
               example: {
-                batch_size: 16,
                 device: cpu,
                 image_padding: short_side,
                 image_size: 32,
-                model_arch: resnet-18-32x32,
                 num_classes: 10,
-                num_workers: 8,
-                pre_trained: false,
-                shuffle: true,
-                weight_to_load: resnet-34.pth
               }
             msg:
               type: string

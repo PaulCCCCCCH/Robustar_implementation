@@ -18,19 +18,18 @@ class MainController(QObject):
         self.main_view = None
         self.key_to_prompt = {
             "name": "container name",
+            "image": "docker image version",
             "port": "port",
+            "device": "device",
+            "cls": "class number",
+            "size": "image size",
+            "pad": "padding",
             "train_path": "train set path",
             "val_path": "validation set path",
             "test_path": "test set path",
             "paired_path": "paired set path",
-            "out_path": "output folder path",
             "inf_path": "influence result path",
-            "ckpt_path": "check point path",
-            "batch": "batch size",
-            "worker": "worker number",
-            "cls": "class number",
-            "size": "image size",
-            "device": "device"
+            "out_path": "output folder path",
         }
 
         self.app_root = app_root
@@ -50,7 +49,9 @@ class MainController(QObject):
         try:
             self.init_images()
             self.init_devices()
-            self.docker_ctrl = DockerController(self.model, self.main_view, self, self.app_root)
+            self.docker_ctrl = DockerController(
+                self.model, self.main_view, self, self.app_root
+            )
             self.docker_ctrl.refresh_server()
             self.main_view.show()
         except requests.RequestException as e:
@@ -77,6 +78,20 @@ class MainController(QObject):
 
     def set_m_port(self):
         self.model.port = self.main_view.ui.port_line_edit.text()
+
+    def set_m_device(self):
+        self.model.device = self.main_view.ui.device_combo_box.currentText()
+
+    def set_m_cls(self):
+        self.model.cls = self.main_view.ui.cls_line_edit.text()
+
+    def set_m_size(self):
+        self.model.size = self.main_view.ui.size_line_edit.text()
+
+    def set_m_pad(self):
+        # To align with the backend
+        match_dict = {"short side": "short_side", "none": "none"}
+        self.model.pad = match_dict[self.main_view.ui.pad_combo_box.currentText()]
 
     def set_m_train_path(self):
         path = QFileDialog.getExistingDirectory(
@@ -110,23 +125,6 @@ class MainController(QObject):
         if path:
             self.model.paired_path = path
 
-    def set_m_out_path(self):
-        path = QFileDialog.getExistingDirectory(
-            self.main_view, "Choose Output Folder Path", self.model.cwd
-        )
-        self.model.cwd = os.path.dirname(path)
-        if path:
-            self.model.out_path = path
-
-    def set_m_ckpt_path(self):
-        path = QFileDialog.getExistingDirectory(
-            self.main_view, "Choose Checkpoints Path", self.model.cwd
-        )
-        self.model.cwd = os.path.dirname(path)
-        if path:
-            self.model.ckpt_path = path
-            self.init_ckpts()
-
     def set_m_inf_path(self):
         path = QFileDialog.getExistingDirectory(
             self.main_view, "Choose Influence Result Path", self.model.cwd
@@ -135,46 +133,13 @@ class MainController(QObject):
         if path:
             self.model.inf_path = path
 
-    def set_m_arch(self):
-        self.model.arch = self.main_view.ui.arch_combo_box.currentText()
-
-    def set_m_pretrain(self):
-        if self.main_view.ui.pretrain_check_box.isChecked():
-            self.model.pretrain = "True"
-        else:
-            self.model.pretrain = "False"
-
-    def set_m_weight(self):
-        self.model.weight = self.main_view.ui.weight_combo_box.currentText()
-
-    def set_m_device(self):
-        self.model.device = self.main_view.ui.device_combo_box.currentText()
-
-    def set_m_shuffle(self):
-        if self.main_view.ui.shuffle_check_box.isChecked():
-            self.model.shuffle = "True"
-        else:
-            self.model.shuffle = "False"
-
-    def set_m_batch(self):
-        self.model.batch = self.main_view.ui.batch_line_edit.text()
-
-    def set_m_worker(self):
-        self.model.worker = self.main_view.ui.worker_line_edit.text()
-
-    def set_m_size(self):
-        self.model.size = self.main_view.ui.size_line_edit.text()
-
-    def set_m_pad(self):
-        # To align with the backend
-        match_dict = {
-            'short side': 'short_side',
-            'none': 'none'
-        }
-        self.model.pad = match_dict[self.main_view.ui.pad_combo_box.currentText()]
-
-    def set_m_cls(self):
-        self.model.cls = self.main_view.ui.cls_line_edit.text()
+    def set_m_out_path(self):
+        path = QFileDialog.getExistingDirectory(
+            self.main_view, "Choose Output Folder Path", self.model.cwd
+        )
+        self.model.cwd = os.path.dirname(path)
+        if path:
+            self.model.out_path = path
 
     def load_profile(self):
         path, _ = QFileDialog.getOpenFileName(
@@ -192,7 +157,9 @@ class MainController(QObject):
             except FileNotFoundError:
                 self.print_message(
                     self.main_view.ui.prompt_text_browser,
-                    "Failed to find the profile file.", level="warning")
+                    "Failed to find the profile file.",
+                    level="warning",
+                )
 
     def save_profile(self):
         path, _ = QFileDialog.getSaveFileName(
@@ -222,7 +189,8 @@ class MainController(QObject):
         if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
             self.print_message(
                 self.main_view.ui.prompt_text_browser,
-                "Please select a container on Manage Tab Page."),
+                "Please select a container on Manage Tab Page.",
+            ),
             return
         t = ServerOperationThread(target=self.docker_ctrl.stop_server, ctrl=self)
         t.start()
@@ -231,7 +199,8 @@ class MainController(QObject):
         if self.main_view.ui.cm_tab_widget.currentIndex() == 0:
             self.print_message(
                 self.main_view.ui.prompt_text_browser,
-                "Please select a container on Manage Tab Page."),
+                "Please select a container on Manage Tab Page.",
+            ),
             return
         t = ServerOperationThread(target=self.docker_ctrl.delete_server, ctrl=self)
         t.start()
@@ -250,6 +219,20 @@ class MainController(QObject):
     def set_v_port(self, val):
         self.main_view.ui.port_line_edit.setText(val)
 
+    def set_v_device(self, val):
+        self.main_view.ui.device_combo_box.setCurrentText(val)
+
+    def set_v_cls(self, val):
+        self.main_view.ui.cls_line_edit.setText(val)
+
+    def set_v_size(self, val):
+        self.main_view.ui.size_line_edit.setText(val)
+
+    def set_v_pad(self, val):
+        # To align with the backend
+        match_dict = {"short_side": "short side", "none": "none"}
+        self.main_view.ui.pad_combo_box.setCurrentText(match_dict[val])
+
     def set_v_train_path(self, val):
         self.main_view.ui.train_line_edit.setText(val)
 
@@ -262,54 +245,11 @@ class MainController(QObject):
     def set_v_paired_path(self, val):
         self.main_view.ui.paired_line_edit.setText(val)
 
-    def set_v_out_path(self, val):
-        self.main_view.ui.out_line_edit.setText(val)
-
-    def set_v_ckpt_path(self, val):
-        self.main_view.ui.ckpt_line_edit.setText(val)
-        self.init_ckpts()
-
     def set_v_inf_path(self, val):
         self.main_view.ui.inf_line_edit.setText(val)
 
-    def set_v_arch(self, val):
-        self.main_view.ui.arch_combo_box.setCurrentText(val)
-
-    def set_v_pretrain(self, val):
-        if val == "True":
-            self.main_view.ui.pretrain_check_box.setChecked(True)
-        else:
-            self.main_view.ui.pretrain_check_box.setChecked(False)
-
-    def set_v_weight(self, val):
-        self.main_view.ui.weight_combo_box.setCurrentText(val)
-
-    def set_v_device(self, val):
-        self.main_view.ui.device_combo_box.setCurrentText(val)
-
-    def set_v_shuffle(self, val):
-        if val == "True":
-            self.main_view.ui.shuffle_check_box.setChecked(True)
-        else:
-            self.main_view.ui.shuffle_check_box.setChecked(False)
-
-    def set_v_batch(self, val):
-        self.main_view.ui.batch_line_edit.setText(val)
-
-    def set_v_worker(self, val):
-        self.main_view.ui.worker_line_edit.setText(val)
-
-    def set_v_size(self, val):
-        self.main_view.ui.size_line_edit.setText(val)
-
-    def set_v_pad(self, val):
-        # To align with the backend
-        match_dict = {'short_side': 'short side',
-                      'none': 'none'}
-        self.main_view.ui.pad_combo_box.setCurrentText(match_dict[val])
-
-    def set_v_cls(self, val):
-        self.main_view.ui.cls_line_edit.setText(val)
+    def set_v_out_path(self, val):
+        self.main_view.ui.out_line_edit.setText(val)
 
     def enable_control(self):
         self.main_view.ui.create_push_button.setEnabled(True)
@@ -328,22 +268,7 @@ class MainController(QObject):
     def check_miss_input(self):
         miss_input_prompt = []
 
-        for key in [
-            "name",
-            "port",
-            "train_path",
-            "val_path",
-            "test_path",
-            "paired_path",
-            "out_path",
-            "inf_path",
-            "ckpt_path",
-            "batch",
-            "worker",
-            "cls",
-            "size",
-            "device"
-        ]:
+        for key in self.key_to_prompt:
             if not self.model.profile[key].strip():
                 miss_input_prompt.append(self.key_to_prompt[key])
 
@@ -358,14 +283,16 @@ class MainController(QObject):
     def check_wrong_input(self):
         wrong_input_prompt = []
 
-        for key in ["port", "batch", "worker", "cls", "size"]:
+        for key in ["port", "cls", "size"]:
             if not self.model.profile[key].isdigit():
                 wrong_input_prompt.append(self.key_to_prompt[key])
 
         if len(wrong_input_prompt) != 0:
             self.print_message(
                 self.main_view.ui.prompt_text_browser,
-                "The input type of {} should be integer".format(", ".join(wrong_input_prompt)),
+                "The input type of {} should be integer".format(
+                    ", ".join(wrong_input_prompt)
+                ),
             )
             return 1
         return 0
@@ -382,7 +309,9 @@ class MainController(QObject):
         )
 
     def update_success_view(self):
-        with open(os.path.join(self.docker_ctrl.config_root, "config_record.json"), "r") as f:
+        with open(
+            os.path.join(self.docker_ctrl.config_root, "config_record.json"), "r"
+        ) as f:
             match_dict = json.load(f)
             file_name = match_dict[self.model.temp_name]
         with open(file_name) as f:
@@ -421,7 +350,9 @@ class MainController(QObject):
         try:
             for gpu_info in nvgpu.gpu_info():
                 if gpu_info["mem_used_percent"] < 100:
-                    self.main_view.ui.device_combo_box.addItem(f"cuda:{gpu_info['index']}")
+                    self.main_view.ui.device_combo_box.addItem(
+                        f"cuda:{gpu_info['index']}"
+                    )
         except Exception as e:
             print(e)
             LoggerManager.append_log("app", "info", e)
@@ -452,7 +383,9 @@ class MainController(QObject):
             row = list_widget.row(item)
             list_widget.takeItem(row)
         else:
-            LoggerManager.append_log("app", "info", "The container to be removed changed its state")
+            LoggerManager.append_log(
+                "app", "info", "The container to be removed changed its state"
+            )
             return
 
 

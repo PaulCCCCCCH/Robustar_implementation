@@ -26,7 +26,6 @@ class RDataManager:
         dataset_dir: str,
         db_conn: SQLAlchemy,
         app: Flask,
-        shuffle=True,
         image_size=32,
         image_padding="short_side",
         class2label_mapping=None,
@@ -36,7 +35,6 @@ class RDataManager:
         self.data_root = dataset_dir
         self.base_dir = baseDir
         self.db_conn = db_conn
-        self.shuffle = shuffle
         self.image_size = image_size
         self.image_padding = image_padding
         self.class2label = class2label_mapping

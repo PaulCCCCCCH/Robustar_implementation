@@ -14,6 +14,7 @@ from PySide2.QtWidgets import *
 
 import resource_rc
 
+
 class Ui_main_widget(object):
     def setupUi(self, main_widget):
         if not main_widget.objectName():
@@ -36,14 +37,16 @@ class Ui_main_widget(object):
         icon = QIcon()
         icon.addFile(u":/resources/logo_short.png", QSize(), QIcon.Normal, QIcon.Off)
         main_widget.setWindowIcon(icon)
-        main_widget.setStyleSheet(u"QWidget{font: 8pt \"Arial\"}\n"
-"QPushButton{background-color: #E1E1E1; \n"
-"			font: 8pt Arial;\n"
-"			border: 1px solid #ADADAD;}\n"
-"QPushButton:hover {\n"
-"   background-color: #E3ECF3;\n"
-"   border: 1px solid #3287CA;\n"
-"}")
+        main_widget.setStyleSheet(
+            u'QWidget{font: 8pt "Arial"}\n'
+            "QPushButton{background-color: #E1E1E1; \n"
+            "			font: 8pt Arial;\n"
+            "			border: 1px solid #ADADAD;}\n"
+            "QPushButton:hover {\n"
+            "   background-color: #E3ECF3;\n"
+            "   border: 1px solid #3287CA;\n"
+            "}"
+        )
         self.layoutWidget = QWidget(main_widget)
         self.layoutWidget.setObjectName(u"layoutWidget")
         self.layoutWidget.setGeometry(QRect(35, 0, 931, 44))
@@ -55,7 +58,9 @@ class Ui_main_widget(object):
         sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.header_label.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.header_label.sizePolicy().hasHeightForWidth()
+        )
         self.header_label.setSizePolicy(sizePolicy1)
         self.header_label.setMinimumSize(QSize(164, 42))
         self.header_label.setMaximumSize(QSize(164, 42))
@@ -74,7 +79,9 @@ class Ui_main_widget(object):
         self.op_main_v_layout.setContentsMargins(0, 0, 0, 0)
         self.cm_tab_widget = QTabWidget(self.layoutWidget1)
         self.cm_tab_widget.setObjectName(u"cm_tab_widget")
-        sizePolicy1.setHeightForWidth(self.cm_tab_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.cm_tab_widget.sizePolicy().hasHeightForWidth()
+        )
         self.cm_tab_widget.setSizePolicy(sizePolicy1)
         self.cm_tab_widget.setMinimumSize(QSize(940, 610))
         self.cm_tab_widget.setMaximumSize(QSize(940, 610))
@@ -83,31 +90,31 @@ class Ui_main_widget(object):
         self.create_widget.setObjectName(u"create_widget")
         self.layoutWidget2 = QWidget(self.create_widget)
         self.layoutWidget2.setObjectName(u"layoutWidget2")
-        self.layoutWidget2.setGeometry(QRect(4, 9, 931, 531))
+        self.layoutWidget2.setGeometry(QRect(4, 9, 931, 606))
         self.create_h_layout = QHBoxLayout(self.layoutWidget2)
         self.create_h_layout.setSpacing(9)
         self.create_h_layout.setObjectName(u"create_h_layout")
         self.create_h_layout.setContentsMargins(0, 0, 0, 0)
-        self.docker_data_v_layout = QVBoxLayout()
-        self.docker_data_v_layout.setSpacing(0)
-        self.docker_data_v_layout.setObjectName(u"docker_data_v_layout")
-        self.docker_data_v_layout.setContentsMargins(-1, 0, -1, -1)
-        self.docker_group_box = QGroupBox(self.layoutWidget2)
-        self.docker_group_box.setObjectName(u"docker_group_box")
-        sizePolicy1.setHeightForWidth(self.docker_group_box.sizePolicy().hasHeightForWidth())
-        self.docker_group_box.setSizePolicy(sizePolicy1)
-        self.docker_group_box.setMinimumSize(QSize(458, 169))
-        self.docker_group_box.setMaximumSize(QSize(458, 169))
-        self.docker_group_box.setFont(font)
-        self.layoutWidget3 = QWidget(self.docker_group_box)
-        self.layoutWidget3.setObjectName(u"layoutWidget3")
-        self.layoutWidget3.setGeometry(QRect(10, 20, 441, 143))
-        self.docker_v_layout = QVBoxLayout(self.layoutWidget3)
-        self.docker_v_layout.setObjectName(u"docker_v_layout")
-        self.docker_v_layout.setContentsMargins(0, 0, 0, 0)
+        self.server_v_layout = QVBoxLayout()
+        self.server_v_layout.setObjectName(u"server_v_layout")
+        self.server_group_box = QGroupBox(self.layoutWidget2)
+        self.server_group_box.setObjectName(u"server_group_box")
+        sizePolicy1.setHeightForWidth(
+            self.server_group_box.sizePolicy().hasHeightForWidth()
+        )
+        self.server_group_box.setSizePolicy(sizePolicy1)
+        self.server_group_box.setMinimumSize(QSize(458, 400))
+        self.server_group_box.setMaximumSize(QSize(458, 400))
+        self.server_group_box.setFont(font)
+        self.layoutWidget_5 = QWidget(self.server_group_box)
+        self.layoutWidget_5.setObjectName(u"layoutWidget_5")
+        self.layoutWidget_5.setGeometry(QRect(10, 20, 441, 343))
+        self.server_v_layout_2 = QVBoxLayout(self.layoutWidget_5)
+        self.server_v_layout_2.setObjectName(u"server_v_layout_2")
+        self.server_v_layout_2.setContentsMargins(0, 0, 0, 0)
         self.name_h_layout = QHBoxLayout()
         self.name_h_layout.setObjectName(u"name_h_layout")
-        self.name_label = QLabel(self.layoutWidget3)
+        self.name_label = QLabel(self.layoutWidget_5)
         self.name_label.setObjectName(u"name_label")
         sizePolicy1.setHeightForWidth(self.name_label.sizePolicy().hasHeightForWidth())
         self.name_label.setSizePolicy(sizePolicy1)
@@ -117,24 +124,27 @@ class Ui_main_widget(object):
 
         self.name_h_layout.addWidget(self.name_label)
 
-        self.name_line_edit = QLineEdit(self.layoutWidget3)
+        self.name_line_edit = QLineEdit(self.layoutWidget_5)
         self.name_line_edit.setObjectName(u"name_line_edit")
-        sizePolicy1.setHeightForWidth(self.name_line_edit.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.name_line_edit.sizePolicy().hasHeightForWidth()
+        )
         self.name_line_edit.setSizePolicy(sizePolicy1)
         self.name_line_edit.setMinimumSize(QSize(200, 24))
         self.name_line_edit.setMaximumSize(QSize(200, 24))
         self.name_line_edit.setFont(font)
-        self.name_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.name_line_edit.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter
+        )
         self.name_line_edit.setClearButtonEnabled(True)
 
         self.name_h_layout.addWidget(self.name_line_edit)
 
-
-        self.docker_v_layout.addLayout(self.name_h_layout)
+        self.server_v_layout_2.addLayout(self.name_h_layout)
 
         self.image_h_layout = QHBoxLayout()
         self.image_h_layout.setObjectName(u"image_h_layout")
-        self.image_label = QLabel(self.layoutWidget3)
+        self.image_label = QLabel(self.layoutWidget_5)
         self.image_label.setObjectName(u"image_label")
         sizePolicy1.setHeightForWidth(self.image_label.sizePolicy().hasHeightForWidth())
         self.image_label.setSizePolicy(sizePolicy1)
@@ -144,9 +154,11 @@ class Ui_main_widget(object):
 
         self.image_h_layout.addWidget(self.image_label)
 
-        self.image_combo_box = QComboBox(self.layoutWidget3)
+        self.image_combo_box = QComboBox(self.layoutWidget_5)
         self.image_combo_box.setObjectName(u"image_combo_box")
-        sizePolicy1.setHeightForWidth(self.image_combo_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.image_combo_box.sizePolicy().hasHeightForWidth()
+        )
         self.image_combo_box.setSizePolicy(sizePolicy1)
         self.image_combo_box.setMinimumSize(QSize(200, 24))
         self.image_combo_box.setMaximumSize(QSize(200, 24))
@@ -154,12 +166,11 @@ class Ui_main_widget(object):
 
         self.image_h_layout.addWidget(self.image_combo_box)
 
-
-        self.docker_v_layout.addLayout(self.image_h_layout)
+        self.server_v_layout_2.addLayout(self.image_h_layout)
 
         self.port_h_layout = QHBoxLayout()
         self.port_h_layout.setObjectName(u"port_h_layout")
-        self.port_label = QLabel(self.layoutWidget3)
+        self.port_label = QLabel(self.layoutWidget_5)
         self.port_label.setObjectName(u"port_label")
         sizePolicy1.setHeightForWidth(self.port_label.sizePolicy().hasHeightForWidth())
         self.port_label.setSizePolicy(sizePolicy1)
@@ -169,407 +180,31 @@ class Ui_main_widget(object):
 
         self.port_h_layout.addWidget(self.port_label)
 
-        self.port_line_edit = QLineEdit(self.layoutWidget3)
+        self.port_line_edit = QLineEdit(self.layoutWidget_5)
         self.port_line_edit.setObjectName(u"port_line_edit")
-        sizePolicy1.setHeightForWidth(self.port_line_edit.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.port_line_edit.sizePolicy().hasHeightForWidth()
+        )
         self.port_line_edit.setSizePolicy(sizePolicy1)
         self.port_line_edit.setMinimumSize(QSize(200, 24))
         self.port_line_edit.setMaximumSize(QSize(200, 24))
         self.port_line_edit.setFont(font)
-        self.port_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.port_line_edit.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter
+        )
         self.port_line_edit.setClearButtonEnabled(True)
 
         self.port_h_layout.addWidget(self.port_line_edit)
 
-
-        self.docker_v_layout.addLayout(self.port_h_layout)
-
-
-        self.docker_data_v_layout.addWidget(self.docker_group_box)
-
-        self.data_group_box = QGroupBox(self.layoutWidget2)
-        self.data_group_box.setObjectName(u"data_group_box")
-        sizePolicy1.setHeightForWidth(self.data_group_box.sizePolicy().hasHeightForWidth())
-        self.data_group_box.setSizePolicy(sizePolicy1)
-        self.data_group_box.setMinimumSize(QSize(458, 356))
-        self.data_group_box.setMaximumSize(QSize(458, 356))
-        self.data_group_box.setFont(font)
-        self.layoutWidget4 = QWidget(self.data_group_box)
-        self.layoutWidget4.setObjectName(u"layoutWidget4")
-        self.layoutWidget4.setGeometry(QRect(10, 20, 441, 343))
-        self.data_v_layout = QVBoxLayout(self.layoutWidget4)
-        self.data_v_layout.setSpacing(9)
-        self.data_v_layout.setObjectName(u"data_v_layout")
-        self.data_v_layout.setContentsMargins(0, 0, 0, 0)
-        self.train_h_layout = QHBoxLayout()
-        self.train_h_layout.setObjectName(u"train_h_layout")
-        self.train_h_layout.setContentsMargins(0, -1, -1, -1)
-        self.train_label = QLabel(self.layoutWidget4)
-        self.train_label.setObjectName(u"train_label")
-        sizePolicy1.setHeightForWidth(self.train_label.sizePolicy().hasHeightForWidth())
-        self.train_label.setSizePolicy(sizePolicy1)
-        self.train_label.setMinimumSize(QSize(200, 39))
-        self.train_label.setMaximumSize(QSize(200, 39))
-        self.train_label.setFont(font)
-
-        self.train_h_layout.addWidget(self.train_label)
-
-        self.train_line_edit = QLineEdit(self.layoutWidget4)
-        self.train_line_edit.setObjectName(u"train_line_edit")
-        self.train_line_edit.setEnabled(True)
-        sizePolicy1.setHeightForWidth(self.train_line_edit.sizePolicy().hasHeightForWidth())
-        self.train_line_edit.setSizePolicy(sizePolicy1)
-        self.train_line_edit.setMinimumSize(QSize(154, 24))
-        self.train_line_edit.setMaximumSize(QSize(154, 24))
-        self.train_line_edit.setFont(font)
-        self.train_line_edit.setMouseTracking(True)
-        self.train_line_edit.setReadOnly(True)
-
-        self.train_h_layout.addWidget(self.train_line_edit)
-
-        self.train_push_button = QPushButton(self.layoutWidget4)
-        self.train_push_button.setObjectName(u"train_push_button")
-        sizePolicy1.setHeightForWidth(self.train_push_button.sizePolicy().hasHeightForWidth())
-        self.train_push_button.setSizePolicy(sizePolicy1)
-        self.train_push_button.setMinimumSize(QSize(25, 20))
-        self.train_push_button.setMaximumSize(QSize(25, 20))
-        self.train_push_button.setFont(font)
-
-        self.train_h_layout.addWidget(self.train_push_button)
-
-
-        self.data_v_layout.addLayout(self.train_h_layout)
-
-        self.val_h_layout = QHBoxLayout()
-        self.val_h_layout.setObjectName(u"val_h_layout")
-        self.val_h_layout.setContentsMargins(-1, -1, 0, -1)
-        self.val_label = QLabel(self.layoutWidget4)
-        self.val_label.setObjectName(u"val_label")
-        sizePolicy1.setHeightForWidth(self.val_label.sizePolicy().hasHeightForWidth())
-        self.val_label.setSizePolicy(sizePolicy1)
-        self.val_label.setMinimumSize(QSize(200, 39))
-        self.val_label.setMaximumSize(QSize(200, 39))
-        self.val_label.setFont(font)
-
-        self.val_h_layout.addWidget(self.val_label)
-
-        self.val_line_edit = QLineEdit(self.layoutWidget4)
-        self.val_line_edit.setObjectName(u"val_line_edit")
-        sizePolicy1.setHeightForWidth(self.val_line_edit.sizePolicy().hasHeightForWidth())
-        self.val_line_edit.setSizePolicy(sizePolicy1)
-        self.val_line_edit.setMinimumSize(QSize(154, 24))
-        self.val_line_edit.setMaximumSize(QSize(154, 24))
-        self.val_line_edit.setFont(font)
-        self.val_line_edit.setReadOnly(True)
-
-        self.val_h_layout.addWidget(self.val_line_edit)
-
-        self.val_push_button = QPushButton(self.layoutWidget4)
-        self.val_push_button.setObjectName(u"val_push_button")
-        sizePolicy1.setHeightForWidth(self.val_push_button.sizePolicy().hasHeightForWidth())
-        self.val_push_button.setSizePolicy(sizePolicy1)
-        self.val_push_button.setMinimumSize(QSize(25, 20))
-        self.val_push_button.setMaximumSize(QSize(25, 20))
-        self.val_push_button.setFont(font)
-
-        self.val_h_layout.addWidget(self.val_push_button)
-
-
-        self.data_v_layout.addLayout(self.val_h_layout)
-
-        self.test_h_layout = QHBoxLayout()
-        self.test_h_layout.setObjectName(u"test_h_layout")
-        self.test_h_layout.setContentsMargins(-1, -1, 0, -1)
-        self.test_label = QLabel(self.layoutWidget4)
-        self.test_label.setObjectName(u"test_label")
-        sizePolicy1.setHeightForWidth(self.test_label.sizePolicy().hasHeightForWidth())
-        self.test_label.setSizePolicy(sizePolicy1)
-        self.test_label.setMinimumSize(QSize(200, 39))
-        self.test_label.setMaximumSize(QSize(200, 39))
-        self.test_label.setFont(font)
-
-        self.test_h_layout.addWidget(self.test_label)
-
-        self.test_line_edit = QLineEdit(self.layoutWidget4)
-        self.test_line_edit.setObjectName(u"test_line_edit")
-        sizePolicy1.setHeightForWidth(self.test_line_edit.sizePolicy().hasHeightForWidth())
-        self.test_line_edit.setSizePolicy(sizePolicy1)
-        self.test_line_edit.setMinimumSize(QSize(154, 24))
-        self.test_line_edit.setMaximumSize(QSize(154, 24))
-        self.test_line_edit.setFont(font)
-        self.test_line_edit.setReadOnly(True)
-
-        self.test_h_layout.addWidget(self.test_line_edit)
-
-        self.test_push_button = QPushButton(self.layoutWidget4)
-        self.test_push_button.setObjectName(u"test_push_button")
-        sizePolicy1.setHeightForWidth(self.test_push_button.sizePolicy().hasHeightForWidth())
-        self.test_push_button.setSizePolicy(sizePolicy1)
-        self.test_push_button.setMinimumSize(QSize(25, 20))
-        self.test_push_button.setMaximumSize(QSize(25, 20))
-        self.test_push_button.setFont(font)
-
-        self.test_h_layout.addWidget(self.test_push_button)
-
-
-        self.data_v_layout.addLayout(self.test_h_layout)
-
-        self.paired_h_layout = QHBoxLayout()
-        self.paired_h_layout.setObjectName(u"paired_h_layout")
-        self.paired_h_layout.setContentsMargins(-1, -1, 0, -1)
-        self.paired_label = QLabel(self.layoutWidget4)
-        self.paired_label.setObjectName(u"paired_label")
-        sizePolicy1.setHeightForWidth(self.paired_label.sizePolicy().hasHeightForWidth())
-        self.paired_label.setSizePolicy(sizePolicy1)
-        self.paired_label.setMinimumSize(QSize(200, 39))
-        self.paired_label.setMaximumSize(QSize(200, 39))
-        self.paired_label.setFont(font)
-
-        self.paired_h_layout.addWidget(self.paired_label)
-
-        self.paired_line_edit = QLineEdit(self.layoutWidget4)
-        self.paired_line_edit.setObjectName(u"paired_line_edit")
-        sizePolicy1.setHeightForWidth(self.paired_line_edit.sizePolicy().hasHeightForWidth())
-        self.paired_line_edit.setSizePolicy(sizePolicy1)
-        self.paired_line_edit.setMinimumSize(QSize(154, 24))
-        self.paired_line_edit.setMaximumSize(QSize(154, 24))
-        self.paired_line_edit.setFont(font)
-        self.paired_line_edit.setReadOnly(True)
-
-        self.paired_h_layout.addWidget(self.paired_line_edit)
-
-        self.paired_push_button = QPushButton(self.layoutWidget4)
-        self.paired_push_button.setObjectName(u"paired_push_button")
-        sizePolicy1.setHeightForWidth(self.paired_push_button.sizePolicy().hasHeightForWidth())
-        self.paired_push_button.setSizePolicy(sizePolicy1)
-        self.paired_push_button.setMinimumSize(QSize(25, 20))
-        self.paired_push_button.setMaximumSize(QSize(25, 20))
-        self.paired_push_button.setFont(font)
-
-        self.paired_h_layout.addWidget(self.paired_push_button)
-
-
-        self.data_v_layout.addLayout(self.paired_h_layout)
-
-        self.ckpt_h_layout = QHBoxLayout()
-        self.ckpt_h_layout.setObjectName(u"ckpt_h_layout")
-        self.ckpt_label = QLabel(self.layoutWidget4)
-        self.ckpt_label.setObjectName(u"ckpt_label")
-        sizePolicy1.setHeightForWidth(self.ckpt_label.sizePolicy().hasHeightForWidth())
-        self.ckpt_label.setSizePolicy(sizePolicy1)
-        self.ckpt_label.setMinimumSize(QSize(200, 39))
-        self.ckpt_label.setMaximumSize(QSize(200, 39))
-        self.ckpt_label.setFont(font)
-
-        self.ckpt_h_layout.addWidget(self.ckpt_label)
-
-        self.ckpt_line_edit = QLineEdit(self.layoutWidget4)
-        self.ckpt_line_edit.setObjectName(u"ckpt_line_edit")
-        sizePolicy1.setHeightForWidth(self.ckpt_line_edit.sizePolicy().hasHeightForWidth())
-        self.ckpt_line_edit.setSizePolicy(sizePolicy1)
-        self.ckpt_line_edit.setMinimumSize(QSize(154, 24))
-        self.ckpt_line_edit.setMaximumSize(QSize(154, 24))
-        self.ckpt_line_edit.setFont(font)
-        self.ckpt_line_edit.setReadOnly(True)
-
-        self.ckpt_h_layout.addWidget(self.ckpt_line_edit)
-
-        self.ckpt_push_button = QPushButton(self.layoutWidget4)
-        self.ckpt_push_button.setObjectName(u"ckpt_push_button")
-        sizePolicy1.setHeightForWidth(self.ckpt_push_button.sizePolicy().hasHeightForWidth())
-        self.ckpt_push_button.setSizePolicy(sizePolicy1)
-        self.ckpt_push_button.setMinimumSize(QSize(25, 20))
-        self.ckpt_push_button.setMaximumSize(QSize(25, 20))
-        self.ckpt_push_button.setFont(font)
-
-        self.ckpt_h_layout.addWidget(self.ckpt_push_button)
-
-
-        self.data_v_layout.addLayout(self.ckpt_h_layout)
-
-        self.inf_h_layout = QHBoxLayout()
-        self.inf_h_layout.setObjectName(u"inf_h_layout")
-        self.inf_label = QLabel(self.layoutWidget4)
-        self.inf_label.setObjectName(u"inf_label")
-        sizePolicy1.setHeightForWidth(self.inf_label.sizePolicy().hasHeightForWidth())
-        self.inf_label.setSizePolicy(sizePolicy1)
-        self.inf_label.setMinimumSize(QSize(200, 39))
-        self.inf_label.setMaximumSize(QSize(200, 39))
-        self.inf_label.setFont(font)
-
-        self.inf_h_layout.addWidget(self.inf_label)
-
-        self.inf_line_edit = QLineEdit(self.layoutWidget4)
-        self.inf_line_edit.setObjectName(u"inf_line_edit")
-        sizePolicy1.setHeightForWidth(self.inf_line_edit.sizePolicy().hasHeightForWidth())
-        self.inf_line_edit.setSizePolicy(sizePolicy1)
-        self.inf_line_edit.setMinimumSize(QSize(154, 24))
-        self.inf_line_edit.setMaximumSize(QSize(154, 24))
-        self.inf_line_edit.setFont(font)
-        self.inf_line_edit.setReadOnly(True)
-
-        self.inf_h_layout.addWidget(self.inf_line_edit)
-
-        self.inf_push_button = QPushButton(self.layoutWidget4)
-        self.inf_push_button.setObjectName(u"inf_push_button")
-        sizePolicy1.setHeightForWidth(self.inf_push_button.sizePolicy().hasHeightForWidth())
-        self.inf_push_button.setSizePolicy(sizePolicy1)
-        self.inf_push_button.setMinimumSize(QSize(25, 20))
-        self.inf_push_button.setMaximumSize(QSize(25, 20))
-        self.inf_push_button.setFont(font)
-
-        self.inf_h_layout.addWidget(self.inf_push_button)
-
-
-        self.data_v_layout.addLayout(self.inf_h_layout)
-
-        self.out_h_layout = QHBoxLayout()
-        self.out_h_layout.setObjectName(u"out_h_layout")
-        self.out_h_layout.setContentsMargins(-1, -1, 0, -1)
-        self.out_label = QLabel(self.layoutWidget4)
-        self.out_label.setObjectName(u"out_label")
-        sizePolicy1.setHeightForWidth(self.out_label.sizePolicy().hasHeightForWidth())
-        self.out_label.setSizePolicy(sizePolicy1)
-        self.out_label.setMinimumSize(QSize(200, 39))
-        self.out_label.setMaximumSize(QSize(200, 39))
-        self.out_label.setFont(font)
-
-        self.out_h_layout.addWidget(self.out_label)
-
-        self.out_line_edit = QLineEdit(self.layoutWidget4)
-        self.out_line_edit.setObjectName(u"out_line_edit")
-        sizePolicy1.setHeightForWidth(self.out_line_edit.sizePolicy().hasHeightForWidth())
-        self.out_line_edit.setSizePolicy(sizePolicy1)
-        self.out_line_edit.setMinimumSize(QSize(154, 24))
-        self.out_line_edit.setMaximumSize(QSize(154, 24))
-        self.out_line_edit.setFont(font)
-        self.out_line_edit.setReadOnly(True)
-
-        self.out_h_layout.addWidget(self.out_line_edit)
-
-        self.out_push_button = QPushButton(self.layoutWidget4)
-        self.out_push_button.setObjectName(u"out_push_button")
-        sizePolicy1.setHeightForWidth(self.out_push_button.sizePolicy().hasHeightForWidth())
-        self.out_push_button.setSizePolicy(sizePolicy1)
-        self.out_push_button.setMinimumSize(QSize(25, 20))
-        self.out_push_button.setMaximumSize(QSize(25, 20))
-        self.out_push_button.setFont(font)
-
-        self.out_h_layout.addWidget(self.out_push_button)
-
-
-        self.data_v_layout.addLayout(self.out_h_layout)
-
-
-        self.docker_data_v_layout.addWidget(self.data_group_box)
-
-
-        self.create_h_layout.addLayout(self.docker_data_v_layout)
-
-        self.model_v_layout_2 = QVBoxLayout()
-        self.model_v_layout_2.setSpacing(0)
-        self.model_v_layout_2.setObjectName(u"model_v_layout_2")
-        self.model_group_box = QGroupBox(self.layoutWidget2)
-        self.model_group_box.setObjectName(u"model_group_box")
-        sizePolicy1.setHeightForWidth(self.model_group_box.sizePolicy().hasHeightForWidth())
-        self.model_group_box.setSizePolicy(sizePolicy1)
-        self.model_group_box.setMinimumSize(QSize(458, 525))
-        self.model_group_box.setMaximumSize(QSize(458, 525))
-        self.model_group_box.setFont(font)
-        self.layoutWidget_2 = QWidget(self.model_group_box)
-        self.layoutWidget_2.setObjectName(u"layoutWidget_2")
-        self.layoutWidget_2.setGeometry(QRect(10, 20, 441, 493))
-        self.model_v_layout = QVBoxLayout(self.layoutWidget_2)
-        self.model_v_layout.setObjectName(u"model_v_layout")
-        self.model_v_layout.setContentsMargins(0, 0, 0, 0)
-        self.arch_h_layout = QHBoxLayout()
-        self.arch_h_layout.setObjectName(u"arch_h_layout")
-        self.arch_label = QLabel(self.layoutWidget_2)
-        self.arch_label.setObjectName(u"arch_label")
-        sizePolicy1.setHeightForWidth(self.arch_label.sizePolicy().hasHeightForWidth())
-        self.arch_label.setSizePolicy(sizePolicy1)
-        self.arch_label.setMinimumSize(QSize(200, 39))
-        self.arch_label.setMaximumSize(QSize(200, 39))
-        self.arch_label.setFont(font)
-
-        self.arch_h_layout.addWidget(self.arch_label)
-
-        self.arch_combo_box = QComboBox(self.layoutWidget_2)
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.addItem("")
-        self.arch_combo_box.setObjectName(u"arch_combo_box")
-        sizePolicy1.setHeightForWidth(self.arch_combo_box.sizePolicy().hasHeightForWidth())
-        self.arch_combo_box.setSizePolicy(sizePolicy1)
-        self.arch_combo_box.setMinimumSize(QSize(200, 24))
-        self.arch_combo_box.setMaximumSize(QSize(200, 24))
-        self.arch_combo_box.setFont(font)
-
-        self.arch_h_layout.addWidget(self.arch_combo_box)
-
-
-        self.model_v_layout.addLayout(self.arch_h_layout)
-
-        self.pretrain_h_layout = QHBoxLayout()
-        self.pretrain_h_layout.setObjectName(u"pretrain_h_layout")
-        self.pretrain_label = QLabel(self.layoutWidget_2)
-        self.pretrain_label.setObjectName(u"pretrain_label")
-        sizePolicy1.setHeightForWidth(self.pretrain_label.sizePolicy().hasHeightForWidth())
-        self.pretrain_label.setSizePolicy(sizePolicy1)
-        self.pretrain_label.setMinimumSize(QSize(200, 39))
-        self.pretrain_label.setMaximumSize(QSize(200, 39))
-        self.pretrain_label.setFont(font)
-
-        self.pretrain_h_layout.addWidget(self.pretrain_label)
-
-        self.pretrain_check_box = QCheckBox(self.layoutWidget_2)
-        self.pretrain_check_box.setObjectName(u"pretrain_check_box")
-        sizePolicy1.setHeightForWidth(self.pretrain_check_box.sizePolicy().hasHeightForWidth())
-        self.pretrain_check_box.setSizePolicy(sizePolicy1)
-        self.pretrain_check_box.setMinimumSize(QSize(200, 24))
-        self.pretrain_check_box.setMaximumSize(QSize(200, 24))
-
-        self.pretrain_h_layout.addWidget(self.pretrain_check_box)
-
-
-        self.model_v_layout.addLayout(self.pretrain_h_layout)
-
-        self.weight_h_layout = QHBoxLayout()
-        self.weight_h_layout.setObjectName(u"weight_h_layout")
-        self.weight_label = QLabel(self.layoutWidget_2)
-        self.weight_label.setObjectName(u"weight_label")
-        sizePolicy1.setHeightForWidth(self.weight_label.sizePolicy().hasHeightForWidth())
-        self.weight_label.setSizePolicy(sizePolicy1)
-        self.weight_label.setMinimumSize(QSize(200, 39))
-        self.weight_label.setMaximumSize(QSize(200, 39))
-        self.weight_label.setFont(font)
-
-        self.weight_h_layout.addWidget(self.weight_label)
-
-        self.weight_combo_box = QComboBox(self.layoutWidget_2)
-        self.weight_combo_box.addItem("")
-        self.weight_combo_box.setObjectName(u"weight_combo_box")
-        sizePolicy1.setHeightForWidth(self.weight_combo_box.sizePolicy().hasHeightForWidth())
-        self.weight_combo_box.setSizePolicy(sizePolicy1)
-        self.weight_combo_box.setMinimumSize(QSize(200, 24))
-        self.weight_combo_box.setMaximumSize(QSize(200, 24))
-        self.weight_combo_box.setFont(font)
-
-        self.weight_h_layout.addWidget(self.weight_combo_box)
-
-
-        self.model_v_layout.addLayout(self.weight_h_layout)
+        self.server_v_layout_2.addLayout(self.port_h_layout)
 
         self.device_h_layout = QHBoxLayout()
         self.device_h_layout.setObjectName(u"device_h_layout")
-        self.device_label = QLabel(self.layoutWidget_2)
+        self.device_label = QLabel(self.layoutWidget_5)
         self.device_label.setObjectName(u"device_label")
-        sizePolicy1.setHeightForWidth(self.device_label.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.device_label.sizePolicy().hasHeightForWidth()
+        )
         self.device_label.setSizePolicy(sizePolicy1)
         self.device_label.setMinimumSize(QSize(200, 39))
         self.device_label.setMaximumSize(QSize(200, 39))
@@ -577,10 +212,12 @@ class Ui_main_widget(object):
 
         self.device_h_layout.addWidget(self.device_label)
 
-        self.device_combo_box = QComboBox(self.layoutWidget_2)
+        self.device_combo_box = QComboBox(self.layoutWidget_5)
         self.device_combo_box.addItem("")
         self.device_combo_box.setObjectName(u"device_combo_box")
-        sizePolicy1.setHeightForWidth(self.device_combo_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.device_combo_box.sizePolicy().hasHeightForWidth()
+        )
         self.device_combo_box.setSizePolicy(sizePolicy1)
         self.device_combo_box.setMinimumSize(QSize(200, 24))
         self.device_combo_box.setMaximumSize(QSize(200, 24))
@@ -588,90 +225,11 @@ class Ui_main_widget(object):
 
         self.device_h_layout.addWidget(self.device_combo_box)
 
-
-        self.model_v_layout.addLayout(self.device_h_layout)
-
-        self.shuffle_h_layout = QHBoxLayout()
-        self.shuffle_h_layout.setObjectName(u"shuffle_h_layout")
-        self.shuffle_label = QLabel(self.layoutWidget_2)
-        self.shuffle_label.setObjectName(u"shuffle_label")
-        sizePolicy1.setHeightForWidth(self.shuffle_label.sizePolicy().hasHeightForWidth())
-        self.shuffle_label.setSizePolicy(sizePolicy1)
-        self.shuffle_label.setMinimumSize(QSize(200, 39))
-        self.shuffle_label.setMaximumSize(QSize(200, 39))
-        self.shuffle_label.setFont(font)
-
-        self.shuffle_h_layout.addWidget(self.shuffle_label)
-
-        self.shuffle_check_box = QCheckBox(self.layoutWidget_2)
-        self.shuffle_check_box.setObjectName(u"shuffle_check_box")
-        sizePolicy1.setHeightForWidth(self.shuffle_check_box.sizePolicy().hasHeightForWidth())
-        self.shuffle_check_box.setSizePolicy(sizePolicy1)
-        self.shuffle_check_box.setMinimumSize(QSize(200, 24))
-        self.shuffle_check_box.setMaximumSize(QSize(200, 24))
-
-        self.shuffle_h_layout.addWidget(self.shuffle_check_box)
-
-
-        self.model_v_layout.addLayout(self.shuffle_h_layout)
-
-        self.batch_h_layout = QHBoxLayout()
-        self.batch_h_layout.setObjectName(u"batch_h_layout")
-        self.batch_lable = QLabel(self.layoutWidget_2)
-        self.batch_lable.setObjectName(u"batch_lable")
-        sizePolicy1.setHeightForWidth(self.batch_lable.sizePolicy().hasHeightForWidth())
-        self.batch_lable.setSizePolicy(sizePolicy1)
-        self.batch_lable.setMinimumSize(QSize(200, 39))
-        self.batch_lable.setMaximumSize(QSize(200, 39))
-        self.batch_lable.setFont(font)
-
-        self.batch_h_layout.addWidget(self.batch_lable)
-
-        self.batch_line_edit = QLineEdit(self.layoutWidget_2)
-        self.batch_line_edit.setObjectName(u"batch_line_edit")
-        sizePolicy1.setHeightForWidth(self.batch_line_edit.sizePolicy().hasHeightForWidth())
-        self.batch_line_edit.setSizePolicy(sizePolicy1)
-        self.batch_line_edit.setMinimumSize(QSize(200, 24))
-        self.batch_line_edit.setMaximumSize(QSize(200, 24))
-        self.batch_line_edit.setFont(font)
-        self.batch_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.batch_line_edit.setClearButtonEnabled(True)
-
-        self.batch_h_layout.addWidget(self.batch_line_edit)
-
-
-        self.model_v_layout.addLayout(self.batch_h_layout)
-
-        self.worker_h_layout = QHBoxLayout()
-        self.worker_h_layout.setObjectName(u"worker_h_layout")
-        self.worker_h_layout_2 = QLabel(self.layoutWidget_2)
-        self.worker_h_layout_2.setObjectName(u"worker_h_layout_2")
-        sizePolicy1.setHeightForWidth(self.worker_h_layout_2.sizePolicy().hasHeightForWidth())
-        self.worker_h_layout_2.setSizePolicy(sizePolicy1)
-        self.worker_h_layout_2.setMinimumSize(QSize(200, 39))
-        self.worker_h_layout_2.setMaximumSize(QSize(200, 39))
-        self.worker_h_layout_2.setFont(font)
-
-        self.worker_h_layout.addWidget(self.worker_h_layout_2)
-
-        self.worker_line_edit = QLineEdit(self.layoutWidget_2)
-        self.worker_line_edit.setObjectName(u"worker_line_edit")
-        sizePolicy1.setHeightForWidth(self.worker_line_edit.sizePolicy().hasHeightForWidth())
-        self.worker_line_edit.setSizePolicy(sizePolicy1)
-        self.worker_line_edit.setMinimumSize(QSize(200, 24))
-        self.worker_line_edit.setMaximumSize(QSize(200, 24))
-        self.worker_line_edit.setFont(font)
-        self.worker_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.worker_line_edit.setClearButtonEnabled(True)
-
-        self.worker_h_layout.addWidget(self.worker_line_edit)
-
-
-        self.model_v_layout.addLayout(self.worker_h_layout)
+        self.server_v_layout_2.addLayout(self.device_h_layout)
 
         self.cls_h_layout = QHBoxLayout()
         self.cls_h_layout.setObjectName(u"cls_h_layout")
-        self.cls_label = QLabel(self.layoutWidget_2)
+        self.cls_label = QLabel(self.layoutWidget_5)
         self.cls_label.setObjectName(u"cls_label")
         sizePolicy1.setHeightForWidth(self.cls_label.sizePolicy().hasHeightForWidth())
         self.cls_label.setSizePolicy(sizePolicy1)
@@ -681,24 +239,27 @@ class Ui_main_widget(object):
 
         self.cls_h_layout.addWidget(self.cls_label)
 
-        self.cls_line_edit = QLineEdit(self.layoutWidget_2)
+        self.cls_line_edit = QLineEdit(self.layoutWidget_5)
         self.cls_line_edit.setObjectName(u"cls_line_edit")
-        sizePolicy1.setHeightForWidth(self.cls_line_edit.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.cls_line_edit.sizePolicy().hasHeightForWidth()
+        )
         self.cls_line_edit.setSizePolicy(sizePolicy1)
         self.cls_line_edit.setMinimumSize(QSize(200, 24))
         self.cls_line_edit.setMaximumSize(QSize(200, 24))
         self.cls_line_edit.setFont(font)
-        self.cls_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.cls_line_edit.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter
+        )
         self.cls_line_edit.setClearButtonEnabled(True)
 
         self.cls_h_layout.addWidget(self.cls_line_edit)
 
-
-        self.model_v_layout.addLayout(self.cls_h_layout)
+        self.server_v_layout_2.addLayout(self.cls_h_layout)
 
         self.size_h_layout = QHBoxLayout()
         self.size_h_layout.setObjectName(u"size_h_layout")
-        self.size_label = QLabel(self.layoutWidget_2)
+        self.size_label = QLabel(self.layoutWidget_5)
         self.size_label.setObjectName(u"size_label")
         sizePolicy1.setHeightForWidth(self.size_label.sizePolicy().hasHeightForWidth())
         self.size_label.setSizePolicy(sizePolicy1)
@@ -708,24 +269,27 @@ class Ui_main_widget(object):
 
         self.size_h_layout.addWidget(self.size_label)
 
-        self.size_line_edit = QLineEdit(self.layoutWidget_2)
+        self.size_line_edit = QLineEdit(self.layoutWidget_5)
         self.size_line_edit.setObjectName(u"size_line_edit")
-        sizePolicy1.setHeightForWidth(self.size_line_edit.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.size_line_edit.sizePolicy().hasHeightForWidth()
+        )
         self.size_line_edit.setSizePolicy(sizePolicy1)
         self.size_line_edit.setMinimumSize(QSize(200, 24))
         self.size_line_edit.setMaximumSize(QSize(200, 24))
         self.size_line_edit.setFont(font)
-        self.size_line_edit.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.size_line_edit.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter
+        )
         self.size_line_edit.setClearButtonEnabled(True)
 
         self.size_h_layout.addWidget(self.size_line_edit)
 
-
-        self.model_v_layout.addLayout(self.size_h_layout)
+        self.server_v_layout_2.addLayout(self.size_h_layout)
 
         self.pad_h_layout = QHBoxLayout()
         self.pad_h_layout.setObjectName(u"pad_h_layout")
-        self.pad_label = QLabel(self.layoutWidget_2)
+        self.pad_label = QLabel(self.layoutWidget_5)
         self.pad_label.setObjectName(u"pad_label")
         sizePolicy1.setHeightForWidth(self.pad_label.sizePolicy().hasHeightForWidth())
         self.pad_label.setSizePolicy(sizePolicy1)
@@ -735,11 +299,13 @@ class Ui_main_widget(object):
 
         self.pad_h_layout.addWidget(self.pad_label)
 
-        self.pad_combo_box = QComboBox(self.layoutWidget_2)
+        self.pad_combo_box = QComboBox(self.layoutWidget_5)
         self.pad_combo_box.addItem("")
         self.pad_combo_box.addItem("")
         self.pad_combo_box.setObjectName(u"pad_combo_box")
-        sizePolicy1.setHeightForWidth(self.pad_combo_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.pad_combo_box.sizePolicy().hasHeightForWidth()
+        )
         self.pad_combo_box.setSizePolicy(sizePolicy1)
         self.pad_combo_box.setMinimumSize(QSize(200, 24))
         self.pad_combo_box.setMaximumSize(QSize(200, 24))
@@ -747,14 +313,277 @@ class Ui_main_widget(object):
 
         self.pad_h_layout.addWidget(self.pad_combo_box)
 
+        self.server_v_layout_2.addLayout(self.pad_h_layout)
 
-        self.model_v_layout.addLayout(self.pad_h_layout)
+        self.server_v_layout.addWidget(self.server_group_box)
 
+        self.create_h_layout.addLayout(self.server_v_layout)
 
-        self.model_v_layout_2.addWidget(self.model_group_box)
+        self.dir_v_layout = QVBoxLayout()
+        self.dir_v_layout.setObjectName(u"dir_v_layout")
+        self.dir_group_box = QGroupBox(self.layoutWidget2)
+        self.dir_group_box.setObjectName(u"dir_group_box")
+        sizePolicy1.setHeightForWidth(
+            self.dir_group_box.sizePolicy().hasHeightForWidth()
+        )
+        self.dir_group_box.setSizePolicy(sizePolicy1)
+        self.dir_group_box.setMinimumSize(QSize(458, 400))
+        self.dir_group_box.setMaximumSize(QSize(458, 400))
+        self.dir_group_box.setFont(font)
+        self.layoutWidget_6 = QWidget(self.dir_group_box)
+        self.layoutWidget_6.setObjectName(u"layoutWidget_6")
+        self.layoutWidget_6.setGeometry(QRect(10, 20, 441, 343))
+        self.dir_v_layout_2 = QVBoxLayout(self.layoutWidget_6)
+        self.dir_v_layout_2.setSpacing(9)
+        self.dir_v_layout_2.setObjectName(u"dir_v_layout_2")
+        self.dir_v_layout_2.setContentsMargins(0, 0, 0, 0)
+        self.train_h_layout = QHBoxLayout()
+        self.train_h_layout.setSpacing(9)
+        self.train_h_layout.setObjectName(u"train_h_layout")
+        self.train_h_layout.setContentsMargins(0, -1, -1, -1)
+        self.train_label = QLabel(self.layoutWidget_6)
+        self.train_label.setObjectName(u"train_label")
+        sizePolicy1.setHeightForWidth(self.train_label.sizePolicy().hasHeightForWidth())
+        self.train_label.setSizePolicy(sizePolicy1)
+        self.train_label.setMinimumSize(QSize(100, 39))
+        self.train_label.setMaximumSize(QSize(200, 39))
+        self.train_label.setFont(font)
 
+        self.train_h_layout.addWidget(self.train_label)
 
-        self.create_h_layout.addLayout(self.model_v_layout_2)
+        self.train_line_edit = QLineEdit(self.layoutWidget_6)
+        self.train_line_edit.setObjectName(u"train_line_edit")
+        self.train_line_edit.setEnabled(True)
+        sizePolicy1.setHeightForWidth(
+            self.train_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.train_line_edit.setSizePolicy(sizePolicy1)
+        self.train_line_edit.setMinimumSize(QSize(154, 24))
+        self.train_line_edit.setMaximumSize(QSize(154, 24))
+        self.train_line_edit.setFont(font)
+        self.train_line_edit.setMouseTracking(True)
+        self.train_line_edit.setReadOnly(True)
+
+        self.train_h_layout.addWidget(self.train_line_edit)
+
+        self.train_push_button = QPushButton(self.layoutWidget_6)
+        self.train_push_button.setObjectName(u"train_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.train_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.train_push_button.setSizePolicy(sizePolicy1)
+        self.train_push_button.setMinimumSize(QSize(25, 20))
+        self.train_push_button.setMaximumSize(QSize(25, 20))
+        self.train_push_button.setFont(font)
+
+        self.train_h_layout.addWidget(self.train_push_button)
+
+        self.dir_v_layout_2.addLayout(self.train_h_layout)
+
+        self.val_h_layout = QHBoxLayout()
+        self.val_h_layout.setObjectName(u"val_h_layout")
+        self.val_h_layout.setContentsMargins(-1, -1, 0, -1)
+        self.val_label = QLabel(self.layoutWidget_6)
+        self.val_label.setObjectName(u"val_label")
+        sizePolicy1.setHeightForWidth(self.val_label.sizePolicy().hasHeightForWidth())
+        self.val_label.setSizePolicy(sizePolicy1)
+        self.val_label.setMinimumSize(QSize(200, 39))
+        self.val_label.setMaximumSize(QSize(200, 39))
+        self.val_label.setFont(font)
+
+        self.val_h_layout.addWidget(self.val_label)
+
+        self.val_line_edit = QLineEdit(self.layoutWidget_6)
+        self.val_line_edit.setObjectName(u"val_line_edit")
+        sizePolicy1.setHeightForWidth(
+            self.val_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.val_line_edit.setSizePolicy(sizePolicy1)
+        self.val_line_edit.setMinimumSize(QSize(154, 24))
+        self.val_line_edit.setMaximumSize(QSize(154, 24))
+        self.val_line_edit.setFont(font)
+        self.val_line_edit.setReadOnly(True)
+
+        self.val_h_layout.addWidget(self.val_line_edit)
+
+        self.val_push_button = QPushButton(self.layoutWidget_6)
+        self.val_push_button.setObjectName(u"val_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.val_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.val_push_button.setSizePolicy(sizePolicy1)
+        self.val_push_button.setMinimumSize(QSize(25, 20))
+        self.val_push_button.setMaximumSize(QSize(25, 20))
+        self.val_push_button.setFont(font)
+
+        self.val_h_layout.addWidget(self.val_push_button)
+
+        self.dir_v_layout_2.addLayout(self.val_h_layout)
+
+        self.test_h_layout = QHBoxLayout()
+        self.test_h_layout.setObjectName(u"test_h_layout")
+        self.test_h_layout.setContentsMargins(-1, -1, 0, -1)
+        self.test_label = QLabel(self.layoutWidget_6)
+        self.test_label.setObjectName(u"test_label")
+        sizePolicy1.setHeightForWidth(self.test_label.sizePolicy().hasHeightForWidth())
+        self.test_label.setSizePolicy(sizePolicy1)
+        self.test_label.setMinimumSize(QSize(200, 39))
+        self.test_label.setMaximumSize(QSize(200, 39))
+        self.test_label.setFont(font)
+
+        self.test_h_layout.addWidget(self.test_label)
+
+        self.test_line_edit = QLineEdit(self.layoutWidget_6)
+        self.test_line_edit.setObjectName(u"test_line_edit")
+        sizePolicy1.setHeightForWidth(
+            self.test_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.test_line_edit.setSizePolicy(sizePolicy1)
+        self.test_line_edit.setMinimumSize(QSize(154, 24))
+        self.test_line_edit.setMaximumSize(QSize(154, 24))
+        self.test_line_edit.setFont(font)
+        self.test_line_edit.setReadOnly(True)
+
+        self.test_h_layout.addWidget(self.test_line_edit)
+
+        self.test_push_button = QPushButton(self.layoutWidget_6)
+        self.test_push_button.setObjectName(u"test_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.test_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.test_push_button.setSizePolicy(sizePolicy1)
+        self.test_push_button.setMinimumSize(QSize(25, 20))
+        self.test_push_button.setMaximumSize(QSize(25, 20))
+        self.test_push_button.setFont(font)
+
+        self.test_h_layout.addWidget(self.test_push_button)
+
+        self.dir_v_layout_2.addLayout(self.test_h_layout)
+
+        self.paired_h_layout = QHBoxLayout()
+        self.paired_h_layout.setObjectName(u"paired_h_layout")
+        self.paired_h_layout.setContentsMargins(-1, -1, 0, -1)
+        self.paired_label = QLabel(self.layoutWidget_6)
+        self.paired_label.setObjectName(u"paired_label")
+        sizePolicy1.setHeightForWidth(
+            self.paired_label.sizePolicy().hasHeightForWidth()
+        )
+        self.paired_label.setSizePolicy(sizePolicy1)
+        self.paired_label.setMinimumSize(QSize(200, 39))
+        self.paired_label.setMaximumSize(QSize(200, 39))
+        self.paired_label.setFont(font)
+
+        self.paired_h_layout.addWidget(self.paired_label)
+
+        self.paired_line_edit = QLineEdit(self.layoutWidget_6)
+        self.paired_line_edit.setObjectName(u"paired_line_edit")
+        sizePolicy1.setHeightForWidth(
+            self.paired_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.paired_line_edit.setSizePolicy(sizePolicy1)
+        self.paired_line_edit.setMinimumSize(QSize(154, 24))
+        self.paired_line_edit.setMaximumSize(QSize(154, 24))
+        self.paired_line_edit.setFont(font)
+        self.paired_line_edit.setReadOnly(True)
+
+        self.paired_h_layout.addWidget(self.paired_line_edit)
+
+        self.paired_push_button = QPushButton(self.layoutWidget_6)
+        self.paired_push_button.setObjectName(u"paired_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.paired_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.paired_push_button.setSizePolicy(sizePolicy1)
+        self.paired_push_button.setMinimumSize(QSize(25, 20))
+        self.paired_push_button.setMaximumSize(QSize(25, 20))
+        self.paired_push_button.setFont(font)
+
+        self.paired_h_layout.addWidget(self.paired_push_button)
+
+        self.dir_v_layout_2.addLayout(self.paired_h_layout)
+
+        self.inf_h_layout = QHBoxLayout()
+        self.inf_h_layout.setObjectName(u"inf_h_layout")
+        self.inf_label = QLabel(self.layoutWidget_6)
+        self.inf_label.setObjectName(u"inf_label")
+        sizePolicy1.setHeightForWidth(self.inf_label.sizePolicy().hasHeightForWidth())
+        self.inf_label.setSizePolicy(sizePolicy1)
+        self.inf_label.setMinimumSize(QSize(200, 39))
+        self.inf_label.setMaximumSize(QSize(200, 39))
+        self.inf_label.setFont(font)
+
+        self.inf_h_layout.addWidget(self.inf_label)
+
+        self.inf_line_edit = QLineEdit(self.layoutWidget_6)
+        self.inf_line_edit.setObjectName(u"inf_line_edit")
+        sizePolicy1.setHeightForWidth(
+            self.inf_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.inf_line_edit.setSizePolicy(sizePolicy1)
+        self.inf_line_edit.setMinimumSize(QSize(154, 24))
+        self.inf_line_edit.setMaximumSize(QSize(154, 24))
+        self.inf_line_edit.setFont(font)
+        self.inf_line_edit.setReadOnly(True)
+
+        self.inf_h_layout.addWidget(self.inf_line_edit)
+
+        self.inf_push_button = QPushButton(self.layoutWidget_6)
+        self.inf_push_button.setObjectName(u"inf_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.inf_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.inf_push_button.setSizePolicy(sizePolicy1)
+        self.inf_push_button.setMinimumSize(QSize(25, 20))
+        self.inf_push_button.setMaximumSize(QSize(25, 20))
+        self.inf_push_button.setFont(font)
+
+        self.inf_h_layout.addWidget(self.inf_push_button)
+
+        self.dir_v_layout_2.addLayout(self.inf_h_layout)
+
+        self.out_h_layout = QHBoxLayout()
+        self.out_h_layout.setObjectName(u"out_h_layout")
+        self.out_h_layout.setContentsMargins(-1, -1, 0, -1)
+        self.out_label = QLabel(self.layoutWidget_6)
+        self.out_label.setObjectName(u"out_label")
+        sizePolicy1.setHeightForWidth(self.out_label.sizePolicy().hasHeightForWidth())
+        self.out_label.setSizePolicy(sizePolicy1)
+        self.out_label.setMinimumSize(QSize(200, 39))
+        self.out_label.setMaximumSize(QSize(200, 39))
+        self.out_label.setFont(font)
+
+        self.out_h_layout.addWidget(self.out_label)
+
+        self.out_line_edit = QLineEdit(self.layoutWidget_6)
+        self.out_line_edit.setObjectName(u"out_line_edit")
+        sizePolicy1.setHeightForWidth(
+            self.out_line_edit.sizePolicy().hasHeightForWidth()
+        )
+        self.out_line_edit.setSizePolicy(sizePolicy1)
+        self.out_line_edit.setMinimumSize(QSize(154, 24))
+        self.out_line_edit.setMaximumSize(QSize(154, 24))
+        self.out_line_edit.setFont(font)
+        self.out_line_edit.setReadOnly(True)
+
+        self.out_h_layout.addWidget(self.out_line_edit)
+
+        self.out_push_button = QPushButton(self.layoutWidget_6)
+        self.out_push_button.setObjectName(u"out_push_button")
+        sizePolicy1.setHeightForWidth(
+            self.out_push_button.sizePolicy().hasHeightForWidth()
+        )
+        self.out_push_button.setSizePolicy(sizePolicy1)
+        self.out_push_button.setMinimumSize(QSize(25, 20))
+        self.out_push_button.setMaximumSize(QSize(25, 20))
+        self.out_push_button.setFont(font)
+
+        self.out_h_layout.addWidget(self.out_push_button)
+
+        self.dir_v_layout_2.addLayout(self.out_h_layout)
+
+        self.dir_v_layout.addWidget(self.dir_group_box)
+
+        self.create_h_layout.addLayout(self.dir_v_layout)
 
         self.create_button_frame = QFrame(self.create_widget)
         self.create_button_frame.setObjectName(u"create_button_frame")
@@ -767,13 +596,17 @@ class Ui_main_widget(object):
         self.horizontalLayout = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalSpacer = QSpacerItem(526, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(
+            526, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
         self.create_push_button = QPushButton(self.horizontalLayoutWidget)
         self.create_push_button.setObjectName(u"create_push_button")
-        sizePolicy1.setHeightForWidth(self.create_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.create_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.create_push_button.setSizePolicy(sizePolicy1)
         self.create_push_button.setMinimumSize(QSize(100, 25))
         self.create_push_button.setMaximumSize(QSize(100, 25))
@@ -782,13 +615,17 @@ class Ui_main_widget(object):
 
         self.horizontalLayout.addWidget(self.create_push_button)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
         self.load_push_button = QPushButton(self.horizontalLayoutWidget)
         self.load_push_button.setObjectName(u"load_push_button")
-        sizePolicy1.setHeightForWidth(self.load_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.load_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.load_push_button.setSizePolicy(sizePolicy1)
         self.load_push_button.setMinimumSize(QSize(100, 25))
         self.load_push_button.setMaximumSize(QSize(100, 25))
@@ -797,13 +634,17 @@ class Ui_main_widget(object):
 
         self.horizontalLayout.addWidget(self.load_push_button)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout.addItem(self.horizontalSpacer_3)
 
         self.save_push_button = QPushButton(self.horizontalLayoutWidget)
         self.save_push_button.setObjectName(u"save_push_button")
-        sizePolicy1.setHeightForWidth(self.save_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.save_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.save_push_button.setSizePolicy(sizePolicy1)
         self.save_push_button.setMinimumSize(QSize(100, 25))
         self.save_push_button.setMaximumSize(QSize(100, 25))
@@ -814,19 +655,21 @@ class Ui_main_widget(object):
         self.cm_tab_widget.addTab(self.create_widget, "")
         self.manage_widget = QWidget()
         self.manage_widget.setObjectName(u"manage_widget")
-        self.layoutWidget5 = QWidget(self.manage_widget)
-        self.layoutWidget5.setObjectName(u"layoutWidget5")
-        self.layoutWidget5.setGeometry(QRect(0, 10, 931, 531))
-        self.manage_h_layout = QHBoxLayout(self.layoutWidget5)
+        self.layoutWidget3 = QWidget(self.manage_widget)
+        self.layoutWidget3.setObjectName(u"layoutWidget3")
+        self.layoutWidget3.setGeometry(QRect(0, 10, 931, 531))
+        self.manage_h_layout = QHBoxLayout(self.layoutWidget3)
         self.manage_h_layout.setObjectName(u"manage_h_layout")
         self.manage_h_layout.setContentsMargins(0, 0, 0, 0)
         self.exit_create_v_layout = QVBoxLayout()
         self.exit_create_v_layout.setSpacing(0)
         self.exit_create_v_layout.setObjectName(u"exit_create_v_layout")
         self.exit_create_v_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.exit_group_box = QGroupBox(self.layoutWidget5)
+        self.exit_group_box = QGroupBox(self.layoutWidget3)
         self.exit_group_box.setObjectName(u"exit_group_box")
-        sizePolicy1.setHeightForWidth(self.exit_group_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.exit_group_box.sizePolicy().hasHeightForWidth()
+        )
         self.exit_group_box.setSizePolicy(sizePolicy1)
         self.exit_group_box.setMinimumSize(QSize(455, 325))
         self.exit_group_box.setMaximumSize(QSize(455, 325))
@@ -834,16 +677,20 @@ class Ui_main_widget(object):
         self.exit_list_widget = QListWidget(self.exit_group_box)
         self.exit_list_widget.setObjectName(u"exit_list_widget")
         self.exit_list_widget.setGeometry(QRect(10, 20, 438, 290))
-        sizePolicy1.setHeightForWidth(self.exit_list_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.exit_list_widget.sizePolicy().hasHeightForWidth()
+        )
         self.exit_list_widget.setSizePolicy(sizePolicy1)
         self.exit_list_widget.setMinimumSize(QSize(438, 290))
         self.exit_list_widget.setMaximumSize(QSize(438, 290))
 
         self.exit_create_v_layout.addWidget(self.exit_group_box)
 
-        self.create_group_box = QGroupBox(self.layoutWidget5)
+        self.create_group_box = QGroupBox(self.layoutWidget3)
         self.create_group_box.setObjectName(u"create_group_box")
-        sizePolicy1.setHeightForWidth(self.create_group_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.create_group_box.sizePolicy().hasHeightForWidth()
+        )
         self.create_group_box.setSizePolicy(sizePolicy1)
         self.create_group_box.setMinimumSize(QSize(455, 200))
         self.create_group_box.setMaximumSize(QSize(455, 200))
@@ -851,19 +698,22 @@ class Ui_main_widget(object):
         self.create_list_widget = QListWidget(self.create_group_box)
         self.create_list_widget.setObjectName(u"create_list_widget")
         self.create_list_widget.setGeometry(QRect(10, 20, 438, 162))
-        sizePolicy1.setHeightForWidth(self.create_list_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.create_list_widget.sizePolicy().hasHeightForWidth()
+        )
         self.create_list_widget.setSizePolicy(sizePolicy1)
         self.create_list_widget.setMinimumSize(QSize(438, 162))
         self.create_list_widget.setMaximumSize(QSize(438, 160))
 
         self.exit_create_v_layout.addWidget(self.create_group_box)
 
-
         self.manage_h_layout.addLayout(self.exit_create_v_layout)
 
-        self.run_group_box = QGroupBox(self.layoutWidget5)
+        self.run_group_box = QGroupBox(self.layoutWidget3)
         self.run_group_box.setObjectName(u"run_group_box")
-        sizePolicy1.setHeightForWidth(self.run_group_box.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.run_group_box.sizePolicy().hasHeightForWidth()
+        )
         self.run_group_box.setSizePolicy(sizePolicy1)
         self.run_group_box.setMinimumSize(QSize(458, 525))
         self.run_group_box.setMaximumSize(QSize(458, 525))
@@ -871,7 +721,9 @@ class Ui_main_widget(object):
         self.run_list_widget = QListWidget(self.run_group_box)
         self.run_list_widget.setObjectName(u"run_list_widget")
         self.run_list_widget.setGeometry(QRect(10, 20, 438, 490))
-        sizePolicy1.setHeightForWidth(self.run_list_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.run_list_widget.sizePolicy().hasHeightForWidth()
+        )
         self.run_list_widget.setSizePolicy(sizePolicy1)
         self.run_list_widget.setMinimumSize(QSize(438, 490))
         self.run_list_widget.setMaximumSize(QSize(438, 490))
@@ -889,13 +741,17 @@ class Ui_main_widget(object):
         self.horizontalLayout_2 = QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalSpacer_4 = QSpacerItem(386, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_4 = QSpacerItem(
+            386, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_4)
 
         self.start_push_button = QPushButton(self.horizontalLayoutWidget_2)
         self.start_push_button.setObjectName(u"start_push_button")
-        sizePolicy1.setHeightForWidth(self.start_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.start_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.start_push_button.setSizePolicy(sizePolicy1)
         self.start_push_button.setMinimumSize(QSize(100, 25))
         self.start_push_button.setMaximumSize(QSize(100, 25))
@@ -904,13 +760,17 @@ class Ui_main_widget(object):
 
         self.horizontalLayout_2.addWidget(self.start_push_button)
 
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_5 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_5)
 
         self.stop_push_button = QPushButton(self.horizontalLayoutWidget_2)
         self.stop_push_button.setObjectName(u"stop_push_button")
-        sizePolicy1.setHeightForWidth(self.stop_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.stop_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.stop_push_button.setSizePolicy(sizePolicy1)
         self.stop_push_button.setMinimumSize(QSize(100, 25))
         self.stop_push_button.setMaximumSize(QSize(100, 25))
@@ -918,13 +778,17 @@ class Ui_main_widget(object):
 
         self.horizontalLayout_2.addWidget(self.stop_push_button)
 
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_6 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_6)
 
         self.delete_push_button = QPushButton(self.horizontalLayoutWidget_2)
         self.delete_push_button.setObjectName(u"delete_push_button")
-        sizePolicy1.setHeightForWidth(self.delete_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.delete_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.delete_push_button.setSizePolicy(sizePolicy1)
         self.delete_push_button.setMinimumSize(QSize(100, 25))
         self.delete_push_button.setMaximumSize(QSize(100, 25))
@@ -932,13 +796,17 @@ class Ui_main_widget(object):
 
         self.horizontalLayout_2.addWidget(self.delete_push_button)
 
-        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_7 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_7)
 
         self.refresh_push_button = QPushButton(self.horizontalLayoutWidget_2)
         self.refresh_push_button.setObjectName(u"refresh_push_button")
-        sizePolicy1.setHeightForWidth(self.refresh_push_button.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.refresh_push_button.sizePolicy().hasHeightForWidth()
+        )
         self.refresh_push_button.setSizePolicy(sizePolicy1)
         self.refresh_push_button.setMinimumSize(QSize(100, 25))
         self.refresh_push_button.setMaximumSize(QSize(100, 25))
@@ -951,7 +819,9 @@ class Ui_main_widget(object):
 
         self.pdl_tab_widget = QTabWidget(self.layoutWidget1)
         self.pdl_tab_widget.setObjectName(u"pdl_tab_widget")
-        sizePolicy1.setHeightForWidth(self.pdl_tab_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.pdl_tab_widget.sizePolicy().hasHeightForWidth()
+        )
         self.pdl_tab_widget.setSizePolicy(sizePolicy1)
         self.pdl_tab_widget.setMinimumSize(QSize(940, 319))
         self.pdl_tab_widget.setMaximumSize(QSize(940, 319))
@@ -962,7 +832,9 @@ class Ui_main_widget(object):
         self.prompt_text_browser = QTextBrowser(self.prompt_widget)
         self.prompt_text_browser.setObjectName(u"prompt_text_browser")
         self.prompt_text_browser.setGeometry(QRect(0, 0, 940, 297))
-        sizePolicy1.setHeightForWidth(self.prompt_text_browser.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.prompt_text_browser.sizePolicy().hasHeightForWidth()
+        )
         self.prompt_text_browser.setSizePolicy(sizePolicy1)
         self.prompt_text_browser.setMinimumSize(QSize(940, 297))
         self.prompt_text_browser.setMaximumSize(QSize(940, 297))
@@ -973,7 +845,9 @@ class Ui_main_widget(object):
         self.detail_text_browser = QTextBrowser(self.detail_widget)
         self.detail_text_browser.setObjectName(u"detail_text_browser")
         self.detail_text_browser.setGeometry(QRect(0, 0, 940, 297))
-        sizePolicy1.setHeightForWidth(self.detail_text_browser.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.detail_text_browser.sizePolicy().hasHeightForWidth()
+        )
         self.detail_text_browser.setSizePolicy(sizePolicy1)
         self.detail_text_browser.setMinimumSize(QSize(940, 297))
         self.detail_text_browser.setMaximumSize(QSize(940, 297))
@@ -983,7 +857,9 @@ class Ui_main_widget(object):
         self.log_text_browser = QTextBrowser(self.log_widget)
         self.log_text_browser.setObjectName(u"log_text_browser")
         self.log_text_browser.setGeometry(QRect(0, 0, 940, 297))
-        sizePolicy1.setHeightForWidth(self.log_text_browser.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.log_text_browser.sizePolicy().hasHeightForWidth()
+        )
         self.log_text_browser.setSizePolicy(sizePolicy1)
         self.log_text_browser.setMinimumSize(QSize(940, 297))
         self.log_text_browser.setMaximumSize(QSize(940, 297))
@@ -998,156 +874,254 @@ class Ui_main_widget(object):
         self.cm_tab_widget.setCurrentIndex(0)
         self.pdl_tab_widget.setCurrentIndex(0)
 
-
         QMetaObject.connectSlotsByName(main_widget)
+
     # setupUi
 
     def retranslateUi(self, main_widget):
-        main_widget.setWindowTitle(QCoreApplication.translate("main_widget", u"Robustar Launcher", None))
+        main_widget.setWindowTitle(
+            QCoreApplication.translate("main_widget", u"Robustar Launcher", None)
+        )
         self.header_label.setText("")
-        self.docker_group_box.setTitle(QCoreApplication.translate("main_widget", u"Docker", None))
-#if QT_CONFIG(tooltip)
-        self.name_label.setToolTip(QCoreApplication.translate("main_widget", u"The name of the docker container", None))
-#endif // QT_CONFIG(tooltip)
-        self.name_label.setText(QCoreApplication.translate("main_widget", u"Container Name", None))
-        self.name_line_edit.setText(QCoreApplication.translate("main_widget", u"robustar", None))
-#if QT_CONFIG(tooltip)
-        self.image_label.setToolTip(QCoreApplication.translate("main_widget", u"The version of the docker image of the container", None))
-#endif // QT_CONFIG(tooltip)
-        self.image_label.setText(QCoreApplication.translate("main_widget", u"Image Version", None))
+        self.server_group_box.setTitle(
+            QCoreApplication.translate("main_widget", u"Server", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.name_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The name of the docker container", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.name_label.setText(
+            QCoreApplication.translate("main_widget", u"Server Name", None)
+        )
+        self.name_line_edit.setText(
+            QCoreApplication.translate("main_widget", u"robustar", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.image_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The version of the docker image of the container", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.image_label.setText(
+            QCoreApplication.translate("main_widget", u"Image Version", None)
+        )
         self.image_combo_box.setProperty("placeholderText", "")
-#if QT_CONFIG(tooltip)
-        self.port_label.setToolTip(QCoreApplication.translate("main_widget", u"The port the docker container forwards to", None))
-#endif // QT_CONFIG(tooltip)
-        self.port_label.setText(QCoreApplication.translate("main_widget", u"Port", None))
-        self.port_line_edit.setText(QCoreApplication.translate("main_widget", u"8000", None))
-        self.data_group_box.setTitle(QCoreApplication.translate("main_widget", u"Data", None))
-#if QT_CONFIG(tooltip)
-        self.train_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the train set", None))
-#endif // QT_CONFIG(tooltip)
-        self.train_label.setText(QCoreApplication.translate("main_widget", u"Train Set", None))
-        self.train_line_edit.setText("")
-        self.train_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.val_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the validation set", None))
-#endif // QT_CONFIG(tooltip)
-        self.val_label.setText(QCoreApplication.translate("main_widget", u"Validation Set", None))
-        self.val_line_edit.setText("")
-        self.val_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.test_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the test set", None))
-#endif // QT_CONFIG(tooltip)
-        self.test_label.setText(QCoreApplication.translate("main_widget", u"Test Set", None))
-        self.test_line_edit.setText("")
-        self.test_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.paired_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the paired set", None))
-#endif // QT_CONFIG(tooltip)
-        self.paired_label.setText(QCoreApplication.translate("main_widget", u"Paired Set", None))
-        self.paired_line_edit.setText("")
-        self.paired_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.ckpt_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path for all checkpoint files saved by Robustar", None))
-#endif // QT_CONFIG(tooltip)
-        self.ckpt_label.setText(QCoreApplication.translate("main_widget", u"Checkpoint", None))
-        self.ckpt_line_edit.setText("")
-        self.ckpt_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.inf_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path for all influence result calculated by Robustar", None))
-#endif // QT_CONFIG(tooltip)
-        self.inf_label.setText(QCoreApplication.translate("main_widget", u"Influence Result", None))
-        self.inf_line_edit.setText("")
-        self.inf_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-#if QT_CONFIG(tooltip)
-        self.out_label.setToolTip(QCoreApplication.translate("main_widget", u"The root path of the generated files", None))
-#endif // QT_CONFIG(tooltip)
-        self.out_label.setText(QCoreApplication.translate("main_widget", u"Output Folder", None))
-        self.out_line_edit.setText("")
-        self.out_push_button.setText(QCoreApplication.translate("main_widget", u"...", None))
-        self.model_group_box.setTitle(QCoreApplication.translate("main_widget", u"Model", None))
-#if QT_CONFIG(tooltip)
-        self.arch_label.setToolTip(QCoreApplication.translate("main_widget", u"The architecture of the model", None))
-#endif // QT_CONFIG(tooltip)
-        self.arch_label.setText(QCoreApplication.translate("main_widget", u"Architecture", None))
-        self.arch_combo_box.setItemText(0, QCoreApplication.translate("main_widget", u"resnet-18", None))
-        self.arch_combo_box.setItemText(1, QCoreApplication.translate("main_widget", u"resnet-34", None))
-        self.arch_combo_box.setItemText(2, QCoreApplication.translate("main_widget", u"resnet-50", None))
-        self.arch_combo_box.setItemText(3, QCoreApplication.translate("main_widget", u"resnet-101", None))
-        self.arch_combo_box.setItemText(4, QCoreApplication.translate("main_widget", u"resnet-152", None))
-        self.arch_combo_box.setItemText(5, QCoreApplication.translate("main_widget", u"resnet-18-32x32", None))
-        self.arch_combo_box.setItemText(6, QCoreApplication.translate("main_widget", u"mobilenet-v2", None))
-        self.arch_combo_box.setItemText(7, QCoreApplication.translate("main_widget", u"alexnet", None))
+        # if QT_CONFIG(tooltip)
+        self.port_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The port the docker container forwards to", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.port_label.setText(
+            QCoreApplication.translate("main_widget", u"Port", None)
+        )
+        self.port_line_edit.setText(
+            QCoreApplication.translate("main_widget", u"8000", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.device_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The device on which the model will be created", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.device_label.setText(
+            QCoreApplication.translate("main_widget", u"Device", None)
+        )
+        self.device_combo_box.setItemText(
+            0, QCoreApplication.translate("main_widget", u"cpu", None)
+        )
 
-        self.arch_combo_box.setCurrentText(QCoreApplication.translate("main_widget", u"resnet-18", None))
-        self.arch_combo_box.setProperty("placeholderText", "")
-#if QT_CONFIG(tooltip)
-        self.pretrain_label.setToolTip(QCoreApplication.translate("main_widget", u"Check the box if you want a model with pretrained weights", None))
-#endif // QT_CONFIG(tooltip)
-        self.pretrain_label.setText(QCoreApplication.translate("main_widget", u"Pretrained", None))
-        self.pretrain_check_box.setText("")
-#if QT_CONFIG(tooltip)
-        self.weight_label.setToolTip(QCoreApplication.translate("main_widget", u"The weight file used to initialize the model. Optional weight files are under the root path of the checkpoint you set", None))
-#endif // QT_CONFIG(tooltip)
-        self.weight_label.setText(QCoreApplication.translate("main_widget", u"Weight File", None))
-        self.weight_combo_box.setItemText(0, QCoreApplication.translate("main_widget", u"None", None))
-
-        self.weight_combo_box.setProperty("placeholderText", "")
-#if QT_CONFIG(tooltip)
-        self.device_label.setToolTip(QCoreApplication.translate("main_widget", u"The device on which the model will be created", None))
-#endif // QT_CONFIG(tooltip)
-        self.device_label.setText(QCoreApplication.translate("main_widget", u"Device", None))
-        self.device_combo_box.setItemText(0, QCoreApplication.translate("main_widget", u"cpu", None))
-
-        self.device_combo_box.setCurrentText(QCoreApplication.translate("main_widget", u"cpu", None))
+        self.device_combo_box.setCurrentText(
+            QCoreApplication.translate("main_widget", u"cpu", None)
+        )
         self.device_combo_box.setProperty("placeholderText", "")
-#if QT_CONFIG(tooltip)
-        self.shuffle_label.setToolTip(QCoreApplication.translate("main_widget", u"Check the box if you want the train data to be shuffled", None))
-#endif // QT_CONFIG(tooltip)
-        self.shuffle_label.setText(QCoreApplication.translate("main_widget", u"Shuffle", None))
-        self.shuffle_check_box.setText("")
-#if QT_CONFIG(tooltip)
-        self.batch_lable.setToolTip(QCoreApplication.translate("main_widget", u"The batch size of the data", None))
-#endif // QT_CONFIG(tooltip)
-        self.batch_lable.setText(QCoreApplication.translate("main_widget", u"Batch Size", None))
-        self.batch_line_edit.setText("")
-#if QT_CONFIG(tooltip)
-        self.worker_h_layout_2.setToolTip(QCoreApplication.translate("main_widget", u"The number of workers for the data loader", None))
-#endif // QT_CONFIG(tooltip)
-        self.worker_h_layout_2.setText(QCoreApplication.translate("main_widget", u"Worker Number", None))
-        self.worker_line_edit.setText("")
-#if QT_CONFIG(tooltip)
-        self.cls_label.setToolTip(QCoreApplication.translate("main_widget", u"The number of classes of the data", None))
-#endif // QT_CONFIG(tooltip)
-        self.cls_label.setText(QCoreApplication.translate("main_widget", u"Class Number", None))
+        # if QT_CONFIG(tooltip)
+        self.cls_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The number of classes of the data", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.cls_label.setText(
+            QCoreApplication.translate("main_widget", u"Class Number", None)
+        )
         self.cls_line_edit.setText("")
-#if QT_CONFIG(tooltip)
-        self.size_label.setToolTip(QCoreApplication.translate("main_widget", u"The length of side of the input image of the model", None))
-#endif // QT_CONFIG(tooltip)
-        self.size_label.setText(QCoreApplication.translate("main_widget", u"Image Size", None))
+        # if QT_CONFIG(tooltip)
+        self.size_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget",
+                u"The length of side of the input image of the model",
+                None,
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.size_label.setText(
+            QCoreApplication.translate("main_widget", u"Image Size", None)
+        )
         self.size_line_edit.setText("")
-#if QT_CONFIG(tooltip)
-        self.pad_label.setToolTip(QCoreApplication.translate("main_widget", u"The mode of padding", None))
-#endif // QT_CONFIG(tooltip)
-        self.pad_label.setText(QCoreApplication.translate("main_widget", u"Image Padding", None))
-        self.pad_combo_box.setItemText(0, QCoreApplication.translate("main_widget", u"short side", None))
-        self.pad_combo_box.setItemText(1, QCoreApplication.translate("main_widget", u"none", None))
+        # if QT_CONFIG(tooltip)
+        self.pad_label.setToolTip(
+            QCoreApplication.translate("main_widget", u"The mode of padding", None)
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.pad_label.setText(
+            QCoreApplication.translate("main_widget", u"Image Padding", None)
+        )
+        self.pad_combo_box.setItemText(
+            0, QCoreApplication.translate("main_widget", u"short side", None)
+        )
+        self.pad_combo_box.setItemText(
+            1, QCoreApplication.translate("main_widget", u"none", None)
+        )
 
-        self.pad_combo_box.setCurrentText(QCoreApplication.translate("main_widget", u"short side", None))
+        self.pad_combo_box.setCurrentText(
+            QCoreApplication.translate("main_widget", u"short side", None)
+        )
         self.pad_combo_box.setProperty("placeholderText", "")
-        self.create_push_button.setText(QCoreApplication.translate("main_widget", u"Create Server", None))
-        self.load_push_button.setText(QCoreApplication.translate("main_widget", u"Load Profile", None))
-        self.save_push_button.setText(QCoreApplication.translate("main_widget", u"Save Profile", None))
-        self.cm_tab_widget.setTabText(self.cm_tab_widget.indexOf(self.create_widget), QCoreApplication.translate("main_widget", u"Create", None))
-        self.exit_group_box.setTitle(QCoreApplication.translate("main_widget", u"Exited", None))
-        self.create_group_box.setTitle(QCoreApplication.translate("main_widget", u"Created", None))
-        self.run_group_box.setTitle(QCoreApplication.translate("main_widget", u"Running", None))
-        self.start_push_button.setText(QCoreApplication.translate("main_widget", u"Start Server", None))
-        self.stop_push_button.setText(QCoreApplication.translate("main_widget", u"Stop Server", None))
-        self.delete_push_button.setText(QCoreApplication.translate("main_widget", u"Delete Server", None))
-        self.refresh_push_button.setText(QCoreApplication.translate("main_widget", u"Refresh", None))
-        self.cm_tab_widget.setTabText(self.cm_tab_widget.indexOf(self.manage_widget), QCoreApplication.translate("main_widget", u"Manage", None))
-        self.pdl_tab_widget.setTabText(self.pdl_tab_widget.indexOf(self.prompt_widget), QCoreApplication.translate("main_widget", u"Prompts", None))
-        self.pdl_tab_widget.setTabText(self.pdl_tab_widget.indexOf(self.detail_widget), QCoreApplication.translate("main_widget", u"Details", None))
-        self.pdl_tab_widget.setTabText(self.pdl_tab_widget.indexOf(self.log_widget), QCoreApplication.translate("main_widget", u"Logs", None))
-    # retranslateUi
+        self.dir_group_box.setTitle(
+            QCoreApplication.translate("main_widget", u"Directory", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.train_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The root path of the train set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.train_label.setText(
+            QCoreApplication.translate("main_widget", u"Train Set", None)
+        )
+        self.train_line_edit.setText("")
+        self.train_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.val_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The root path of the validation set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.val_label.setText(
+            QCoreApplication.translate("main_widget", u"Validation Set", None)
+        )
+        self.val_line_edit.setText("")
+        self.val_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.test_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The root path of the test set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.test_label.setText(
+            QCoreApplication.translate("main_widget", u"Test Set", None)
+        )
+        self.test_line_edit.setText("")
+        self.test_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.paired_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The root path of the paired set", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.paired_label.setText(
+            QCoreApplication.translate("main_widget", u"Paired Set", None)
+        )
+        self.paired_line_edit.setText("")
+        self.paired_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.inf_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget",
+                u"The root path for all influence result calculated by Robustar",
+                None,
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.inf_label.setText(
+            QCoreApplication.translate("main_widget", u"Influence Result", None)
+        )
+        self.inf_line_edit.setText("")
+        self.inf_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.out_label.setToolTip(
+            QCoreApplication.translate(
+                "main_widget", u"The root path of the generated files", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.out_label.setText(
+            QCoreApplication.translate("main_widget", u"Output", None)
+        )
+        self.out_line_edit.setText("")
+        self.out_push_button.setText(
+            QCoreApplication.translate("main_widget", u"...", None)
+        )
+        self.create_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Create Server", None)
+        )
+        self.load_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Load Profile", None)
+        )
+        self.save_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Save Profile", None)
+        )
+        self.cm_tab_widget.setTabText(
+            self.cm_tab_widget.indexOf(self.create_widget),
+            QCoreApplication.translate("main_widget", u"Create", None),
+        )
+        self.exit_group_box.setTitle(
+            QCoreApplication.translate("main_widget", u"Exited", None)
+        )
+        self.create_group_box.setTitle(
+            QCoreApplication.translate("main_widget", u"Created", None)
+        )
+        self.run_group_box.setTitle(
+            QCoreApplication.translate("main_widget", u"Running", None)
+        )
+        self.start_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Start Server", None)
+        )
+        self.stop_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Stop Server", None)
+        )
+        self.delete_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Delete Server", None)
+        )
+        self.refresh_push_button.setText(
+            QCoreApplication.translate("main_widget", u"Refresh", None)
+        )
+        self.cm_tab_widget.setTabText(
+            self.cm_tab_widget.indexOf(self.manage_widget),
+            QCoreApplication.translate("main_widget", u"Manage", None),
+        )
+        self.pdl_tab_widget.setTabText(
+            self.pdl_tab_widget.indexOf(self.prompt_widget),
+            QCoreApplication.translate("main_widget", u"Prompts", None),
+        )
+        self.pdl_tab_widget.setTabText(
+            self.pdl_tab_widget.indexOf(self.detail_widget),
+            QCoreApplication.translate("main_widget", u"Details", None),
+        )
+        self.pdl_tab_widget.setTabText(
+            self.pdl_tab_widget.indexOf(self.log_widget),
+            QCoreApplication.translate("main_widget", u"Logs", None),
+        )
 
+    # retranslateUi
