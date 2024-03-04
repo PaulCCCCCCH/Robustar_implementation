@@ -1,4 +1,4 @@
-FROM leonleyang/robustar-base:base-0.3.2
+FROM paulcccccch/robustar-base:base-0.3.1
 # Default VCUDA is 11.8
 ARG VCUDA=11.8 
 COPY . /Robustar2/
