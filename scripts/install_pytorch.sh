@@ -2,65 +2,53 @@
 
 function getTorchCPU {
     python3.9 -m pip install \
-    torch==1.9.1 \
-    torchvision==0.10.1 \
-    torchattacks==3.1.0 \
+    torch==2.2.0 \
+    torchvision==0.17.0 \
+    torchattacks==3.4.0 \
     pytorch_influence_functions==0.1.1 \
     flashtorch==0.1.3 \
-    -f https://download.pytorch.org/whl/cpu/torch_stable.html
+    -f https://download.pytorch.org/whl/cpu
 }
 
-function getTorchCUDA92 {
+function getTorchCUDA117 {
     python3.9 -m pip install \
-    torch==1.7.0+cu92 \
-    torchvision==0.8.0+cu92 \
-    torchattacks==3.1.0 \
+    torch==2.0.1 \
+    torchvision==0.15.2 \
+    torchattacks==3.4.0 \
     pytorch_influence_functions==0.1.1 \
     flashtorch==0.1.3 \
-    -f https://download.pytorch.org/whl/cu92/torch_stable.html 
+    -f https://download.pytorch.org/whl/cu117
 }
 
-function getTorchCUDA102 {
-    python3.9 -m pip install \
-    torch==1.9.1+cu102 \
-    torchvision==0.10.1+cu102  \
-    torchattacks==3.1.0 \
-    pytorch_influence_functions==0.1.1 \
-    flashtorch==0.1.3 \
-    -f https://download.pytorch.org/whl/cu102/torch_stable.html 
-}
-
-function getTorchCUDA111 {
-    python3.9 -m pip install \
-    torch==1.9.1+cu111 \
-    torchvision==0.10.1+cu111  \
-    torchattacks==3.1.0 \
-    pytorch_influence_functions==0.1.1 \
-    flashtorch==0.1.3 \
-    -f https://download.pytorch.org/whl/cu111/torch_stable.html 
-}
-
-function getTorchCUDA113 {
+function getTorchCUDA118 {
     pip install \
-    torch==1.12.1+cu113 \
-    torchvision==0.13.1+cu113  \
-    torchattacks==3.1.0 \
+    torch==2.2.0 \
+    torchvision==0.17.0  \
+    torchattacks==3.4.0 \
     pytorch_influence_functions==0.1.1 \
     flashtorch==0.1.3 \
-    -f https://download.pytorch.org/whl/cu113/torch_stable.html 
+    -f https://download.pytorch.org/whl/cu118
+}
+
+function getTorchCUDA121 {
+    pip install \
+    torch==2.2.0 \
+    torchvision==0.17.0  \
+    torchattacks==3.4.0 \
+    pytorch_influence_functions==0.1.1 \
+    flashtorch==0.1.3 \
+    -f https://download.pytorch.org/whl/cu121
 }
 
 function installPyTorch {
     if [ "$1" == "cpu" ]; then
         getTorchCPU
-    elif [ "$1" == '9.2' ]; then
-        getTorchCUDA92
-    elif [ "$1" == '10.2' ]; then
-        getTorchCUDA102
-    elif [ "$1" == '11.1' ]; then
-        getTorchCUDA111
-    elif [ "$1" == '11.3' ]; then
-        getTorchCUDA113
+    elif [ "$1" == '11.7' ]; then
+        getTorchCUDA117
+    elif [ "$1" == '11.8' ]; then
+        getTorchCUDA118
+    elif [ "$1" == '12.1' ]; then
+        getTorchCUDA121
     else
         echo "CUDA version $1 not supported."
         exit 1
