@@ -8,6 +8,8 @@
 
     <v-spacer></v-spacer>
 
+    <div class="mr-8 primary--text">Current Model: {{ currentModel?.nickname || '' }}</div>
+
     <div v-click-outside="onClickOutside">
       <v-btn icon color="primary" @click="toggleTaskspanel" data-test="header-toggle-tasks-panel">
         <v-icon>mdi-format-list-bulleted-type</v-icon>
@@ -25,6 +27,7 @@
 
 <script>
 import TaskPanel from '@/components/common/TaskPanel';
+import { APIGetCurrentModel } from '@/services/model/';
 
 export default {
   name: 'Header',
@@ -35,7 +38,12 @@ export default {
     return {
       isFullscreen: false,
       showTaskPanel: false,
+      currentModel: {},
     };
+  },
+  async created() {
+    this.syncCurrentModel();
+    this.$root.$on('sync-current-model', this.syncCurrentModel);
   },
   methods: {
     toggleFullscreen() {
@@ -54,6 +62,15 @@ export default {
     onClickOutside() {
       if (this.showTaskPanel == true) {
         this.showTaskPanel = false;
+      }
+    },
+    async syncCurrentModel() {
+      try {
+        const res = await APIGetCurrentModel();
+        this.currentModel = res?.data?.data;
+      } catch (error) {
+        console.log(error);
+        this.currentModel = {};
       }
     },
   },

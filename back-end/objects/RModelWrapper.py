@@ -221,10 +221,17 @@ class RModelWrapper:
             metadata.get("nickname") or model_to_update.nickname
         )
 
-        prev_tags = metadata.get("tags")
-        model_to_update.tags = (
-            [Tags(name=tag_name) for tag_name in prev_tags] if prev_tags else []
-        )
+        if "tags" in metadata:
+            existing_tags = {tag.name: tag for tag in Tags.query.all()}
+            updated_tags = []
+            for tag_name in metadata["tags"]:
+                if tag_name in existing_tags:
+                    updated_tags.append(existing_tags[tag_name])
+                else:
+                    new_tag = Tags(name=tag_name)
+                    db.session.add(new_tag)
+                    updated_tags.append(new_tag)
+            model_to_update.tags = updated_tags
 
         db.session.commit()
 

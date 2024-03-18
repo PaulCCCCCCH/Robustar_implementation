@@ -183,7 +183,7 @@ def construct_metadata_4_save(metadata, code_path, weight_path, model):
         "predefined": bool(int(metadata.get("predefined"))),
         "pretrained": bool(int(metadata.get("pretrained"))),
         "description": metadata.get("description"),
-        "tags": metadata.get("tags"),
+        "tags": metadata.get("tags", []),
         "create_time": datetime.now(),
         "code_path": code_path,
         "weight_path": weight_path,
