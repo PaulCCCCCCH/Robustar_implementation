@@ -48,14 +48,28 @@
     <v-card class="pa-2 mb-4" width="1300">
       <v-card-title>
         All models <v-spacer></v-spacer>
+        <div v-if="selectedTags.length > 0" class="d-flex align-center mr-4">
+          <v-chip v-for="tag in selectedTags" :key="tag" close @click:close="filterByTag(tag)" class="mr-2">
+            {{ tag }}
+          </v-chip>
+          <v-btn color="primary" outlined small @click="clearSelectedTags">
+            Clear Tags
+          </v-btn>
+        </div>
         <v-text-field v-model="searchText" append-icon="mdi-magnify" label="Search" single-line hide-details dense
           class="mr-8"></v-text-field>
         <ModelUploader @upload="getModelList" />
       </v-card-title>
-      <v-data-table v-model="selectedModels" :headers="headers" :items="modelList" :search="searchText"
+      <v-data-table v-model="selectedModels" :headers="headers" :items="filteredModelList" :search="searchText"
         :loading="isLoading" loading-text="Loading... Please wait" item-key="id" show-select width="1000">
         <template v-slot:item.tag="{ item }">
-          {{ item.tags && item.tags.length > 0 ? item.tags.join(', ') : '-' }}
+          <div>
+            <v-chip v-for="tag in item.tags" :key="tag" small class="mr-1 mb-1" text-color="black"
+              @click="filterByTag(tag)">
+              {{ tag }}
+            </v-chip>
+            <span v-if="!item.tags || item.tags.length === 0">-</span>
+          </div>
         </template>
         <template v-slot:top>
           <!-- <v-toolbar flat> -->
@@ -205,6 +219,7 @@ export default {
       modelList: [],
       selectedModels: [],
       searchText: '',
+      selectedTags: [],
       dialogEdit: false,
       dialogDelete: false,
       headers: [
@@ -225,9 +240,30 @@ export default {
     this.getCurrentModel();
     this.getModelList();
   },
+  computed: {
+    filteredModelList() {
+      if (this.selectedTags.length > 0) {
+        return this.modelList.filter(model =>
+          model.tags && this.selectedTags.every(tag => model.tags.includes(tag))
+        );
+      } else {
+        return this.modelList;
+      }
+    },
+  },
   methods: {
     trainModel() {
       this.$router.push({ name: 'TrainPad' });
+    },
+    filterByTag(tag) {
+      if (this.selectedTags.includes(tag)) {
+        this.selectedTags = this.selectedTags.filter(t => t !== tag);
+      } else {
+        this.selectedTags.push(tag);
+      }
+    },
+    clearSelectedTags() {
+      this.selectedTags = [];
     },
     async getCurrentModel() {
       try {
@@ -242,7 +278,6 @@ export default {
         this.isLoading = true;
         const response = await APIGetAllModels();
         this.modelList = response?.data?.data;
-        console.log('Model List:', this.modelList);
       } catch (error) {
         console.error('Error fetching model list:', error);
       } finally {
