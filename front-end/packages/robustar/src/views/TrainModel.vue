@@ -9,7 +9,7 @@
         <div>
           <span>
             <span class="font-weight-medium">Tag: </span>
-            {{ currentModel.tag }}
+            {{ currentModel.tag.join(', ') }}
           </span>
           <span class="mx-8">
             <span class="font-weight-medium">Epoch: </span>
@@ -54,6 +54,9 @@
       </v-card-title>
       <v-data-table v-model="selectedModels" :headers="headers" :items="modelList" :search="searchText"
         :loading="isLoading" loading-text="Loading... Please wait" item-key="id" show-select width="1000">
+        <template v-slot:item.tag="{ item }">
+          {{ item.tags && item.tags.length > 0 ? item.tags.join(', ') : '-' }}
+        </template>
         <template v-slot:top>
           <!-- <v-toolbar flat> -->
           <v-dialog v-model="dialogEdit" max-width="800px" persistent>
@@ -72,9 +75,9 @@
                 </div>
                 <v-divider class="mb-4"></v-divider>
                 <div>
-                  <div style="width: 100px; display: inline-block">
-                    <v-text-field v-model="editingModel.tag" :loading="isSubmitting" label="Tag" hint="" outlined
-                      clearable dense></v-text-field>
+                  <div style="width: 200px; display: inline-block">
+                    <v-combobox v-model="editingModel.tags" :loading="isSubmitting" label="Tags" hint="" outlined multiple
+                      chips clearable dense></v-combobox>
                   </div>
                   <span class="mx-8">
                     <span class="font-weight-medium">Epoch: </span>
@@ -136,6 +139,7 @@
           </v-dialog>
           <!-- </v-toolbar> -->
         </template>
+
         <template v-slot:item.actions="{ item }">
           <v-icon small @click="
             editingModel = { ...item };
@@ -143,7 +147,8 @@
           " data-test="train-model-edit-model">
             mdi-pencil
           </v-icon>
-          <v-icon small class="mx-2" @click="duplicateModel(item)"  data-test="train-model-duplicate-model"> mdi-content-copy </v-icon>
+          <v-icon small class="mx-2" @click="duplicateModel(item)" data-test="train-model-duplicate-model">
+            mdi-content-copy </v-icon>
           <v-icon small @click="
             deletingModelId = item.id;
           deletingModelName = item.nickname;
@@ -152,6 +157,7 @@
             mdi-delete
           </v-icon>
         </template>
+
       </v-data-table>
     </v-card>
   </div>
@@ -180,7 +186,7 @@ const initialModel = {
   test_accuracy: '',
   train_accuracy: '',
   val_accuracy: '',
-  tag: '',
+  tag: [],
 };
 
 export default {
@@ -234,7 +240,9 @@ export default {
     async getModelList() {
       try {
         this.isLoading = true;
-        this.modelList = (await APIGetAllModels())?.data?.data;
+        const response = await APIGetAllModels();
+        this.modelList = response?.data?.data;
+        console.log('Model List:', this.modelList);
       } catch (error) {
         console.error('Error fetching model list:', error);
       } finally {

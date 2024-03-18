@@ -36,7 +36,7 @@ export const APIUploadModel = async (metadata, code = null, weightFile = null) =
 
   if (code) formData.append('code', code);
   if (weightFile) formData.append('weight_file', weightFile);
-
+  console.log(metadata)
   return postRequest(`/model`, formData);
 };
 

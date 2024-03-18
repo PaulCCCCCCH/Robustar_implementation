@@ -57,7 +57,10 @@ class Models(db.Model):
     )
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        data = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        data["tags"] = [tag.name for tag in self.tags]
+        return data
+
 
 
 class Tags(db.Model):
