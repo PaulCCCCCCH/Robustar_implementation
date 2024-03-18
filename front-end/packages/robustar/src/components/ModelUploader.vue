@@ -131,7 +131,7 @@ export default {
     },
     addModelClassAsTag() {
       if (this.predefined && this.className && !this.tags.includes(this.className)) {
-        this.tags.push(this.className);
+        this.tags.push("predefined-"+this.className);
       }
     },
     async submit() {
